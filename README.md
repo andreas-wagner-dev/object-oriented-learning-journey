@@ -9,3 +9,5 @@ There are my favoritre blogs and posts of people which teach me/us in the intern
 https://javadevguy.wordpress.com/
 
 https://www.vzurauskas.com/
+
+https://www.infoworld.com/article/2072302/more-on-getters-and-setters.html?page=2
