@@ -10,4 +10,4 @@ https://javadevguy.wordpress.com/
 
 https://www.vzurauskas.com/
 
-https://www.infoworld.com/article/2072302/more-on-getters-and-setters.html?page=2
+https://www.infoworld.com/article/2072302/more-on-getters-and-setters.html
