@@ -1,12 +1,55 @@
-# object-oriented-learning-journey
+# Hi there! 👋 I'm Andreas Wagner
 
-This bolg code describes my heavy journey about learning how to write a better (more object oriented) software.
+## 🚀 About Me
+Passionate software developer with a focus on **object-oriented programming** and **backend technologies**. I love exploring the fundamental concepts behind good software design and sharing knowledge with the developer community.
 
-It's try to summarize and extends the ideas of my favorite blogs and posts of people, which shows how to understand the real ideas behind the object oriented software approach:
+## 🛠️ Tech Stack
+- **Languages:** Java ☕
+- **Frameworks:** Jakarta EE, Enterprise Applications
+- **Technologies:** Apache Kafka, Embedded Systems
+- **Focus Areas:** Object-Oriented Design, Microservices Architecture
+- **Testing:** JUnit, Test-Driven Development
 
-- [https://github.com/yegor256](https://www.yegor256.com/)
-- https://javadevguy.wordpress.com/
-- https://www.vzurauskas.com/
+## 📚 Featured Projects
 
+### 🎯 [Object-Oriented Learning Journey](https://github.com/andreas-wagner-dev/object-oriented-learning-journey)
+A curated collection of my favorite blogs and resources from experts who teach the real ideas behind object-oriented software development. Perfect for developers wanting to deepen their OOP understanding.
 
-- https://www.infoworld.com/article/2072302/more-on-getters-and-setters.html
+**Why this matters:** Understanding OOP isn't just about syntax—it's about a programming philosophy that changes how we think about problems and design solutions.
+
+### ⚡ [Kafka Server Embedded](https://github.com/andreas-wagner-dev/kafka-server-embedded)
+Complete example of running an embedded Kafka server as a local Java program, including producer and consumer examples in JUnit tests.
+
+**Key Features:**
+- Easy local development setup
+- Production-ready patterns
+- Comprehensive test examples
+
+## 🌱 What I'm Currently Learning
+- Advanced Kafka patterns and streaming architectures
+- Modern Java features and best practices
+- Microservices design patterns
+
+## 💡 Philosophy
+I believe in:
+- **Clean Code:** Writing code that tells a story
+- **Continuous Learning:** Technology evolves, and so should we
+- **Knowledge Sharing:** The best way to learn is to teach others
+
+## 📫 Let's Connect
+- **GitHub:** You're already here! 😄
+- **Location:** Bavaria, Germany 🇩🇪
+- **Open to:** Collaborations, discussions about software architecture, and knowledge exchange
+
+---
+
+*"The best programs are written when the programmer is supposed to be working on something else."* - Melinda Varian
+
+## 📊 GitHub Stats
+
+![Andreas's GitHub stats](https://github-readme-stats.vercel.app/api?username=andreas-wagner-dev&show_icons=true&theme=vue-dark)
+
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=andreas-wagner-dev&layout=compact&theme=vue-dark)
+
+---
+⭐️ From [andreas-wagner-dev](https://github.com/andreas-wagner-dev)
