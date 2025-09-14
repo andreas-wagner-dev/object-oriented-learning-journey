@@ -322,7 +322,6 @@ Context-Driven Packaging macht Ihr **Context-Diagramm im Code sichtbar**. Busine
 
 ### Grundlegende Artikel
 - [Happy Packaging! (javadevguy)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
-- [Package by Feature (Philipp Hauer)](https://phauer.com/2020/package-by-feature/)
 - [Modular Monoliths - Simon Brown (Video)](https://www.youtube.com/watch?v=9imyW_WAYP4)
 - [Modular Monoliths - Simon Brown (Slides)](https://static.codingthearchitecture.com/presentations/softwarecircus2015-modular-monoliths.pdf)
 
@@ -333,6 +332,7 @@ Context-Driven Packaging macht Ihr **Context-Diagramm im Code sichtbar**. Busine
 - [NDDDSample - DDD Implementation](https://github.com/aivascu/ndddsample)
 - [Hexagonal Architecture (Alistair Cockburn)](https://alistair.cockburn.us/hexagonal-architecture/)
 - [Vertical Slice Architecture (Jimmy Bogard)](https://jimmybogard.com/vertical-slice-architecture/)
+- [Package by Feature (Philipp Hauer)](https://phauer.com/2020/package-by-feature/)
 
 ### Beispiel-Projekte
 - [Spring Framework Documentation](https://spring.io/guides/gs/serving-web-content/)
