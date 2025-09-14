@@ -29,6 +29,7 @@ Stellen Sie sich vor: Ein Business Analyst zeigt Ihnen ein System Context Diagra
 Dann öffnen Sie den Code und finden:
 
 **Beispiel 1: Klassische Layered Architecture**
+
 ```
 com.test.catalog
 ├── controller/
@@ -40,6 +41,7 @@ com.test.catalog
 ```
 
 **Beispiel 2: Clean Architecture (nach Robert C. Martin)**
+
 ```
 com.test.catalog
 ├── domain/
@@ -55,6 +57,7 @@ com.test.catalog
 ```
 
 **Beispiel 3: DDD Structure (nach Eric Evans)**
+
 ```
 com.test.catalog
 ├── aggregate/
@@ -67,6 +70,8 @@ com.test.catalog
 ```
 
 **Beispiel 4: Hexagonal Architecture**
+*Quelle: [Alistair Cockburn's Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)*
+
 ```
 com.test.catalog
 ├── domain/
@@ -79,9 +84,11 @@ com.test.catalog
 │   └── messaging/
 └── application/
 ```
-*Quelle: [Alistair Cockburn's Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)*
+
 
 **Beispiel 5: Vertical Slices Architecture**
+*Quelle: [Jimmy Bogard's Vertical Slices](https://jimmybogard.com/vertical-slice-architecture/)*
+
 ```
 com.test.catalog
 ├── features/
@@ -100,7 +107,7 @@ com.test.catalog
 ├── shared/
 └── infrastructure/
 ```
-*Quelle: [Jimmy Bogard's Vertical Slices](https://jimmybogard.com/vertical-slice-architecture/)*
+
 
 **Wo ist Jira? Wo ist Codebeamer? Wo ist DOORS aus dem Context-Diagramm?**
 
