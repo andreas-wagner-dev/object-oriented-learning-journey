@@ -28,7 +28,7 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
    - Traditionelle Paketstrukturen folgen oft technischen Schichten statt Business-Kontexten
    - **Folge**: Höhere Kopplungsmetriken und schwierigere Wartbarkeit
 
-### 1.2 Wissenschaftliches Ziel
+### 1.2 Zielsetzung
 
 **Forschungsfrage**:
 > *"Wie können Bräutigams (2017) und Kluths (2010) Paketdesign-Prinzipien mit Siedersleben (2008) Quasar-Software-Kategorien um eine Business-Kontextdimension erweitert werden, die die mentale Übersetzungslücke zwischen C4/DDD-Diagrammen und Code-Struktur schließt und gleichzeitig die ordnungsgemäße Trennung von A-, R- und T-Software gewährleistet?"*
@@ -48,25 +48,23 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 
 #### Warum benötigt man eine standardisierte Terminologie?
 
-In vielen Softwareprojekten entstehen Verständnisschwierigkeiten, weil zentrale Begriffe mehrdeutig verwendet werden. Ohne klare Definition drohen Missverständnisse zwischen Modell, Code und Architektur. Das führt zu Inkonsistenzen in Modellierung, Dokumentation und Implementierung.
+In vielen Softwareprojekten entstehen Verständnisschwierigkeiten, weil zentrale Begriffe mehrdeutig verwendet werden. Besonders der Begriff *Service* wird in Code, Architektur und Deployment uneinheitlich gebraucht. Das führt zu Inkonsistenzen zwischen Modell, Code und Architektur und erschwert die Verständigung im Team.
 
 #### Beispiele für Mehrdeutigkeit
 
-| Begriff | Mögliche Bedeutungen / Verwendungen |
-|---|---|
-| **Service** | • Ein Fachservice im Domain-Modell, der Fachlogik kapselt <br> • Eine technische Schnittstelle (z. B. HTTP Endpoint) <br> • Ein Infrastruktur-Service (z. B. Logging, Datenbankzugriff) |
-| **Domain** | • Das Geschäftsfeld oder der Kontext, z. B. Zahlungsabwicklung <br> • Der Teil des Codes, der Geschäftslogik enthält <br> • In DDD: Aggregat-Wurzel, Entitäten, Wertobjekte etc. |
-| **Komponente / Modul / Package** | • Einheit der Verteilung oder Deployment <br> • Sammlung von Classes mit zusammengehöriger Funktionalität <br> • Struktur im Repository oder Namespace |
+| Begriff | Mehrdeutige Verwendungen (problematisch) | Klare Definition (in diesem Artikel) |
+|---|---|---|
+| **Service** | • Klassenbezeichnung wie `CustomerService` <br> • Spring-Annotation (`@Service`) <br> • Business-Logik-Klasse im Code | **Nur als Architektur-/Deployment-Begriff**: Ein *Service* ist eine eigenständig deploybare Einheit (z. B. Microservice, Subsystem). <br> → Kein Code-Begriff für Business-Logik! |
+| **Domain** | • Geschäftsfeld (fachlich) <br> • Paket für Fachlogik <br> • Aggregat-Bezeichnung | **Fachlicher Kontext**: Geschäftsfeld oder Bounded Context inkl. Entitäten, Wertobjekten, Aggregaten. |
+| **Komponente / Modul / Package** | • Deployment-Einheit <br> • lose Code-Sammlung <br> • Namespace ohne Fachbezug | **Strukturelement im Code**: Gruppierung von Klassen und Objekten mit gemeinsamer Verantwortung; sichtbar in Package-Struktur und Modell. |
 
 #### Unsere Definitionen für diesen Artikel
 
-Damit im Folgenden keine Verwirrung entsteht, verwenden wir:
+- **Service**: *eine eigenständig deploybare Einheit auf Architektur-/Deployment-Ebene*. Kein Begriff im objektorientierten Code. Business-Logik-Klassen heißen nicht `…Service`, sondern werden durch **fachliche Namen** (Entitäten, Repositories, Policies, Komponenten) ausgedrückt.  
+- **Domain**: der fachliche Kontext bzw. das Geschäftsfeld, inkl. Modellierung von Entitäten, Wertobjekten und Aggregaten.  
+- **Package / Modul**: eine Organisationseinheit im Code, die fachlich oder technisch kohärente Klassen bündelt und klare Abhängigkeitsregeln hat.  
 
-- **Service**: *ein Element der Fachlogik*, das Geschäftsregeln umsetzt und nicht (primär) eine Infrastrukturkomponente darstellt.  
-- **Domain:** der fachliche Kontext bzw. das Geschäftsfeld, inkl. Modellierung von Entitäten, Wertobjekten und Aggregaten.  
-- **Package / Modul**: strukturelle Gruppierung von Code in einem Software-Projekt, so dass zusammengehörende Klassen / Komponenten sinnvoll gekapselt werden; sichtbar sowohl in Code-Organisation als auch in der Architektur.
-
-Diese Begriffe werden so einheitlich im Artikel benutzt. Weitere Begriffe werden bei Einführung klar definiert.
+Damit ist festgelegt: Der Begriff *Service* darf im Code nicht als Namenskonzept für Business-Logik auftreten. Er gehört ausschließlich in die Ebene der Architektur und des Deployments. 
 
 ---
 
