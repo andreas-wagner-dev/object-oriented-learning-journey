@@ -301,16 +301,16 @@ com.company.docmgmt
 **Die Erkenntnis:** Package-Struktur = ausführbares Context-Diagramm
 
 **Die Synthese kombiniert:**
-- **javadevguy's Regeln** für lesbare, hierarchische Struktur
-- **Hauer's Feature-Orientierung** für fachliche Kohäsion  
+- **javadevguy's Regeln** für lesbare Business Struktur
 - **Brown's Modularität** für klare Grenzen
+- **Hauer's Feature-Orientierung** für fachliche Kohäsion  
 - **Context-Diagramm-Mapping** für Business-Developer-Alignment
 
 **Das Ergebnis:** Eine Package-Struktur, die sowohl technisch sauber als auch fachlich erkennbar ist und die mentale Übersetzungslücke zwischen Business Analysten und Entwicklern schließt.
 
 ## Fazit
 
-Context-Driven Packaging macht Ihr **Context-Diagramm im Code sichtbar**. Business Analysten und Entwickler sprechen endlich dieselbe Sprache. Der Code wird zum **lebenden Architektur-Dokument**.
+Business Context-Driven Packaging macht Ihr **Context-Diagramm im Code sichtbar**. Business Analysten und Entwickler sprechen endlich dieselbe Sprache. Der Code wird zum **lebenden Architektur-Dokument**.
 
 **Probieren Sie es aus**: Nehmen Sie Ihr aktuelles Projekt, zeichnen Sie das Context-Diagramm und spiegeln Sie es in Ihren Packages wider. Sie werden überrascht sein, wie viel klarer Ihr Code wird.
 
