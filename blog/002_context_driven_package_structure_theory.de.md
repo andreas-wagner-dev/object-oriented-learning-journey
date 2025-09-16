@@ -118,8 +118,9 @@ Unter **(business) kontextgetriebenen Strukturen** verstehen wir Paket- und Arch
 Ein Geschäftskontext (Bounded Context nach DDD) markiert die fachliche Grenze, innerhalb derer Modelle, Packages und Klassen kohärent zusammengehören.  
 
 **Zentrale Eigenschaften:**
-- **Business-Alignment**: Packages spiegeln explizit die fachliche Domäne wider und vermeiden technische Namensschichten wie `service`, `controller` oder `util`.  
-- **Schließen der Modell-Code-Lücke**: Architekturdiagramme (Business Context, Komposition, Komponente, Code) und reale Package-Struktur stehen in 1:1-Beziehung.  
+- **Business-Alignment**: Packages spiegeln explizit die fachliche Domäne nach OOP Prinzipien wider und verbietet technische Namensschichten wie `service`, `controller`, `repositories`, `application`, `domain`, `infrastructure` oder `util`, alle Dinge, welche in der Realität nicht existieren. 
+- **Schließen der Modell-Code-Lücke**:
+Architekturdiagramme (Business Context, Komposition, Komponente, Code) und reale Package-Struktur stehen in 1:1-Beziehung.  
 - **Kleinste Architektureinheit**: Das Package ist die sichtbare Projektion eines Geschäftskontexts in den Code.  
 - **Kohärenz und Verantwortlichkeit**: Alle Klassen in einem Package dienen demselben fachlichen Zweck; technische Adapter werden in eigenen Unterpaketen isoliert.  
 
