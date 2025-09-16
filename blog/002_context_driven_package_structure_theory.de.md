@@ -114,7 +114,17 @@ Die **Modell-Code-Lücke** bezeichnet die Diskrepanz zwischen dem Domain- oder A
 ---
 ### 2.3 (Business) kontextgetriebene Strukturen
 
-Unter **(business) kontextgetriebenen Strukturen** verstehen wir Software-Package- und Architekturstrukturen, die sich primär an **Geschäftskontexten** orientieren, nicht an technischen Schichten. Ein Geschäftskontext (Bounded Context) bildet die fachliche Grenze, innerhalb derer Modelle, Packages und Klassen kohärent zusammengehören. Packages sind dabei die kleinsten Architektureinheiten im Code, die diese Fachlichkeit sichtbar machen. Kontextgetriebene Strukturen schließen die **Modell-Code-Lücke**, indem Architekturdiagramme (Business Context, Komposition, Komponente, Code) direkt mit der realen Package-Struktur übereinstimmen. Sie sorgen für klare Verantwortlichkeiten, konsistente Terminologie und eine enge Kopplung zwischen Business-Modell und Implementierung.
+Unter **(business) kontextgetriebenen Strukturen** verstehen wir Paket- und Architekturstrukturen, die sich primär an **fachlichen Geschäftskontexten** orientieren und nicht an technischen Schichten.  
+Ein Geschäftskontext (Bounded Context nach DDD) markiert die fachliche Grenze, innerhalb derer Modelle, Packages und Klassen kohärent zusammengehören.  
+
+**Zentrale Eigenschaften:**
+- **Business-Alignment**: Packages spiegeln explizit die fachliche Domäne wider und vermeiden technische Namensschichten wie `service`, `controller` oder `util`.  
+- **Schließen der Modell-Code-Lücke**: Architekturdiagramme (Business Context, Komposition, Komponente, Code) und reale Package-Struktur stehen in 1:1-Beziehung.  
+- **Kleinste Architektureinheit**: Das Package ist die sichtbare Projektion eines Geschäftskontexts in den Code.  
+- **Kohärenz und Verantwortlichkeit**: Alle Klassen in einem Package dienen demselben fachlichen Zweck; technische Adapter werden in eigenen Unterpaketen isoliert.  
+
+Damit stellen kontextgetriebene Strukturen sicher, dass die Fachlichkeit im Code **erkennbar, überprüfbar und refaktorierbar** bleibt. Sie bilden die Brücke zwischen abstrakter Modellierung und konkreter Implementierung und schaffen so die Voraussetzung für nachhaltige Softwarequalität.
+
 
 ### 2.4 Software-Kategorien in kontextgetriebenen Strukturen
 
