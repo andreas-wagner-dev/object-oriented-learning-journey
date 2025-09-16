@@ -130,7 +130,14 @@ Für eine **objektorientierte Sicht** und den **Business Context-Driven Package 
 3. **Components** – konkrete fachliche/technische Bausteine (Aggregate, Repositories, Policies)  
 4. **Code** – Implementierungsebene  
 
-Damit wird das C4-Modell OO
+#### Vergalich C4 vs. BCDPS-C4
+System Context → Business Context (OOP: fachliche Bounded Contexts statt Gesamtsystem).
+Containers → Compositions (OOP: objektorientierte Komposition statt deployment-getriebener Container).
+Components → Components (bleibt, aber klar fachlich definiert).
+Code → Code (unverändert).
+
+Damit wird das C4-Modell OOP-gerecht transformiert: weg von deploymentspezifischen Containern, hin zu **Kompositionen**, die die objektorientierte Struktur und die businessgetriebene Paketbildung widerspiegeln.
+
 ---
 ## 3. Synthese: Kontextgetriebenes Paketdesign
 
@@ -173,6 +180,7 @@ graph TD
          .orShould().dependOnClassesThat()
          .resideInAPackage("jakarta..");
      ```
+
 
 4. [ ] **I-Metrik < 0.40 pro Geschäftskontext**
 
