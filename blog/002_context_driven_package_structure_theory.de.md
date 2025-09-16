@@ -1,4 +1,4 @@
-# Kontextgetriebene Paketstruktur: Wissenschaftliche Synthese für Geschäftsausrichtung
+# Kontextgetriebene Paketstruktur: Wissenschaftliche Synthese für Geschäftsausrichtung von Paketstrukturen
 
 *Von Andreas Wagner | 20. September 2025*
 
