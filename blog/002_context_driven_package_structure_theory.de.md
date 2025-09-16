@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Stand der Technik und Forschungsfrage
+## 1. Stand der Technik und Zielsetzung
 
 ### 1.1 Aktuelle Problemanalyse
 
