@@ -106,7 +106,31 @@ A + R = A   (Erlaubt: Business-Kontext mit seinen technischen Adaptern)
 R + T = R   (Erlaubt: Technische Adapter verwenden Bibliotheken)
 A + T = AT  (Vermeiden: Business-Kontext darf nicht direkt von T abhängen)
 ```
+### 2.4 OOP-gerechte Anpassung des C4-Modells
 
+Das ursprüngliche C4-Modell von Simon Brown (https://c4model.com/) beschreibt vier Hierarchieebenen:  
+1. System Context  
+2. Containers  
+3. Components  
+4. Code  
+
+Für eine **objektorientierte Sicht** und den **Business Context-Driven Package Structure**-Ansatz ergeben sich jedoch Anpassungen:
+
+| C4-Ebene (Brown) | OOP-/BCDPS-Variante | Begründung |
+|------------------|----------------------|------------|
+| **System Context** | **Business Context** | Im BCDPS steht nicht das gesamte „System“ im Vordergrund, sondern die fachlichen Geschäftskontexte (Bounded Contexts nach DDD). |
+| **Containers** | **Compositions** | „Container“ ist ein deployment-getriebener Begriff. In OOP beschreibt „Composition“ das zentrale Strukturprinzip: Objekte, Module und Packages werden durch Komposition zusammengesetzt. |
+| **Components** | **Components** | Bleibt erhalten, wird aber fachlich geschärft: Komponenten sind klar abgegrenzte Bausteine innerhalb einer Komposition, z. B. Aggregate, Policies, Repositories. |
+| **Code** | **Code** | Detailebene der Implementierung: Klassen, Methoden, Properties. |
+
+#### Hierarchie für BCDPS
+
+1. **Business Context** – fachliche Abgrenzung (Bounded Contexts, Geschäftsdomänen)  
+2. **Compositions** – Zusammenstellung von Modulen/Packages innerhalb eines Kontexts  
+3. **Components** – konkrete fachliche/technische Bausteine (Aggregate, Repositories, Policies)  
+4. **Code** – Implementierungsebene  
+
+Damit wird das C4-Modell OO
 ---
 ## 3. Synthese: Kontextgetriebenes Paketdesign
 
