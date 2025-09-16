@@ -39,7 +39,7 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 
 > *"Wie können Bräutigams (2017) und Kluths (2010) Paketdesign-Prinzipien mit Siedersleben (2008) Quasar-Software-Kategorien um eine Business-Kontextdimension erweitert werden, die die mentale Übersetzungslücke zwischen Arc42/C4/DDD-Diagrammen und Code-Struktur schließt und gleichzeitig die ordnungsgemäße Trennung von A-, R- und T-Software gewährleistet?"*
 
-**Beitrag**:
+**Gegenstand der Beitrag**:
 
 1. **Erweiterung der 3. Regeln (von R. Bräutigam)** um eine **Business-Kontextdimension**
 2. **Übertragung der 3 Software-Kategorien (A/T/R)** auf Strukturen der *Pakete* mit klarer Trennung:
