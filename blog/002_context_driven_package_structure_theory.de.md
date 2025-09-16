@@ -34,19 +34,20 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 
 **Fragestellung**:
 
-> *"Wie können Bräutigams (2017) und Kluths (2010) Paketdesign-Prinzipien mit Siedersleben (2008) Quasar-Software-Kategorien um eine Business-Kontextdimension erweitert werden, die die mentale Übersetzungslücke zwischen Arc42/C4/DDD-Diagrammen und Code-Struktur schließt und gleichzeitig die ordnungsgemäße Trennung von A-, R- und T-Software gewährleistet?"*
+> *"Wie können Bräutigams (2017) und Kluths (2010) Paketdesign-Prinzipien mit Siedersleben (2008) Quasar-Software-Kategorien um eine Business-Kontextdimension erweitert werden, die die mentale Übersetzungslücke zwischen Arc42-/C4-/DDD-Diagrammen und Code-Struktur schließt und gleichzeitig die ordnungsgemäße Trennung von A-, R- und T-Software gewährleistet?"*
 
-**Gegenstand der Beitrag**:
+**Gegenstand der Betrachtung**:
 
-1. **Erweiterung der 3. Regeln (von R. Bräutigam)** um eine **Business-Kontextdimension**
+1. **Business-Kontext basierte Anwendung der 3 Regeln (nach R. Bräutigam) zum Strukturieren von Software Paketen**
 2. **Übertragung der 3 Software-Kategorien (A/T/R)** auf Strukturen der *Pakete* mit klarer Trennung:
    * A-Software = Business-Kontexte (Bounded Contexts) = business.package
    * R-Software = Kontextspezifische technische Adapter = adapter.package
    * T-Software = Reine technische Bibliotheken (keine Business-Logik) = technical.package
 3. **Anpassung des C4-Modell von Simon Brown** für eine **objektorientierte Sicht**
-4. **Synthese** aller Prinzipien mit Fokus auf Business-Alignment
-5. **Validierung der Paketdesign-Prinzipien** verschiedener Ansätze für Package Structure
-6. **Verifikation der Messwert** und Vergleiche verschiedener Ansätze für Package Structure.
+4. **Verwendung der fundierten Paketdesign-Prinzipien (von R. C. Martin)** 
+5. **Synthese** aller Prinzipien mit Fokus auf Business-Alignment
+6. **Validierung der Synthese** an verschiedenen Architekturen (DDD, Clean Architecture oder only Java EE-Stack)  
+7. **Verifikation der Synthese durch Messwerte** und Vergleiche bei verschiedenen Architekturen.
 
 ---
 
