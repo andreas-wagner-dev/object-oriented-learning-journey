@@ -42,9 +42,56 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 3. **Wissenschaftliche Synthese** aller Prinzipien mit Fokus auf Business-Alignment
 
 ---
-## 2. Wissenschaftliche Grundlagen
+## 2. Grundlagen
 
-### 2.1 Quasar-Software-Kategorien in kontextgetriebenen Strukturen
+### 2.1 Standardisierung der Terminologie
+
+#### Warum benötigt man eine standardisierte Terminologie?
+
+In vielen Softwareprojekten entstehen Verständnisschwierigkeiten, weil zentrale Begriffe mehrdeutig verwendet werden. Ohne klare Definition drohen Missverständnisse zwischen Modell, Code und Architektur. Das führt zu Inkonsistenzen in Modellierung, Dokumentation und Implementierung.
+
+#### Beispiele für Mehrdeutigkeit
+
+| Begriff | Mögliche Bedeutungen / Verwendungen |
+|---|---|
+| **Service** | • Ein Fachservice im Domain-Modell, der Fachlogik kapselt <br> • Eine technische Schnittstelle (z. B. HTTP Endpoint) <br> • Ein Infrastruktur-Service (z. B. Logging, Datenbankzugriff) |
+| **Domain** | • Das Geschäftsfeld oder der Kontext, z. B. Zahlungsabwicklung <br> • Der Teil des Codes, der Geschäftslogik enthält <br> • In DDD: Aggregat-Wurzel, Entitäten, Wertobjekte etc. |
+| **Komponente / Modul / Package** | • Einheit der Verteilung oder Deployment <br> • Sammlung von Classes mit zusammengehöriger Funktionalität <br> • Struktur im Repository oder Namespace |
+
+#### Unsere Definitionen für diesen Artikel
+
+Damit im Folgenden keine Verwirrung entsteht, verwenden wir:
+
+- **Service**: *ein Element der Fachlogik*, das Geschäftsregeln umsetzt und nicht (primär) eine Infrastrukturkomponente darstellt.  
+- **Domain:** der fachliche Kontext bzw. das Geschäftsfeld, inkl. Modellierung von Entitäten, Wertobjekten und Aggregaten.  
+- **Package / Modul**: strukturelle Gruppierung von Code in einem Software-Projekt, so dass zusammengehörende Klassen / Komponenten sinnvoll gekapselt werden; sichtbar sowohl in Code-Organisation als auch in der Architektur.
+
+Diese Begriffe werden so einheitlich im Artikel benutzt. Weitere Begriffe werden bei Einführung klar definiert.
+
+---
+
+### 2.2 Modell-Code-Lücke
+
+#### Definition
+
+Die **Modell-Code-Lücke** bezeichnet die Diskrepanz zwischen dem Domain- oder Architekturmodell (z. B. in UML, Domain Model, Konzepten) und der realen Code-Struktur (Packages, Klassen, Abhängigkeiten). Sie zeigt sich, wenn das Modell, das zur Planung / Kommunikation dient, nicht mit der tatsächlichen Struktur des Codes übereinstimmt.
+
+#### Wie manifestiert sich die Lücke?
+
+- **Architektur vs. Package-Struktur**: Das Modell kann z. B. Aggregatgrenzen, Module oder Service-Grenzen festlegen, die sich nicht im Code in Form von Packages oder Namespaces widerspiegeln.  
+- **Abhängigkeiten**: Das Modell spricht vielleicht von Minimalabhängigkeiten zwischen Domänen, doch der Code enthält starke Kopplung (z. B. Service A kennt interne Klassen von Domain B).  
+- **Wartbarkeit & Verständlichkeit**: Entwickler finden das Modell hilfreich für Kommunikation, doch der Code ist schwer zugänglich, weil Package-Struktur und Klassennamen dem Modell nicht folgen.  
+- **Refactoring-Aufwand**: Codestruktur driftet mit der Zeit weg vom ursprünglich modellierten Entwurf, wenn keine disziplinierende Methode besteht.
+
+#### Kernprobleme, die der Business Context-Driven Ansatz löst
+
+- Erhöhung der Kohärenz zwischen Modell und Code: die Struktur im Code spiegelt bewusst und konsequent den fachlichen Kontext wider.  
+- Klarere Verantwortlichkeiten: durch Modellvorgaben wie Domänen, Aggregatgrenzen, Services etc. werden Verantwortlichkeiten in Packages sichtbar gemacht und durchgesetzt.  
+- Weniger technischer Ballast in fachlichen Kontexten: Infrastruktur-Code wird getrennt, damit Modell-Code-Lücke nicht durch technische Details verwischt wird.
+
+---
+
+### 2.3 Quasar-Software-Kategorien in kontextgetriebenen Strukturen
 
 | Kategorie | Definition (Siedersleben, 2008)          | Kontextgetriebene Implementierung      | Beispiel-Paketstruktur             | Abhängigkeitsregeln                  |
 |-----------|-------------------------------------------|----------------------------------------|-------------------------------------|---------------------------------------|
@@ -63,7 +110,7 @@ A + T = AT  (Vermeiden: Business-Kontext darf nicht direkt von T abhängen)
 ```
 
 ---
-## 3. Wissenschaftliche Synthese: Kontextgetriebenes Paketdesign
+## 3. Synthese: Kontextgetriebenes Paketdesign
 
 ### 3.1 Erweiterter Algorithmus mit Kontextdimension
 
@@ -81,7 +128,7 @@ graph TD
   H -->|>50| K[Skalierbare Kontextmodule]
 ```
 
-### 3.2 Wissenschaftlich validierte Checkliste
+### 3.2 Checkliste Algorithmus Validierung 
 
 ```markdown
 1. [ ] **1:1 Geschäftskontext-Mapping** (Regel 4)
