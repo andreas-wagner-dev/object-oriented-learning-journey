@@ -170,12 +170,12 @@ com.test.catalog                       ← Hauptkontext (Domain Core)
 ## Messbare Vorteile
 
 ### 1. Code-Navigation
-- **Vorher**: 10-15 Minuten für Feature-Lokalisierung
+- **Vorher**: 3-5 Minuten für Feature-Lokalisierung
 - **Nachher**: 30 Sekunden bis 2 Minuten
 - **Verbesserung**: 80-90% weniger Zeit
 
 ### 2. Onboarding neuer Entwickler
-- **Vorher**: "Wo finde ich die Jira-Integration?" → 30 Minuten Erklärung
+- **Vorher**: "Wo finde ich die Jira Anbindung?" → 30 Minuten Erklärung
 - **Nachher**: "Schau ins `jira` Package" → 30 Sekunden
 - **Verbesserung**: 99% weniger Erklärungsaufwand
 
