@@ -47,9 +47,9 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 ---
 ## 2. Grundlagen
 
-### 2.1 Standardisierung der Terminologie
+### 2.1 Terminologie
 
-#### Warum benötigt man eine standardisierte Terminologie?
+#### Warum benötigt man eine festgelegte Terminologie?
 
 In vielen Softwareprojekten entstehen Verständnisschwierigkeiten, weil zentrale Begriffe mehrdeutig verwendet werden. Besonders der Begriff *Service* wird in Code, Architektur und Deployment uneinheitlich gebraucht. Das führt zu Inkonsistenzen zwischen Modell, Code und Architektur und erschwert die Verständigung im Team.
 
@@ -61,10 +61,22 @@ In vielen Softwareprojekten entstehen Verständnisschwierigkeiten, weil zentrale
 | **Domain** | • Geschäftsfeld (fachlich) <br> • Paket für Fachlogik <br> • Aggregat-Bezeichnung | **Fachlicher Kontext**: Geschäftsfeld oder Bounded Context inkl. Entitäten, Wertobjekten, Aggregaten. |
 | **Komponente / Modul / Package** | • Deployment-Einheit <br> • lose Code-Sammlung <br> • Namespace ohne Fachbezug | **Strukturelement im Code**: Gruppierung von Klassen und Objekten mit gemeinsamer Verantwortung; sichtbar in Package-Struktur und Modell. |
 
-#### Unsere Definitionen für diesen Artikel
+#### Klassen vs. Objekte 
 
-- **Service**: *eine eigenständig deploybare Einheit auf Architektur-/Deployment-Ebene*. Kein Begriff im objektorientierten Code. Business-Logik-Klassen heißen nicht `…Service`, sondern werden durch **fachliche Namen** (Entitäten, Repositories, Policies, Komponenten) ausgedrückt.  
-- **Domain**: der fachliche Kontext bzw. das Geschäftsfeld, inkl. Modellierung von Entitäten, Wertobjekten und Aggregaten.  
+- Klasse = die „Geburtsstätte“ (Yegor) von Objekten, also ein Blueprint, der beschreibt, wie ein Objekt aussehen und sich verhalten soll.
+- Objekt = die konkrete, zur Laufzeit existierende Instanz mit Zustand und Verhalten.
+
+#### Und was ist dann ein Package?
+
+In dieser Logik ist ein Package keine eigene „Laufzeit-Einheit“ (wie ein Objekt), sondern eher ein Struktur- und Ordnungsprinzip auf der Code-Ebene:
+- Ein Package ist der Kontext-Rahmen, in dem Klassen leben.
+- Es ist vergleichbar mit einem Modul oder einem Namensraum, der dafür sorgt, dass Klassen, die zusammengehören (fachlich oder technisch), auch gemeinsam betrachtet und instanziiert werden können.
+- Während Klassen Objekte hervorbringen, erzeugen Packages keine „Objekte“, sondern Ordnung und Kohärenz im Code.
+
+#### Definitionen für diesen Artikel
+
+- **Service**: *eine eigenständig deploybare Einheit auf Architektur-/Deployment-Ebene*. Kein Begriff im objektorientierten Code. Business-Logik-Klassen heißen nicht `…Service`, sondern werden objektorientiert durch **fachliche Namen** (Payment, Car, Bill, Order,...) ausgedrückt.  
+- **Domain**: der fachliche Kontext bzw. das Geschäftsfeld, inkl.objektorientierten Modellierung von Entitäten, Wertobjekten und Aggregaten.  
 - **Package / Modul**: eine Organisationseinheit im Code, die fachlich oder technisch kohärente Klassen bündelt und klare Abhängigkeitsregeln hat.  
 
 Damit ist festgelegt: Der Begriff *Service* darf im Code nicht als Namenskonzept für Business-Logik auftreten. Er gehört ausschließlich in die Ebene der Architektur und des Deployments. 
@@ -92,7 +104,7 @@ Die **Modell-Code-Lücke** bezeichnet die Diskrepanz zwischen dem Domain- oder A
 
 ---
 
-### 2.3 Quasar-Software-Kategorien in kontextgetriebenen Strukturen
+### 2.3 Software-Kategorien in kontextgetriebenen Strukturen
 
 | Kategorie | Definition (Siedersleben, 2008)          | Kontextgetriebene Implementierung      | Beispiel-Paketstruktur             | Abhängigkeitsregeln                  |
 |-----------|-------------------------------------------|----------------------------------------|-------------------------------------|---------------------------------------|
@@ -135,9 +147,9 @@ Für eine **objektorientierte Sicht** und den **Business Context-Driven Package 
 
 Damit wird das C4-Modell OOP-gerecht transformiert: weg von deploymentspezifischen Containern, hin zu **Kompositionen**, die die objektorientierte Struktur und die businessgetriebene Paketbildung widerspiegeln.
 
-### 2.5 Kluths Paketdesign-Prinzipien (2010)
+### 2.5 Paketdesign-Prinzipien
 
-Oliver Kluths Arbeit "Object-Oriented Design Quality Assessment" (2010) definiert wissenschaftlich fundierte Prinzipien für hochwertiges Paketdesign, die sich besonders für die Bewertung von Business-Kontext-Strukturen eignen:
+Oliver Kluths Arbeit "Object-Oriented Design Quality Assessment" (2010 in Anlenung an R. C. Martin) veranschaulicht fundierte Prinzipien für Paketentwurf, welche zur Bewertung von Paket-Strukturen herangezogen werden:
 
 #### 1. Reuse-Release Equivalence Principle
 - **Definition**: Pakete sollten die kleinste Einheit für Wiederverwendung und Release sein
@@ -224,7 +236,7 @@ Oliver Kluths Arbeit "Object-Oriented Design Quality Assessment" (2010) definier
 |----------------------|--------------|-------|------|----------------------|
 | D-Metric (A-Pakete)  | 0.35-0.50    | 0.05-0.15 | -0.30 | Kluth (2010)        |
 | Sequence D-Metric    | 0.8-1.2      | 0.2-0.4 | -0.6  | Kluth (2010)        |
-| Main Sequence Konformität | 40-60% | 85-95% | +45%  | Kluth (2010)        |
+| Main Sq. Konformität | 40-60%       | 85-95% | +45%  | Kluth (2010)        |
 
 
 ---
