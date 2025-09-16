@@ -1,4 +1,4 @@
-# Context-Driven Package Structure: Der fehlende Link zwischen Business und Code
+# Business Context-Driven Package Structure: Der fehlende Link zwischen Business und Code
 
 *Warum Ihre Package-Struktur das ausführbare Context-Diagramm Ihres Systems sein sollte*
 
