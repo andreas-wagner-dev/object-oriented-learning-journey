@@ -30,16 +30,19 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 
 ### 1.2 Zielsetzung
 
-**Forschungsfrage**:
+**Fragestellung**:
 > *"Wie können Bräutigams (2017) und Kluths (2010) Paketdesign-Prinzipien mit Siedersleben (2008) Quasar-Software-Kategorien um eine Business-Kontextdimension erweitert werden, die die mentale Übersetzungslücke zwischen C4/DDD-Diagrammen und Code-Struktur schließt und gleichzeitig die ordnungsgemäße Trennung von A-, R- und T-Software gewährleistet?"*
 
 **Wissenschaftlicher Beitrag**:
-1. **Erweiterung von Bräutigams 3 Regeln** um eine **Business-Kontextdimension** (Regel 4)
-2. **Ordnungsgemäße Implementierung der Quasar-Kategorien** mit klarer Trennung:
-   - A-Software = Business-Kontexte (Bounded Contexts)
-   - R-Software = Kontextspezifische technische Adapter
-   - T-Software = Reine technische Bibliotheken (keine Business-Logik)
-3. **Wissenschaftliche Synthese** aller Prinzipien mit Fokus auf Business-Alignment
+1. **Erweiterung 3 Regeln (von R. Bräutigam)** um eine **Business-Kontextdimension**
+2. **Übertragung Software-Kategorien** auf Strukturen der *Pakete* mit klarer Trennung:
+   - A-Software = Business-Kontexte (Bounded Contexts) = business.package
+   - R-Software = Kontextspezifische technische Adapter = adapter.package
+   - T-Software = Reine technische Bibliotheken (keine Business-Logik) = technical.package
+3. **Anpssung des C4-Modell von Simon Brown** für eine **objektorientierte Sicht**
+4. **Synthese** aller Prinzipien mit Fokus auf Business-Alignment
+6. **Validierung der Paketdesign-Prinzipien** beim Business Context-Driven Package Structure Ansatz
+7. **Verifikation der Messwert** und Vergleiche verschiedener Ansätze für Package Structure.
 
 ---
 ## 2. Grundlagen
