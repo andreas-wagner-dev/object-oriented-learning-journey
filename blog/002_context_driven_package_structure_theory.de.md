@@ -360,7 +360,7 @@ businesscontexts/
 ```
 
 ---
-## 5. Wissenschaftliche Diskussion
+## 5. Diskussion
 
 ### 5.1 Theoretische Grenzen der Quasar-Implementierung
 
@@ -371,9 +371,9 @@ businesscontexts/
 | Team-Widerstand             | Gewohnheit der Schichtenarchitektur | Quasar-Schulung mit Context-Mapping | Evans (2003): +1.2 Akzeptanzpunkte |
 | T-Paket-Identifikation     | Frameworks in Codebasis        | Externe T-Pakete von internen R-Paketen trennen | Kluth (2010): 85% Erkennungsrate |
 
-### 5.2 Praktische Herausforderungen bei der Quasar-Implementierung
+### 5.2 Praktische Herausforderungen bei der Implementierung von Software-Kategorien nach Quasar
 
-1. **Refaktorierung von Legacy-Systemen mit Quasar-Kategorien**:
+1. **Refaktorierung von Legacy-Systemen mit Software-Kategorien nach Quasar**:
    ```bash
    # Vorher (AT-Kombination: I-Metrik 0.72)
    company.service.CustomerService  # Enthält A + T
@@ -398,9 +398,9 @@ businesscontexts/
    - **Ergebnis**: 92% korrekte Klassifikation (Siedersleben, 2008)
 
 ---
-## 6. Wissenschaftliche Schlussfolgerung
+## 6. Schlussfolgerung
 
-### 6.1 Validierte Ergebnisse mit Quasar-Kategorien
+### 6.1 Validierte Ergebnisse mit Software-Kategorien von Quasar
 
 | Metrik                  | Traditionell      | Kontextgetrieben mit A/R/T | Δ          | Quelle                     |
 |-------------------------|-------------------|---------------------------|------------|----------------------------|
@@ -410,7 +410,7 @@ businesscontexts/
 | Geschäftsausrichtung    | 30-40%            | 85-95%                    | +50-60%    | Hauer (2020)               |
 | Change-Failure-Rate     | 12-18%            | 5-8%                      | -7-10%     | Forsgren (2018)            |
 
-### 6.2 Wissenschaftlich validierte Empfehlungen
+### 6.2 Validierte Empfehlungen
 
 | Projektgröße     | Strukturtyp                  | I-Metrik-Ziel | Quasar-Konformität | Wissenschaftliche Basis             |
 |------------------|------------------------------|---------------|--------------------|-------------------------------------|
@@ -418,7 +418,7 @@ businesscontexts/
 | Mittel (10-50 KLoC)| Ausgewogene Geschäftskontexte | <0.40         | 95-100%            | Kluth (2010) + Siedersleben (2008)  |
 | Groß (>50 KLoC)   | Skalierbare Geschäftsmodule  | <0.45         | 90-95%             | Evans (2003) + Siedersleben (2008)  |
 
-**Abschließende wissenschaftliche Empfehlung**:
+**Abschließende Empfehlung**:
 > "Die Kontextgetriebene Paketstruktur mit ordnungsgemäßer Implementierung der Quasar-Kategorien (A/R/T) synthetisiert die Prinzipien von Bräutigam (2017), Kluth (2010), Siedersleben (2008) und Evans (2003) in ein Framework, das:
 >
 > 1. Die **mentale Übersetzungslücke um 85-95%** durch 1:1-Geschäftskontext-Mapping reduziert
@@ -433,7 +433,7 @@ businesscontexts/
 > - Refaktoriere Legacy-Systeme inkrementell mit Fokus auf die Eliminierung von AT-Kombinationen (Ziel: <5% AT-Kombinationen)"
 
 ---
-## 7. Wissenschaftliche Referenzen
+## 7. Referenzen
 
 ### Grundlagenwerke
 - **Siedersleben, J.** (2008). *Moderne Softwarearchitektur - Umsichtig planen, robust bauen mit Quasar*. dpunkt.verlag
