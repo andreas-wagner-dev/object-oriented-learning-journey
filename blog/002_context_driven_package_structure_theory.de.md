@@ -2,7 +2,7 @@
 
 # Business Context-Driven Package Structure
 
-*Synthese von Paketdesign-Prinzipien, Software-Blutgruppen und Business-Kontext*
+*Synthese von Business-Kontext-Diagrammen, Software-Blutgruppen und Paketdesign-Prinzipien*
 
 *Von Andreas Wagner | 20. September 2025*
 
