@@ -4,19 +4,17 @@
 
 ## Das Problem: Die Übersetzungslücke
 
-Stellen Sie sich vor: Ein Business Analyst zeigt Ihnen ein System Context Diagramm mit einem **TestCatalog**, das mit **Jira**, **Codebeamer** und **DOORS** integriert ist:
+Stellen Sie sich vor: Ein Business Analyst zeigt Ihnen ein System Context Diagramm von einem **Test-Catalog**, das mit **Jira**, **Codebeamer** und **DOORS** integriert ist:
 
 ```
                      Business Analyst
                             │
-                            │
                             ▼
      ┌─────────┐    ┌─────────────────┐    ┌─────────────┐
-     │         │────│                 │────│             │
-     │  Jira   │    │   TestCatalog   │    │ Codebeamer  │
-     │         │────│                 │────│             │
+     │         │    │                 │    │             │
+     │  Jira   │────│   TestCatalog   │────│ Codebeamer  │
+     │         │    │                 │    │             │
      └─────────┘    └─────────────────┘    └─────────────┘
-                            │
                             │
                             ▼
                     ┌───────────────┐
