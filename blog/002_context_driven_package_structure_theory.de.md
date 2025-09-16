@@ -14,21 +14,18 @@
 
 Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Struktur manifestiert sich in drei Schlüsselbereichen:
 
+2. **Modell-Code-Lücke** (Brown, 2015):
+   * **Empirisch**: 82% der Diagramme stimmen nicht mit der Codestruktur überein
+   * "Our architecture diagrams don't match the code"
+     
 1. **Terminologie-Standardisierung** (Brown, 2015):
-
-   * **Beobachtung**: Inkonsistente Paketnamen durch mehrdeutige Terminologie
-   * "Service" kann bedeuten:
-     * Spring-Annotation (`@Service`)
+   * **Beobachtung**: Inkonsistente (Paket-)namen durch mehrdeutige Terminologie
+   * z. B. "Service" kann bedeuten:
+     * Spring-Service (`@Service`)
      * Business-Logik-Klasse
      * Deployierbares Artefakt
 
-2. **Modell-Code-Lücke** (Brown, 2015):
-
-   * **Empirisch**: 82% der C4-Diagramme stimmen nicht mit der Paketstruktur überein
-   * "Our architecture diagrams don't match the code"
-
 3. **Fehlende Business-Ausrichtung**:
-
    * **Beobachtung**: Package-by-Layer Ansätze erschweren Business-Feature-Entwicklung (Hauer, 2020)
    * Traditionelle Paketstrukturen folgen oft technischen Schichten statt Business-Kontexten
    * **Folge**: Höhere Kopplungsmetriken und schwierigere Wartbarkeit
