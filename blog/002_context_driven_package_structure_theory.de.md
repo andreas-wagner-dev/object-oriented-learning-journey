@@ -1,10 +1,10 @@
-# Kontextgetriebene Paketstruktur: Wissenschaftliche Synthese für Geschäftsausrichtung von Paketstrukturen
+# Business Context-Driven Package Structure: Wissenschaftliche Synthese von Paketdesign-Prinzipien, Software-Blutgruppen und Business-Kontext
 
 *Von Andreas Wagner | 20. September 2025*
 
 ---
 
-## 1. Stand der Technik und Forschungslücke
+## 1. Stand der Technik und Forschungsfrage
 
 ### 1.1 Aktuelle Problemanalyse
 
@@ -15,28 +15,29 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
      - Spring-Annotation (`@Service`)
      - Business-Logik-Klasse
      - Deployierbares Artefakt
-   - **Ergebnis**: 78% inkonsistente Paketnamen (Hayes, 2021)
+   - **Beobachtung**: Inkonsistente Paketnamen durch mehrdeutige Terminologie
 
 2. **Modell-Code-Lücke** (Brown, 2015):
-   - "Unsere Architekturdiagramme passen nicht zum Code"
+   - "Our architecture diagrams don't match the code"
    - **Empirisch**: 82% der C4-Diagramme stimmen nicht mit der Paketstruktur überein
 
-3. **Fehlende Geschäftsausrichtung** (Hauer, 2020):
-   - 91% der Paketstrukturen folgen technischen Schichten statt Geschäftskontexten
-   - **Ergebnis**: 3x höhere Change-Failure-Rate bei I-Metrik > 0.6 (Kluth, 2010)
+3. **Fehlende Business-Ausrichtung**:
+   - Traditionelle Paketstrukturen folgen oft technischen Schichten statt Business-Kontexten
+   - **Beobachtung**: Package-by-Layer Ansätze erschweren Business-Feature-Entwicklung (Hauer, 2020)
+   - **Folge**: Höhere Kopplungsmetriken und schwierigere Wartbarkeit
 
 ### 1.2 Wissenschaftliches Ziel
 
 **Forschungsfrage**:
-> *"Wie können Bräutigams (2017) und Kluths (2010) Paketdesign-Prinzipien mit Siedersleben (2008) Quasar-Software-Kategorien um eine Kontextdimension erweitert werden, die die mentale Übersetzungslücke zwischen C4/DDD-Diagrammen und Code-Struktur schließt und gleichzeitig die ordnungsgemäße Trennung von A-, R- und T-Software gewährleistet?"*
+> *"Wie können Bräutigams (2017) und Kluths (2010) Paketdesign-Prinzipien mit Siedersleben (2008) Quasar-Software-Kategorien um eine Business-Kontextdimension erweitert werden, die die mentale Übersetzungslücke zwischen C4/DDD-Diagrammen und Code-Struktur schließt und gleichzeitig die ordnungsgemäße Trennung von A-, R- und T-Software gewährleistet?"*
 
-**Innovationsbeitrag**:
-1. **Erweiterung von Bräutigams 3 Regeln** um eine **Kontextdimension** (Regel 4)
+**Wissenschaftlicher Beitrag**:
+1. **Erweiterung von Bräutigams 3 Regeln** um eine **Business-Kontextdimension** (Regel 4)
 2. **Ordnungsgemäße Implementierung der Quasar-Kategorien** mit klarer Trennung:
-   - A-Software = Geschäftskontexte (Bounded Contexts)
+   - A-Software = Business-Kontexte (Bounded Contexts)
    - R-Software = Kontextspezifische technische Adapter
-   - T-Software = Reine technische Bibliotheken (keine Geschäftslogik)
-3. **Wissenschaftliche Synthese** aller Prinzipien mit Fokus auf Geschäftsausrichtung
+   - T-Software = Reine technische Bibliotheken (keine Business-Logik)
+3. **Wissenschaftliche Synthese** aller Prinzipien mit Fokus auf Business-Alignment
 
 ---
 ## 2. Wissenschaftliche Grundlagen
@@ -47,16 +48,16 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 |-----------|-------------------------------------------|----------------------------------------|-------------------------------------|---------------------------------------|
 | **A**     | Anwendungslogik                          | Geschäftskontext (DDD/C4)              | `customermanagement/`               | Darf nur von R abhängen              |
 | **R**     | Repräsentation (A ↔ T)                   | Kontextspezifische technische Adapter | `customermanagement/database/`      | Darf von A und T abhängen            |
-| **T**     | Technische Abhängigkeiten                | Externe Frameworks/Bibliotheken        | `org.springframework.data.jpa`       | Darf nicht von A abhängen            |
+| **T**     | Technische Abhängigkeiten                | Externe Frameworks/Bibliotheken        | `org.springframework.*`, `jakarta.persistence.*` | Darf nicht von A abhängen            |
 | **AT**    | Anwendungslogik + Technisch (vermeiden)  | Cross-Context-Utilities (vermeiden)    | ❌ `company.utils`                   | Nicht erlaubt                        |
-| **0**     | Keine Abhängigkeiten                     | Value Objects                          | `shared/valueobjects/Money.java`     | Keine Abhängigkeiten                |
+| **0**     | Keine Abhängigkeiten                     | Java Base Module (String, Integer, etc.) | `java.lang.String`, `java.math.BigDecimal` | Keine Abhängigkeiten                |
 
 **Validierte Kombinationen**:
 ```
-A + 0 = A   (Ideal: Reine Geschäftsobjekte ohne Abhängigkeiten)
-A + R = A   (Erlaubt: Geschäftskontext mit seinen technischen Adaptern)
+A + 0 = A   (Ideal: Reine Business-Objekte mit nur Java Base Module)
+A + R = A   (Erlaubt: Business-Kontext mit seinen technischen Adaptern)
 R + T = R   (Erlaubt: Technische Adapter verwenden Bibliotheken)
-A + T = AT  (Vermeiden: Geschäftskontext darf nicht direkt von T abhängen)
+A + T = AT  (Vermeiden: Business-Kontext darf nicht direkt von T abhängen)
 ```
 
 ---
@@ -88,7 +89,7 @@ graph TD
 2. [ ] **Korrekte Quasar-Kategorien pro Kontext**
    - A: Geschäftslogik (`customermanagement/`)
    - R: Technische Adapter (`customermanagement/database/`)
-   - T: Nur als externe Abhängigkeit (z.B. `org.springframework.*`)
+   - T: Nur als externe Abhängigkeit (z.B. `org.springframework.*`, `jakarta.persistence.*`)
 
 3. [ ] **Keine AT-Kombinationen**
    - *Test*:
@@ -97,7 +98,9 @@ graph TD
      public static final ArchRule NO_AT_COMBINATIONS =
          noClasses().that().resideInAPackage("..customermanagement..")
          .should().dependOnClassesThat()
-         .resideInAPackage("org.springframework..");
+         .resideInAPackage("org.springframework..")
+         .orShould().dependOnClassesThat()
+         .resideInAPackage("jakarta..");
      ```
 
 4. [ ] **I-Metrik < 0.40 pro Geschäftskontext**
@@ -107,10 +110,14 @@ graph TD
      ```java
      package customermanagement.database;
 
-     import customermanagement.Customer;  // A
+     import customermanagement.Customer;   // A
+     import customermanagement.Customers;  // A
      import org.springframework.data.jpa.repository.JpaRepository;  // T
 
-     public interface CustomerRepository extends JpaRepository<Customer, Long> {}
+     public class DatabaseCustomers extends JpaRepository<Customer, Long> implements Customers {
+         // R-Software: Brücke zwischen A (Customers) und T (JpaRepository)
+         // Korrekt: R erweitert sowohl A als auch T
+     }
      ```
 
 6. [ ] **Common Closure pro Geschäftskontext**
@@ -168,9 +175,8 @@ businesscontexts/
 │   └── database/
 │       ├── DatabaseContract.java
 │       └── DatabaseContracts.java
-└── shared/                 # 0-Kategorie
-    └── valueobjects/
-        └── Money.java
+└── payment/                # 0-Kategorie (Java Base Module)
+    └── Money.java          # Verwendet nur java.math.BigDecimal
 ```
 
 ---
@@ -208,7 +214,7 @@ businesscontexts/
    - **Kriterien für T-Pakete**:
      - Keine Geschäftslogik
      - Keine Abhängigkeiten zu A-Paketen
-     - Nur technische Abstraktionen (z.B. `org.springframework.*`)
+     - Nur technische Abstraktionen (z.B. `org.springframework.*`, `jakarta.persistence.*`)
    - **Ergebnis**: 92% korrekte Klassifikation (Siedersleben, 2008)
 
 ---
@@ -250,7 +256,10 @@ businesscontexts/
 ## 7. Wissenschaftliche Referenzen
 
 ### Grundlagenwerke
-- **Siedersleben, J.** (2008). *Quasar: A Quality Model for Object-Oriented Design*
+- **Siedersleben, J.** (2008). *Moderne Softwarearchitektur - Umsichtig planen, robust bauen mit Quasar*. dpunkt.verlag
+  - **Quasar** = "Qualitätssoftwarearchitektur" (sd&m Softwarehaus)
+  - Umfassendes Framework für betriebliche Informationssysteme
+  - Software-Engineering Preis 2005 für Johannes Siedersleben
 - **Bräutigam, R.** (2017). *Three Rules for Package Design*. [javadevguy.com](https://javadevguy.com/2017/04/03/three-rules-for-package-design/)
 - **Kluth, O.** (2010). *Object-Oriented Design Quality Assessment*
 
