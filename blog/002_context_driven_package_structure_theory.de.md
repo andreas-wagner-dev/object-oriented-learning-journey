@@ -112,8 +112,11 @@ Die **Modell-Code-Lücke** bezeichnet die Diskrepanz zwischen dem Domain- oder A
 * Weniger technischer Ballast in fachlichen Kontexten: Infrastruktur-Code wird getrennt, damit Modell-Code-Lücke nicht durch technische Details verwischt wird.
 
 ---
+### 2.3 (Business) kontextgetriebene Strukturen
 
-### 2.3 Software-Kategorien in kontextgetriebenen Strukturen
+Unter **(business) kontextgetriebenen Strukturen** verstehen wir Software-Package- und Architekturstrukturen, die sich primär an **Geschäftskontexten** orientieren, nicht an technischen Schichten. Ein Geschäftskontext (Bounded Context) bildet die fachliche Grenze, innerhalb derer Modelle, Packages und Klassen kohärent zusammengehören. Packages sind dabei die kleinsten Architektureinheiten im Code, die diese Fachlichkeit sichtbar machen. Kontextgetriebene Strukturen schließen die **Modell-Code-Lücke**, indem Architekturdiagramme (Business Context, Komposition, Komponente, Code) direkt mit der realen Package-Struktur übereinstimmen. Sie sorgen für klare Verantwortlichkeiten, konsistente Terminologie und eine enge Kopplung zwischen Business-Modell und Implementierung.
+
+### 2.4 Software-Kategorien in kontextgetriebenen Strukturen
 
 Quasar steht für "Qualitätssoftwarearchitektur" und fasst das Wissen zusammen, das das Softwarehaus sd&m über Jahre in der Entwicklung betrieblicher Informationssysteme gesammelt hat. Im Mittelpunkt steht das Denken in Komponenten und Schnittstellen mit besonderem Fokus auf die klare Trennung von Anwendung und Technik.
 
@@ -142,7 +145,7 @@ R + T = R   (Erlaubt: Technische Adapter verwenden Bibliotheken)
 A + T = AT  (Vermeiden: Business-Kontext darf nicht direkt von T abhängen)
 ```
 
-### 2.4 OOP-gerechte Anpassung des C4-Modells
+### 2.5 OOP-Abgrenzung zu C4-Modells
 
 Das ursprüngliche C4-Modell von Simon Brown (https://c4model.com/) beschreibt vier Hierarchieebenen:
 
@@ -169,7 +172,7 @@ Für eine **objektorientierte Sicht** und den **Business Context-Driven Package 
 
 Damit wird das C4-Modell OOP-gerecht transformiert: weg von deploymentspezifischen Containern, hin zu **Kompositionen**, die die objektorientierte Struktur und die businessgetriebene Paketbildung widerspiegeln.
 
-### 2.5 Paketdesign-Prinzipien
+### 2.6 Paketdesign-Prinzipien
 
 Oliver Kluths Arbeit "Object-Oriented Design Quality Assessment" (2010 in Anlenung an R. C. Martin) veranschaulicht fundierte Prinzipien für Paketentwurf, welche zur Bewertung von Paket-Strukturen herangezogen werden:
 
@@ -215,7 +218,7 @@ Oliver Kluths Arbeit "Object-Oriented Design Quality Assessment" (2010 in Anlenu
 * 92% der validierten Strukturen erfüllen alle 5 Prinzipien (Kluth, 2010)
 * Besonders Common Closure und Acyclic Dependencies zeigen signifikante Verbesserung gegenüber Layered Architecture (+45% Konformität)
 
-### 2.6 Metriken für Paketdesign-Qualität
+### 2.7 Metriken für Paketdesign-Qualität
 
 #### 2.6.1 The A vs I Plot (Abstraction vs Instability)
 
