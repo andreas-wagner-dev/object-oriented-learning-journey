@@ -1,4 +1,6 @@
-# Business Context-Driven Package Structure: Wissenschaftliche Synthese von Paketdesign-Prinzipien, Software-Blutgruppen und Business-Kontext
+# Business Context-Driven Package Structure
+
+*Synthese von Paketdesign-Prinzipien, Software-Blutgruppen und Business-Kontext*
 
 *Von Andreas Wagner | 20. September 2025*
 
@@ -11,19 +13,19 @@
 Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Struktur manifestiert sich in drei Schlüsselbereichen:
 
 1. **Terminologie-Standardisierung** (Brown, 2015):
+   - **Beobachtung**: Inkonsistente Paketnamen durch mehrdeutige Terminologie
    - "Service" kann bedeuten:
      - Spring-Annotation (`@Service`)
      - Business-Logik-Klasse
      - Deployierbares Artefakt
-   - **Beobachtung**: Inkonsistente Paketnamen durch mehrdeutige Terminologie
 
 2. **Modell-Code-Lücke** (Brown, 2015):
-   - "Our architecture diagrams don't match the code"
    - **Empirisch**: 82% der C4-Diagramme stimmen nicht mit der Paketstruktur überein
+   - "Our architecture diagrams don't match the code"
 
 3. **Fehlende Business-Ausrichtung**:
-   - Traditionelle Paketstrukturen folgen oft technischen Schichten statt Business-Kontexten
    - **Beobachtung**: Package-by-Layer Ansätze erschweren Business-Feature-Entwicklung (Hauer, 2020)
+   - Traditionelle Paketstrukturen folgen oft technischen Schichten statt Business-Kontexten
    - **Folge**: Höhere Kopplungsmetriken und schwierigere Wartbarkeit
 
 ### 1.2 Wissenschaftliches Ziel
