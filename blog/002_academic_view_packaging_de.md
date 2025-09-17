@@ -350,7 +350,8 @@ validiert sich durch Messbarkeit mit Martin-Metriken
 
 ## 7. Zusammenfassung in einem Bild
 
-```flowchart TB
+```mermaid
+flowchart TB
     subgraph Business["A-Software (Business)"]
         A1[Order]
         A2[Customer]
