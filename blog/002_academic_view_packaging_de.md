@@ -1,4 +1,4 @@
-# Kontextgetriebenes Paketdesign – Schließen der mentalen Übersetzungslücke zwischen Architektur und Code
+# Business Concept-Driven Paketdesign – *Schließen der mentalen Übersetzungslücke zwischen Architektur und Code*
 
 ## 1. Problemanalyse und Zielsetzung
 
