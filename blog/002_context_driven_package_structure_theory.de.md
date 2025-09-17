@@ -32,22 +32,28 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 
 ### 1.2 Zielsetzung
 
-**Fragestellung**:
+Synthese ausgewählter Ansätze:
 
-> *"Wie können Bräutigams (2017) und Kluths (2010) Paketdesign-Prinzipien mit Siedersleben (2008) Quasar-Software-Kategorien um eine Business-Kontextdimension erweitert werden, die die mentale Übersetzungslücke zwischen Arc42-/C4-/DDD-Diagrammen und Code-Struktur schließt und gleichzeitig die ordnungsgemäße Trennung von A-, R- und T-Software gewährleistet?"*
+- Arc42-/C4-/DDD-Diagrammen (C4 nach Brown 2015) für Architekturvisualisierung
+- DDD Ubiquitous Language (Evans 2003) für die Ermittlung und fachliche Abgrenzung
+- Quasar (Siedersleben 2008) für die fachliche und technische Kategorisierung
+- Paketdesign-Prinzipien (Robert Cecil Martin, Kluth 2010) für Qualitätssicherung
+- 3 pragmatische Regeln (Robert Bräutigam 2017) für die praktische Realiesierung
+  
+welche die mentale Übersetzungslücke zwischen Arc42-/C4-/DDD-Diagrammen und der Code-Struktur schließt.
 
 **Gegenstand der Betrachtung**:
 
-1. **Business-Kontext basierte Anwendung der 3 Regeln (nach R. Bräutigam) zum Strukturieren von Software Paketen**
+1. **Abgrenzung der Terminologie nach OOP**
 2. **Übertragung der 3 Software-Kategorien (A/T/R)** auf Strukturen der *Pakete* mit klarer Trennung:
    * A-Software = Business-Kontexte (Bounded Contexts) = business.package
    * R-Software = Kontextspezifische technische Adapter = adapter.package
    * T-Software = Reine technische Bibliotheken (keine Business-Logik) = technical.package
-3. **Anpassung des C4-Modell von Simon Brown** für eine **objektorientierte Sicht**
-4. **Verwendung der fundierten Paketdesign-Prinzipien (von R. C. Martin)** 
-5. **Synthese** aller Prinzipien mit Fokus auf Business-Alignment
-6. **Validierung der Synthese** an verschiedenen Architekturen (DDD, Clean Architecture oder only Java EE-Stack)  
-7. **Verifikation der Synthese durch Messwerte** und Vergleiche bei verschiedenen Architekturen.
+5. **Kontext basierte Verwendung der 3 Regeln (nach R. Bräutigam) zum Strukturieren von Software Paketen**
+5. **Einhaltung von fundierten Paketdesign-Prinzipien (von R. C. Martin)** 
+6. **Synthese** aller Prinzipien mit Fokus auf Business-Alignment
+7. **Validierung der Synthese** an verschiedenen Architekturen (DDD, Clean Architecture oder only Java EE-Stack)  
+8. **Verifikation der Synthese durch Messwerte** und Vergleiche bei verschiedenen Architekturen.
 
 ---
 
@@ -157,14 +163,9 @@ A + T = AT  (Vermeiden: Business-Kontext darf nicht direkt von T abhängen)
 ### 2.5 OOP-Abgrenzung zu C4-Modells
 
 Das ursprüngliche C4-Modell von Simon Brown (https://c4model.com/) beschreibt vier Hierarchieebenen:
-
-1. System Context
-2. Containers
-3. Components
-4. Code
+- 1. System Context 2. Containers 3. Components 4. Code
 
 Für eine **objektorientierte Sicht** und den **Business Context-Driven Package Structure**-Ansatz ergeben sich jedoch Anpassungen:
-
 
 | **C4-Ebene (Brown)** | **OOP-/BCDPS-Variante** | **Begründung** |
 | --- | --- | --- |
@@ -221,6 +222,7 @@ Oliver Kluths Arbeit "Object-Oriented Design Quality Assessment" (2010 in Anlenu
 * **Definition**: Pakete sollten nur von stabileren Paketen abhängen
 * **Metrik**: I-Metrik der abhängigen Pakete
 * **Anwendung in BCDPS**: A-Pakete dürfen nur von R-Paketen abhängen, nicht von T-Paketen
+* **Beispiel:** A-Pakete → R-Pakete → T-Pakete (nie umgekehrt)
 
 **Validierung der Prinzipien in BCDPS**:
 
