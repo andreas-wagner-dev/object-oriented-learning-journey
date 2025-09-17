@@ -136,9 +136,9 @@ flowchart TB
     end
     
     subgraph T["T-Software (Technik)"]
-        T1[HTTP Lib]
-        T2[ODBC Lib]
-        T3[[UI Lib]
+        T1[HTTPLib]
+        T2[ODBCLib]
+        T3[[UILib]
     end
 
     O1 --> R1
