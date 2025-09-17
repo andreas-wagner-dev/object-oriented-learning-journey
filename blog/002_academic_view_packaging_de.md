@@ -140,22 +140,24 @@ flowchart TB
         T2[SFTP]
         T3[Kafka]
     end
-    
+```
+
+```
     O1 --> R1
     O2 --> R2
     O3 --> R3
     R1 --> T1
     R2 --> T2
     R3 --> T3
+```
 👉 Dieses Diagramm zeigt die klare Trennung:
 
 A-Pakete enthalten die Business-Domäne.
-
 R-Pakete verbinden die Domäne mit der Infrastruktur.
-
 T-Pakete liefern technische Services, auf die Adapter aufbauen.
 
 3.2 Beispiel einer resultierenden Paketstruktur
+
 mermaid
 Code kopieren
 graph TD
@@ -170,12 +172,11 @@ graph TD
     
     customer --> customer_profile[profile]
     customer --> customer_contract[contract]
+
 👉 Vorteile:
 
 Business-Pakete (order, customer) stehen im Vordergrund.
-
 Adapter-Pakete (web, database) sind klar abgetrennt.
-
 Technische Pakete (kafka) liegen separat.
 
 4. Validierung an Architekturen
@@ -200,46 +201,34 @@ Technische Ressourcen (JPA, Servlets) als R- und T-Software
 Zur objektiven Verifikation eignen sich die Martin-Metriken (1994):
 
 Instability (I) = fan-out / (fan-in + fan-out)
-
 Abstractness (A) = abstrakte Klassen / alle Klassen
-
 Distance (D) = |A + I - 1|
 
 👉 Erwartung bei Anwendung der Synthese:
 
 A-Software: stabil, mittlere Abstraktion
-
 R-Software: eher instabil, niedrige Abstraktion
-
 T-Software: hoch abstrakt, stabil
 
 Ein Vergleich von Architekturen (klassisch vs. Synthese) zeigt:
-
 Bessere Werte für Kopplung/Kohäsion
-
 Deutlich klarere Abgrenzung von Verantwortlichkeiten
-
 Höhere Wartbarkeit und geringere mentale Übersetzungslücke
 
 6. Fazit
 Die Synthese aus den 3 Regeln (Bräutigam), den 3 Software-Kategorien (Siedersleben) und den Paketdesign-Prinzipien (Martin) liefert ein praktikables und validierbares Modell für Paketstrukturen.
 
 Sie:
-
 schließt die mentale Übersetzungslücke zwischen Diagrammen und Code
-
 schafft Klarheit durch konsistente Terminologie
-
 fördert fachliche Lesbarkeit durch Ubiquitous Language
-
 validiert sich durch Messbarkeit mit Martin-Metriken
 
 👉 Damit wird Paketdesign von einer zufälligen Ordnerstruktur zu einem architektonischen Werkzeug, das Verständlichkeit, Wartbarkeit und Teamkommunikation nachhaltig verbessert.
 
 7. Zusammenfassung in einem Bild
-mermaid
-Code kopieren
-flowchart TB
+
+```flowchart TB
     subgraph Business["A-Software (Business)"]
         A1[Order]
         A2[Customer]
@@ -257,13 +246,13 @@ flowchart TB
         T2[SFTP Lib]
         T3[Kafka Client]
     end
-    
-    Business --> Adapter
-    Adapter --> Technik
+
+```
+
+Business --> Adapter
+Adapter --> Technik
+
 👉 Die Synthese ist in einem Schaubild zusammengefasst:
-
 Oben: Fachliche Business-Konzepte
-
 Mitte: Adapter zur Infrastruktur
-
 Unten: Technische Bibliotheken
