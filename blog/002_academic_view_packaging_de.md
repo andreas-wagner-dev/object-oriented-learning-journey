@@ -147,9 +147,9 @@ flowchart TB
     R1 --> T1
     R2 --> T2
     R3 --> T3
-```
 
 ```
+
 
 👉 Dieses Diagramm zeigt die klare Trennung:
 
