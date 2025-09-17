@@ -1,16 +1,18 @@
 \`
 
-# Business Context-Driven Package Structure
+# Business Concept-Driven Package Structure
 
-*Synthese von Business-Kontext-Diagrammen, Software-Blutgruppen und Paketdesign-Prinzipien*
+*Synthese aus Kontext-Diagrammen und Business-Konzeptgetriebenen Paketstrukturen im Code*
 
 *Von Andreas Wagner | 20. September 2025*
 
 ---
 
-## 1. Stand der Technik und Zielsetzung
+## 1. Problemanalyse und Zielsetzung
 
-### 1.1 Aktuelle Problemanalyse
+### 1.1 Problemanalyse
+
+Die Diskrepanz zwischen Architekturdiagrammen und tatsächlichem Code ist eines der größten ungelösten Probleme der Softwareentwicklung. Studien zeigen, dass 82% aller Architekturdiagramme nicht mit der realen Code-Struktur übereinstimmen (Brown, 2015). Diese "mentale Übersetzungslücke" kostet Teams wertvolle Zeit und führt zu erhöhten Wartungskosten.
 
 Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Struktur manifestiert sich in drei Schlüsselbereichen:
 
@@ -18,7 +20,7 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
    * **Empirisch**: 82% der Diagramme stimmen nicht mit der Codestruktur überein
    * "Our architecture diagrams don't match the code"
      
-1. **Terminologie-Standardisierung** (Brown, 2015):
+1. **Terminologie-Chaos** (Brown, 2015):
    * **Beobachtung**: Inkonsistente (Paket-)namen durch mehrdeutige Terminologie
    * z. B. "Service" kann bedeuten:
      * Spring-Service (`@Service`)
@@ -27,30 +29,28 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 
 3. **Fehlende Business-Ausrichtung**:
    * **Beobachtung**: Package-by-Layer Ansätze erschweren Business-Feature-Entwicklung (Hauer, 2020)
-   * Traditionelle Paketstrukturen folgen oft technischen Schichten statt Business-Kontexten
+   * Traditionelle Paketstrukturen folgen oft technischen Schichten und reflectieren oft nicht Business-Konzepte
    * **Folge**: Höhere Kopplungsmetriken und schwierigere Wartbarkeit
 
 ### 1.2 Zielsetzung
 
-Synthese ausgewählter Ansätze (mit Fokus auf Business-Alignment):
+**Beweis der Hypothese** die Anwendung der 3 pragmatischen Regeln von Robert Bräutigam zum Strukturieren von Paketen schließt die Übersetzungslücke zwischen den Kontext-Diagrammen und der Code-Struktur.
+
+**Synthese** ausgewählter Ansätzen:
 
 - Arc42-/C4-/DDD-Diagrammen (C4 nach Brown 2015) für Architekturvisualisierung
 - DDD Ubiquitous Language (Evans 2003) für die Ermittlung und fachliche Abgrenzung
 - Quasar (Siedersleben 2008) für die fachliche und technische Kategorisierung
-- Paketdesign-Prinzipien (Robert Cecil Martin, Kluth 2010) für Qualitätssicherung
 - 3 pragmatische Regeln (Robert Bräutigam 2017) für die praktische Realiesierung
-  
- welche die mentale Übersetzungslücke zwischen Arc42-/C4-/DDD-Diagrammen und der Code-Struktur schließt.
-
-
+- Paketdesign-Prinzipien (Robert Cecil Martin, Kluth 2010) für Qualitätssicherung
 
 **Gegenstand der Betrachtung**:
 
 1. **Abgrenzung der Terminologie nach OOP**
-2. **Übertragung der 3 Software-Kategorien (A/T/R)** auf Strukturen der *Pakete* mit klarer Trennung:
-   * A-Software = Business-Kontexte (Bounded Contexts) = business.package
-   * R-Software = Kontextspezifische technische Adapter = adapter.package
-   * T-Software = Reine technische Bibliotheken (keine Business-Logik) = technical.package
+2. **Übertragung der 3 Software-Kategorien (A/T/R)** auf business Konzepte als *Pakete* mit klarer Trennung:
+   * A-Software = Business-Concepts = Bounded Contexts (Order, Customer, Payment, Car, Money)
+   * R-Software = Adapter Code für Business-Concepts (web, app, ui, database, service, resorce)
+   * T-Software = Reine technische Bibliotheken (keine Business oder Adapter-Logik) (http, sftp, kafka, service)
 5. **Kontext basierte Verwendung der 3 Regeln** (nach R. Bräutigam) zum Strukturieren von Software Paketen
 5. **Verwendung von fundierten Paketdesign-Prinzipien** (von R. C. Martin) 
 6. **Synthese** aller Prinzipien mit Fokus auf Business-Alignment
@@ -493,16 +493,13 @@ businesscontexts/
 
 ## 7. Referenzen
 
-### Grundlagenwerke
+### Quellen
 
 * **Siedersleben, J.** (2008). *Moderne Softwarearchitektur - Umsichtig planen, robust bauen mit Quasar*. dpunkt.verlag
-  * **Quasar** = "Qualitätssoftwarearchitektur" (sd&m Softwarehaus)
-  * Umfassendes Framework für betriebliche Informationssysteme
-  * Software-Engineering Preis 2005 für Johannes Siedersleben
 * **Bräutigam, R.** (2017). *Three Rules for Package Design*. [javadevguy.com](https://javadevguy.com/2017/04/03/three-rules-for-package-design/)
 * **Kluth, O.** (2010). *Object-Oriented Design Quality Assessment*
 
-### Validierungstools
+### Tools
 
 * [DesigniteJava](https://www.designite-tools.com/) (Quasar-Kategorien + I-Metrik)
 * [ArchUnit](https://www.archunit.org/) (AT-Kombinationsprüfung)
