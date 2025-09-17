@@ -27,7 +27,7 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
      * Business-Logik-Klasse
      * Deployierbares Artefakt
 
-3. **Fehlende Business-Ausrichtung**:
+3. **Technologie-Focus**:
    * **Beobachtung**: Package-by-Layer Ansätze erschweren Business-Feature-Entwicklung (Hauer, 2020)
    * Traditionelle Paketstrukturen folgen oft technischen Schichten und reflectieren oft nicht Business-Konzepte
    * **Folge**: Höhere Kopplungsmetriken und schwierigere Wartbarkeit
