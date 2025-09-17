@@ -159,7 +159,6 @@ T-Pakete liefern technische Services, auf die Adapter aufbauen.
 3.2 Beispiel einer resultierenden Paketstruktur
 
 ```mermaid
-Code kopieren
 graph TD
     root[com.example] --> order
     root --> customer
@@ -173,6 +172,7 @@ graph TD
     customer --> customer.profile[profile]
     customer --> customer.contract[contract]
 ```
+
 👉 Vorteile:
 
 Business-Pakete (order, customer) stehen im Vordergrund.
