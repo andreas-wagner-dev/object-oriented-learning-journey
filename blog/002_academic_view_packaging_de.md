@@ -158,7 +158,7 @@ T-Pakete liefern technische Services, auf die Adapter aufbauen.
 
 3.2 Beispiel einer resultierenden Paketstruktur
 
-mermaid
+```mermaid
 Code kopieren
 graph TD
     root[com.example] --> order
@@ -167,12 +167,12 @@ graph TD
     root --> database
     root --> kafka
     
-    order --> order_process[process]
-    order --> order_payment[payment]
+    order --> order.process[process]
+    order --> order.payment[payment]
     
-    customer --> customer_profile[profile]
-    customer --> customer_contract[contract]
-
+    customer --> customer.profile[profile]
+    customer --> customer.contract[contract]
+```
 👉 Vorteile:
 
 Business-Pakete (order, customer) stehen im Vordergrund.
@@ -248,7 +248,6 @@ validiert sich durch Messbarkeit mit Martin-Metriken
     end
 
 ```
-
 Business --> Adapter
 Adapter --> Technik
 
