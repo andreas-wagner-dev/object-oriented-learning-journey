@@ -1,4 +1,5 @@
 ```mermaid
+
 scatter
   title Clean Architecture: Abstraktion vs Instabilität
   xAxis "Instabilität (I)" 0 --> 1
