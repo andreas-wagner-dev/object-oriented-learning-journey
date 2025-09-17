@@ -34,7 +34,7 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 
 ### 1.2 Zielsetzung
 
-**Beweis der Hypothese** die Anwendung der 3 pragmatischen Regeln von Robert Bräutigam zum Strukturieren von Paketen schließt die Übersetzungslücke zwischen den Kontext-Diagrammen und der Code-Struktur.
+**Beweis der Hypothese** die Anwendung der 3 pragmatischen Regeln von Robert Bräutigam zum Strukturieren von Paketen die Paketdesign-Prinzipien (Robert Cecil Martin, Kluth 2010) erfühlt und gleichzeitig die Übersetzungslücke zwischen den Kontext-Diagrammen und der Code-Struktur schließt.
 
 **Synthese** ausgewählter Ansätzen:
 
@@ -47,13 +47,12 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 **Gegenstand der Betrachtung**:
 
 1. **Abgrenzung der Terminologie nach OOP**
-2. **Übertragung der 3 Software-Kategorien (A/T/R)** auf business Konzepte als *Pakete* mit klarer Trennung:
+2. **Abgleich mit fundierten Paketdesign-Prinzipien** (von R. C. Martin)
+5. **Erweiterte Betrachtung der 3 Regeln** (nach R. Bräutigam) um die **3 Software-Kategorien (A/T/R)** nach Quasar (Siedersleben 2008) für *Pakete* mit klarer Trennung: 
    * A-Software = Business-Concepts = Bounded Contexts (Order, Customer, Payment, Car, Money)
    * R-Software = Adapter Code für Business-Concepts (web, app, ui, database, service, resorce)
    * T-Software = Reine technische Bibliotheken (keine Business oder Adapter-Logik) (http, sftp, kafka, service)
-5. **Kontext basierte Verwendung der 3 Regeln** (nach R. Bräutigam) zum Strukturieren von Software Paketen
-5. **Verwendung von fundierten Paketdesign-Prinzipien** (von R. C. Martin) 
-6. **Synthese** aller Prinzipien mit Fokus auf Business-Alignment
+6. **Synthese** der 3 Regeln* (nach R. Bräutigam), 3 Software-Kategorien und Paketdesign-Prinzipien** (von R. C. Martin)
 7. **Validierung der Synthese** an verschiedenen Architekturen (DDD, Clean Architecture oder only Java EE-Stack)  
 8. **Verifikation der Synthese durch Messwerte** und Vergleiche bei Anwendung auf verschiedenen Architekturen.
 
