@@ -156,7 +156,7 @@ A-Pakete enthalten die Business-Domäne.
 R-Pakete verbinden die Domäne mit der Infrastruktur.
 T-Pakete liefern technische Services, auf die Adapter aufbauen.
 
-3.2 Beispiel einer resultierenden Paketstruktur
+### 3.2 Beispiel einer resultierenden Paketstruktur
 
 ```mermaid
 graph TD
@@ -179,7 +179,7 @@ Business-Pakete (order, customer) stehen im Vordergrund.
 Adapter-Pakete (web, database) sind klar abgetrennt.
 Technische Pakete (kafka) liegen separat.
 
-4. Validierung an Architekturen
+## 4. Validierung an Architekturen
 Die Synthese lässt sich auf verschiedene Architekturparadigmen anwenden:
 
 Domain-Driven Design (DDD)
@@ -197,7 +197,7 @@ Technische Ressourcen (JPA, Servlets) als R- und T-Software
 
 👉 Ergebnis: Die Synthese ist architekturunabhängig einsetzbar.
 
-5. Verifikation durch Metriken
+## 5. Verifikation durch Metriken
 Zur objektiven Verifikation eignen sich die Martin-Metriken (1994):
 
 Instability (I) = fan-out / (fan-in + fan-out)
@@ -215,7 +215,7 @@ Bessere Werte für Kopplung/Kohäsion
 Deutlich klarere Abgrenzung von Verantwortlichkeiten
 Höhere Wartbarkeit und geringere mentale Übersetzungslücke
 
-6. Fazit
+## 6. Fazit
 Die Synthese aus den 3 Regeln (Bräutigam), den 3 Software-Kategorien (Siedersleben) und den Paketdesign-Prinzipien (Martin) liefert ein praktikables und validierbares Modell für Paketstrukturen.
 
 Sie:
@@ -226,7 +226,7 @@ validiert sich durch Messbarkeit mit Martin-Metriken
 
 👉 Damit wird Paketdesign von einer zufälligen Ordnerstruktur zu einem architektonischen Werkzeug, das Verständlichkeit, Wartbarkeit und Teamkommunikation nachhaltig verbessert.
 
-7. Zusammenfassung in einem Bild
+## 7. Zusammenfassung in einem Bild
 
 ```flowchart TB
     subgraph Business["A-Software (Business)"]
