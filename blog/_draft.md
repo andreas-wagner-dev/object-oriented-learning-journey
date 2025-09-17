@@ -77,7 +77,6 @@ Beispiel: `com.shop.order` statt `com.shop.service.order`.
 - **T-Software**: Technische Bibliotheken (z. B. Messaging, Datenbanken)
 
 ```mermaid
-
 flowchart TB
     subgraph A[Business-Software (A)]
         A1[Order]
