@@ -32,7 +32,7 @@ Die **mentale Übersetzungslücke** zwischen Architekturdiagrammen und Code-Stru
 
 ### 1.2 Zielsetzung
 
-Synthese ausgewählter Ansätze:
+Synthese ausgewählter Ansätze (mit Fokus auf Business-Alignment):
 
 - Arc42-/C4-/DDD-Diagrammen (C4 nach Brown 2015) für Architekturvisualisierung
 - DDD Ubiquitous Language (Evans 2003) für die Ermittlung und fachliche Abgrenzung
@@ -40,7 +40,9 @@ Synthese ausgewählter Ansätze:
 - Paketdesign-Prinzipien (Robert Cecil Martin, Kluth 2010) für Qualitätssicherung
 - 3 pragmatische Regeln (Robert Bräutigam 2017) für die praktische Realiesierung
   
-welche die mentale Übersetzungslücke zwischen Arc42-/C4-/DDD-Diagrammen und der Code-Struktur schließt.
+ welche die mentale Übersetzungslücke zwischen Arc42-/C4-/DDD-Diagrammen und der Code-Struktur schließt.
+
+
 
 **Gegenstand der Betrachtung**:
 
@@ -49,11 +51,11 @@ welche die mentale Übersetzungslücke zwischen Arc42-/C4-/DDD-Diagrammen und de
    * A-Software = Business-Kontexte (Bounded Contexts) = business.package
    * R-Software = Kontextspezifische technische Adapter = adapter.package
    * T-Software = Reine technische Bibliotheken (keine Business-Logik) = technical.package
-5. **Kontext basierte Verwendung der 3 Regeln (nach R. Bräutigam) zum Strukturieren von Software Paketen**
-5. **Einhaltung von fundierten Paketdesign-Prinzipien (von R. C. Martin)** 
+5. **Kontext basierte Verwendung der 3 Regeln** (nach R. Bräutigam) zum Strukturieren von Software Paketen
+5. **Verwendung von fundierten Paketdesign-Prinzipien** (von R. C. Martin) 
 6. **Synthese** aller Prinzipien mit Fokus auf Business-Alignment
 7. **Validierung der Synthese** an verschiedenen Architekturen (DDD, Clean Architecture oder only Java EE-Stack)  
-8. **Verifikation der Synthese durch Messwerte** und Vergleiche bei verschiedenen Architekturen.
+8. **Verifikation der Synthese durch Messwerte** und Vergleiche bei Anwendung auf verschiedenen Architekturen.
 
 ---
 
@@ -73,6 +75,7 @@ In vielen Softwareprojekten entstehen Verständnisschwierigkeiten, weil zentrale
 | Service | • Klassenbezeichnung wie CustomerService <br> • Spring-Annotation (@Service) <br> • Business-Logik-Klasse im Code | Nur als Architektur-/Deployment-Begriff: Ein Service ist eine eigenständig deploybare Einheit (z. B. Microservice, Subsystem). <br> → Kein Code-Begriff für Business-Logik! |
 | Domain | • Geschäftsfeld (fachlich) <br> • Paket für Fachlogik <br> • Aggregat-Bezeichnung | Fachlicher Kontext: Geschäftsfeld oder Bounded Context inkl. Entitäten, Wertobjekten, Aggregaten. |
 | Komponente / Modul / Package | • Deployment-Einheit <br> • lose Code-Sammlung <br> • Namespace ohne Fachbezug | Strukturelement im Code: Gruppierung von Klassen und Objekten mit gemeinsamer Verantwortung; sichtbar in Package-Struktur und Modell. |
+
 #### Klassen vs. Objekte
 
 * Klasse = die „Geburtsstätte“ (Yegor) von Objekten, also ein Blueprint, der beschreibt, wie ein Objekt aussehen und sich verhalten soll.
@@ -83,16 +86,18 @@ In vielen Softwareprojekten entstehen Verständnisschwierigkeiten, weil zentrale
 In dieser Logik ist ein Package keine eigene „Laufzeit-Einheit“ (wie ein Objekt), sondern eher ein Struktur- und Ordnungsprinzip auf der Code-Ebene:
 
 * Ein Package ist der Kontext-Rahmen, in dem Klassen leben.
-* Es ist vergleichbar mit einem Modul oder einem Namensraum, der dafür sorgt, dass Klassen, die zusammengehören (fachlich oder technisch), auch gemeinsam betrachtet und instanziiert werden können.
-* Während Klassen Objekte hervorbringen, erzeugen Packages keine „Objekte“, sondern Ordnung und Kohärenz im Code.
+* Es ist vergleichbar mit einem Modul oder einem Namensraum, der dafür sorgt, dass Klassen, die zusammengehören (fachlich oder technisch), auch gemeinsam betrachtet und instanziiert bzw. "geboren" werden können.
+* Während Klassen Objekte hervorbringen, erzeugen Packages keine „Objekte“, sondern Ordnung und Zusammenhalt (Kohärenz) im Code.
 
 #### Definitionen für diesen Artikel
 
-* **Service**: *eine eigenständig deploybare Einheit auf Architektur-/Deployment-Ebene*. Kein Begriff im objektorientierten Code. Business-Logik-Klassen heißen nicht `…Service`, sondern werden objektorientiert durch **fachliche Namen** (Payment, Car, Bill, Order,...) ausgedrückt.
-* **Domain**: der fachliche Kontext bzw. das Geschäftsfeld, inkl.objektorientierten Modellierung von Entitäten, Wertobjekten und Aggregaten.
-* **Package / Modul**: eine Organisationseinheit im Code, die fachlich oder technisch kohärente Klassen bündelt und klare Abhängigkeitsregeln hat.
 
-Damit ist festgelegt: Der Begriff *Service* darf im Code nicht als Namenskonzept für Business-Logik auftreten. Er gehört ausschließlich in die Ebene der Architektur und des Deployments.
+* **Domain**: der fachliche Kontext bzw. das Geschäftsfeld, inkl. objektorientierten Modellierung von Entitäten, Wertobjekten und Aggregaten.
+* **Package**: eine Organisationseinheit im Code, die fachlich oder technisch kohärente Klassen bündelt und klare Abhängigkeitsregeln hat.
+* **Modul**: eine Organisationseinheit für fachliche oder technische Kompositionen im Code, bündelt meist kohärente Schnittstellen.
+* **Service**: *eine eigenständig deploybare Einheit auf Architektur-/Deployment-Ebene*. Kein Begriff im objektorientierten Code. Business-Logik-  Klassen heißen nicht `…Service`, sondern werden durch **fachliche Namen** (Payment, Car, Bill, Order,...) ausgedrückt.
+
+Damit ist festgelegt: Der Begriff *Service* darf im Code nicht als Namenskonzept für Klassen mit Business-Logik auftreten. Er gehört ausschließlich in die Ebene der Deployment-Diagramme. Andereseits wenn es vom Business gefordert wird, einen (web-)service zu realisieren, ist es durch aus ein Begriff für einen Paketn Namen, welche als Adapter die Business-Kontexte gegen die technichen Grenzen.
 
 ---
 
