@@ -136,9 +136,9 @@ flowchart TB
     end
     
     subgraph T["T-Software (Technik)"]
-        T1[HTTP]
-        T2[SFTP]
-        T3[Kafka]
+        T1[HTTP Lib]
+        T2[ODBC Lib]
+        T3[[UI Lib]
     end
 
     O1 --> R1
@@ -244,8 +244,8 @@ validiert sich durch Messbarkeit mit Martin-Metriken
     
     subgraph Technik["T-Software (Technik)"]
         T1[HTTP Lib]
-        T2[SFTP Lib]
-        T3[Kafka Client]
+        T2[ODBC Lib]
+        T3[UI Lib]
     end
 
 ```
