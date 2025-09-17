@@ -77,6 +77,7 @@ Beispiel: `com.shop.order` statt `com.shop.service.order`.
 - **T-Software**: Technische Bibliotheken (z. B. Messaging, Datenbanken)
 
 ```mermaid
+
 flowchart TB
     subgraph A[Business-Software (A)]
         A1[Order]
@@ -107,6 +108,7 @@ flowchart TB
 - **T-Software**: Technische Bibliotheken (z. B. Messaging, Datenbanken)
 
 ```mermaid
+
 flowchart TB
     subgraph A[Bounded Contexts (A-Software)]
         A1[Order]
@@ -130,6 +132,7 @@ flowchart TB
 - **T-Software**: Frameworks & Driver Libraries
 
 ```mermaid
+
 flowchart TB
     subgraph A[Entities + Use Cases (A)]
         A1[Order]
@@ -175,6 +178,7 @@ flowchart TB
 ### 7.1 Clean Architecture
 
 ```mermaid
+
 flowchart TB
     subgraph A[Entities (A-Software)]
         A1[com.shop.order]
@@ -282,9 +286,6 @@ scatter
 | Order     | 12      | 3               | 0.25 | 2  | 2  | 0.50 | 0.25 |
 | Customer  | 10      | 2               | 0.20 | 2  | 2  | 0.50 | 0.30 |
 
-```mermaid
-scatter
-  title DDD Bounded Contexts: Abstraktion vs Instabilität
-  xAxis "Instabilität (I)" 0 --> 1
+
  
 
