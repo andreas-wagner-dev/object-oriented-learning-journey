@@ -370,6 +370,7 @@ validiert sich durch Messbarkeit mit Martin-Metriken
     end
 
 ```
+
 Business --> Adapter
 Adapter --> Technik
 
