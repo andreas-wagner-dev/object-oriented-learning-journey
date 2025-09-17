@@ -140,9 +140,7 @@ flowchart TB
         T2[SFTP]
         T3[Kafka]
     end
-```
 
-```
     O1 --> R1
     O2 --> R2
     O3 --> R3
@@ -150,6 +148,9 @@ flowchart TB
     R2 --> T2
     R3 --> T3
 ```
+
+```
+
 👉 Dieses Diagramm zeigt die klare Trennung:
 
 A-Pakete enthalten die Business-Domäne.
