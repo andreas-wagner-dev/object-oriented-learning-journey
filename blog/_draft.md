@@ -77,16 +77,12 @@ graph LR
 ```
 
 ```mermaid
-
-graph TD
-  subgraph Customer
-    direction TB
-    A[customer.address]
-    B[customer.contact]
-  end
-
-  B --> A
-
+graph LR
+    subgraph Customer
+        Address[customer.address]
+        Contact[customer.contact]
+    end
+    Address --> contact
 ```
 
 | Regel / Sonderfall                                        | Erfüllt? | Begründung                                                                                                                         |
