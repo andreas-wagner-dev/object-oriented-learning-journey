@@ -63,13 +63,15 @@ Wenn zwei Sub-Packages derselben Ebene voneinander abhängen, ist das erlaubt, s
 Beispiel:  
 - `com.example.customer.address` ↔ `com.example.customer.contact`
 
-Beide gehören zum übergeordneten Konzept „Customer“ und dürfen zusammenarbeiten, so lange sie keine zirkulär Abhängingkeiten aufweisen
+Beide gehören zum übergeordneten Konzept *Customer* und dürfen zusammenarbeiten, so lange sie keine zirkulär Abhängingkeiten aufweisen
 
-**Valide Abhängigkeit:** customer.address und customer.contact sind Sub-Packages derselben Ebene unter customer. Beide Sub-Packages gehören zum selben Überkonzept „Customer“.
+**Valide Abhängigkeit:** customer.address und customer.contact sind Sub-Packages derselben Ebene unter customer. Beide Sub-Packages gehören zum selben Überkonzept *Customer*.
 
 ```mermaid
+
 graph TD
-  subgraph Customer[Customer (Oberkonzept)]
+  subgraph Customer
+    direction TB
     A[customer.address]
     B[customer.contact]
   end
