@@ -3,7 +3,7 @@
 Fast jeder Entwickler beginnt damit, Packages lediglich als ein Werkzeug zur Organisation von Klassen zu nutzen – meist so, wie es in dem Moment logisch erscheint.  
 Doch eine Packaging-Strategie kann weitaus mächtiger sein: Sie kann Wissen enthalten, Orientierung bieten und die langfristige Wartbarkeit der Software erheblich verbessern.
 
-Dieses Blogpost zeigt drei zentrale Regeln und beleuchtet typische Corner Cases aus der Praxis, die beim Einsatz in realen Projekten auftauchen.  
+Dieses Blogpost zeigt drei zentrale Regeln und beleuchtet typische Aspekts aus der Praxis, die beim Einsatz in realen Projekten auftauchen.  
 Dazu werden Varianten für **Jakarta EE**-basierte Systeme vorgestellt.
 
 ---
@@ -41,10 +41,20 @@ Beispiel:
 - `com.example.api.service` (für Dienste, die Business-Logik triggern)
 
 ---
+## C4
 
-## Praktische Corner Cases
+## Praktische Aspekte
 
-### Corner Case 1: Technishe Abhängkeiten und Konfiguration
+### Aspekt 0: Analyse der Business   (C4)
+
+1. Starte mit dem System context diagram (C4) [https://c4model.com/diagrams/container]
+*Identifikation von betroffenen Elenenten*
+- People (e.g. users, actors, roles, or personas) and software systems (external dependencies) that are directly connected to the software    system in scope. Typically these other software systems sit outside the scope or boundary of your own software system, and you don’t have responsibility or ownership of them.
+*Intended audience*
+Everybody, both technical and non-technical people, inside and outside the software development team.
+*Identifikation von betroffenen Elenenten*
+
+### Aspekt 1: Technishe Abhängkeiten und Konfiguration
 Im Kontext des Deloyments sind technishen Abhängkeiten und Konfiguration der gesamten Applikation ein Business-Konzept/-Need.
 
 Durch die Einführung eines `app`-Pakets wird das Deloyment und Konfiguration als Business-Konzept und  kein **technisches Hilfspaket**.  
@@ -58,7 +68,7 @@ Das Paket ist vergleichbar mit der „Infrastruktur-Schicht“ in DDD und bleibt
 
 ---
 
-### Corner Case 2: Abhängigkeiten zwischen Sub-Packages
+### Aspekt 2: Abhängigkeiten zwischen Sub-Packages
 Wenn zwei Sub-Packages derselben Ebene voneinander abhängen, ist das erlaubt, sofern es fachlich Sinn ergibt.  
 Beispiel:  
 - `com.example.customer.address` ↔ `com.example.customer.contact`
@@ -118,7 +128,7 @@ graph LR
 
 ---
 
-### Corner Case 3: API als eigenes Business-Konzept
+### Aspekt 3: Schnittstellen - API als eigenes Business-Konzept
 
 Eine Applikation, die Schnittstellen z. B. für Ressourcen oder Interaktionen anbietet, dann ist es vom  Business fordert dass Applikation Schnittstellen (**API**) ein Business-Konzept der Applikation sind. (https://c4model.com/diagrams/container)  
 
@@ -131,16 +141,16 @@ Hier ist die API also nicht nur ein technischer Layer, sondern ein **vollwertige
 
 ---
 
-### Corner Case 4: Technische Utilities
+### Aspekt 4: Technische Hilfsklassen Utilities
 Utilities und technische Hilfsklassen sollten **kein eigenes Business-Konzept** sein.  
-Sie gehören entweder klar zu einem bestehenden Business-Konzept oder werden durch objektorientierte Patterns (z. B. **Decorator**) eingebunden.  
+Sie gehören entweder klar zu einem bestehenden Business-Konzept oder werden durch objektorientierte Patterns (z. B. **Decorator**) realisiert.  
 
 Falsch wäre: ein generisches `com.example.util`-Paket.  
 Richtig wäre: technische Helfer lokal in dem Business-Paket ablegen, wo sie fachlich Sinn ergeben.
 
 ---
 
-### Corner Case 5: Tasks sind kein eigenes Business-Konzept
+### Aspekt 5: Tasks sind kein eigenes Business-Konzept
 Hintergrundaufgaben (oder Cron Tasks) sind fachlich motivierte Prozesse bezogen auf die fachlichen Objekte, aber **kein eigenständiges Business-Konzept** wie z. B. `catalog` oder `item`.  
 Sie befinden sich direkt im **Root** eines **Business-Kontext** und werden dort als fachliche Prozesse verankert:
 
