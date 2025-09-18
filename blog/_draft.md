@@ -73,8 +73,6 @@ graph LR
         Address[customer.address]
         Contact[customer.contact]
     end
-
-    Address --> Contact
     Contact --> Address
 ```
 
@@ -87,7 +85,6 @@ graph TD
     B[customer.contact]
   end
 
-  A --> B
   B --> A
 
 ```
@@ -103,7 +100,7 @@ graph TD
 
 ```mermaid
 graph LR
-    subgraph Customer[Customer(Oberkonzept)]
+    subgraph Customer
         Address[customer.address]
         Contact[customer.contact]
     end
