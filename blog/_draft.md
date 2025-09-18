@@ -92,14 +92,14 @@ Richtig wäre: technische Helfer lokal in dem Business-Paket ablegen, wo sie fac
 Hintergrundaufgaben (oder Cron Tasks) sind fachlich motivierte Prozesse bezogen auf die fachlichen Objekte, aber **kein eigenständiges Business-Konzept** wie z. B. `catalog` oder `item`.  
 Sie befinden sich direkt im **Root** eines **Business-Kontext** und werden dort als fachliche Prozesse verankert:
 
-´´´
+```
 com.test.catalog
 ├── ItemCleanupTask.java ← Fachlicher Task als direkt im Root vom fachlichen Haupkontext
 ├── ItemSyncTask.java ← Fachlicher Task als direkt im Root vom fachlichen Haupkontext 
 ├── Catalog.java
 ├── Item.java
 └── Synchronization.java
-´´´
+```
 
 Oder als Betrachtung fachlicher Deteils zu einem Bussines-Objekt 
 
@@ -121,7 +121,7 @@ com.test.catalog
 
 Hier sind die Einstiegspunkte direkt im jeweiligen Sub-Kontext untergebracht:
 
-´´´
+```
 com.test.catalog
 ├── app/ ← Startup, DI, Config
 │ ├── CatalogApplication.java (handle or register hooks on Startup event, prepare all **jakarta.inject.*** CDI injections/producers)
@@ -158,7 +158,7 @@ com.test.catalog
 ├── Catalog.java
 ├── Item.java
 └── Synchronization.java
-´´´
+```
 
 ---
 
@@ -167,7 +167,7 @@ com.test.catalog
 Hier werden alle Schnittstellen in einem dedizierten `api`-Paket gesammelt, das selbst ein Business-Konzept darstellt.  
 Tasks bleiben jedoch im Root, da sie **fachliche Prozesse** sind und kein API-Subkonzept.
 
-´´´
+```
 com.test.catalog
 ├── api/
 │ ├── user/ 
@@ -213,7 +213,7 @@ com.test.catalog
 ├── Catalog.java
 ├── Item.java
 └── Synchronization.java
-´´´
+```
 
 ---
 
