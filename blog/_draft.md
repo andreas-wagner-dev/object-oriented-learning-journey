@@ -68,13 +68,15 @@ Beide gehören zum übergeordneten Konzept „Customer“ und dürfen zusammenar
 **Valide Abhängigkeit:** customer.address und customer.contact sind Sub-Packages derselben Ebene unter customer. Beide Sub-Packages gehören zum selben Überkonzept „Customer“.
 
 ```mermaid
-graph LR
-    subgraph Customer[Customer(Oberkonzept)]
-        Address[customer.address]
-        Contact[customer.contact]
-    end
-    Address --> Contact
-    Contact --> Address
+graph TD
+  subgraph Customer[Customer (Oberkonzept)]
+    A[customer.address]
+    B[customer.contact]
+  end
+
+  A --> B
+  B --> A
+
 ```
 
 | Regel / Sonderfall                                        | Erfüllt? | Begründung                                                                                                                         |
