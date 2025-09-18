@@ -63,14 +63,60 @@ Wenn zwei Sub-Packages derselben Ebene voneinander abhängen, ist das erlaubt, s
 Beispiel:  
 - `com.example.customer.address` ↔ `com.example.customer.contact`
 
-Beide gehören zum übergeordneten Konzept „Customer“ und dürfen zusammenarbeiten.
+Beide gehören zum übergeordneten Konzept „Customer“ und dürfen zusammenarbeiten, so lange sie keine zirkulär Abhängingkeiten aufweisen
+
+**Valide Abhängigkeit:** customer.address und customer.contact sind Sub-Packages derselben Ebene unter customer. Beide Sub-Packages gehören zum selben Überkonzept „Customer“.
+
+```mermaid
+graph LR
+    subgraph Customer[Customer (Oberkonzept)]
+        Address[customer.address]
+        Contact[customer.contact]
+    end
+
+    Address --> Contact
+    Contact --> Address
+```
+
+| Regel / Sonderfall                                        | Erfüllt? | Begründung                                                                                                                         |
+| --------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Regel 1: Kein Paket darf von Sub-Package abhängen**     | ✅        | `customer.address` hängt von `customer.contact` — aber kein übergeordnetes Paket hängt davon ab. Es ist innerhalb derselben Ebene. |
+| **Regel 2: Sub-Packages führen keine neuen Konzepte ein** | ✅        | Beide sind Teil des Konzeptes „Customer“. Es werden keine völlig neuen Domänenbegriffe eingeführt.                                 |
+| **Regel 3: Pakete spiegeln Business-Konzepte**            | ✅        | „Address“ und „Contact“ sind fachlich verständliche Begriffe im Kontext „Customer“, kein technisches Layer-Wording.                |
+
+
+**Zirkuläre Abhängigkeit:** customer.address hängt von customer.contact ab und umgekehrt.
+
+```mermaid
+graph LR
+    subgraph Customer[Customer (Oberkonzept)]
+        Address[customer.address]
+        Contact[customer.contact]
+    end
+
+    Address --> Contact
+    Contact --> Address
+```
+
+*Warum ist diese Struktur problematisch?*
+
+- Verletzung von Regel 1: Pakete sollten nicht von ihren eigenen Sub‑Paketen abhängen. Diese zirkuläre Abhängigkeit führt zu einer instabilen Hierarchie.
+- Verletzung von Regel 2: Sub‑Pakete sollten keine neuen Konzepte einführen. Die gegenseitige Abhängigkeit zwischen address und contact kann zu einer Vermischung von Verantwortlichkeiten führen.
+- Verletzung von Regel 3: Pakete sollten Business‑Konzepte widerspiegeln. Die zirkuläre Struktur erschwert das Verständnis der fachlichen Zusammenhänge.
+
+**Mögliche Lösungen**
+
+- Refactoring: Überprüfen, ob die Verantwortlichkeiten klar getrennt sind und ob eine der Abhängigkeiten entfernt oder umgestaltet werden kann.
+- Verwendung von Schnittstellen: Einführen von Schnittstellen oder abstrakten Klassen, um die direkte Abhängigkeit zwischen den Paketen zu vermeiden.
+- Neuorganisation der Pakete: Erstellen eines neuen Pakets, das die gemeinsamen Konzepte oder Schnittstellen enthält, um die Abhängigkeiten zu entflechten.
 
 ---
 
 ### Corner Case 3: API als eigenes Business-Konzept
-Wenn das Business fordert, dass eine Applikation Daten als Ressourcen bereitstellt oder externe Interaktionen ermöglicht, entsteht eine **API** als Business-Konzept.  
 
-Die Sub-Pakete der API können z. B. sein:  
+Eine Applikation, die Schnittstellen z. B. für Ressourcen oder Interaktionen anbietet, dann ist es vom  Business fordert dass Applikation Schnittstellen (**API**) ein Business-Konzept der Applikation sind. (https://c4model.com/diagrams/container)  
+
+Die Sub-Pakete, welche von der API ausgehen können z. B. sein:  
 - `api.user` (Interaktion durch Menschen, z. B. UI/Frontend)  
 - `api.resource` (bereitgestellte Daten-Ressourcen, z. B. JSON via JAX-RS)  
 - `api.service` (externe Services, die Business-Logik triggern)  
