@@ -74,6 +74,8 @@ graph LR
         Contact[customer.contact]
     end
 
+    Customer --> Contact
+    Customer --> Address
     Address --> Contact
     Contact --> Address
 ```
@@ -94,6 +96,8 @@ graph LR
         Contact[customer.contact]
     end
 
+    Customer --> Contact
+    Customer --> Address
     Address --> Contact
     Contact --> Address
 
