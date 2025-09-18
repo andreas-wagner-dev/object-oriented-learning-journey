@@ -68,6 +68,17 @@ Beide gehören zum übergeordneten Konzept *Customer* und dürfen zusammenarbeit
 **Valide Abhängigkeit:** customer.address und customer.contact sind Sub-Packages derselben Ebene unter customer. Beide Sub-Packages gehören zum selben Überkonzept *Customer*.
 
 ```mermaid
+graph LR
+    subgraph Customer
+        Address[customer.address]
+        Contact[customer.contact]
+    end
+
+    Address --> Contact
+    Contact --> Address
+```
+
+```mermaid
 
 graph TD
   subgraph Customer
