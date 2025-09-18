@@ -30,24 +30,20 @@ Ein Beispiel:
 
 ```
 com.example.billing
-
 ├── bill/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Bill) aus dem Business-Kontext
 │ ├── StoredBill.java  <- realisiert/erweitert/dekoriert/detailliert Bill
 │ ├── TaxedBill.java  
-│ ├── PaidBill.java  
-│ └── [OtherDetailOf]Bill.java
+│ └── PaidBill.java  
 ├── rule/ <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekt (Rule) aus dem Business-Kontext
 │ ├── unit/ <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Unit) aus dem Sub Business-Kontext
 │ │   └──ISO.java <- realisiert/erweitert/dekoriert/detailliert Unit
 │ ├── StoredRule.java
 │ ├── TimedRule.java
 │ ├── ConfirmedRule.java
-│ ├── Unit.java <- Geschäftobjekt im Sub Kontext
-│ └── [OtherDetailOf]Rule.java
+│ └── Unit.java <- Geschäftobjekt im Sub Kontext
 ├── tax/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Tax) aus dem Business-Kontext
 │ ├── USTax.java  <- realisiert/erweitert/dekoriert/detailliert Tax
-│ ├── EUTax.java  
-│ └── [OtherDetailOf]Tax.java
+│ └── EUTax.java  
 ├── Rule.java <- Geschäftobjekt im Kontext
 ├── Tax.java <- Geschäftobjekt im Kontext
 ├── Bill.java <- Geschäftobjekt im Kontext
@@ -75,28 +71,13 @@ Beispiel:
 
 ### Aspekt 0: Analyse der Business-Konzepte (C4)
 
-1. Starte mit dem System context diagram (C4) [https://c4model.com/diagrams/container]
-*Identifikation von betroffenen Elenenten*
-- People (e.g. users, actors, roles, or personas) and software systems (external dependencies) that are directly connected to the software    system in scope. Typically these other software systems sit outside the scope or boundary of your own software system, and you don’t have responsibility or ownership of them.
-*Intended audience*
-Everybody, both technical and non-technical people, inside and outside the software development team.
-*Identifikation von betroffenen Elenenten*
-
-### Aspekt 1: Technishe Abhängkeiten und Konfiguration
-Im Kontext des Deloyments sind technishen Abhängkeiten und Konfiguration der gesamten Applikation ein Business-Konzept/-Need.
-
-Durch die Einführung eines `app`-Pakets wird das Deloyment und Konfiguration als Business-Konzept und  kein **technisches Hilfspaket**.  
-Es dient ausschließlich für:
-- **Application-Startup** (Bootstrapping)  
-- **Dependency Injection** (z. B. CDI, Spring, Guice)  
-- **Konfiguration** (Properties, technische Bindung an Frameworks)  
-
-👉 Fachliche Logik gehört **niemals** in `app`.  
-Das Paket ist vergleichbar mit der „Infrastruktur-Schicht“ in DDD und bleibt bewusst **technisch isoliert**.
+1 *Identifikation betroffenen Elenenten und Zielgruppen* [C4 System-Context Diagram (https://c4model.com/diagrams/system-context)]
+2.*Identifikation von Business-Konzepten* [C4 System-Context Diagram ((https://c4model.com/diagrams/component)]
+3 *Identifikation von Applikation Schittellen* [C4 Container Diagram (https://c4model.com/diagrams/container)]
+4.*Identifikation der Technishe Abhängkeiten und Konfiguration* [C4 Deployment Diagram (https://c4model.com/diagrams/deployment)]
 
 ---
-
-### Aspekt 2: Abhängigkeiten zwischen Sub-Packages
+### Aspekt 1: Abhängigkeiten zwischen Sub-Packages
 Wenn zwei Sub-Packages derselben Ebene voneinander abhängen, ist das erlaubt, sofern es fachlich Sinn ergibt.  
 Beispiel:  
 - `com.example.customer.address` ↔ `com.example.customer.contact`
@@ -155,12 +136,18 @@ graph LR
 - Neuorganisation der Pakete: Erstellen eines neuen Pakets, das die gemeinsamen Konzepte oder Schnittstellen enthält, um die Abhängigkeiten zu entflechten.
 
 ---
+### Aspekt 2: Technische Hilfsklassen Utilities
+Utilities und technische Hilfsklassen sollten **kein eigenes Business-Konzept** sein.  
+Sie gehören entweder klar zu einem bestehenden Business-Konzept oder werden durch objektorientierte Patterns (z. B. **Decorator**) realisiert.  
 
-### Aspekt 3: Schnittstellen - API als eigenes Business-Konzept
+Falsch wäre: ein generisches `com.example.util`-Paket.  
+Richtig wäre: technische Helfer lokal in dem Business-Paket ablegen, wo sie fachlich Sinn ergeben.
 
-Eine Applikation, die Schnittstellen z. B. für Ressourcen oder Interaktionen anbietet, dann ist es vom  Business fordert dass Applikation Schnittstellen (**API**) ein Business-Konzept der Applikation sind. (https://c4model.com/diagrams/container)  
+### Aspekt 3: Applikation Schnittstellen - API als eigenes Business-Konzept
 
-Die Sub-Pakete, welche von der API ausgehen können z. B. sein:  
+Eine Applikation, die Schnittstellen z. B. für Ressourcen oder Interaktionen anbietet, impliziert die (**API**) als ein Business-Konzept der Applikation.
+
+Die Sub-Pakete, welche von der API ausgehen können z. B. sein: 
 - `api.user` (Interaktion durch Menschen, z. B. UI/Frontend)  
 - `api.resource` (bereitgestellte Daten-Ressourcen, z. B. JSON via JAX-RS)  
 - `api.service` (externe Services, die Business-Logik triggern)  
@@ -169,13 +156,20 @@ Hier ist die API also nicht nur ein technischer Layer, sondern ein **vollwertige
 
 ---
 
-### Aspekt 4: Technische Hilfsklassen Utilities
-Utilities und technische Hilfsklassen sollten **kein eigenes Business-Konzept** sein.  
-Sie gehören entweder klar zu einem bestehenden Business-Konzept oder werden durch objektorientierte Patterns (z. B. **Decorator**) realisiert.  
+### Aspekt 4: Technishe Abhängkeiten und Konfiguration
 
-Falsch wäre: ein generisches `com.example.util`-Paket.  
-Richtig wäre: technische Helfer lokal in dem Business-Paket ablegen, wo sie fachlich Sinn ergeben.
+Ein Paket wie `app` oder config  ist meist in Bibliothekenartigen Code nicht notwendig, im gegensatz zu Business-Applikationen ist es meist notwendig dem technischen *Übel* Herr zu werden.
 
+Im Kontext des Deloyments sind technishen Abhängkeiten und Konfiguration der gesamten Applikation ein Business-Konzept/-Need.
+
+Durch die Einführung eines `app`-Pakets wird das Deloyment und Konfiguration als Business-Konzept und  kein **technisches Hilfspaket**.  
+Es dient ausschließlich für:
+- **Application-Startup** (Bootstrapping)  
+- **Dependency Injection** (z. B. CDI, Spring, Guice)  
+- **Konfiguration** (Properties, technische Bindung an Frameworks)  
+
+👉 Fachliche Logik gehört **niemals** in `app`.  
+Das Paket ist vergleichbar mit der „Infrastruktur-Schicht“ in DDD und bleibt bewusst **technisch isoliert**.
 ---
 
 ### Aspekt 5: Tasks sind kein eigenes Business-Konzept
