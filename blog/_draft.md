@@ -103,7 +103,7 @@ com.test.catalog
 
 Oder als Betrachtung fachlicher Deteils zu einem Bussines-Objekt 
 
-´´´
+```
 com.test.catalog
 ├── item/ <- Fachliche Deteils zum ← Bussines-Objekt Item 
 │ ├── ItemSyncTask.java ← Fachlicher Task als Detail direkt im Root vom fachlichen Subkontext
@@ -111,7 +111,7 @@ com.test.catalog
 ├── Catalog.java
 ├── Item.java ← Bussines-Objekt/-Interface  
 └── Synchronization.java
-´´´
+```
 
 ---
 
