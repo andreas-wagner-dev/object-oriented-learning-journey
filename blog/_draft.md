@@ -82,7 +82,7 @@ graph LR
         Address[customer.address]
         Contact[customer.contact]
     end
-    Address --> contact
+    Address --> Contact
 ```
 
 | Regel / Sonderfall                                        | Erfüllt? | Begründung                                                                                                                         |
