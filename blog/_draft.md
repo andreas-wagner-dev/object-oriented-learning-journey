@@ -100,6 +100,7 @@ com.test.catalog
 ├── Item.java
 └── Synchronization.java
 ´´´
+
 Oder als Betrachtung fachlicher Deteils zu einem Bussines-Objekt 
 
 ´´´
@@ -119,6 +120,7 @@ com.test.catalog
 ### Variante A: Mehrere Einstiegspunkte ohne zentrales `api`-Paket
 
 Hier sind die Einstiegspunkte direkt im jeweiligen Sub-Kontext untergebracht:
+
 ´´´
 com.test.catalog
 ├── app/ ← Startup, DI, Config
@@ -164,6 +166,7 @@ com.test.catalog
 
 Hier werden alle Schnittstellen in einem dedizierten `api`-Paket gesammelt, das selbst ein Business-Konzept darstellt.  
 Tasks bleiben jedoch im Root, da sie **fachliche Prozesse** sind und kein API-Subkonzept.
+
 ´´´
 com.test.catalog
 ├── api/
