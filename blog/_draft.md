@@ -96,6 +96,7 @@ graph LR
 
     Address --> Contact
     Contact --> Address
+
 ```
 
 *Warum ist diese Struktur problematisch?*
@@ -338,12 +339,14 @@ catalog-doors (Modul)
 │ └── DocumentSync.java
 ```
 
+```
 catalog-api (Modul) ← wenn Business API verlangt
 ├── com.test.catalog.api
 │ ├── CatalogApi.java
 │ └── ItemApi.java
 ```
 
+```
 catalog-ui (Modul) ← wenn Business UI verlangt
 ├── com.test.catalog.ui
 │ ├── catalog/
@@ -409,6 +412,7 @@ graph TD
     B --> C
     A --> C
 ```
+
 **Erläuterung: Modul-Abhängigkeiten**
 
 Core (Business Core) enthält die fundamentalen Domänenobjekte: Catalog, Item, Synchronization. Diese sollten keine Abhängigkeit auf Module außerhalb des Cores haben (Regel 1 & 3).
