@@ -73,9 +73,6 @@ graph LR
         Address[customer.address]
         Contact[customer.contact]
     end
-
-    Customer --> Contact
-    Customer --> Address
     Address --> Contact
     Contact --> Address
 ```
@@ -95,12 +92,8 @@ graph LR
         Address[customer.address]
         Contact[customer.contact]
     end
-
-    Customer --> Contact
-    Customer --> Address
     Address --> Contact
     Contact --> Address
-
 ```
 
 *Warum ist diese Struktur problematisch?*
