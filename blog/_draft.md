@@ -71,10 +71,10 @@ Beispiel:
 
 ### Aspekt 0: Analyse der Business-Konzepte (C4)
 
-1 *Identifikation betroffenen Elenenten und Zielgruppen* [C4 System-Context Diagram (https://c4model.com/diagrams/system-context)]
-2.*Identifikation von Business-Konzepten* [C4 System-Context Diagram ((https://c4model.com/diagrams/component)]
-3 *Identifikation von Applikation Schittellen* [C4 Container Diagram (https://c4model.com/diagrams/container)]
-4.*Identifikation der Technishe Abhängkeiten und Konfiguration* [C4 Deployment Diagram (https://c4model.com/diagrams/deployment)]
+1. *Identifikation betroffenen Elenenten und Zielgruppen* [C4 System-Context Diagram (https://c4model.com/diagrams/system-context)]
+2. *Identifikation von Business-Konzepten* [C4 System-Context Diagram ((https://c4model.com/diagrams/component)]
+3. *Identifikation von Applikation Schittellen* [C4 Container Diagram (https://c4model.com/diagrams/container)]
+4. *Identifikation der Technishe Abhängkeiten und Konfiguration* [C4 Deployment Diagram (https://c4model.com/diagrams/deployment)]
 
 ---
 ### Aspekt 1: Abhängigkeiten zwischen Sub-Packages
