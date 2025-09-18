@@ -114,8 +114,7 @@ com.test.catalog
 ```
 
 ---
-
-## Varianten der Paketstruktur (Jakarta EE Beispiel)
+## Paketstruktur für Framework basierte Architektur (Jakarta EE oder Spring)
 
 ### Variante A: Mehrere Einstiegspunkte ohne zentrales `api`-Paket
 
@@ -161,7 +160,6 @@ com.test.catalog
 ```
 
 ---
-
 ### Variante B: Einheitliches `api`-Paket für alle Einstiegspunkte
 
 Hier werden alle Schnittstellen in einem dedizierten `api`-Paket gesammelt, das selbst ein Business-Konzept darstellt.  
@@ -214,6 +212,173 @@ com.test.catalog
 ├── Item.java
 └── Synchronization.java
 ```
+
+---
+## Paketstruktur für Clean- und DDD-Architektur (Implementierung mit Jakarta EE oder Spring)
+
+---
+### Single Artefak Project
+(In einem Single Artefakt Projekt bleibt alles in einem Deployment-Artefakt, aber mit klarer fachlicher Struktur.)
+```
+com.test.catalog
+├── app/
+│ ├── CatalogApplication.java
+│ ├── CatalogConfig.java
+│ └── DependencyProvider.java
+├── jira/
+│ ├── Jira.java
+│ ├── IssueItem.java
+│ └── StorySync.java
+├── codebeamer/
+│ ├── Codebeamer.java
+│ ├── RequirementItem.java
+│ └── RequirementSync.java
+├── doors/
+│ ├── Doors.java
+│ ├── DocumentItem.java
+│ └── DocumentSync.java
+├── catalog/
+│ ├── CatalogView.java
+│ ├── CatalogApi.java
+│ ├── CatalogResource.java
+│ └── CatalogList.java
+├── item/
+│ ├── ItemView.java
+│ ├── IssueItemView.java
+│ ├── RequirementItemView.java
+│ ├── DocumentItemView.java
+│ └── ItemList.java
+├── ItemCleanupTask.java
+├── ItemSyncTask.java
+├── Catalog.java
+├── Item.java
+└── Synchronization.java
+```
+
+---
+### Multi Artefakt Project
+
+(In einem Multi-Artefakt Projekt werden die Business-Kontexte in separate Module aufgeteilt, die einzeln versioniert und ggf. deployt werden können, aber die Regeln bleiben gleich.)
+
+```
+catalog-core (Modul)
+├── com.test.catalog.core
+│ ├── Catalog.java
+│ ├── Item.java
+│ └── Synchronization.java
+```
+
+```
+catalog-jira (Modul)
+├── com.test.catalog.jira
+│ ├── Jira.java
+│ ├── IssueItem.java
+│ └── StorySync.java
+```
+
+```
+catalog-codebeamer (Modul)
+├── com.test.catalog.codebeamer
+│ ├── Codebeamer.java
+│ ├── RequirementItem.java
+│ └── RequirementSync.java
+```
+
+```
+catalog-doors (Modul)
+├── com.test.catalog.doors
+│ ├── Doors.java
+│ ├── DocumentItem.java
+│ └── DocumentSync.java
+```
+
+catalog-api (Modul) ← wenn Business API verlangt
+├── com.test.catalog.api
+│ ├── CatalogApi.java
+│ └── ItemApi.java
+```
+
+catalog-ui (Modul) ← wenn Business UI verlangt
+├── com.test.catalog.ui
+│ ├── catalog/
+│ │ ├── CatalogView.java
+│ │ ├── CatalogForm.java
+│ │ └── CatalogTable.java
+│ ├── item/
+│ │ ├── ItemView.java
+│ │ ├── IssueItemView.java
+│ │ ├── RequirementItemView.java
+│ │ └── DocumentItemView.java
+```
+
+```
+catalog-root (Modul)
+├── com.test.catalog
+│ ├── ItemCleanupTask.java
+│ ├── ItemSyncTask.java
+│ └── (optional) Synchronization.java
+```
+
+**Visualisierung: Modul-Abhängigkeiten**
+
+```mermaid
+graph TD
+    subgraph Core[Business Core]
+        A[Catalog]
+        B[Item]
+        C[Synchronization]
+    end
+
+    subgraph ExternalContexts[Externe Business-Kontexte]
+        J[Jira]
+        CB[Codebeamer]
+        D[Doors]
+    end
+
+    subgraph API[Business API Schnittstellen]
+        API_Resource[ApiResource]
+        API_User[ApiUser]
+    end
+
+    subgraph UI[User Interface]
+        U_Catalog[CatalogView]
+        U_Item[ItemView]
+    end
+
+    %% Abhängigkeitspfeile, nur wenn geschäftlich verlangt
+    J --> A
+    CB --> A
+    D --> A
+
+    UI --> A
+    UI --> B
+
+    API_Resource --> A
+    API_Resource --> B
+
+    API_User --> U_Catalog
+    API_User --> U_Item
+
+    Core --> Synchronization
+    B --> C
+    A --> C
+```
+**Erläuterung: Modul-Abhängigkeiten**
+
+Core (Business Core) enthält die fundamentalen Domänenobjekte: Catalog, Item, Synchronization. Diese sollten keine Abhängigkeit auf Module außerhalb des Cores haben (Regel 1 & 3).
+
+- Externe Business-Kontexte wie Jira, Codebeamer, Doors dürfen vom Core abhängig sein — z. B. wenn Sync-Logik benötigt wird. Nicht umgekehrt.
+- UI-Module (z. B. CatalogView, ItemView) sind fachliche Darstellungskonzepte, erlauben Abhängigkeit auf Core, aber nicht umgekehrt.
+- API-Module (z. B. ApiResource, ApiUser) erlauben ebenfalls Abhängigkeit auf Core, da API Schnittstellen oft Daten oder Aktionen aus dem Core exposen.
+- Es wird nicht vorgesehen, dass UI Module auf externe Kontexte wie Jira direkt zugreifen, sofern das Business es nicht verlangt. Wenn UI z. B. Daten von Jira darstellen muss, dann geschieht das über eine fachlich benannte API bzw. über Sync-Klassen im Jira Paket.
+
+
+| Regel                                                                    | Anwendung im Beispiel                                                                                                         |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| *Regel 1*: Kein Paket sollte von seinen Sub-Paketen abhängen             | Core hat keine Abhängigkeit zu UI oder API, nur umgekehrt. Subpakete (z. B. UI, API) hängen auf Core.                           |
+| *Regel 2*: Sub-Pakete führen keine neuen Konzepte ein                    | UI, API, Externe Kontexte sind bestehende Business-Konzepte, Sub-Pakete gliedern nur Details (View, Resource etc.).             |
+| *Regel 3*: Pakete spiegeln Business-Konzepte, keine technischen Begriffe | Namen wie `Jira`, `Item`, `Catalog`, `ApiUser`, `CatalogView` sind fachlich. Kein `infrastructure`, kein `task` Paketname, etc. |
+
 
 ---
 
