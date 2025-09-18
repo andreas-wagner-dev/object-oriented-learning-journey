@@ -4,14 +4,15 @@ Fast jeder Entwickler beginnt damit, Packages lediglich als ein Werkzeug zur Org
 Doch eine Packaging-Strategie kann weitaus mächtiger sein: Sie kann Wissen enthalten, Orientierung bieten und die langfristige Wartbarkeit der Software erheblich verbessern.
 
 Dieses Blogpost zeigt drei zentrale Regeln und beleuchtet typische Aspekts aus der Praxis, die beim Einsatz in realen Projekten auftauchen.  
-Dazu werden Varianten für **Jakarta EE**-basierte Systeme vorgestellt.
+Dazu werden Varianten für Clean- und DDD-Architektur sowie für  **Jakarta EE**-basierte Systeme vorgestellt.
 
 ---
 
 ## Die drei Regeln
 
 ### Regel 1: Packages sollten niemals von ihren Sub-Packages abhängen
-Ein Package darf nicht von seinen eigenen Sub-Packages abhängig sein.  
+Ein Package darf nicht von seinen eigenen Sub-Packages abhängig sein.
+
 Beispiel: `com.example.customer` sollte nicht von `com.example.customer.bill` abhängen.
 
 Damit bleibt die Hierarchie stabil und die Abhängigkeiten zeigen nach „unten“, nicht nach „oben“.  
@@ -42,7 +43,7 @@ com.example.billing
 │ ├── ConfirmedRule.java
 │ └── Unit.java <- Geschäftobjekt im Sub Kontext
 ├── tax/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Tax) aus dem Business-Kontext
-│ ├── USTax.java  <- realisiert/erweitert/dekoriert/detailliert Tax
+│ ├── UKTax.java  <- realisiert/erweitert/dekoriert/detailliert Tax
 │ └── EUTax.java  
 ├── Rule.java <- Geschäftobjekt im Kontext
 ├── Tax.java <- Geschäftobjekt im Kontext
@@ -57,13 +58,23 @@ Falsch wäre:
 ---
 
 ### Regel 3: Packages spiegeln Business-Konzepte wider
-Packages sollten **Business-Terminologie** und **fachliche Konzepte** reflektieren.  
+
+Packages sollten **Business-Terminologie** und **fachliche Konzepte** reflektieren, und nicht die technischen.  
 Dadurch wird die Software auch für Fachfremde nachvollziehbar.
 
-Beispiel:  
-- `com.example.api.user` (für die Business-Interaktion menschlicher Benutzer)  
-- `com.example.api.resource` (für externe Systeme, die Business-Daten konsumieren)  
-- `com.example.api.service` (für Dienste, die Business-Logik triggern)
+Die Business-Konzepte hängen jedoch stark von der Perspektive des Betrachters ab.
+
+Während vom Kunden in erster Linie seine Geschäftsprozesse als Business-Konzepte angesehen werden,
+sieht meist der Endnutzer 'user' die Benuzteroberfläche als für Ihn relevantes Business-Konzept.
+Beispiel 1:
+- `com.example.billing.user` (Business-Konzept für Interaktion menschlicher Benutzer)
+Beispiel 2:
+- `com.example.billing.api.user`  (Business-Konzept für Interaktion menschlicher Benutzer)  
+- `com.example.billing.api.resource` (Business-Konzept für externe Systeme, die Business-Daten konsumieren)  
+- `com.example.billing.api.service` (Business-Konzept für Dienste, die Business-Logik ausführen)
+
+Auch das Deployment sowie die Verwaltug von Abhängigkeiten und Konfigurationen können jenach Berachterperspektive ein Business-Konzpt sein. 
+Ein Paket wie `app` oder 'config' ist meist in einem Bibliothekenartigen Codestruktur nicht notwendig, im Gegensatz zu Business-Applikationen ist es oft notwendig, um auch dem technischen *Übel* Herr zu werden.
 
 ---
 
@@ -147,7 +158,7 @@ Richtig wäre: technische Helfer lokal in dem Business-Paket ablegen, wo sie fac
 
 Eine Applikation, die Schnittstellen z. B. für Ressourcen oder Interaktionen anbietet, impliziert die (**API**) als ein Business-Konzept der Applikation.
 
-Die Sub-Pakete, welche von der API ausgehen können z. B. sein: 
+Die Detailausprägungen bzw. die Sub-Pakete welche von einer 'api' ausgehen, können z. B. sein: 
 - `api.user` (Interaktion durch Menschen, z. B. UI/Frontend)  
 - `api.resource` (bereitgestellte Daten-Ressourcen, z. B. JSON via JAX-RS)  
 - `api.service` (externe Services, die Business-Logik triggern)  
@@ -158,7 +169,7 @@ Hier ist die API also nicht nur ein technischer Layer, sondern ein **vollwertige
 
 ### Aspekt 4: Technishe Abhängkeiten und Konfiguration
 
-Ein Paket wie `app` oder config  ist meist in Bibliothekenartigen Code nicht notwendig, im gegensatz zu Business-Applikationen ist es meist notwendig dem technischen *Übel* Herr zu werden.
+Ein Paket wie `app` oder 'config' ist meist in einem Bibliothekenartigen Code nicht notwendig, im Gegensatz zu Business-Applikationen ist es meist notwendig um dem technischen *Übel* Herr zu werden.
 
 Im Kontext des Deloyments sind technishen Abhängkeiten und Konfiguration der gesamten Applikation ein Business-Konzept/-Need.
 
