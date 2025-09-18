@@ -69,7 +69,7 @@ Beide gehören zum übergeordneten Konzept „Customer“ und dürfen zusammenar
 
 ```mermaid
 graph LR
-    subgraph Customer[Customer (Oberkonzept)]
+    subgraph Customer[Customer(Oberkonzept)]
         Address[customer.address]
         Contact[customer.contact]
     end
@@ -89,7 +89,7 @@ graph LR
 
 ```mermaid
 graph LR
-    subgraph Customer[Customer (Oberkonzept)]
+    subgraph Customer[Customer(Oberkonzept)]
         Address[customer.address]
         Contact[customer.contact]
     end
