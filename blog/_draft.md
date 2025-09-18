@@ -20,14 +20,43 @@ Was **nicht** gemeint ist: Packages auf der gleichen Ebene („Siblings“) dür
 ---
 
 ### Regel 2: Sub-Packages führen keine neuen Konzepte ein
-Sub-Packages dienen der **Detaillierung** eines bestehenden Konzepts, nicht der Einführung neuer.  
+Sub-Packages dienen der **Detaillierung** eines bestehenden Konzepts, nicht der Einführung neuer.
+
 Ein Beispiel:  
 - `com.example.billing` (Business-Konzept „Billing“)  
 - `com.example.billing.rule` (Details: Geschäftsregeln des Billings)
 
+**Details** - sind Geschäftsregeln und beziehen sich immer auf Geschäftobjekte aus dem lokalen Kontext  
+
+```
+com.example.billing
+
+├── bill/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Bill) aus dem Business-Kontext
+│ ├── StoredBill.java  <- realisiert/erweitert/dekoriert/detailliert Bill
+│ ├── TaxedBill.java  
+│ ├── PaidBill.java  
+│ └── [OtherDetailOf]Bill.java
+├── rule/ <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekt (Rule) aus dem Business-Kontext
+│ ├── unit/ <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Unit) aus dem Sub Business-Kontext
+│ │   └──ISO.java <- realisiert/erweitert/dekoriert/detailliert Unit
+│ ├── StoredRule.java
+│ ├── TimedRule.java
+│ ├── ConfirmedRule.java
+│ ├── Unit.java <- Geschäftobjekt im Sub Kontext
+│ └── [OtherDetailOf]Rule.java
+├── tax/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Tax) aus dem Business-Kontext
+│ ├── USTax.java  <- realisiert/erweitert/dekoriert/detailliert Tax
+│ ├── EUTax.java  
+│ └── [OtherDetailOf]Tax.java
+├── Rule.java <- Geschäftobjekt im Kontext
+├── Tax.java <- Geschäftobjekt im Kontext
+├── Bill.java <- Geschäftobjekt im Kontext
+└── Billing.java  <- Geschäftobjekt im Kontext
+```
+
 Falsch wäre:  
-- `com.example.billing.rule` enthält plötzlich ein Konzept „Notification“, das nichts mit Billing zu tun hat.  
-- oder ein Sub-Package `util`, das kein Business-Konzept darstellt.
+- com.example.billing.rule` enthält plötzlich ein Konzept „Notification“, das nichts mit Billing zu tun hat bzw. zu keinem der Geschäftobjekte im "billing" Paket eine Beziehung hat.  
+- oder ein Sub-Package `util`, das kein Business-Konzept darstellt, sondern nur nüzliche Klassen z. B. für ISO Einheiten sammelt.
 
 ---
 
@@ -41,11 +70,10 @@ Beispiel:
 - `com.example.api.service` (für Dienste, die Business-Logik triggern)
 
 ---
-## C4
 
 ## Praktische Aspekte
 
-### Aspekt 0: Analyse der Business   (C4)
+### Aspekt 0: Analyse der Business-Konzepte (C4)
 
 1. Starte mit dem System context diagram (C4) [https://c4model.com/diagrams/container]
 *Identifikation von betroffenen Elenenten*
@@ -387,7 +415,7 @@ catalog-root (Modul)
 
 ```mermaid
 graph TD
-    subgraph Core[Business Core]
+    subgraph Core[Main Kontexte Business]
         A[Catalog]
         B[Item]
         C[Synchronization]
