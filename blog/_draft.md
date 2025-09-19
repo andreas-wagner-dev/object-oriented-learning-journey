@@ -1,3 +1,49 @@
+
+
+```piantumi
+
+@startuml
+title Generisches Packaging-Gesetz: Abstraktionen (a) & Detailpakete (p)
+
+' Root-Package
+package "com.company.<app>" {
+
+  ' Root-Abstraktion (Beispiel: App, Task, User, Policy, Project)
+  package "a[N]" as aN {
+    ' Optionale Sub-Abstraktionen
+    package "a[N.1]" as aN1
+    package "a[N.2]" as aN2
+  }
+
+  ' Detailpaket p[N] legitimiert durch Abstraktion a[N]
+  package "p[N] (Implementierungen von a[N])" as pN {
+    package "a[N.M]" as aNM
+    package "p[N.M] (Implementierungen von a[N.M])" as pNM {
+      package "a[N.M.K]" as aNMK
+      package "p[N.M.K] (Implementierungen von a[N.M.K])" as pNMK
+    }
+  }
+}
+
+' Existenz-Regeln: Abstraktion legitimiert Detailpaket
+aN -[thickness=2,dashed]-> pN
+aNM -[thickness=2,dashed]-> pNM
+aNMK -[thickness=2,dashed]-> pNMK
+
+note right of pN
+  Regel:
+  1. Jedes p[X] existiert nur,
+     wenn a[X] existiert.
+  2. p[X] enthält nur Details
+     von a[X].
+end note
+
+@enduml
+```
+
+```mermaid
+```
+
 **Semantische Regeln**
 
 1. Existenzregel:
