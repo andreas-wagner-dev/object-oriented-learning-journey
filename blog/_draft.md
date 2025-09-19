@@ -84,17 +84,17 @@ Ein Paket wie `app` oder 'config' ist meist in einem Bibliothekenartigen Codestr
 
 ### Aspekt 0: Analyse der Business-Konzepte (C4)
 
-Die 4 Sichten im C4 Modell können beiten Anhaltspunkte zur Identifikation von Paketen:
+Die 4 Sichten im C4 Modell beinhalten Anhaltspunkte zur Identifikation von Business-Konzepten und zugehötigen Paketen:
 - Kontext-Diagramme – Ebene 1: ... Umfang eines Systems seine Beziehungen zu *Benutzern* und *anderen Systemen*.
-- Container-Diagramme – Ebene 2: ... Laufzeitgrenzen um Komponenten als separat betreibbare Einheiten.
-- Komponenten-Diagramme – Ebene 3: ... Aspekte wie Paketirung von Komponenten, deren Verantwortlichkeiten mit Technologie-/Implementierungsdetails.
+- Container-Diagramme – Ebene 2: ... separat betreibbare *Artifakte* als Laufzeitgrenzen um Komponenten.
+- Komponenten-Diagramme – Ebene 3: ... Aspekte wie *Pakete* von Komponenten, deren Verantwortlichkeiten mit Implementierungsdetails.
 - Quelltext-Diagramme – Ebene 4: ... Details über den Entwurf der Architekturelemente, die auf Code abgebildet werden können.
 
-Zudem veranschaulichen Deployment Diagrame, wie Instanzen von Softwaresystemen und/oder Containern im statischen Modell in der Infrastruktur innerhalb einer gegebenen Bereitstellungsumgebung (z. B. Produktion, Staging, Entwicklung usw.) bereitgestellt werden. 
+Zudem veranschaulichen Deployment Diagramme, wie Instanzen von Softwaresystemen und/oder Containern im statischen Modell in der Infrastruktur innerhalb einer gegebenen Bereitstellungsumgebung (z. B. Produktion, Staging, Entwicklung usw.) bereitgestellt werden. 
 
 1. *Identifikation von Elenenten und Zielgruppen* [C4 System-Context Diagram (https://c4model.com/diagrams/system-context)]
 2. *Identifikation von Applikation Schittellen* [C4 Container Diagram (https://c4model.com/diagrams/container)]
-3. *Identifikation von Business-Konzepten* [C4 System-Context Diagram ((https://c4model.com/diagrams/component)]
+3. *Identifikation von Business-Konzepten* [C4 Component Diagram ((https://c4model.com/diagrams/component)]
 4. *Identifikation von Abhängkeiten und Konfigurationen* [C4 Deployment Diagram (https://c4model.com/diagrams/deployment)]
 
 ---
