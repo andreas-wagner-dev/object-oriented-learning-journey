@@ -4,7 +4,7 @@ Fast jeder Entwickler beginnt damit, Packages lediglich als ein Werkzeug zur Org
 
 Dieses Blogpost beleuchtet drei zentrale Regeln von Robert Bräutingm für eine Bisness-Contept getriebene Paketierung in Softwareprojekten und vertieft praktische Aspekt, welche beim Einsatz in realen Projekten auftreten können.
 
-Dazu werden Varianten für Clean- und DDD-Architektur sowie für **Jakarta EE**-basierte Systeme vorgestellt.
+Dazu werden Varianten von Paketstrukturen für **Jakarta EE** sowie Clean-Architektur und DDD basierte Projekte vorgestellt.
 
 Als Ausgangspunkt der Betrachtung statischer Code-Strukturen wie *Pakete" eines Softwaresystems, wird das **C4-Modell** für die grundlegende Terminologie und Abstraktion verwendet. 
 
