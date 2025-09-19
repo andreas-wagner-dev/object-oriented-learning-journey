@@ -3,7 +3,7 @@
 # Kontextgetriebene Paketierung in Softwareprojekten
 
 
-```@startuml
+@startuml
 title Generisches Packaging-Gesetz: Abstraktionen (a) & Detailpakete (p)
 
 ' Root-Package
@@ -39,7 +39,7 @@ note right of pN
      von a[X].
 end note
 
-```@enduml
+@enduml
 
 
 Fast jeder Entwickler beginnt damit, Packages lediglich als ein Werkzeug zur Organisation von Klassen zu nutzen – meist so, wie es in dem Moment logisch erscheint.  Doch eine *Packaging-Strategie* kann weitaus mächtiger sein: Sie kann *Wissen* enthalten, *Orientierung* bieten und die langfristige *Wartbarkeit* der Software erheblich verbessern.
