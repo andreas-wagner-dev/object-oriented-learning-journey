@@ -1,3 +1,183 @@
+1. Formale Definition der Hierarchie
+Gegeben:
+n[0]: Höchste Abstraktionsgrenze der Anwendung (Root-Namespace).
+m: Anzahl aller Abstraktionen innerhalb der Grenze n[0].
+Hierarchieebenen: n[0] bis n[m], wobei jede Ebene eine Abstraktion mit dem gleichen Name repräsentiert.
+
+
+**Definitionen**
+Definitionen
+
+
+Start: n[0] = höchste Abstraktionsgrenze der Anwendung.
+Ende: n[m] wobei m = Summe aller Abstraktionen innerhalb von Abstraktionsgrenze n = m.
+- b[n] = Namespace auf Ebene n (z. B. com.company.[context-boundary])
+- a[n+1] = Abstraktion auf Ebene n+1, z. B. Interface, abstrakte Klasse oder Domain-Konzept
+- p[n+1] = Package, das ausschließlich Implementierungen der Korrespondierenen Abstraktion *a[n+1]* enthält
+
+```
+Beziehung,Notation,Beispiel,Bedeutung
+Boundary → Abstraction,b[n] → a[n+1],Das Paket b[n] enthält die Abstraktion a[n+1],com.example.billing → Bill.java
+Abstraction → Package,a[n] → p[n],Die Abstraktion a[n] definiert das Paket p[n],Bill.java → com.example.billing.bill
+Detaillierung,a[n] ⊲ a[n+1],a[n+1] ist eine Spezialisierung/Implementierung von a[n],Bill ⊲ TaxedBill
+Aggregation,a[n] → a[m],a[n] enthält/verwaltet a[m] (keine Detaillierung!), Billing → Bill
+```
+
+**Hinweis:**
+
+Die Paketstruktur folgt der Abstraktionshierarchie: jedes Package p[n+1] implementiert die Abstraktion a[n+1] innerhalb des Namespace b[n].
+
+Benennung ist konsistent: Pakete und Abstraktionen haben den gleichen Namen, um Abstraktionsgrad und Kontext sofort erkennbar zu machen.
+
+
+**Axiome / Regeln**
+*Existenzregel für Abstraktionen*
+**Jede Abstraktion a[n] darf im globalen Namespace oder in einem höheren Paket-Level existieren.**
+```
+a[n] ∈ {n[0], n[0].*}
+```
+*Existenzregel für Implementierungspakete*
+**Ein Package p[n] darf nur existieren, wenn eine gleichnamige Abstraktion a[n] entweder im globalen Namespace oder in einem höheren Level existiert.**
+```
+∃ a[n] : a[n] ∈ {n[0], n[0].*} ⇒ p[n] darf existieren
+```
+*Inhaltsregel für Implementierungspakete*
+**Jedes p[n] darf ausschließlich Implementierungen, Spezialisierungen oder Detail-Aspekte von a[n] enthalten.**
+*Formal:*
+```
+∀ c ∈ p[n] : c ⊑ a[n]
+wobei ⊑ für „ist Spezialisierung / Implementierung von" steht.
+```
+
+```
+ich möchte eine OOP Package Design Regel Formalisieren
+```
+Formales Packaging-Gesetz
+Definitionen
+a[n] = Abstraktion auf Ebene n
+(z. B. Interface, abstrakte Klasse oder Domain-Konzept)
+p[n] = Package, das ausschließlich Implementierungen von a[n] enthält
+Root = com.company.<app> = globales Root-Package für die gesamte Anwendung
+
+
+
+**Formales Packaging-Gesetz**
+*Definitionen*
+a[n] = Abstraktion auf Ebene n
+p[n] = Package, das ausschließlich Implementierungen von a[n] enthält
+
+*Axiome*
+
+com.company.<app> = globales Root-Package.
+Jede Abstraktion a[n] darf im lokalen Root-Package existieren.
+Jedes Package p[n] darf nur existieren, wenn eine gleichnamige Abstraktion a[n] im lokalen Root oder auf einer höheren a[n-1] existiert.
+p[n] enthält ausschließlich Implementierungen, Spezialisierungen oder Detail-Aspekte von a[n].
+
+
+
+
+```mermaid
+graph TD
+    %% Root-Namespace
+    s0["s[0] = com.example"]
+
+    %% Abstraktion Ebene 0 (Aggregator)
+    s0 --> a0_billing["a[0] = Billing.java"]
+    s0 --> a0_bill["a[0] = Bill.java"]
+    s0 --> a0_rule["a[0] = Rule.java"]
+    s0 --> a0_tax["a[0] = Tax.java"]
+
+    %% Aggregationsbeziehung
+    a0_billing -->|"aggregiert"| a0_bill
+
+    %% Pakete Ebene 1
+    a0_bill --> p1_bill["p[1] = com.example.billing.bill"]
+    a0_rule --> p1_rule["p[1] = com.example.billing.rule"]
+    a0_tax --> p1_tax["p[1] = com.example.billing.tax"]
+
+    %% Implementierungen in p[1]
+    p1_bill --> StoredBill["StoredBill.java"]
+    p1_bill --> TaxedBill["TaxedBill.java"]
+    p1_bill --> PaidBill["PaidBill.java"]
+
+    p1_rule --> Unit["Unit.java"]
+    p1_rule --> StoredRule["StoredRule.java"]
+    p1_rule --> TimedRule["TimedRule.java"]
+    p1_rule --> ConfirmedRule["ConfirmedRule.java"]
+
+    p1_tax --> UKTax["UKTax.java"]
+    p1_tax --> EUTax["EUTax.java"]
+
+    %% Detaillierungsrelationen
+    a0_bill -->|⊲ 1.1| StoredBill
+    a0_bill -->|⊲ 1.1| TaxedBill
+    a0_bill -->|⊲ 1.1| PaidBill
+
+    a0_rule -->|⊲ 1.2| Unit
+    a0_rule -->|⊲ 1.1| StoredRule
+    a0_rule -->|⊲ 1.4| TimedRule
+    a0_rule -->|⊲ 1.4| ConfirmedRule
+
+    a0_tax -->|⊲ 1.1| UKTax
+    a0_tax -->|⊲ 1.1| EUTax
+
+    %% Strukturelle Beziehung: Bill → Tax (1.3)
+    a0_bill -->|⊲ 1.3| a0_tax
+
+    %% Stile
+    classDef aggregate fill:#f96,stroke:#333;
+    classDef abstract fill:#f9f,stroke:#333;
+    classDef package fill:#bbf,stroke:#333;
+    classDef impl fill:#9f9,stroke:#333;
+
+    class a0_billing aggregate;
+    class a0_bill,a0_rule,a0_tax abstract;
+    class p1_bill,p1_rule,p1_tax package;
+    class StoredBill,TaxedBill,PaidBill,Unit,StoredRule,TimedRule,ConfirmedRule,UKTax,EUTax impl;
+
+    %% Legende
+    linkStyle 0 stroke:#f66,stroke-width:2px,stroke-dasharray: 5 5;
+    linkStyle 1,2,3,4,5,6,7,8,9 stroke-width:2px;  %%
+```
+
+
+
+
+
+*Schablone*
+
+- Ersetze <app> durch deinen App-Namen (z. B. todo).
+- Kopiere den Block a[N] und p[N], wenn du weitere Abstraktionen/Detailpakete einfügen willst.
+- Die Indizes [N], [N.M], [N.M.K] kannst du beliebig erweitern, um tiefere Verschachtelungen darzustellen.
+
+@startuml
+title Generisches Packaging-Gesetz: Abstraktionen (a) & Detailpakete (p)
+@enduml
+
+Existenzregel:
+Ein <package-for-abstraction> darf nur dann vorkommen, wenn eine gleichnamige <abstraction> im selben Kontext existiert.
+Namensregel:
+p[N] muss denselben Index wie a[N] tragen.
+Rekursion:
+Sowohl <sub-abstraction-list> als auch <package-for-abstraction-list> sind beliebig tief verschachtelbar.
+
+
+```mermaid
+classDiagram
+  class App
+  class Task
+  class Policy
+  class User
+
+  class app
+  class task
+  class policy
+  class user
+
+  App <|-- app
+  Task <|-- task
+  Policy <|-- policy
+  User <|-- user
 
 
 ```piantumi
@@ -185,7 +365,7 @@ com.example.billing
 ├── Rule.java <- Geschäftobjekt im Kontext
 ├── Tax.java <- Geschäftobjekt im Kontext
 ├── Bill.java <- Geschäftobjekt im Kontext
-└── Billing.java  <- Geschäftobjekt im Kontext
+└── Billing.java  <- Geschäftobjekt im Kontext aggrigate Bill.java
 ```
 
 Falsch wäre:  
