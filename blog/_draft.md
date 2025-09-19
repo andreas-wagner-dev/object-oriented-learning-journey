@@ -1,10 +1,17 @@
 # Kontextgetriebene Paketierung in Softwareprojekten
 
-Fast jeder Entwickler beginnt damit, Packages lediglich als ein Werkzeug zur Organisation von Klassen zu nutzen – meist so, wie es in dem Moment logisch erscheint.  
-Doch eine Packaging-Strategie kann weitaus mächtiger sein: Sie kann Wissen enthalten, Orientierung bieten und die langfristige Wartbarkeit der Software erheblich verbessern.
+Fast jeder Entwickler beginnt damit, Packages lediglich als ein Werkzeug zur Organisation von Klassen zu nutzen – meist so, wie es in dem Moment logisch erscheint.  Doch eine *Packaging-Strategie* kann weitaus mächtiger sein: Sie kann *Wissen* enthalten, *Orientierung* bieten und die langfristige *Wartbarkeit* der Software erheblich verbessern.
 
-Dieses Blogpost zeigt drei zentrale Regeln und beleuchtet typische Aspekts aus der Praxis, die beim Einsatz in realen Projekten auftauchen.  
-Dazu werden Varianten für Clean- und DDD-Architektur sowie für  **Jakarta EE**-basierte Systeme vorgestellt.
+Dieses Blogpost beleuchtet drei zentrale Regeln von Robert Bräutingm für eine Bisness-Contept getriebene Paketierung in Softwareprojekten und vertieft praktische Aspekt, welche beim Einsatz in realen Projekten auftreten können.
+
+Dazu werden Varianten für Clean- und DDD-Architektur sowie für **Jakarta EE**-basierte Systeme vorgestellt.
+
+Als Ausgangspunkt der Betrachtung statischer Code-Strukturen wie *Pakete" eines Softwaresystems, wird das C4-Modell für die grundlegende Terminologie und Abstraktion verwendet. Die 4 Sichten im Modell sind entsprechend ihrer hierarchischen Ebene organisiert:
+- Kontext-Diagramme – Ebene 1: Zeigen den Umfang eines Systems sowie seine Beziehung zu Benutzern und anderen Systemen.
+- Container-Diagramme – Ebene 2: ... die Laufzeitgrenzen um Komponenten und separat betreibare Einheiten.
+- Komponenten-Diagramme – Ebene 3:  ... Verantwortlichkeiten und Technologie-/Implementierungsdetails. Aspekte wie Komponenten verpackt werden (z. B. eine Komponente im Vergleich zu vielen Komponenten pro Artifakt)
+- Quelltext-Diagramme – Ebene 4: ... zusätzliche Details über den Entwurf der Architekturelemente, die auf Code abgebildet werden können.
+ 
 
 ---
 
