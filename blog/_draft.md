@@ -1,3 +1,50 @@
+**Semantische Regeln**
+
+1. Existenzregel:
+Ein <package-for-abstraction> darf nur dann vorkommen, wenn eine gleichnamige <abstraction> im selben Kontext existiert.
+
+2. Namensregel:
+p[N] muss denselben Index wie a[N] tragen.
+
+3. Rekursion:
+Sowohl <sub-abstraction-list> als auch <package-for-abstraction-list> sind beliebig tief verschachtelbar.
+
+4. Anti-Pattern-Regel (ergänzt als semantische Einschränkung, nicht BNF):
+Innerhalb von p[N] dürfen keine Klassen mit Suffixen wie *Service, *Repository, *Manager, *Access, *Validator existieren.
+
+```
+<root>          ::= "com.company." <app> "." <abstraction-list>
+
+<app>           ::= <identifier>
+
+<abstraction-list> 
+                 ::= <abstraction> | <abstraction> <abstraction-list>
+
+<abstraction>   ::= "a[" <id> "]"
+                     [ <sub-abstraction-list> ]
+                     [ <package-for-abstraction> ]
+
+<sub-abstraction-list>
+                 ::= <abstraction> | <abstraction> <sub-abstraction-list>
+
+<package-for-abstraction>
+                 ::= "p[" <id> "]"
+                     "(" "Implementierungen von a[" <id> "]" ")"
+                     [ <sub-abstraction-list> ]
+                     [ <package-for-abstraction-list> ]
+
+<package-for-abstraction-list>
+                 ::= <package-for-abstraction> | <package-for-abstraction> <package-for-abstraction-list>
+
+<id>            ::= <number> [ "." <number> [ "." <number> ... ] ]
+
+<identifier>    ::= <letter> { <letter> | <digit> }
+<number>        ::= <digit> { <digit> }
+<letter>        ::= "A" | "B" | ... | "Z" | "a" | "b" | ... | "z"
+<digit>         ::= "0" | "1" | ... | "9"
+```
+
+
 
 
 # Kontextgetriebene Paketierung in Softwareprojekten
