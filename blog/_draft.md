@@ -1,4 +1,4 @@
-1. Formale Definition der Hierarchie
+1. Formale Definition einer Paket-Hierarchie
 Gegeben:
 n[0]: Höchste Abstraktionsgrenze der Anwendung (Root-Namespace).
 m: Anzahl aller Abstraktionen innerhalb der Grenze n[0].
@@ -9,9 +9,9 @@ Hierarchieebenen: n[0] bis n[m], wobei jede Ebene eine Abstraktion mit dem gleic
 Definitionen
 
 
-Start: n[0] = höchste Abstraktionsgrenze der Anwendung.
-Ende: n[m] wobei m = Summe aller Abstraktionen innerhalb von Abstraktionsgrenze n = m.
-- b[n] = Namespace auf Ebene n (z. B. com.company.[context-boundary])
+Start: n[0] = 0 höchste Ebene der Anwendung.
+Ende: n[m] = m wobei m = Summe aller Abstraktionen innerhalb von Abstraktionsgrenze n = m.
+- b[n] = Namespace auf Ebene der Abstraktionsgrenze n[0] (z. B. com.company.[context-boundary])
 - a[n+1] = Abstraktion auf Ebene n+1, z. B. Interface, abstrakte Klasse oder Domain-Konzept
 - p[n+1] = Package, das ausschließlich Implementierungen der Korrespondierenen Abstraktion *a[n+1]* enthält
 
