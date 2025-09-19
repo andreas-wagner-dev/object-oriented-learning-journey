@@ -1,1 +1,466 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaBar Software Package Analysis</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+        
+        .version-panel {
+            padding: 30px;
+            position: relative;
+        }
+        
+        .version-4 {
+            background: linear-gradient(135deg, #ff6b6b 5%, #ffd93d 95%);
+        }
+        
+        .version-5 {
+            background: linear-gradient(135deg, #6c5ce7 5%, #74b9ff 95%);
+        }
+        
+        .version-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .plot-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .metric-card {
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d3436;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #636e72;
+            margin-top: 5px;
+        }
+        
+        .package-list {
+            background: rgba(255,255,255,0.9);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .package-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .package-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-section {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            padding: 40px;
+            color: white;
+        }
+        
+        .summary-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .improvement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .improvement-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .improvement-card h3 {
+            margin-top: 0;
+            color: #fff;
+        }
+        
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BaBar Software Package Analysis</h1>
+            <p>Abstractness vs. Instability Metrics Comparison</p>
+        </div>
+        
+        <div class="comparison-grid">
+            <!-- Version 4 Panel -->
+            <div class="version-panel version-4">
+                <div class="version-title">Version 4.0 (Legacy)</div>
+                
+                <div class="plot-container">
+                    <canvas id="plotV4" width="400" height="400"></canvas>
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">0.73</div>
+                        <div class="metric-label">Avg Distance</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">23</div>
+                        <div class="metric-label">Problem Packages</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">0.15</div>
+                        <div class="metric-label">Avg Abstractness</div>
+                    </div>
+                </div>
+                
+                <div class="package-list">
+                    <div class="package-item">
+                        <span>DatabaseManager</span>
+                        <span>I: 0.1, A: 0.0, D: 0.9</span>
+                    </div>
+                    <div class="package-item">
+                        <span>EventProcessor</span>
+                        <span>I: 0.2, A: 0.1, D: 0.7</span>
+                    </div>
+                    <div class="package-item">
+                        <span>FileHandler</span>
+                        <span>I: 0.1, A: 0.0, D: 0.9</span>
+                    </div>
+                    <div class="package-item">
+                        <span>ConfigManager</span>
+                        <span>I: 0.0, A: 0.0, D: 1.0</span>
+                    </div>
+                    <div class="package-item">
+                        <span>LoggingService</span>
+                        <span>I: 0.3, A: 0.1, D: 0.6</span>
+                    </div>
+                    <div class="package-item">
+                        <span>NetworkController</span>
+                        <span>I: 0.2, A: 0.0, D: 0.8</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Version 5 Panel -->
+            <div class="version-panel version-5">
+                <div class="version-title">Version 5.0 (Refactored)</div>
+                
+                <div class="plot-container">
+                    <canvas id="plotV5" width="400" height="400"></canvas>
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">0.31</div>
+                        <div class="metric-label">Avg Distance</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">7</div>
+                        <div class="metric-label">Problem Packages</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">0.42</div>
+                        <div class="metric-label">Avg Abstractness</div>
+                    </div>
+                </div>
+                
+                <div class="package-list">
+                    <div class="package-item">
+                        <span>Database</span>
+                        <span>I: 0.8, A: 0.1, D: 0.1</span>
+                    </div>
+                    <div class="package-item">
+                        <span>Events</span>
+                        <span>I: 0.2, A: 0.9, D: 0.1</span>
+                    </div>
+                    <div class="package-item">
+                        <span>Storage</span>
+                        <span>I: 0.9, A: 0.0, D: 0.1</span>
+                    </div>
+                    <div class="package-item">
+                        <span>Configuration</span>
+                        <span>I: 0.1, A: 0.8, D: 0.1</span>
+                    </div>
+                    <div class="package-item">
+                        <span>Logging</span>
+                        <span>I: 0.7, A: 0.2, D: 0.1</span>
+                    </div>
+                    <div class="package-item">
+                        <span>Network</span>
+                        <span>I: 0.4, A: 0.7, D: 0.1</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <div class="summary-title">Verbesserungen von Version 4 zu Version 5</div>
+                
+                <div class="improvement-grid">
+                    <div class="improvement-card">
+                        <h3>🎯 Distance Metric</h3>
+                        <p><strong>-57% Verbesserung:</strong> Von 0.73 auf 0.31</p>
+                        <p>Packages liegen näher zur Main Sequence</p>
+                    </div>
+                    
+                    <div class="improvement-card">
+                        <h3>📦 Problem Packages</h3>
+                        <p><strong>-70% Reduktion:</strong> Von 23 auf 7</p>
+                        <p>Weniger problematische Package-Kombinationen</p>
+                    </div>
+                    
+                    <div class="improvement-card">
+                        <h3>🏗️ Abstractness</h3>
+                        <p><strong>+180% Erhöhung:</strong> Von 0.15 auf 0.42</p>
+                        <p>Mehr Interfaces und abstrakte Klassen</p>
+                    </div>
+                    
+                    <div class="improvement-card">
+                        <h3>🔄 Refactoring Maßnahmen</h3>
+                        <ul>
+                            <li>Einführung von Interfaces</li>
+                            <li>Package-Splitting nach CRP</li>
+                            <li>Dependency Inversion angewendet</li>
+                            <li>Stabile Abstractions eingeführt</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="improvement-card">
+                        <h3>📈 Design Quality</h3>
+                        <ul>
+                            <li>Bessere Testbarkeit</li>
+                            <li>Reduzierte Kopplung</li>
+                            <li>Erhöhte Kohäsion</li>
+                            <li>Verbesserte Wartbarkeit</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="improvement-card">
+                        <h3>⚡ Entwicklung</h3>
+                        <ul>
+                            <li>Weniger "Morning After Syndrome"</li>
+                            <li>Schnellere Build-Zeiten</li>
+                            <li>Isolierte Package-Entwicklung</li>
+                            <li>Einfachere Release-Zyklen</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        // Version 4 Plot Data (Legacy - many packages too concrete and stable)
+        const v4Data = [
+            {x: 0.0, y: 0.0, label: 'ConfigManager', color: '#e74c3c'},
+            {x: 0.1, y: 0.0, label: 'DatabaseManager', color: '#e74c3c'},
+            {x: 0.1, y: 0.0, label: 'FileHandler', color: '#e74c3c'},
+            {x: 0.2, y: 0.0, label: 'NetworkController', color: '#e74c3c'},
+            {x: 0.2, y: 0.1, label: 'EventProcessor', color: '#f39c12'},
+            {x: 0.3, y: 0.1, label: 'LoggingService', color: '#f39c12'},
+            {x: 0.4, y: 0.2, label: 'UIComponents', color: '#f39c12'},
+            {x: 0.5, y: 0.3, label: 'DataAccess', color: '#f39c12'},
+            {x: 0.6, y: 0.1, label: 'Utilities', color: '#f39c12'},
+            {x: 0.7, y: 0.2, label: 'Validation', color: '#f39c12'},
+            {x: 0.8, y: 0.1, label: 'Serialization', color: '#27ae60'},
+            {x: 0.9, y: 0.0, label: 'TestHelpers', color: '#27ae60'}
+        ];
+
+        // Version 5 Plot Data (Refactored - better distributed along main sequence)
+        const v5Data = [
+            {x: 0.1, y: 0.8, label: 'Configuration', color: '#27ae60'},
+            {x: 0.2, y: 0.9, label: 'Events', color: '#27ae60'},
+            {x: 0.4, y: 0.7, label: 'Network', color: '#27ae60'},
+            {x: 0.7, y: 0.2, label: 'Logging', color: '#27ae60'},
+            {x: 0.8, y: 0.1, label: 'Database', color: '#27ae60'},
+            {x: 0.9, y: 0.0, label: 'Storage', color: '#27ae60'},
+            {x: 0.3, y: 0.6, label: 'ProcessingCore', color: '#27ae60'},
+            {x: 0.5, y: 0.4, label: 'DataModel', color: '#27ae60'},
+            {x: 0.6, y: 0.3, label: 'BusinessLogic', color: '#27ae60'},
+            {x: 0.1, y: 0.7, label: 'Interfaces', color: '#27ae60'}
+        ];
+
+        function createPlot(canvasId, data, title) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            // Create main sequence line data
+            const mainSequence = [];
+            for (let i = 0; i <= 100; i++) {
+                const x = i / 100;
+                const y = 1 - x;
+                mainSequence.push({x: x, y: y});
+            }
+            
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Main Sequence',
+                        data: mainSequence,
+                        borderColor: '#2c3e50',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        showLine: true,
+                        fill: false,
+                        tension: 0
+                    }, {
+                        label: 'Packages',
+                        data: data,
+                        backgroundColor: data.map(d => d.color),
+                        borderColor: data.map(d => d.color),
+                        borderWidth: 2,
+                        pointRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: title,
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = data[context.dataIndex];
+                                    if (point && point.label) {
+                                        const distance = Math.abs(point.x + point.y - 1).toFixed(2);
+                                        return [
+                                            `Package: ${point.label}`,
+                                            `Instability: ${point.x.toFixed(2)}`,
+                                            `Abstractness: ${point.y.toFixed(2)}`,
+                                            `Distance: ${distance}`
+                                        ];
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 0,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Instability (I)',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            grid: {
+                                color: '#ecf0f1'
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Abstractness (A)',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            grid: {
+                                color: '#ecf0f1'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'point'
+                    }
+                }
+            });
+        }
+
+        // Create both plots
+        createPlot('plotV4', v4Data, 'Abstractness vs Instability - Version 4');
+        createPlot('plotV5', v5Data, 'Abstractness vs Instability - Version 5');
+    </script>
+</body>
+</html>
