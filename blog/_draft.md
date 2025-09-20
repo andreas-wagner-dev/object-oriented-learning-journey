@@ -379,29 +379,45 @@ Sub-Packages dienen der **Detaillierung** eines bestehenden Konzepts, nicht der 
 Ein Beispiel:  
 - `com.example.billing` (Business-Konzept „Billing“)  
 - `com.example.billing.rule` (Details: Geschäftsregeln des Billings)
+- `com.example.billing.rule.unit` (Details: Einheiten einer Rule)
 
 **Details** - sind Geschäftsregeln und beziehen sich immer auf Geschäftobjekte aus dem lokalen Kontext  
 
 ```
 com.example.billing
+├── app/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Bill) aus dem Business-Kontext
+│ ├── MonitoredBillingApp.java  
+│ ├── LoggedBillingApp.java  
+│ └── BillingApp.java  <- realisiert App (startup, injections, Configuration, Properites)
+├── user/  <- fachliche Details für Benuzter-oberflächen
+│ ├── menu/ <- Navigation-Aspekt auf der Benuzteroberflächenl - 
+│ │   └──LockedMenu.java <- dekoriert Menu
+│ ├── Admin.java <- dekoriert User
+│ └── Menu.java (interface)
+├── resouce/  <- fachliche Details von Benuzteroberflächen
+│ ├── BillResouce.java 
+│ └── BillingResouces.java realisiert die REST Service API
 ├── bill/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Bill) aus dem Business-Kontext
-│ ├── StoredBill.java  <- realisiert/erweitert/dekoriert/detailliert Bill
+│ ├── StoredBill.java  <- dekoriert Bill
 │ ├── TaxedBill.java  
 │ └── PaidBill.java  
-├── rule/ <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekt (Rule) aus dem Business-Kontext
-│ ├── unit/ <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Unit) aus dem Sub Business-Kontext
-│ │   └──ISO.java <- realisiert/erweitert/dekoriert/detailliert Unit
+├── rule/ <- fachliche Details
+│ ├── unit/ <- fachliche Details - Geschäftsregeln eines Geschäftobjekts (Unit) 
+│ │   └──ISO.java <- realisiert Unit
 │ ├── StoredRule.java
 │ ├── TimedRule.java
 │ ├── ConfirmedRule.java
-│ └── Unit.java <- Geschäftobjekt im Sub Kontext
-├── tax/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Tax) aus dem Business-Kontext
-│ ├── UKTax.java  <- realisiert/erweitert/dekoriert/detailliert Tax
+│ └── Unit.java <- Geschäftobjekt im Sub-Kontext
+├── tax/  <- fachliche Details - Geschäftsregeln eines Geschäftobjekts (Tax) aus dem Business-Kontext
+│ ├── UKTax.java  <- dekoriert Tax
 │ └── EUTax.java  
-├── Rule.java <- Geschäftobjekt im Kontext
-├── Tax.java <- Geschäftobjekt im Kontext
-├── Bill.java <- Geschäftobjekt im Kontext
-└── Billing.java  <- Geschäftobjekt im Kontext aggrigate Bill.java
+├── App.java (interface) <- Setup-/Monitoring-/Logging-Aspekte als Geschäft-Konzept
+├── User.java (interface) <- UI-Aspekte als Geschäft-Konzept
+├── Resouce.java (interface) <- REST-Service-Aspekte als Geschäft-Konzept
+├── Rule.java (interface)
+├── Tax.java (interface)
+├── Bill.java (interface)
+└── Billing.java (interface) aggrigate Bill
 ```
 
 Falsch wäre:  
