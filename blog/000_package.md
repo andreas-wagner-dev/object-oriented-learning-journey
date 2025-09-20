@@ -5,36 +5,24 @@ Chat:
 Propm:
 
 Formale Regeln für Paketstrukturen
+
 1. Paketentstehung
 Pakete entstehen ausschließlich auf der Ebene von gleichnamigen Abstraktionen und nur dann, wenn eine Abstraktion existiert:
+```
 ∃p[n]  ⟺  ∃a[n]∈b[n−1]\exists p[n] \iff \exists a[n] \in b[n-1]∃p[n]⟺∃a[n]∈b[n−1]
-
+```
 a[n]: Abstraktion (Interface oder abstrakte Klasse)
 p[n]: Paket mit Namen a[n].toLowerCase()
-b[n-1]: Übergeordneter Namespace (z. B. com.example.billing)
+b[n-1]: Übergeordneter Namespace (z. B. com.example.pdc)
 
-**Korrektes Beispiel:**
-```
-// Abstraktion (Interface)
-com.example.billing.App
-// Daraus entsteht das Paket (Kleinbuchstaben, Singular)
-com.example.billing.app/
-```
-
-
-**2. Namenskonventionen**
+2. Namenskonventionen für Paketnamen:
 Der Paketname muss dem Namen der korrespondierenden Abstraktion entsprechen:
-- Kleinbuchstaben
-- Singularform
-- 1:1-Korrespondenz
-
-**Formale Definition:**
+- Kleinbuchstaben,Singularform, 1:1-Korrespondenz
+- Formale Definition
 ```
 ∀p[n]:Name(p[n])=Name(a[n]).toLowerCase()∧isSingular(Name(a[n]))\forall p[n]: \text{Name}(p[n]) = \text{Name}(a[n]).\text{toLowerCase()} \land \text{isSingular}(\text{Name}(a[n]))∀p[n]:Name(p[n])=Name(a[n]).toLowerCase()∧isSingular(Name(a[n]))
 ```
-
-
-**3. Paketinhalte**
+1. Paketinhalte
 Pakete dürfen nur Realisierungen ihrer gleichnamigen Abstraktion enthalten:
 ```
 ∀c∈p[n]:c⪯a[n]\forall c \in p[n]: c \preceq a[n]∀c∈p[n]:c⪯a[n]
@@ -52,6 +40,8 @@ Beispiel für ungültigen Zyklus:
 ```
 com.example.billing.a → com.example.billing.b → com.example.billing.a
 ```
+
+
 
 Attmpts:
 
@@ -94,32 +84,87 @@ a[n+1]=Abstraktion auf Ebene n+1(Interface, abstrakte Klasse oder Domain-
 | Pluralform | FEHLER: Abstraktionsname 'Rules' ist im Plural. Verwende Singularform. | Umbenennen in Rule. |
 | Falsche Realisierung | FEHLER: Klasse InvalidBill in Paket com.example.billing.bill realisiert nicht Bill. Lösung: 1. Implementiere Bill in InvalidBill 2. Verschiebe InvalidBill in das korrekte Paket | Klasse korrigieren oder verschieben. |
 
-Priorisierung der Fehler:
 
-KRITISCH (🚨): Zirkuläre Abhängigkeiten
-HOCH (🔴): Fehlende Domain-Pakete/Pluralformen
-MITTEL (🟠): Falsche Paketnamen/leere Pakete
+Vergleiche imperativen Stil gegen OOP-Stil mit den folgenden Anforderungen und Quellen:
 
+**1 Fachliche Anforderungen:**
 
+1.1 Priorisierung der Fehler:
+- KRITISCH (🚨): Zirkuläre Abhängigkeiten
+- HOCH (🔴): Fehlende Domain-Pakete/Pluralformen
+- MITTEL (🟠): Falsche Paketnamen/leere Pakete
 
-Erweiterte Zyklenerkennung:
-
-Findet direkte und indirekte Zyklen
-Generiert detaillierte Pfadbeschreibungen
-Bietet 3 konkrete Lösungsvorschläge pro Zyklus
-
-
-
-Die Implementierung folgt strikt deinen Anforderungen:
-
-Nur englische Code-Kommentare
-Deutsche Erklärungen in der Dokumentation
-Klare Trennung zwischen Code und Erklärung
-Priorisierte Validierung mit detaillierten Lösungsvorschlägen
+1.. Zyklenerkennung:
+- Findet direkte und indirekte Zyklen
+- Generiert detaillierte Pfadbeschreibungen
+- Bietet 3 konkrete Lösungsvorschläge pro Zyklus als text Meldung
 
 
+**2 Implementierungs Anforderungen:**
 
+2.1 Object-Nameing:
+https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
+https://www.yegor256.com/2015/03/09/objects-end-with-er.html
+https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html
+
+2.2 Realisierung ausliißlier im OOP Stil für Dependency Injects ohne containers und Decorator-Pattern:
+https://www.yegor256.com/2014/10/03/di-containers-are-evil.html
+https://www.yegor256.com/2015/02/26/composable-decorators.html
+https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html
+https://www.yegor256.com/2016/01/26/defensive-programming.html
+
+2.3 Package Design Check 'pdc' wie hier:
+Quelle: https://javadevguy.wordpress.com/2017/12/18/happy-packaging/
+Beachte Formale Regeln für Paketstrukturen:
+2.3.1. Paketentstehung 
+Pakete entstehen ausschließlich auf der Ebene von gleichnamigen Abstraktionen und nur dann, wenn eine Abstraktion existiert:
 ```
+∃p[n]  ⟺  ∃a[n]∈b[n−1]\exists p[n] \iff \exists a[n] \in b[n-1]∃p[n]⟺∃a[n]∈b[n−1]
+```
+a[n]: Abstraktion (Interface oder abstrakte Klasse)
+p[n]: Paket mit Namen a[n].toLowerCase()
+b[n-1]: Übergeordneter Namespace (z. B. com.example.pdc)
+
+2.3.3 Paketinhalte
+Pakete dürfen nur Realisierungen ihrer gleichnamigen Abstraktion enthalten:
+```
+∀c∈p[n]:c⪯a[n]\forall c \in p[n]: c \preceq a[n]∀c∈p[n]:c⪯a[n]
+```
+- ⊑: "ist eine Realisierung von" (Implementierung, Vererbung oder Dekoration)
+- c: Klasse im Paket
+- a[n]: Abstraktion des Pakets
+
+2.3.3 
+Erweitere diese Paketstruktur
+
+com.example.pdc/            (Namespace)
+├── App.java                (Interface)
+├── Package.java            (Interface)
+├── Rule.java               (Interface)
+├── Dependency.java         (Interface)
+├── app/                    (Paket für App-Realisierungen)
+│   ├── PDCApp.java      (implements App)
+│   └── ConsolePDCApp.java (decorates PDCApp -> entry point)
+├── package/                   (Paket für Package-Realisierungen)
+│   ├── SimplePackage.java      (extends Package)
+│   └── ....     
+└── rule/                   (Paket für Rule-Realisierungen)
+    ├── ....java           (Interface)
+    └── .../                (Paket für ...-Realisierungen)
+        └── ...java         (implements ..)
+
+//
+public ConsolePDCApp {
+  //
+  public static void main(String[] args){
+  // initialisierung start 
+  }
+}
+
+Hier ist der Beispielscode im imperativen Stil baue um nach OOP Still mit meinen Anforderungen und Quellen von oben:
+```
+
+
 void validatePackageRules(String rootPackage, Map<String, Exception> exceptions) {
     exceptions.clear();
 
