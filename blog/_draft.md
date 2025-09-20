@@ -385,7 +385,7 @@ Ein Beispiel:
 
 ```
 com.example.billing
-├── app/  <- fachliche Deteils - Geschäftsregeln eines Geschäftobjekts (Bill) aus dem Business-Kontext
+├── app/  <- fachliche Deteils - Geschäftsregeln für das Setup-/Monitoring-/Logging-Aspekte
 │ ├── MonitoredBillingApp.java  
 │ ├── LoggedBillingApp.java  
 │ └── BillingApp.java  <- realisiert App (startup, injections, Configuration, Properites)
@@ -423,6 +423,63 @@ com.example.billing
 Falsch wäre:  
 - com.example.billing.rule` enthält plötzlich ein Konzept „Notification“, das nichts mit Billing zu tun hat bzw. zu keinem der Geschäftobjekte im "billing" Paket eine Beziehung hat.  
 - oder ein Sub-Package `util`, das kein Business-Konzept darstellt, sondern nur nüzliche Klassen z. B. für ISO Einheiten sammelt.
+
+
+**Validierung**
+```
+boolean validatePackageRules(String rootPackage) {
+    return validatePackageRulesRecursive(rootPackage, rootPackage, 0);
+}
+
+private boolean validatePackageRulesRecursive(String currentPackage, String rootPackage, int level) {
+    // 1. Finde alle Abstraktionen im aktuellen Paket
+    List<Class<?>> abstractions = findAbstractions(currentPackage);
+
+    for (Class<?> abstraction : abstractions) {
+        String abstractionName = abstraction.getSimpleName();
+
+        // Regel: Namen immer in Singularform
+        if (abstractionName.endsWith("s")) {
+            return false; // Pluralform verboten
+        }
+
+        String expectedPackageName = abstractionName.toLowerCase();
+        String expectedPackagePath = currentPackage + "." + expectedPackageName;
+
+        // Regel 1: Paket muss existieren und Implementierungen enthalten
+        if (!packageExists(expectedPackagePath)) {
+            return false; // Verstoß gegen Existenzregel
+        }
+
+        List<Class<?>> implementations = findClassesInPackage(expectedPackagePath);
+        if (implementations.isEmpty()) {
+            return false; // Verstoß: Paket existiert, aber keine Implementierungen
+        }
+
+        for (Class<?> impl : implementations) {
+            if (!isSubtypeOf(impl, abstraction)) {
+                return false; // Verstoß: Klasse im Paket ist keine Implementierung der Abstraktion
+            }
+        }
+
+        // Regel 2: Paketname muss dem Abstraktionsnamen entsprechen
+        if (!getPackageName(expectedPackagePath).equals(expectedPackageName)) {
+            return false; // Verstoß gegen Namensregel
+        }
+
+        // Rekursive Validierung für Sub-Abstraktionen
+        if (!validatePackageRulesRecursive(expectedPackagePath, rootPackage, level + 1)) {
+            return false;
+        }
+    }
+
+    // Basis-Fall: Keine weiteren Abstraktionen gefunden
+    return true;
+}
+```
+
+
+
 
 ---
 
