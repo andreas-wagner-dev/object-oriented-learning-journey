@@ -1,8 +1,40 @@
 1. Formale Definition einer Paket-Hierarchie
-Gegeben:
-n[0]: Höchste Abstraktionsgrenze der Anwendung (Root-Namespace).
+*es sei Gegeben:*
+n[0]: Höchste Abstraktionsgrenze der Anwendung (com.company.<app>).
 m: Anzahl aller Abstraktionen innerhalb der Grenze n[0].
 Hierarchieebenen: n[0] bis n[m], wobei jede Ebene eine Abstraktion mit dem gleichen Name repräsentiert.
+
+
+
+
+# Pakete nach Abstraktionsgrad
+
+Pakete sind nach ihrem Abstraktionsgrad organisiert und benannt.  
+Die Pakete folgen streng ihren Abstraktionen, welche die Architektur-Hierarchie abbildet.
+
+```mermaid
+flowchart TD
+  %% Ebenen
+  A_top[Abstraktion a_n hoher Abstraktionsgrad]
+  P_impl[p_n Implementierungs-Package für a_n]  
+  A_lower[Abstraktion a_n-1 ''niedrigerer Abstraktionsgrad'']
+
+  %% Beziehungen
+  A_top -->|definiert / bildet Architektur| P_impl
+  P_impl -->|realisierung / spezialisiert auf| A_lower
+
+  %% Annotationen
+  style A_top fill:#f8f9fa,stroke:#111,stroke-width:1px
+  style P_impl fill:#ffffff,stroke:#111,stroke-width:1px,stroke-dasharray: 4 2
+  style A_lower fill:#f8f9fa,stroke:#111,stroke-width:1px
+
+  subgraph Legende[ ]
+    direction LR
+    L1[Abstraktion = Architektur-Ebene Interface oder Contract]
+    L2[Package = konkrete Implementierung  Spezialisierung]
+  end
+  L1 --- L2
+```
 
 
 **Definitionen**
@@ -22,6 +54,10 @@ Abstraction → Package,a[n] → p[n],Die Abstraktion a[n] definiert das Paket p
 Detaillierung,a[n] ⊲ a[n+1],a[n+1] ist eine Spezialisierung/Implementierung von a[n],Bill ⊲ TaxedBill
 Aggregation,a[n] → a[m],a[n] enthält/verwaltet a[m] (keine Detaillierung!), Billing → Bill
 ```
+
+
+
+
 
 **Hinweis:**
 
