@@ -7,23 +7,23 @@ https://chatgpt.com/
 
 Hi GPT, was bedeutet Folgendes, im Sinne von OOP, antworte kurz und pregnant:
 1. Objektorientiert?
-2. Type im sine von Objektorientiert
-3. Klasse im Sinne von Objektorientiert
-4. Object im Sinne von Objektorientiert
-5. Paket im Sinne von Objektorientiert
-6. Layer im Sinne von Objektorientiert
-7. System im Sinne von Objektorientiert
+2. Type
+3. Klasse
+4. Objekt
+5. Paket
+6. Layer
+7. System
 
 
 Klar – hier die kurze, prägnante OOP-Definition:
 
 Objektorientiert – Paradigma, das Software als Zusammenspiel autonomer Objekte modelliert.
-Type – Vertrag, der die Form und das Verhalten von Objekten beschreibt (Interface/Abstraktion).
-Klasse – Bauplan, der festlegt, wie ein Typ konkret implementiert wird.
-Object – laufende Instanz eines Typs/Klasse mit eigenem Zustand und Verhalten.
-Paket – logischer Namensraum, der zusammengehörige Typen/Objekte strukturiert.
-Layer – Abstraktionsebene, die Objekte nach Verantwortungsgrad hierarchisch trennt.
-System – Gesamtheit interagierender Objekte und Layer, die gemeinsam Verhalten realisieren.
+- Type – Vertrag, der die Form und das Verhalten von Objekten beschreibt (Interface/Abstraktion).
+- Klasse – Bauplan, der festlegt, wie ein Typ konkret implementiert wird.
+- Object – laufende Instanz eines Typs/Klasse mit eigenem Zustand und Verhalten.
+- Paket – logischer Namensraum, der zusammengehörige Typen/Objekte strukturiert.
+- Layer – Abstraktionsebene, die Objekte nach Verantwortungsgrad hierarchisch trennt.
+- System – Gesamtheit interagierender Objekte und Layer, die gemeinsam Verhalten realisieren.
 
 Damit siehst du:  
 - **Objektorientiert** als Wurzel  
