@@ -1,4 +1,4 @@
-# why I started this blog
+# Why I started this blog? - about my journey to relearning **O**bject-**O**riented **P**rogramming (OOP))
 
 For years, I searched for the **silver bullet** to build business software from scratch. What I found—mainstream DDD, Clean Architecture, and similar approaches—never fit my needs. Instead, it frustrated me. 
 But I didn’t give up. I returned to the roots and started relearning **o**bject-**o**riented **p**rogramming (OOP).
