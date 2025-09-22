@@ -549,4 +549,63 @@ Ich schlage vor, diese Regeln in ähnlicher Form wie dein Packaging-Gesetz zu ve
 - stability(pkg) = Instabilität = |dep_out(pkg)| / (|dep_out(pkg)| + |dep_in(pkg)|) (0 = sehr stabil, 1 = instabil)
 - abstractness(pkg) = |abstracts(pkg)| / |classes(pkg)|
 
+**Regeln**
+
+**1. Reuse/Release (REP)**
+```
+Wenn ein Paket pkg_reuse zur Wiederverwendung gedacht ist, dann
+    pkg_reuse muss versioniert werden und 
+    releasebarkeit garantieren
+```
+**2. Common Reuse Principle (CRP)**
+```
+Für jedes Paket pkg:
+  ∀ c ∈ classes(pkg) : wenn c in Nutzung ist,
+    dann sind typischerweise classes(pkg)\{c} auch in Nutzung
+```
+**3. Common Closure Principle (CCP)**
+```
+Für jedes Paket pkg:
+  ändere Klassen, die sich häufig gemeinsam ändern → sollten im selben pkg sein
+```
+**4 Acyclic Dependencies Principle (ADP)**
+Der gerichtete Graph G = (V = alle Pakete, E = Abhängigkeiten zwischen Paketen) muss azyklisch sein.
+```
+**6. Stable Dependencies Principle (SDP)**
+Für jedes Paket pkg und jedes pkg_dep ∈ dep_out(pkg):
+  stability(pkg) ≥ stability(pkg_dep)
+```
+**5. Stable Abstractions Principle (SAP)**
+```
+Für jedes Paket pkg:
+  Wenn stability(pkg) ≈ 0 (sehr stabil),
+    dann abstractness(pkg) ≈ 1 (hoher Anteil an Abstraktionen)
+```
+
+**Zusatz aus den Package Principles**
+
+Einige Prinzipien von Robert C. Martin & Kollegen, relevant fürs Package-Design:
+- REP: Reuse/Release Equivalency Principle — das Paket, das wiederverwendet wird, sollte auch versionierbar / releasbar sein. 
+- CRP: Common Reuse Principle — Klassen, die zusammen wiederverwendet werden, sollten im selben Paket sein. 
+- CCP: Common Closure Principle — Klassen, die sich aus denselben Gründen ändern, sollten im selben Paket sein. 
+- ADP: Acyclic Dependencies Principle — Paketabhängigkeiten dürfen keine Zyklen enthalten. 
+- SDP: Stable Dependencies Principle — stabile Pakete (selten geändert) sollten von instabileren abhängen, oder allgemein: Änderungen fließen nicht von stabil nach
+- SAP: Stable Abstractions Principle — stabile Pakete sollten abstrakter sein (mehr Interfaces/Abstraktionen) 
+
+
+**🧰 Integriertes Packaging/Layers-Gesetz mit Paketregeln**
+
+Ich schreibe das Gesetz in erweiteter Form, sodass es Layers, Abstraktion, Implementierung und Paketprinzipien zusammenführt.
+
+**Definitionen (komplett)**
+- Layer[n] = Abstraktionsebene n
+- ImplLayer[n] = Implementierungsebene für Layer[n]
+- Package pkg = logischer Container / Modul, der Klassen/Typen/Interfaces enthält
+- classes(pkg) = Menge aller Klassen und Interfaces in pkg
+- abstracts(pkg) = Menge der abstrakten Klassen / Interfaces in pkg
+- concretes(pkg) = Menge der konkreten Klassen in pkg
+- dep_out(pkg) = Menge der Pakete, von denen pkg direkt abhängig ist
+- dep_in(pkg) = Menge der Pakete, die von pkg abhängen
+- stability(pkg) = Maßstab, wie „stabil“ ein Paket ist (z. B. abhängig von Anzahl der Pakete, die es nutzen vs. Anzahl der Pakete, von denen es abhängig ist)
+- abstractness(pkg) = |abstracts(pkg)| / |classes(pkg)|
 
