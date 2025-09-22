@@ -136,7 +136,7 @@ Pakete dürfen nur Realisierungen ihrer gleichnamigen Abstraktion enthalten:
 
 2.3.3 
 Erweitere diese Paketstruktur
-
+```
 com.example.pdc/            (Namespace)
 ├── App.java                (Interface)
 ├── Package.java            (Interface)
@@ -152,6 +152,7 @@ com.example.pdc/            (Namespace)
     ├── ....java           (Interface)
     └── .../                (Paket für ...-Realisierungen)
         └── ...java         (implements ..)
+```
 
 //
 public ConsolePDCApp {
