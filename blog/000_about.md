@@ -487,3 +487,66 @@ flowchart LR
     linkStyle 4 stroke:red,stroke-width:2px,stroke-dasharray:5 5
     linkStyle 5 stroke:red,stroke-width:2px,stroke-dasharray:5 5
 ```
+
+## Package
+
+**📚 Quellen & Konzepte**
+
+Ein paar Prinzipien, die das Thema „Pakete“ / „Package Design“ in OOD abdecken:
+- „Package Principles“ von Robert C. Martin: REP, CCP, CRP, ADP, SDP, SAP. 
+- Prinzipien der Kohäsion und Kopplung: Pakete sollen kohäsiv sein, also thematisch/Stärken-bezogen gruppieren; Kopplung zwischen Paketen möglichst minimieren. 
+
+🛠 Was ist ein Paket im OOP-Sinne
+
+In OOP ist ein Paket (Package / Modul / Namespace) ein logisches Behältnis, das:
+- Thematisch verwandte Klassen, Interfaces und Abstraktionen gruppiert.
+- Eine Grenze der Sichtbarkeit und Zugänglichkeit bietet (z. B. public/private, package/private).
+- Hilft bei Modularisierung: Versionsverwaltung, Release, Wiederverwendung.
+- Unterstützt Verständnis, Wartbarkeit und Veränderbarkeit des Codes.
+
+
+**📏 Typische Regeln für gutes Package-Design**
+
+Hier sind bewährte Regeln / Prinzipien, die man anwenden kann:
+
+| Regel / Prinzip                                                | Beschreibung                                                                                                                                                                                                                |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Kohäsion**                                                   | Klassen in einem Paket sollten stark thematisch verwandt sein: ähnliche Verantwortlichkeiten, ändern sich oft zusammen.                                                                                                     |
+| **Loskopplung (Coupling)**                                     | Pakete sollten möglichst wenige Abhängigkeiten auf andere Pakete haben.                                                                                                                                                     |
+| **Kein Zyklen**                                                | Die Paketabhängigkeitsstruktur darf keine Zyklen enthalten (Package A → B → … → A) (Acyclic Dependencies Principle) ([Medium][1]).                                                                                          |
+| **Stabilitätsprinzip (Stable Dependencies)**                   | Ein Paket sollte nur von stabileren Paketen abhängen; stabile Pakete haben wenige Abhängigkeiten selbst oder sind weniger oft verändert. ([Medium][1]).                                                                     |
+| **Release/Wiederverwendung (REP)**                             | Pakete, die wiederverwendet werden sollen, sollten eine klar definierte Schnittstelle (API) haben und versioniert/released sein. ([Medium][1]).                                                                             |
+| **Abstraktion vs. Stabilität (SAP)**                           | Pakete, die sehr stabil sind (selten geändert), sollten möglichst abstrakt sein (also viele Interfaces / Abstraktionen). ([Medium][1]).                                                                                     |
+| **Gemeinsame Änderungsgründe (Common Closure Principle, CCP)** | Alle Klassen in einem Paket ändern sich aus denselben Gründen, nicht aus verschiedenen Gründen. Wenn man eine Klasse ändert, sollten im Idealfall alle oder alle relevanten Klassen im Paket betroffen sein. ([Medium][1]). |
+| **Wiederverwendung (Common Reuse Principle, CRP)**             | Wenn du ein Paket importierst / nutzt, solltest du möglichst alle Klassen darin nutzen; vermeide, Pakete so zu strukturieren, dass nur ein Teil gebraucht wird, der Rest aber mitschleppt. ([Medium][1]).                   |
+
+[1]: https://medium.com/%40toshie.uya/object-oriented-design-principles-92b759b362bc?utm_source=chatgpt.com "Object Oriented Design Principles | by Toshie Uya | Medium"
+
+
+**🔍 Wichtige Prinzipien für Package-Design (nach Robert C. Martin)**
+
+*Aus Quellen wie “Principles of Package Design”:*
+- REP – Reuse/Release Equivalency Principle: Ein Paket, das wiederverwendet werden soll, muss versioniert / releasemit seinem Inhalt freigegeben werden.
+- CRP – Common Reuse Principle: Klassen, die zusammen wiederverwendet werden, gehören ins gleiche Paket (wenn du eine Klasse brauchst, benutzt du wahrscheinlich auch andere im Paket)
+- CCP – Common Closure Principle: Klassen, die sich aus denselben Gründen ändern, sollten im selben Paket zusammengefasst sein. 
+- ADP – Acyclic Dependencies Principle: Die Abhängigkeitsstruktur zwischen Paketen darf keine Zyklen haben. 
+- SDP – Stable Dependencies Principle: Pakete sollten von stabileren Paketen abhängen, nicht umgekehrt. 
+- SAP – Stable Abstractions Principle: Stabilere Pakete sollten abstrakter sein (Interfaces, abstrakte Klassen) damit sie leichter erweiterbar sind. 
+
+**🧮 Formalisierte Regeln für Pakete**
+
+Ich schlage vor, diese Regeln in ähnlicher Form wie dein Packaging-Gesetz zu verwenden:
+
+
+**Package-Gesetz Erweiterung**
+*Definitionen (ergänzt)*
+- pkg = ein Paket / Namespace / Modul
+- classes(pkg) = Menge der Klassen und Interfaces in pkg
+- abstracts(pkg) = Menge der abstrakten Klassen oder Interfaces in pkg
+- concretes(pkg) = Menge der konkreten Klassen in pkg
+- dep_out(pkg) = Menge der Pakete, von denen pkg abhängig ist
+- dep_in(pkg) = Menge der Pakete, die von pkg abhängig sind
+- stability(pkg) = Instabilität = |dep_out(pkg)| / (|dep_out(pkg)| + |dep_in(pkg)|) (0 = sehr stabil, 1 = instabil)
+- abstractness(pkg) = |abstracts(pkg)| / |classes(pkg)|
+
+
