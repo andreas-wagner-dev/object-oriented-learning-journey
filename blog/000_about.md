@@ -5,6 +5,8 @@ Many years i try to find the silver bullet for constructing business software fr
 Then a ask Chat GPT: 21.09.2025
 https://chatgpt.com/
 
+## OOP-Definition
+
 Hi GPT, was bedeutet Folgendes, im Sinne von OOP, antworte kurz und pregnant:
 1. Objektorientiert?
 2. Type
@@ -63,6 +65,9 @@ flowchart TD
     S --> L
 ```
 
+## Layer-Architektur
+
+## Horizontalen-Layer-Architektur
 👉 Soll ich dir dieses Diagramm auch in einer **horizontalen Layer-Architektur** darstellen, sodass „System“ oben steht und darunter die Schichten gestapelt sind?
 ja
 Perfekt 👍 – hier die horizontale Layer-Architektur mit deinen OOP-Begriffen, in gestapelter Darstellung:
@@ -113,6 +118,8 @@ In OOP versteht man unter Layern typischerweise Abstraktionsebenen, die Objekte 
 3. Layer = Architekturprinzip, nicht nur Packaging.
 
 Das ist der klassische Layered-Architecture-Ansatz in OOP, wie ihn u. a. Yegor Bugayenko (Elegant Objects) oder Self-XDSD verwenden: oben reine Contracts, unten Implementierungen/Details.
+
+## Vertikale-Layer-Architektur
 
 Willst du, dass ich dir ein kurzes Mermaid-Diagramm zeichne, das genau diese vertikale Trennung (Top-Layer → Mid-Layer → Bottom-Layer) zeigt?
 
@@ -404,3 +411,79 @@ Seitwärts-Abhängigkeiten
 - Flow innerhalb der Ebene = ValueObject → Entity → Service.
 - Seitwärts-Abhängigkeiten verboten.
 - Richtung ist strikt „unten nach oben“ innerhalb der Rolle.
+
+me: im Sinne von OOP sind es keine Begriffe ValueObject → Entity → Service.
+
+
+Ganz genau 👍 – du hast völlig recht.
+
+Die Begriffe Value Object, Entity, Service stammen streng genommen aus Domain-Driven Design (DDD), nicht aus „klassischem“ OOP.
+Im OOP-Sinne würde man es eher so ausdrücken:
+
+- Objekte (haben Zustand und Verhalten, Identität optional)
+- Typen/Klassen (definieren die Blaupause für Objekte)
+- Abstraktionen (Interfaces, abstrakte Basisklassen, Verträge)
+- Kompositionen (Objekte, die andere Objekte benutzen, um ihre Verantwortung zu erfüllen)
+
+👉 Die horizontale Trennung im OOP-Sinne wäre also eher:
+
+- Daten-tragende Objekte (fokussieren auf Zustand, z. B. Records, Strukturen)
+- Verhaltens-Objekte (fokussieren auf Verhalten, steuern andere Objekte)
+- Koordinierende Objekte (orchestrieren Zusammenarbeit ohne selbst Fachlogik zu tragen)
+
+**Horizontal Layering (OOP-Terminologie)**
+
+- Primitive/Utility Objects
+Basistypen oder Hilfsobjekte (Strings, Zahlen, Collections).
+- Core Objects
+Domänen- oder Fachobjekte, die Regeln und Zustände verkörpern.
+- Orchestrator Objects
+
+Steuernde Objekte, die Core Objects und Utilities kombinieren.
+
+👉 Innerhalb derselben Abstraktionsebene gilt dann:
+
+- Core Objects dürfen Utilities nutzen.
+- Orchestrators dürfen Core + Utilities nutzen.
+- Utilities dürfen weder Core noch Orchestrators kennen.
+
+Das ist die horizontale Entsprechung im reinen OOP, analog zur vertikalen Schichtung.
+
+
+```mermaid
+flowchart LR
+
+    %% Definition der Schichten
+    subgraph H1["Utility Objects"]
+      U1["StringHelper"]
+      U2["MathUtil"]
+    end
+
+    subgraph H2["Core Objects"]
+      C1["Invoice"]
+      C2["Customer"]
+    end
+
+    subgraph H3["Orchestrator Objects"]
+      O1["InvoiceProcessor"]
+      O2["CustomerService"]
+    end
+
+    %% Erlaubte Abhängigkeiten (grün)
+    H2 -->|uses| H1
+    H3 -->|uses| H2
+    H3 -->|uses| H1
+
+    %% Verbotene Abhängigkeiten (rot gestrichelt)
+    H1 -.->|forbidden| H2
+    H1 -.->|forbidden| H3
+    H2 -.->|forbidden| H3
+
+    %% Styling
+    linkStyle 0 stroke:green,stroke-width:2px
+    linkStyle 1 stroke:green,stroke-width:2px
+    linkStyle 2 stroke:green,stroke-width:2px
+    linkStyle 3 stroke:red,stroke-width:2px,stroke-dasharray:5 5
+    linkStyle 4 stroke:red,stroke-width:2px,stroke-dasharray:5 5
+    linkStyle 5 stroke:red,stroke-width:2px,stroke-dasharray:5 5
+```
