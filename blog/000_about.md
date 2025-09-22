@@ -449,7 +449,6 @@ Steuernde Objekte, die Core Objects und Utilities kombinieren.
 
 Das ist die horizontale Entsprechung im reinen OOP, analog zur vertikalen Schichtung.
 
-
 ```mermaid
 flowchart LR
 
@@ -608,4 +607,107 @@ Ich schreibe das Gesetz in erweiteter Form, sodass es Layers, Abstraktion, Imple
 - dep_in(pkg) = Menge der Pakete, die von pkg abhängen
 - stability(pkg) = Maßstab, wie „stabil“ ein Paket ist (z. B. abhängig von Anzahl der Pakete, die es nutzen vs. Anzahl der Pakete, von denen es abhängig ist)
 - abstractness(pkg) = |abstracts(pkg)| / |classes(pkg)|
+
+**Regeln**
+
+**1. Layer/Abstraktionsregeln**
+- ImplLayer[n] darf nur existieren, wenn Layer[n] existiert.
+- Objekte in ImplLayer[n] implementieren ausschließlich Abstraktionen aus Layer[n] oder darunter.
+- Abhängigkeiten zwischen Layern verlaufen nur nach unten (höherer zu niedrigerer Ebene), implementierende Verbindungen dürfen nach oben zum Vertrag (Abstraktion) zeigen, aber kein bidirektionaler Rückruf.
+
+**2. Paketkohäsion (Cohesion) Regeln**
+
+- REP: Wenn ein Paket pkg für Wiederverwendung gedacht ist, dann muss pkg versionierbar / releasbar sein.
+- CRP: Wenn Klassen c1, c2 in classes(pkg) oft gemeinsam benutzt werden, ist es korrekt, sie im selben pkg zu haben. Wenn nicht, sollte man sie in verschiedene Pakete aufteilen.
+- CCP: Klassen, die aus demselben Änderungsgrund heraus modifiziert werden, gehören in dasselbe Paket.
+Paketkopplung (Coupling) Regeln
+- ADP: Der Abhängigkeitsgraph aller Pakete darf keine Zyklen haben.
+- SDP: Für jedes Paket pkg und jedes Paket q in dep_out(pkg) gilt:
+```
+stability(pkg) ≥ stability(q)
+```
+→ Ein instabiles Paket sollte nicht von einem stabileren abhängen.
+- SAP: Wenn stability(pkg) hoch ist (d. h. wenige externe Abhängigkeiten in, viele pakete, die auf pkg angewiesen sind), dann abstractness(pkg) sollte ebenfalls hoch sein.
+
+Hier ist ein Mermaid-Diagramm, das dein erweitertes Packaging/Layers-Gesetz inkl. Paketprinzipien visualisiert:
+
+```mermaid
+flowchart TB
+
+    subgraph Layering & Abstraktion
+        L1["Layer[n]\nAbstraktionen"]
+        IL1["ImplLayer[n]\nImplementierung"]
+    end
+
+    subgraph Paketprinzipien
+        REP["REP\nReuse / Release Equivalency"]
+        CRP["CRP\nCommon Reuse Principle"]
+        CCP["CCP\nCommon Closure Principle"]
+        ADP["ADP\nAcyclic Dependencies Principle"]
+        SDP["SDP\nStable Dependencies Principle"]
+        SAP["SAP\nStable Abstractions Principle"]
+    end
+
+    %% Verbindungen zwischen Layering und Paketprinzipien
+    L1 -->|muss existieren bevor| IL1
+    IL1 -->|implementiert Abstraktion von| L1
+
+    %% Paketprinzipien Beziehungen
+    REP --> CRP
+    CRP --> CCP
+    ADP --> SDP
+    SDP --> SAP
+
+    %% Einige Regeln an Layer / Pakete geknüpft
+    L1 -->|beeinträchtigt| ADP
+    IL1 -->|muss respektieren| ADP
+    IL1 -->|benefit wenn stabil| SAP
+    L1 -->|mehr Abstraktionen wenn stabil| SAP
+```
+
+
+Okay, hier ist ein Mermaid-Diagramm mit Pfeilen, die deutlich zeigen, welche Paket-Beziehungen erlaubt (grün) und welche verboten (rot) sind, basierend auf den Package Principles:
+
+```mermaid
+flowchart TB
+
+    subgraph Package_Prinzipien["Package Design Prinzipien"]
+        REP["REP\nReuse/Release Equivalency"]
+        CRP["CRP\nCommon Reuse Principle"]
+        CCP["CCP\nCommon Closure Principle"]
+        ADP["ADP\nAcyclic Dependencies Principle"]
+        SDP["SDP\nStable Dependencies Principle"]
+        SAP["SAP\nStable Abstractions Principle"]
+    end
+
+    subgraph Paketstruktur["Pakete pkg, q, etc."]
+        pkgA["Paket A"]
+        pkgB["Paket B"]
+    end
+
+    %% Erlaubte Beziehungen
+    pkgA -->|depends on/wenn pkgB stabiler oder abstrakter| pkgB
+    pkgA -->|implements/defines abstractions| pkgB
+
+    REP ---|supports grouping| CRP
+    CRP ---|aligns change reasons| CCP
+
+    ADP ---|disallows cycles| SDP
+    SDP ---|implies abstraction if stable| SAP
+
+    %% Verbotene Beziehungen
+    pkgB -.->|depends on pkgA wenn pkgA instabil| pkgA
+    pkgB -.->|concrete pkg without abstractions but very stable| SAP
+
+    %% Styling
+    linkStyle 0 stroke:green,stroke-width:2px
+    linkStyle 1 stroke:green,stroke-width:2px
+    linkStyle 2 stroke:green,stroke-width:2px
+    linkStyle 3 stroke:green,stroke-width:2px
+    linkStyle 4 stroke:green,stroke-width:2px
+
+    linkStyle 5 stroke:red,stroke-width:2px,stroke-dasharray:4 2
+    linkStyle 6 stroke:red,stroke-width:2px,stroke-dasharray:4 2
+```
+
 
