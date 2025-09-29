@@ -1,3 +1,5 @@
+OOP - Implementierung
+
 ```mermaid
 graph TB
     subgraph N0["n[0] = com.company.app"]
@@ -169,6 +171,207 @@ graph TB
     style PE2 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
     style PE3 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
     style AU1 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
+```
+
+
+DDD - Implementierung
+```mermaid
+    graph TB
+    subgraph N0["n[0] = com.company.app"]
+        direction TB
+        
+        subgraph DOMAIN["Domain Layer"]
+            direction TB
+            
+            subgraph MODEL["domain.model"]
+                direction LR
+                E1["User<br/><i>interface - Entity</i>"]
+                E2["Document<br/><i>interface - Entity</i>"]
+                VO1["Credentials<br/><i>interface - Value Object</i>"]
+                VO2["Hash<br/><i>interface - Value Object</i>"]
+            end
+            
+            subgraph USER_PKG["domain.model.user"]
+                U1["Authenticated"]
+                U2["Registered"]
+                U3["Anonymous"]
+            end
+            
+            subgraph DOC_PKG["domain.model.document"]
+                D1["Validated"]
+                D2["Draft"]
+                D3["Published"]
+            end
+            
+            subgraph CRED_PKG["domain.model.credentials"]
+                C1["Hashed"]
+                C2["Encrypted"]
+                C3["Temporary"]
+            end
+            
+            subgraph HASH_PKG["domain.model.hash"]
+                H1["Bcrypt"]
+                H2["Sha256"]
+                H3["Argon"]
+            end
+            
+            E1 --> U1 & U2 & U3
+            E2 --> D1 & D2 & D3
+            VO1 --> C1 & C2 & C3
+            VO2 --> H1 & H2 & H3
+            
+            subgraph REPOS["domain"]
+                R1["Users<br/><i>interface - Collection</i>"]
+                R2["Documents<br/><i>interface - Collection</i>"]
+            end
+            
+            subgraph USERS_PKG["domain.users"]
+                RU1["Cached"]
+                RU2["Persistent"]
+                RU3["InMemory"]
+            end
+            
+            subgraph DOCS_PKG["domain.documents"]
+                RD1["Validated"]
+                RD2["Indexed"]
+                RD3["Versioned"]
+            end
+            
+            R1 --> RU1 & RU2 & RU3
+            R2 --> RD1 & RD2 & RD3
+            
+            subgraph SERVICES["domain"]
+                DS1["Authentication<br/><i>interface - Domain Service</i>"]
+            end
+            
+            subgraph AUTH_PKG["domain.authentication"]
+                A1["TokenBased"]
+                A2["SessionBased"]
+                A3["Biometric"]
+            end
+            
+            DS1 --> A1 & A2 & A3
+        end
+        
+        subgraph INFRA["Infrastructure Layer"]
+            direction TB
+            
+            subgraph PERSIST["infrastructure"]
+                P1["Persistence<br/><i>interface</i>"]
+            end
+            
+            subgraph PERSIST_PKG["infrastructure.persistence"]
+                PI1["Database"]
+                PI2["FileSystem"]
+                PI3["Cloud"]
+            end
+            
+            P1 --> PI1 & PI2 & PI3
+            
+            subgraph SEC["infrastructure"]
+                S1["Security<br/><i>interface</i>"]
+            end
+            
+            subgraph SEC_PKG["infrastructure.security"]
+                SI1["Encrypted"]
+                SI2["Signed"]
+                SI3["Audited"]
+            end
+            
+            S1 --> SI1 & SI2 & SI3
+        end
+        
+        subgraph APP["Application Layer"]
+            direction TB
+            
+            subgraph USECASES["application"]
+                UC1["UserRegistration<br/><i>interface - Use Case</i>"]
+                UC2["UserAuthentication<br/><i>interface - Use Case</i>"]
+                UC3["DocumentCreation<br/><i>interface - Use Case</i>"]
+            end
+            
+            subgraph REG_PKG["application.userregistration"]
+                UR1["WithEmail"]
+                UR2["WithOAuth"]
+                UR3["WithPhone"]
+            end
+            
+            subgraph AUTH_UC_PKG["application.userauthentication"]
+                UA1["WithPassword"]
+                UA2["WithToken"]
+                UA3["WithBiometric"]
+            end
+            
+            subgraph DOC_UC_PKG["application.documentcreation"]
+                DC1["FromTemplate"]
+                DC2["FromScratch"]
+                DC3["FromImport"]
+            end
+            
+            UC1 --> UR1 & UR2 & UR3
+            UC2 --> UA1 & UA2 & UA3
+            UC3 --> DC1 & DC2 & DC3
+        end
+        
+        RU1 & RU2 -.->|"nutzt"| E1
+        RD1 & RD2 -.->|"nutzt"| E2
+        UR1 & UR2 -.->|"nutzt"| R1
+        UA1 & UA2 -.->|"nutzt"| DS1
+        DC1 & DC2 -.->|"nutzt"| R2
+    end
+    
+    style E1 fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style E2 fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style VO1 fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style VO2 fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    
+    style R1 fill:#e8f4fd,stroke:#3b82f6,stroke-width:2px
+    style R2 fill:#e8f4fd,stroke:#3b82f6,stroke-width:2px
+    style DS1 fill:#fce7f3,stroke:#ec4899,stroke-width:2px
+    
+    style UC1 fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px
+    style UC2 fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px
+    style UC3 fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px
+    
+    style P1 fill:#e8f4fd,stroke:#3b82f6,stroke-width:2px
+    style S1 fill:#e8f4fd,stroke:#3b82f6,stroke-width:2px
+    
+    style U1 fill:#f0fdf4,stroke:#22c55e
+    style U2 fill:#f0fdf4,stroke:#22c55e
+    style U3 fill:#f0fdf4,stroke:#22c55e
+    style D1 fill:#f0fdf4,stroke:#22c55e
+    style D2 fill:#f0fdf4,stroke:#22c55e
+    style D3 fill:#f0fdf4,stroke:#22c55e
+    style C1 fill:#f0fdf4,stroke:#22c55e
+    style C2 fill:#f0fdf4,stroke:#22c55e
+    style C3 fill:#f0fdf4,stroke:#22c55e
+    style H1 fill:#f0fdf4,stroke:#22c55e
+    style H2 fill:#f0fdf4,stroke:#22c55e
+    style H3 fill:#f0fdf4,stroke:#22c55e
+    style RU1 fill:#f0fdf4,stroke:#22c55e
+    style RU2 fill:#f0fdf4,stroke:#22c55e
+    style RU3 fill:#f0fdf4,stroke:#22c55e
+    style RD1 fill:#f0fdf4,stroke:#22c55e
+    style RD2 fill:#f0fdf4,stroke:#22c55e
+    style RD3 fill:#f0fdf4,stroke:#22c55e
+    style A1 fill:#f0fdf4,stroke:#22c55e
+    style A2 fill:#f0fdf4,stroke:#22c55e
+    style A3 fill:#f0fdf4,stroke:#22c55e
+    style PI1 fill:#f0fdf4,stroke:#22c55e
+    style PI2 fill:#f0fdf4,stroke:#22c55e
+    style PI3 fill:#f0fdf4,stroke:#22c55e
+    style SI1 fill:#f0fdf4,stroke:#22c55e
+    style SI2 fill:#f0fdf4,stroke:#22c55e
+    style SI3 fill:#f0fdf4,stroke:#22c55e
+    style UR1 fill:#f0fdf4,stroke:#22c55e
+    style UR2 fill:#f0fdf4,stroke:#22c55e
+    style UR3 fill:#f0fdf4,stroke:#22c55e
+    style UA1 fill:#f0fdf4,stroke:#22c55e
+    style UA2 fill:#f0fdf4,stroke:#22c55e
+    style UA3 fill:#f0fdf4,stroke:#22c55e
+    style DC1 fill:#f0fdf4,stroke:#22c55e
+    style DC2 fill:#f0fdf4,stroke:#22c55e
+    style DC3 fill:#f0fdf4,stroke:#22c55e
     style AU2 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
     style AU3 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
     style ST1 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
