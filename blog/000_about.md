@@ -454,8 +454,8 @@ flowchart LR
 
     %% Definition der Schichten
     subgraph H1["Utility Objects"]
-      U1["StringHelper"]
-      U2["MathUtil"]
+      U1["String(Helper)"]
+      U2["Math(Util)"]
     end
 
     subgraph H2["Core Objects"]
@@ -464,7 +464,7 @@ flowchart LR
     end
 
     subgraph H3["Orchestrator Objects"]
-      O1["InvoiceProcessor"]
+      O1["Invoicement"]
       O2["CustomerService"]
     end
 
