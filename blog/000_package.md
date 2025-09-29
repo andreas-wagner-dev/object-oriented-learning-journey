@@ -48,23 +48,24 @@ Attmpts:
 
 **Chats**
 
-1. Formale Definition der Hierarchie
-Gegeben:
-
+## 2. Formale Definition der Hierarchie
+**Gegeben:**
+```
 n[0]: Höchste Abstraktionsgrenze der Anwendung (Root-Namespace).
 m: Anzahl aller Abstraktionen innerhalb der Grenze n[0].
 Hierarchieebenen: n[0] bis n[m], wobei jede Ebene eine Abstraktion oder Implementierung repräsentiert.
-
-Definition der Elemente
-2.1 Boundary (Namespace-Grenze)
+```
+**Definition der Elemente**
+### 2.1 Boundary (Namespace-Grenze)
 b[n]=Namespace auf Ebene nmit0≤n≤mb[n] = \text{Namespace auf Ebene } n \quad \text{mit} \quad 0 \leq n \leq mb[n]=Namespace auf Ebene nmit0≤n≤m
 
-Beispiel:
+**Beispiel:**
+```
 b[0]=com.companyb[0] = \text{com.company}b[0]=com.company (Root-Namespace).
 b[1]=com.company.billingb[1] = \text{com.company.billing}b[1]=com.company.billing (Kontext-Boundary).
+```
 
-
-2.2 Abstraktion
+### 2.2 Abstraktion
 a[n+1]=Abstraktion auf Ebene n+1(Interface, abstrakte Klasse oder Domain-Konzept)a[n+1] = \text{Abstraktion auf Ebene } n+1 \quad \text{(Interface, abstrakte Klasse oder Domain-Konzept)}a[n+1]=Abstraktion auf Ebene n+1(Interface, abstrakte Klasse oder Domain-Konze
 
 ```mermaid
@@ -102,21 +103,23 @@ Vergleiche imperativen Stil gegen OOP-Stil mit den folgenden Anforderungen und Q
 
 **2 Implementierungs Anforderungen:**
 
-2.1 Object-Nameing:
+**2.1 Object-Nameing:**
 https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
 https://www.yegor256.com/2015/03/09/objects-end-with-er.html
 https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html
 
-2.2 Realisierung ausliißlier im OOP Stil für Dependency Injects ohne containers und Decorator-Pattern:
+**2.2 Realisierung auschließlich im OOP Stil** für Dependency Injects ohne containers und Decorator-Pattern:
 https://www.yegor256.com/2014/10/03/di-containers-are-evil.html
 https://www.yegor256.com/2015/02/26/composable-decorators.html
 https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html
 https://www.yegor256.com/2016/01/26/defensive-programming.html
 
-2.3 Package Design Check 'pdc' wie hier:
+**2.3 Package Design Check 'pdc' wie hier:**
 Quelle: https://javadevguy.wordpress.com/2017/12/18/happy-packaging/
 Beachte Formale Regeln für Paketstrukturen:
+
 2.3.1. Paketentstehung 
+
 Pakete entstehen ausschließlich auf der Ebene von gleichnamigen Abstraktionen und nur dann, wenn eine Abstraktion existiert:
 ```
 ∃p[n]  ⟺  ∃a[n]∈b[n−1]\exists p[n] \iff \exists a[n] \in b[n-1]∃p[n]⟺∃a[n]∈b[n−1]
@@ -134,8 +137,7 @@ Pakete dürfen nur Realisierungen ihrer gleichnamigen Abstraktion enthalten:
 - c: Klasse im Paket
 - a[n]: Abstraktion des Pakets
 
-2.3.3 
-Erweitere diese Paketstruktur
+2.3.3 Erweitere diese Paketstruktur
 ```
 com.example.pdc/            (Namespace)
 ├── App.java                (Interface)
@@ -162,7 +164,7 @@ public ConsolePDCApp {
   }
 }
 
-Hier ist der Beispielscode im imperativen Stil baue um nach OOP Still mit meinen Anforderungen und Quellen von oben:
+Hier ist der Beispielscode im imperativen Stil baue um nach OOP Stil mit meinen Anforderungen und Quellen von oben:
 ```
 
 
