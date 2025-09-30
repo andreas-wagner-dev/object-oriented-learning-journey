@@ -95,6 +95,88 @@ flowchart LR
 > Horizontale Layer trennen **Zustände von Abläufen**.  
 > Nur reale Dinge dürfen als Objekte existieren.*
 
+## OOP-Layering-Gesetz (Implementierungsabhängigkeiten)
+
+| Beziehung                                   | Erlaubt? | Bedingung                                                                                  |
+| ------------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| **IL[n] → L[n]**                            | ✅        | Implementierung kennt ihre eigene Abstraktion                                              |
+| **IL[n] → L[n-1] oder L[n-2] ...**          | ✅        | Implementierung darf höhere Abstraktionen (nach oben) verwenden                            |
+| **IL[n] → IL[n] (Seitlich, gleiche Ebene)** | ✅        | Solange **keine zyklische Abhängigkeit** entsteht                                          |
+| **IL[n] → IL[m] (m > n, nach unten)**       | ✅        | Implementierung darf konkrete Implementierung tieferer Ebene direkt instanziieren / nutzen |
+| **IL[n] → IL[m] (m < n, nach oben)**        | ❌        | Keine Abhängigkeit von Detail zu höher liegendem Detail                                    |
+| **L[n] → IL[n] oder IL[m]**                 | ❌        | Abstraktionen kennen niemals Implementierungen                                             |
+
+
+**Kurzform:**
+- Abstraktionen dürfen niemals Implementierungen kennen.
+- Implementierungen dürfen beliebig nach unten und seitlich greifen (ohne Zyklen) – aber niemals nach oben.
+
+```mermaid
+flowchart TB
+
+    %% Abstraktionsebene 1
+    subgraph L1["L1: Abstraktionen"]
+      A_App["App"]
+      A_Rule["Rule"]
+      A_SubRule["SubRule"]
+    end
+
+    %% Implementierungsebene 1
+    subgraph IL1["IL1: Implementierungen zu L1"]
+      I_HttpRule["HttpRule (implements Rule)"]
+      I_FileApp["FileApp (implements App)"]
+    end
+
+    %% Abstraktionsebene 2
+    subgraph L2["L2: Abstraktionen"]
+      A_ConcreteSubRule["ConcreteSubRule"]
+    end
+
+    %% Implementierungsebene 2
+    subgraph IL2["IL2: Implementierungen zu L2"]
+      I_SubRuleImpl["SubRuleImpl (implements ConcreteSubRule)"]
+    end
+
+    %% Erlaubte Abhängigkeiten (grün)
+    IL1 -->|uses| L1
+    IL1 -->|uses| L2
+    IL1 -->|uses| IL2
+
+    IL2 -->|uses| L2
+    IL2 -->|uses| L1
+
+    IL1 -->|uses same-level| IL1
+
+    %% Implements-Beziehungen (blau gestrichelt)
+    I_HttpRule -.->|implements| A_Rule
+    I_FileApp -.->|implements| A_App
+    I_SubRuleImpl -.->|implements| A_ConcreteSubRule
+
+    %% Verbotene Abhängigkeiten (rot gestrichelt)
+    L1 -.->|forbidden| IL1
+    L2 -.->|forbidden| IL2
+    IL2 -.->|forbidden no upward impl| IL1
+
+    %% Styling
+    linkStyle 0 stroke:green,stroke-width:2px
+    linkStyle 1 stroke:green,stroke-width:2px
+    linkStyle 2 stroke:green,stroke-width:2px
+    linkStyle 3 stroke:green,stroke-width:2px
+    linkStyle 4 stroke:green,stroke-width:2px
+    linkStyle 5 stroke:green,stroke-width:2px
+
+    linkStyle 6 stroke:blue,stroke-width:2px,stroke-dasharray:3 3
+    linkStyle 7 stroke:blue,stroke-width:2px,stroke-dasharray:3 3
+    linkStyle 8 stroke:blue,stroke-width:2px,stroke-dasharray:3 3
+
+    linkStyle 9 stroke:red,stroke-width:2px,stroke-dasharray:5 5
+    linkStyle 10 stroke:red,stroke-width:2px,stroke-dasharray:5 5
+    linkStyle 11 stroke:red,stroke-width:2px,stroke-dasharray:5 5
+
+```
+
+
+
 
 # Formales Layering-Gesetz
 ## Definitionen
@@ -238,4 +320,130 @@ flowchart TD
     class A1,B1,A2,B2,A3 core;
     class O1,O2 orch;
     class I1,I2,I3 impl;
+```
+
+| Ebene                          | Bedeutung                               | Farbe                      |
+| ------------------------------ | --------------------------------------- | -------------------------- |
+| **Abstraktion (L1–L3)**        | Verträge / Policies                     | 🔵 Blau                    |
+| **Implementierung (IL1–IL3)**  | Konkrete Ausprägungen                   | ⚪ Grau                     |
+| **Horizontale Orchestratoren** | rein koordinierend (falls unvermeidbar) | 🟠 Orange                  |
+| **Verbotene Abhängigkeit**     | Darf nicht passieren                    | 🔴 Rote gestrichelte Linie |
+
+```mermaid
+flowchart TD
+
+    %% Vertikale Abstraktionsebenen
+    subgraph L1["L1 – Abstraktion (Policies / Verträge)"]
+      A1["App"]
+      B1["Rule"]
+    end
+
+    subgraph L2["L2 – Fachliche Spezialisierung"]
+      A2["SubRule"]
+    end
+
+    subgraph L3["L3 – Konkrete Abstraktionen"]
+      A3["Request"]
+    end
+
+    %% Implementierungslayer (seitlich)
+    subgraph IL1["IL1 – Implementierungen von L1"]
+      I1["ConsoleApp"]
+      I2["HttpRule"]
+    end
+
+    subgraph IL2["IL2 – Implementierungen von L2"]
+      I3["ConcreteSubRule"]
+    end
+
+    subgraph IL3["IL3 – Implementierungen von L3"]
+      I4["WebRequest"]
+    end
+
+    %% Horizontale Koordinatoren
+    subgraph Orchestrators["Horizontale Schicht (optional)"]
+      O1["Session"]
+      O2["Conversation"]
+    end
+
+    %% Erlaubte Abhängigkeiten (grün)
+    L2 -->|allowed| L1
+    L3 -->|allowed| L2
+    IL1 -->|allowed| L1
+    IL2 -->|allowed| L2
+    IL3 -->|allowed| L3
+    O1 -->|allowed| L2
+    O2 -->|allowed| L1
+
+    %% Verbotene Abhängigkeiten (rot gestrichelt)
+    L1 -.->|forbidden| L2
+    IL1 -.->|forbidden| IL2
+    IL3 -.->|forbidden| L1
+
+    %% Styling
+    classDef abstraction fill:#d4f1ff,stroke:#0077b6,stroke-width:2px;
+    classDef implementation fill:#e0e0e0,stroke:#666,stroke-width:1px;
+    classDef orchestrator fill:#ffe5cc,stroke:#cc7a00,stroke-width:2px;
+    classDef forbidden stroke:red,stroke-width:2px,stroke-dasharray:5 5;
+
+    class A1,B1,A2,A3 abstraction;
+    class I1,I2,I3,I4 implementation;
+    class O1,O2 orchestrator;
+
+    linkStyle 6 stroke:red,stroke-width:2px,stroke-dasharray:5 5;
+    linkStyle 7 stroke:red,stroke-width:2px,stroke-dasharray:5 5;
+    linkStyle 8 stroke:red,stroke-width:2px,stroke-dasharray:5 5;
+```
+
+| Farbe / Stil              | Bedeutung                                        |
+| ------------------------- | ------------------------------------------------ |
+| **Grün (normaler Pfeil)** | Erlaubte Abhängigkeit (`depends on`)             |
+| **Blau gestrichelt**      | Implementierung / Spezialisierung (`implements`) |
+| **Rot gestrichelt**       | Verbotene Abhängigkeit                           |
+
+
+```mermaid
+flowchart TD
+
+    %% Layer 1 Abstraktionen
+    subgraph L1["Layer 1: Abstraktionen (L1)"]
+      A1_Rule["Rule"]
+      A1_App["App"]
+      A1_Package["Package"]
+    end
+
+    %% Layer 1 Implementierungen
+    subgraph IL1["IL1: Implementierungen von L1"]
+      I1_HttpRule["HttpRule"]
+      I1_ConsoleApp["ConsoleApp"]
+      I1_FileStorage["FileStorage"]
+    end
+
+    %% Layer 2 Abstraktion
+    subgraph L2["Layer 2: Abstraktionen (L2)"]
+      A2_SubRule["SubRule"]
+    end
+
+    %% Layer 2 Implementierungen
+    subgraph IL2["IL2: Implementierungen von L2"]
+      I2_ConcreteSubRule["ConcreteSubRule"]
+    end
+
+    %% Allowed Abhängigkeiten
+    L1 -->|allowed| IL1
+    L2 -->|allowed| IL2
+    IL1 -->|allowed| L1
+    IL2 -->|allowed| L2
+
+    %% Cross-Abhängigkeit erlaubt
+    I1_HttpRule -->|allowed special| I2_ConcreteSubRule
+
+    %% Implements-Beziehungen blau
+    I1_HttpRule -.->|implements Rule| A1_Rule
+    I1_ConsoleApp -.->|implements App| A1_App
+    I2_ConcreteSubRule -.->|implements SubRule| A2_SubRule
+
+    %% Forbidden Abhängigkeiten
+    IL2 -.->|forbidden| IL1
+    L2 -.->|forbidden| L1
 ```
