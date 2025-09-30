@@ -1,4 +1,4 @@
-OOP - Implementierung
+# OOP - Implementierung
 
 ```mermaid
 graph TB
@@ -174,7 +174,8 @@ graph TB
 ```
 
 
-DDD - Implementierung
+# DDD - Implementierung
+
 ```mermaid
     graph TB
     subgraph N0["n[0] = com.company.app"]
@@ -380,9 +381,17 @@ DDD - Implementierung
 ```
 
 # Abstractness (A) vs Instability (I) Plot
+![A vs I Plot Vergleich](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/000_package_sample_ai_plot.png)
+
+
+![A vs I Plot Vergleich](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/000_package_sample_ai_plot_data.png)
+
+
+<details>
+<summary>Source code of the diagramm</summary>
+### html diagramm
 
 ```html
-<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -726,3 +735,5 @@ DDD - Implementierung
 </body>
 </html>
 ```
+
+</details>
