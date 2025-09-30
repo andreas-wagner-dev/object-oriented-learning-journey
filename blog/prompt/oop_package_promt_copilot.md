@@ -1,9 +1,41 @@
 # Universeller Prompt für KI: OOP-Paketstruktur nach axiomatischem, indexbasiertem Regelsystem
 
-## Aufgabenstellung
-Du bist eine KI, die axiomatisch und formal OOP-Paketstrukturen für beliebige Projekte und Domänen erstellt. Die Struktur muss für beliebig viele Ebenen und Abstraktionstypen universell anwendbar sein. 
+## DEFINITIONEN
+- **n[0]** = com.company.<app> = globaler Namespace (Ebene 0)
+- **a[n]** = Abstraktion auf Ebene n (Interface/abstrakte Klasse)
+- **aa[n.m]** = Aggregat-Abstraktion auf Ebene n, abgeleitet aus a[n] (z.B. Collection/Aggregate Interface)
+- **p[n]** = Package mit Implementierungen von a[n] und aa[n.m]
 
-## Regeln
+---
+
+## AXIOME
+
+**1. Existenzregel für Abstraktionen:**  
+ a[n] ∈ {n[0], n[0].*}  
+ aa[n.m] ∈ {n[0], n[0].*}  
+ (Jede Einzel- und Aggregat-Abstraktion existiert auf Ebene n im Namespace.)
+
+**2. Existenzregel für Packages:**  
+ ∃ a[n] ∨ ∃ aa[n.m] : a[n], aa[n.m] ∈ {n[0], n[0].*} ⇒ p[n] darf existieren  
+ (Ein Package entsteht auf gleicher Ebene wie die zugehörigen Abstraktionen und enthält deren Implementierungen.)
+
+**3. Inhaltsregel:**  
+ ∀ c ∈ p[n] : c ⊑ a[n] ∨ c ⊑ aa[n.m]  
+ (Ein Package enthält NUR Implementierungen/Spezialisierungen der zugehörigen Einzel- und Aggregat-Abstraktionen.)
+
+**4. Indexregel für Implementierungen:**  
+ Jede Implementierung erhält als Prefix die vollständige Indexkette ihrer Herkunftsabstraktion bzw. des Aggregats:  
+ - Einzelabstraktion: `ia[n.m.k].java`  
+ - Aggregat: `iaa[n.m.k.l].java`  
+ (Indexkette ist rekursiv und eindeutig.)
+
+**5. Rekursionsregel:**  
+ Weitere Abstraktionen und deren Implementierungen werden rekursiv nach demselben Schema in Unterpackages `p[n.m]/` abgelegt.  
+ (Indexkette erweitert sich bei jeder Ebene.)
+
+---
+
+## Regeln (indexbasiert und rekursiv)
 
 **1. Namespace**
 - Der globale Namespace ist `n[0]` (z. B. `com.company.[name]`).
@@ -13,8 +45,8 @@ Du bist eine KI, die axiomatisch und formal OOP-Paketstrukturen für beliebige P
 - Aggregat-Abstraktionen werden als `aa[k.n].java` bezeichnet und bekommen als Index die Herkunftsabstraktion *k.n*.
 
 **3. Packages für Implementierungen**
-- Für jede Abstraktion der Ebene *k* existiert ein (meist **gleichnamiges**) Package `p[k]/` auf derselben Ebene wie die Abstraktion.
-- Das Package `p[k]/` enthält **nur Implementierungen und Spezialisierungen** von `a[k]` sowie zugehörige Aggregate.
+- Für jede Abstraktion der Ebene *k* existiert ein (meist gleichnamiges) Package `p[k]/` auf derselben Ebene wie die Abstraktion.
+- Das Package `p[k]/` enthält nur Implementierungen/Spezialisierungen von `a[k]` sowie zugehörige Aggregate.
 
 **4. Implementierungen**
 - Implementierungen erhalten als Prefix die vollständige Indexkette ihrer Herkunftsabstraktion:
@@ -26,7 +58,10 @@ Du bist eine KI, die axiomatisch und formal OOP-Paketstrukturen für beliebige P
 - Weitere Abstraktionen (z. B. Unterabstraktionen) werden rekursiv nach dem gleichen Schema in Unterpackages (`p[k.n]/`) abgelegt.
 - Die Indexkette wird für jede Unterabstraktion und deren Implementierungen weitergeführt.
 
-**6. Beispielstruktur (beliebige Tiefe)**
+---
+
+## Beispielstruktur (beliebige Tiefe)
+
 ```
 n[0]                                   # globaler Namespace, z.B. com.company.[name]
 ├── a[1].java                          # Abstraktion Ebene 1
@@ -44,5 +79,7 @@ n[0]                                   # globaler Namespace, z.B. com.company.[n
 │       └── ...                        # weitere Tiefe analog
 ```
 
+---
+
 ## Ziel
-Gib für beliebige Projektstrukturen (Java, C#, Python, etc.) eine Paketstruktur nach diesen Regeln aus (Syntax an Zielsprache anpassen). Die Regeln sind universell, rekursiv und formal für beliebige OOP-Domänen anwendbar.
+Gib für beliebige Projektstrukturen (Java, C#, Python, etc.) eine Paketstruktur nach diesen Axiomen und Regeln aus (Syntax an Zielsprache anpassen). Die Regeln sind universell, rekursiv und formal für beliebige OOP-Domänen anwendbar.
