@@ -1,8 +1,9 @@
 
-
+**Blogs Authors**
 - https://www.yegor256.com/tag/oop.html
 - https://javadevguy.wordpress.com
 - https://amihaiemil.com
+- https://www.vzurauskas.com/
 
 **Beachte Object Nameing hier:**
 - https://www.yegor256.com/2015/03/09/objects-end-with-er.html
@@ -25,6 +26,12 @@
 - https://amihaiemil.com/2019/06/12/hide-it-all.html
 - https://amihaiemil.com/2018/11/10/an-extension-to-telldontask.html
 
+**Composition**
+https://www.thoughtworks.com/insights/blog/composition-vs-inheritance-how-choose
+
+**Decomposition**
+- https://www.yegor256.com/2018/09/18/fear-of-coupling.html
+- https://www.yegor256.com/2016/08/30/decomposition-of-responsibility.html
 
 **DI**
 - https://www.yegor256.com/2014/10/03/di-containers-are-evil.html
@@ -39,10 +46,6 @@
 - https://www.yegor256.com/2015/12/08/temporal-coupling-between-method-calls.html
 - https://www.yegor256.com/2015/02/26/composable-decorators.html
 - https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html
-
-**Decomposition**
-- https://www.yegor256.com/2018/09/18/fear-of-coupling.html
-- https://www.yegor256.com/2016/08/30/decomposition-of-responsibility.html
 
 **Laws**
 - https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/
