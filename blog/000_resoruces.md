@@ -35,7 +35,7 @@
 
 
 **Composition**
-https://www.thoughtworks.com/insights/blog/composition-vs-inheritance-how-choose
+- https://www.thoughtworks.com/insights/blog/composition-vs-inheritance-how-choose
 
 **Decomposition**
 - https://www.yegor256.com/2018/09/18/fear-of-coupling.html
