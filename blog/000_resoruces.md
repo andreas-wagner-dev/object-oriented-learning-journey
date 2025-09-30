@@ -12,6 +12,9 @@
 - https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
 - https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html
 
+**-Contract-Constuction:** 
+- https://www.vzurauskas.com/2019/02/04/its-not-a-contract-if-you-cant-enforce-it
+
 **Object-Constuction:**
 - https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
 - https://www.yegor256.com/2015/05/07/ctors-must-be-code-free.html
@@ -19,6 +22,7 @@
 - https://www.yegor256.com/2017/11/14/static-factory-methods.html
 - https://amihaiemil.com/2018/12/09/builder-as-a-failfast-state-machine.html
 - https://amihaiemil.com/2018/04/17/dolls-and-maquettes.html
+https://www.vzurauskas.com/2018/09/09/static-methods-violate-dependency-inversion-principle
 
 **Getters-and-Setters**
 - https://www.yegor256.com/2014/09/16/getters-and-setters-are-evil.html
@@ -36,6 +40,9 @@ https://www.thoughtworks.com/insights/blog/composition-vs-inheritance-how-choose
 **DI**
 - https://www.yegor256.com/2014/10/03/di-containers-are-evil.html
 - https://www.yegor256.com/2016/06/27/singletons-must-die.html
+
+**Polymorphism**
+- https://www.vzurauskas.com/2021/04/07/factories-and-packages
 
 **Immutable**
 - https://www.yegor256.com/2014/06/09/objects-should-be-immutable.html
