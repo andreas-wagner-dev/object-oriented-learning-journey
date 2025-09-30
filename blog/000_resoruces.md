@@ -12,7 +12,7 @@
 - https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
 - https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html
 
-**-Contract-Constuction:** 
+**Contract-Constuction:** 
 - https://www.vzurauskas.com/2019/02/04/its-not-a-contract-if-you-cant-enforce-it
 
 **Object-Constuction:**
