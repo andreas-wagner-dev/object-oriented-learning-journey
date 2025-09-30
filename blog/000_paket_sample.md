@@ -378,4 +378,351 @@ DDD - Implementierung
     style ST2 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
     style ST3 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px
 ```
+
+# Abstractness (A) vs Instability (I) Plot
+
+```html
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A vs I Plot Vergleich</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        h1 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .chart-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #334155;
+        }
+        canvas {
+            max-height: 400px;
+        }
+        .metrics {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            grid-column: 1 / -1;
+        }
+        .metrics h2 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #475569;
+        }
+        .good {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .warning {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+        .bad {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 20px;
+            font-size: 13px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 5px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Abstractness vs Instability Plot</h1>
+    <div class="subtitle">Vergleich: Klassisches DDD vs OOP-Struktur (Yegor256 Prinzipien)</div>
     
+    <div class="container">
+        <div class="chart-container">
+            <div class="chart-title">Klassisches DDD</div>
+            <canvas id="dddChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">OOP-Struktur (Yegor256)</div>
+            <canvas id="oopChart"></canvas>
+        </div>
+    </div>
+
+    <div class="metrics">
+        <h2>Package Metriken Vergleich</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Package</th>
+                    <th>Abstractness (A)</th>
+                    <th>Instability (I)</th>
+                    <th>Distance (D)</th>
+                    <th>Bewertung</th>
+                </tr>
+            </thead>
+            <tbody id="metricsTable"></tbody>
+        </table>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-color" style="background: #22c55e;"></span>
+                <span>Main Sequence (D ≤ 0.2): Optimal</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #f59e0b;"></span>
+                <span>Akzeptabel (D ≤ 0.4)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #ef4444;"></span>
+                <span>Problematisch (D > 0.4)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DDD Package Metriken
+        const dddPackages = [
+            { name: 'domain.model', A: 0.8, I: 0.2, type: 'DDD' },
+            { name: 'domain.repository', A: 1.0, I: 0.3, type: 'DDD' },
+            { name: 'domain.service', A: 0.7, I: 0.4, type: 'DDD' },
+            { name: 'infrastructure.persistence', A: 0.1, I: 0.8, type: 'DDD' },
+            { name: 'infrastructure.security', A: 0.1, I: 0.7, type: 'DDD' },
+            { name: 'application.usecase', A: 0.5, I: 0.5, type: 'DDD' },
+            { name: 'application.service', A: 0.2, I: 0.6, type: 'DDD' }
+        ];
+
+        // OOP Package Metriken
+        const oopPackages = [
+            { name: 'user', A: 0.9, I: 0.1, type: 'OOP' },
+            { name: 'document', A: 0.9, I: 0.15, type: 'OOP' },
+            { name: 'users', A: 0.85, I: 0.2, type: 'OOP' },
+            { name: 'documents', A: 0.85, I: 0.2, type: 'OOP' },
+            { name: 'user.credentials', A: 0.8, I: 0.25, type: 'OOP' },
+            { name: 'user.registration', A: 0.75, I: 0.3, type: 'OOP' },
+            { name: 'user.credentials.hash', A: 0.7, I: 0.35, type: 'OOP' },
+            { name: 'document.creation', A: 0.75, I: 0.3, type: 'OOP' },
+            { name: 'document.validation', A: 0.8, I: 0.25, type: 'OOP' },
+            { name: 'users.persistence', A: 0.15, I: 0.85, type: 'OOP' },
+            { name: 'users.authentication', A: 0.2, I: 0.8, type: 'OOP' },
+            { name: 'documents.storage', A: 0.15, I: 0.85, type: 'OOP' }
+        ];
+
+        // Distance berechnen: D = |A + I - 1|
+        function calculateDistance(A, I) {
+            return Math.abs(A + I - 1);
+        }
+
+        // Bewertung basierend auf Distance
+        function evaluateDistance(D) {
+            if (D <= 0.2) return { text: 'Optimal', class: 'good' };
+            if (D <= 0.4) return { text: 'Akzeptabel', class: 'warning' };
+            return { text: 'Problematisch', class: 'bad' };
+        }
+
+        // Chart erstellen
+        function createChart(canvasId, packages, title) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            // Main Sequence Line: A + I = 1
+            const mainSequence = [
+                { x: 0, y: 1 },
+                { x: 1, y: 0 }
+            ];
+
+            // Zone of Pain (stable & concrete)
+            const painZone = [
+                { x: 0, y: 0 },
+                { x: 0.3, y: 0 },
+                { x: 0, y: 0.3 }
+            ];
+
+            // Zone of Uselessness (abstract & unstable)
+            const uselessZone = [
+                { x: 0.7, y: 1 },
+                { x: 1, y: 1 },
+                { x: 1, y: 0.7 }
+            ];
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Main Sequence',
+                            data: mainSequence,
+                            type: 'line',
+                            borderColor: '#22c55e',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Packages',
+                            data: packages.map(p => ({ x: p.I, y: p.A })),
+                            backgroundColor: '#3b82f6',
+                            borderColor: '#1e40af',
+                            borderWidth: 2,
+                            pointRadius: 8,
+                            pointHoverRadius: 10
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 1) {
+                                        const pkg = packages[context.dataIndex];
+                                        const D = calculateDistance(pkg.A, pkg.I);
+                                        return [
+                                            `Package: ${pkg.name}`,
+                                            `A: ${pkg.A.toFixed(2)}`,
+                                            `I: ${pkg.I.toFixed(2)}`,
+                                            `D: ${D.toFixed(2)}`
+                                        ];
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Instability (I) →',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            min: 0,
+                            max: 1,
+                            ticks: {
+                                stepSize: 0.1
+                            },
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Abstractness (A) →',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            min: 0,
+                            max: 1,
+                            ticks: {
+                                stepSize: 0.1
+                            },
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Tabelle füllen
+        function fillMetricsTable() {
+            const tbody = document.getElementById('metricsTable');
+            const allPackages = [...dddPackages, ...oopPackages];
+            
+            allPackages.forEach(pkg => {
+                const D = calculateDistance(pkg.A, pkg.I);
+                const evaluation = evaluateDistance(D);
+                
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><strong>${pkg.type}:</strong> ${pkg.name}</td>
+                    <td>${pkg.A.toFixed(2)}</td>
+                    <td>${pkg.I.toFixed(2)}</td>
+                    <td>${D.toFixed(3)}</td>
+                    <td class="${evaluation.class}">${evaluation.text}</td>
+                `;
+            });
+        }
+
+        // Statistiken berechnen
+        function calculateStatistics() {
+            const dddDistances = dddPackages.map(p => calculateDistance(p.A, p.I));
+            const oopDistances = oopPackages.map(p => calculateDistance(p.A, p.I));
+            
+            const avgDDD = dddDistances.reduce((a, b) => a + b, 0) / dddDistances.length;
+            const avgOOP = oopDistances.reduce((a, b) => a + b, 0) / oopDistances.length;
+            
+            console.log('DDD Average Distance:', avgDDD.toFixed(3));
+            console.log('OOP Average Distance:', avgOOP.toFixed(3));
+            console.log('DDD Packages in Main Sequence:', dddDistances.filter(d => d <= 0.2).length);
+            console.log('OOP Packages in Main Sequence:', oopDistances.filter(d => d <= 0.2).length);
+        }
+
+        // Init
+        createChart('dddChart', dddPackages, 'DDD');
+        createChart('oopChart', oopPackages, 'OOP');
+        fillMetricsTable();
+        calculateStatistics();
+    </script>
+</body>
+</html>
+```
