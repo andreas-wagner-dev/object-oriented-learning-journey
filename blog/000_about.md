@@ -11,22 +11,10 @@ https://chatgpt.com/
 - **Type** –  (Vertrag), der vorgibt, welche Regeln, Eigenschaften und Beziehungen (z. B. Aggregation, Komposition) für Objekte gelten.
 - **Klasse** – (Bauplatz), der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
 - **Object** – (Instanz) laufende Instanz eines Typs/Klasse mit eigenem Zustand und Verhalten.
-- **Paket** – (Namensraum), der die Details/Realisierung von Typen (interface oder abstract classes) nach fachlichen Konzepten kapselt.
-- **Layer** – Abstraktions(ebene), die Objekte nach Verantwortungsgrad hierarchisch trennt.
-- **System** – (Gesamtheit) interagierender Objekte und Layer, die gemeinsam Verhalten realisieren.
+- **Paket** – (Namensraum), der die Details/Realisierungen von Typen (interface oder abstract classes) nach fachlichen Konzepten kapselt.
+- **Layer** – Abstraktions(ebene), die Typen nach Verantwortungsgrad hierarchisch in Pakete trennt.
+- **System** – (Gesamtheit) interagierender Objekte und Layer, die gemeinsam Verhalten als ein *Artifakt* realisieren.
 
-***Anmerkungen***
-- Die *Abstraktion* (Interface/abstract class) gibt die Regeln vor, die Klasse setzt sie aktiv um und erzeugt Instanzen.
-- *Klasse* = "Bauplatz"/"Konstrukteur", nicht Bauplan oder Template.
-  -- Die Klasse weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen.
-  -- Sie ist _nicht_ bloßer Bauplan oder Vorlage, sondern der Konstrukteur im System.
-- Ein *Paket* kaselt nur details (Realisierung) von Typen oder abstrakten Klassen zusammen.
-- *Aggregation* oder *Komposition* beschreiben die gegenseitigen Beziehungen, die ausgehend von Typen für Objekte gelten.
-
-***Warum ist eine Klasse kein "Bauplan"?***
-- Ein Bauplan ist ein passives Dokument – er beschreibt nur, wie etwas aussehen soll.
-- Im OOP ist die Klasse jedoch ein aktiver Bestandteil des Systems: Sie kann Objekte erzeugen (konstruiert sie), kennt deren Lebenszyklus und sorgt dafür, dass die Regeln (Abstraktionen, Verträge) eingehalten werden.
-- Die Klasse ist somit nicht bloß Vorlage, sondern der Mechanismus, durch den Objekte im System entstehen.
 
 ```mermaid
 flowchart TD
@@ -50,7 +38,7 @@ flowchart TD
 
     P -- kapselt details von --> TI
     P -- abstrahiert details von --> TA
-    P -- logisch gruppiert --> C
+    P -- regelt zugriff von --> C
 
     L -- abstrahiert --> P
     S -- kapselt --> L
@@ -58,7 +46,8 @@ flowchart TD
     %% Aggregation und Komposition: Nur normale Linien plus Text
     O1 -- Aggregation --> O2
     O1 -- Komposition --> O2
-
+    O1 -- Orchestrierung --> O2
+    
     %% Farbdefinitionen
     classDef interface fill:#b3e0ff,stroke:#2986cc,stroke-width:2px,color:#003366,font-size:16px;
     classDef abstractclass fill:#3399ff,stroke:#003366,stroke-width:2px,color:#ffffff,font-size:16px;
@@ -68,13 +57,29 @@ flowchart TD
     classDef system fill:#ffffff,stroke:#bfbfbf,stroke-width:2px,color:#222,font-size:16px;
 ```
 
-Erläuterungen:  
-- **Objektorientiert** als Wurzel einer Abstrakten  
-- **Type → Klasse → Object** als Kernkette  
-- **Pakete** fassen nur details als Realisierung von Typen oder abstrakten Klassen zusammen
-- **Layer** ordnen Pakete hierarchisch gemäß Verantwortung  
-- **System** kapselt alles als ein Artifakt
+***Anmerkungen***
+- Die **Abstraktion** (Interface/abstract class) gibt die Regeln vor, die Klasse setzt sie aktiv um und erzeugt Instanzen.
+- **Klasse** = "Bauplatz"/"Konstrukteur", nicht Bauplan oder Template.
+  -- Die Klasse weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen.
+  -- Sie ist _nicht_ bloßer Bauplan oder Vorlage, sondern der Konstrukteur im System.
+- Ein **Paket** kaselt nur details (Realisierungen) von Typen oder abstrakten Klassen zusammen.
+- **Aggregation** oder **Komposition** beschreiben die gegenseitigen Beziehungen, die ausgehend von Typen für Objekte gelten können.
 
+***Warum ist eine Klasse kein "Bauplan"?***
+- Ein Bauplan ist ein passives Dokument – er beschreibt nur, wie etwas aussehen soll.
+- Im OOP ist die Klasse jedoch ein aktiver Bestandteil des Systems: Sie kann Objekte erzeugen (konstruiert sie), kennt deren Lebenszyklus und sorgt dafür, dass die Regeln (Abstraktionen, Verträge) eingehalten werden.
+- Die Klasse ist somit nicht bloß Vorlage, sondern der Mechanismus, durch den Objekte im System entstehen.
+
+
+### Object Assoziation  
+**Aggregation**, **Komposition** und **Orchestrierung** beschreiben unterschiedliche Arten von Beziehungen zwischen Objekten, wobei
+- **Assoziation** die allgemeine "kennt-Beziehung" ist, 
+- **Aggregation** eine schwächere "hat-Beziehung", bei der Teile unabhängig vom Ganzen existieren können, und
+- **Komposition** eine stärkere "hat-Beziehung" ist, bei der Teile ohne das Ganze nicht existieren können.
+- **Orchestrierung** ist ein 'dynamisches' Konzept, bei dem komplexere Abläufe oder Dienste durch die Koordination mehrerer unabhängiger Komponenten gesteuert werden, was sich von den strukturellen Beziehungen in Aggregation und Komposition unterscheidet. 
+
+
+## OOP-Definition
 
 ## Layer-Architektur
 
@@ -454,9 +459,9 @@ Steuernde Objekte, die Core Objects und Utilities kombinieren.
 
 👉 Innerhalb derselben Abstraktionsebene gilt dann:
 
-- Core Objects dürfen Utilities nutzen.
-- Orchestrators dürfen Core + Utilities nutzen.
-- Utilities dürfen weder Core noch Orchestrators kennen.
+- Core Objects dürfen Values Objects nutzen.
+- Orchestrators dürfen Core + Values Objects nutzen.
+- Values Objects dürfen weder Core noch Orchestrators kennen.
 
 Das ist die horizontale Entsprechung im reinen OOP, analog zur vertikalen Schichtung.
 
