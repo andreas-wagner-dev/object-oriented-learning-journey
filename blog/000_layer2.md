@@ -3,6 +3,8 @@
 Objektorientierte Systeme bestehen aus Objekten, die reale Dinge oder Vorgänge repräsentieren.  
 Ein Layer beschreibt dabei **nicht technische Schichten**, sondern **Abstraktionsebenen und Verantwortungsbereiche zwischen Objekten**.
 
+
+
 ---
 
 ## 1.2 Vertikale Layer (Abstraktionshöhe)
