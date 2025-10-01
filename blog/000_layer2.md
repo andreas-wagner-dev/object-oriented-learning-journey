@@ -1,8 +1,11 @@
 # 1. Layer-OOP
 
-Objektorientierte Systeme bestehen aus Objekten, die reale Dinge oder Vorgänge repräsentieren.  
+Objektorientierte Systeme bestehen aus Objekten, die reale Dinge oder Vorgänge repräsentieren.
 Ein Layer beschreibt dabei **nicht technische Schichten**, sondern **Abstraktionsebenen und Verantwortungsbereiche zwischen Objekten**.
 
+Die Schichten können vertikale oder horizontale gebildet werden, wobei
+- **Vertikale Layer** trennen Ideen von Details, also ordnen das System nach Abstraktion (Was ist allgemeiner vs. spezieller?)
+- **Horizontale Layer** trennen Zustände von Abläufen, also  ordnen das System nach Verantwortung (Welche Rolle übernimmt ein Objekt auf derselben Höhe?).
 ---
 
 ## 1.2 Vertikale Layer (Abstraktionshöhe)
@@ -82,17 +85,7 @@ flowchart LR
 
 ---
 
-## 1.4 Zusammenhänge & Zusammenfassung
-
-- **Vertikal ordnet nach Abstraktion (Was ist allgemeiner vs. spezieller?).**
-- **Horizontal ordnet nach Verantwortung (Welche Rolle übernimmt ein Objekt auf derselben Höhe?).**
-
-✅ **Merksatz:**
-
-> *Vertikale* Layer trennen **Ideen von Details**.  
-> *Horizontale* Layer trennen **Zustände von Abläufen**.  
-
-## OOP-Layering-Gesetz (Implementierungsabhängigkeiten)
+## 1.4 OOP-Layering-Gesetz (Implementierungsabhängigkeiten)
 
 | Beziehung                                   | Erlaubt? | Bedingung                                                                                  |
 | ------------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
@@ -442,5 +435,5 @@ flowchart TD
 
     %% Forbidden Abhängigkeiten
     IL2 -.->|forbidden| IL1
-    L2 -.->|forbidden| L1
+    L2 -.->|allowed| L1
 ```
