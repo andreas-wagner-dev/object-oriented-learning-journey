@@ -8,7 +8,7 @@ https://chatgpt.com/
 ## OOP-Definition
 
 **Objektorientiert** – Paradigma, das Software als Zusammenspiel von autonomeren Objekten modelliert. Die einzelnen Bausteine sind: 
-- **Type** –  (Vertrag) (interface oder abstract class), der vorgibt, welche Regeln, Eigenschaften und Beziehungen (z. B. Aggregation, Komposition) für Objekte gelten.
+- **Type** –  (Vertrag), der vorgibt, welche Regeln, Eigenschaften und Beziehungen (z. B. Aggregation, Komposition) für Objekte gelten.
 - **Klasse** – (Bauplatz), der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
 - **Object** – (Instanz) laufende Instanz eines Typs/Klasse mit eigenem Zustand und Verhalten.
 - **Paket** – (Namensraum), der die Details/Realisierung von Typen (interface oder abstract classes) nach fachlichen Konzepten kapselt.
