@@ -1,9 +1,8 @@
 # About this Blog
 
-Many years i try to find the silver bullet for constructing business software from the stretch...  but what i found does not fit my needs moreover it's frustrated me... never the less i don't give up... because i maybe understand...
+*Many years i try to find the silver bullet for constructing business software from the stretch...  but what i found does not fit my needs moreover it's frustrated me... never the less i don't give up... because i maybe understand...* 
 
-Then a ask Chat GPT: 21.09.2025
-https://chatgpt.com/
+**The Problem is sitting in front of the Interface**
 
 ## OOP-Definition
 
