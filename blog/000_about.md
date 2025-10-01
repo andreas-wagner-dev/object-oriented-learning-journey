@@ -7,36 +7,26 @@ https://chatgpt.com/
 
 ## OOP-Definition
 
-Objektorientiert – Paradigma, das Software als Zusammenspiel autonomer Objekte modelliert.
-- **Type** – Vertrag, der das abstrakte Verhalten und die zulässige Struktur (z. B. Aggregation/Komposition) von Objekten beschreibt.
-- **Klasse** – Bauplatz, der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
-- **Object** – laufende Instanz eines Typs/Klasse mit eigenem Zustand und Verhalten.
-- **Paket** – logischer Namensraum, der zusammengehörige Typen/Objekte strukturiert.
-- **Layer** – Abstraktionsebene, die Objekte nach Verantwortungsgrad hierarchisch trennt.
-- **System** – Gesamtheit interagierender Objekte und Layer, die gemeinsam Verhalten realisieren.
+**Objektorientiert** – Paradigma, das Software als Zusammenspiel von autonomeren Objekten modelliert. Die einzelnen Bausteine sind: 
+- **Type** –  (Vertrag) (interface oder abstract class), der vorgibt, welche Regeln, Eigenschaften und Beziehungen (z. B. Aggregation, Komposition) für Objekte gelten.
+- **Klasse** – (Bauplatz), der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
+- **Object** – (Instanz) laufende Instanz eines Typs/Klasse mit eigenem Zustand und Verhalten.
+- **Paket** – (Namensraum), der die Details/Realisierung von Typen (interface oder abstract classes) nach fachlichen Konzepten kapselt.
+- **Layer** – Abstraktions(ebene), die Objekte nach Verantwortungsgrad hierarchisch trennt.
+- **System** – (Gesamtheit) interagierender Objekte und Layer, die gemeinsam Verhalten realisieren.
 
+***Anmerkungen***
+- Die *Abstraktion* (Interface/abstract class) gibt die Regeln vor, die Klasse setzt sie aktiv um und erzeugt Instanzen.
+- *Klasse* = "Bauplatz"/"Konstrukteur", nicht Bauplan oder Template.
+  -- Die Klasse weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen.
+  -- Sie ist _nicht_ bloßer Bauplan oder Vorlage, sondern der Konstrukteur im System.
+- Ein *Paket* kaselt nur details (Realisierung) von Typen oder abstrakten Klassen zusammen.
+- *Aggregation* oder *Komposition* beschreiben die gegenseitigen Beziehungen, die ausgehend von Typen für Objekte gelten.
 
-## OOP-Definition (präzisiert)
-
-Objektorientiert – Paradigma, das Software als Zusammenspiel autonomer Objekte modelliert.
-
-- **Type (Abstraktion)** – Vertrag (Interface oder abstrakte Klasse), der vorgibt, welche Regeln, Eigenschaften und Beziehungen (z. B. Aggregation, Komposition) für Objekte gelten.
-- **Klasse** – **Bauplatz**: Der aktive Ort, an dem Objektinstanzen entstehen („geboren werden“) und deren Lebenszyklus verwaltet wird. Die Klasse weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen. Sie ist _nicht_ bloßer Bauplan oder Vorlage, sondern der Konstrukteur im System.<br>
-  <sup>Siehe: [Yegor Bugayenko – Seven Virtues of a Good Object](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)</sup>
-- **Objekt (Instanz)** – Ein eigenständiges, laufendes Exemplar einer Klasse mit eigenem Zustand und Verhalten.
-- **Paket** – Logischer Namensraum, der zusammengehörige Typen, Klassen und Objekte strukturiert.
-- **Layer** – Abstraktionsebene, die Objekte nach Verantwortungsgrad hierarchisch trennt.
-- **System** – Gesamtheit interagierender Objekte und Layer, die gemeinsam Verhalten realisieren.
-
-
-*Anmerkungen*
-- Klasse = "Bauplatz"/"Konstrukteur", nicht Bauplan oder Template.
-- Die Abstraktion (Interface/abstract class) gibt die Regeln vor, die Klasse setzt sie aktiv um und erzeugt Instanzen.
-
-**Warum ist "Bauplan" falsch?**
+***Warum ist eine Klasse kein "Bauplan"?***
 - Ein Bauplan ist ein passives Dokument – er beschreibt nur, wie etwas aussehen soll.
--Im OOP ist die Klasse jedoch ein aktiver Bestandteil des Systems: Sie kann Objekte erzeugen (konstruiert sie), kennt deren Lebenszyklus und sorgt dafür, dass die Regeln (Abstraktionen, Verträge) eingehalten werden.
--Die Klasse ist somit nicht bloß Vorlage, sondern der Mechanismus, durch den Objekte im System entstehen.
+- Im OOP ist die Klasse jedoch ein aktiver Bestandteil des Systems: Sie kann Objekte erzeugen (konstruiert sie), kennt deren Lebenszyklus und sorgt dafür, dass die Regeln (Abstraktionen, Verträge) eingehalten werden.
+- Die Klasse ist somit nicht bloß Vorlage, sondern der Mechanismus, durch den Objekte im System entstehen.
 
 ```mermaid
 flowchart TD
