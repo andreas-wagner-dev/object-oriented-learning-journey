@@ -3,17 +3,15 @@
 Objektorientierte Systeme bestehen aus Objekten, die reale Dinge oder Vorgänge repräsentieren.  
 Ein Layer beschreibt dabei **nicht technische Schichten**, sondern **Abstraktionsebenen und Verantwortungsbereiche zwischen Objekten**.
 
-
-
 ---
 
 ## 1.2 Vertikale Layer (Abstraktionshöhe)
 
-Vertikale Schichtung trennt Objekte nach ihrem **Abstraktionsgrad**:
+Vertikale Schichtung 'L' trennt Objekte nach ihrem **Abstraktionsgrad** 'n':
 
-- **Oben:** Allgemeine Regeln, Verträge, Begriffe (stabile Abstraktionen)
-- **Mitte:** Konkretisierungen dieser Regeln
-- **Unten:** Technische Details und austauschbare Mittel
+-  **Oben:** Allgemeine Regeln, Verträge, Begriffe (stabile Abstraktionen) -  L[n]
+-  **Mitte:** Konkretisierungen dieser Regeln -  IL[n + 1]
+-  **Unten:** Technische Details und austauschbare Mittel - IL[n + 2]
 
 ```mermaid
 flowchart TB
@@ -47,16 +45,16 @@ Diese Rollen folgen **strikten Abhängigkeitsregeln**:
 
 | Layer | Bedeutung | Darf benutzen | Darf nicht benutzen |
 |--------|-----------|----------------|---------------------|
-| Utility Objects | Tragen Daten oder einfache Operationen | – | Core, Orchestrators |
-| Core Objects | Repräsentieren stabile Konzepte/Realitäten | Utilities | Orchestrators |
-| Orchestrating Objects | Reale Vorgänge / Abläufe | Core + Utilities | (keine Abhängigkeit nach oben) |
+| Value Objects | Tragen Daten oder einfache Operationen | – | Core, Orchestrators |
+| Core Objects | Repräsentieren stabile Konzepte/Realitäten | Value | Orchestrators |
+| Orchestrating Objects | Reale Vorgänge / Abläufe | Core + Value | (keine Abhängigkeit nach oben) |
 
 ### Beispiel (OOP-konform benannt)
 
 ```mermaid
 flowchart LR
 
-  subgraph H1["Utility Objects"]
+  subgraph H1["Value Objects"]
     U1["Date"]
     U2["Money"]
   end
@@ -88,14 +86,11 @@ flowchart LR
 
 - **Vertikal ordnet nach Abstraktion (Was ist allgemeiner vs. spezieller?).**
 - **Horizontal ordnet nach Verantwortung (Welche Rolle übernimmt ein Objekt auf derselben Höhe?).**
-- **Alle Objekte müssen reale Dinge oder Vorgänge repräsentieren.**
-- **„Service“, „Manager“, „Controller“ sind verboten — außer sie benennen echte Rollen.**
 
 ✅ **Merksatz:**
 
-> *Vertikale Layer trennen **Ideen von Details**.  
-> Horizontale Layer trennen **Zustände von Abläufen**.  
-> Nur reale Dinge dürfen als Objekte existieren.*
+> *Vertikale* Layer trennen **Ideen von Details**.  
+> *Horizontale* Layer trennen **Zustände von Abläufen**.  
 
 ## OOP-Layering-Gesetz (Implementierungsabhängigkeiten)
 
