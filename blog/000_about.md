@@ -8,12 +8,26 @@ https://chatgpt.com/
 ## OOP-Definition
 
 Objektorientiert – Paradigma, das Software als Zusammenspiel autonomer Objekte modelliert.
-- **Type** – Vertrag (Interface/Abstraktion), der das Verhalten und die zulässige Struktur (z. B. Aggregation/Komposition) von Objekten beschreibt.
+- **Type** – Vertrag, der das abstrakte Verhalten und die zulässige Struktur (z. B. Aggregation/Komposition) von Objekten beschreibt.
 - **Klasse** – Bauplatz, der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
 - **Object** – laufende Instanz eines Typs/Klasse mit eigenem Zustand und Verhalten.
 - **Paket** – logischer Namensraum, der zusammengehörige Typen/Objekte strukturiert.
 - **Layer** – Abstraktionsebene, die Objekte nach Verantwortungsgrad hierarchisch trennt.
 - **System** – Gesamtheit interagierender Objekte und Layer, die gemeinsam Verhalten realisieren.
+
+
+## OOP-Definition (präzisiert)
+
+Objektorientiert – Paradigma, das Software als Zusammenspiel autonomer Objekte modelliert.
+
+- **Type (Abstraktion)** – Vertrag (Interface oder abstrakte Klasse), der vorgibt, welche Regeln, Eigenschaften und Beziehungen (z. B. Aggregation, Komposition) für Objekte gelten.
+- **Klasse** – **Bauplatz**: Der aktive Ort, an dem Objektinstanzen entstehen („geboren werden“) und deren Lebenszyklus verwaltet wird. Die Klasse weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen. Sie ist _nicht_ bloßer Bauplan oder Vorlage, sondern der Konstrukteur im System.<br>
+  <sup>Siehe: [Yegor Bugayenko – Seven Virtues of a Good Object](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)</sup>
+- **Objekt (Instanz)** – Ein eigenständiges, laufendes Exemplar einer Klasse mit eigenem Zustand und Verhalten.
+- **Paket** – Logischer Namensraum, der zusammengehörige Typen, Klassen und Objekte strukturiert.
+- **Layer** – Abstraktionsebene, die Objekte nach Verantwortungsgrad hierarchisch trennt.
+- **System** – Gesamtheit interagierender Objekte und Layer, die gemeinsam Verhalten realisieren.
+
 
 *Anmerkungen*
 - Klasse = "Bauplatz"/"Konstrukteur", nicht Bauplan oder Template.
@@ -27,34 +41,35 @@ Objektorientiert – Paradigma, das Software als Zusammenspiel autonomer Objekte
 ```mermaid
 flowchart TD
 
-    %% Paradigma
-    OO["Objektorientiert</br>(Paradigma)"]
+    OO["Objektorientiert (Paradigma)"]
 
-    %% Typen
-    TI["Interface</br>(Type)"]:::interface
-    TA["Abstrakte Klasse</br>(Type)"]:::abstractclass
-    C["Klasse</br>(Bauplan)"]:::classbox
-    O["Objekt</br>(Instanz)"]:::classbox
+    TI["Interface (Type)"]:::interface
+    TA["Abstrakte Klasse (Type)"]:::abstractclass
+    C["Klasse (Bauplan)"]:::classbox
+    O1["Objekt A (Instanz)"]:::classbox
+    O2["Objekt B (Instanz)"]:::classbox
 
-    %% Strukturelle Container
-    P["Paket</br>(logischer Namensraum)"]:::package
-    L["Layer</br>(Abstraktionsebene)"]:::layer
-    S["System</br>(alle Layer & Objekte)"]:::system
+    P["Paket (logischer Namensraum)"]:::package
+    L["Layer (Abstraktionsebene)"]:::layer
+    S["System (alle Layer & Objekte)"]:::system
 
-    %% Beziehungen mit klarer Beschriftung
     OO -- definiert --> TI
     TI -- wird erweitert von --> TA
     TA -- wird realisiert von --> C
-    C -- wird instanziiert zu --> O
+    C -- wird instanziiert zu --> O1
 
-    P -- kapselt details von--> TI
+    P -- kapselt details von --> TI
     P -- abstrahiert details von --> TA
     P -- logisch gruppiert --> C
 
     L -- abstrahiert --> P
     S -- kapselt --> L
 
-    %% Farbdefinitionen für beste Lesbarkeit
+    %% Aggregation und Komposition: Nur normale Linien plus Text
+    O1 -- Aggregation --> O2
+    O1 -- Komposition --> O2
+
+    %% Farbdefinitionen
     classDef interface fill:#b3e0ff,stroke:#2986cc,stroke-width:2px,color:#003366,font-size:16px;
     classDef abstractclass fill:#3399ff,stroke:#003366,stroke-width:2px,color:#ffffff,font-size:16px;
     classDef classbox fill:#ccffcc,stroke:#339933,stroke-width:2px,color:#003300,font-size:16px;
