@@ -6,7 +6,7 @@
 
 ## OOP-Definition
 
-**Objektorientiert** – Paradigma, das Software als Zusammenspiel von autonomeren Objekten modelliert. Die einzelnen Bausteine sind: 
+**Objektorientiert** – Paradigma, das Software als eine abstraktes Zusammenspiel von autonomeren Objekten modelliert.
 - **Type** –  (Vertrag), der vorgibt, welche Regeln, Eigenschaften und Beziehungen (z. B. Aggregation, Komposition) für Objekte gelten.
 - **Klasse** – (Bauplatz), der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
 - **Object** – (Instanz) laufende Instanz eines Typs/Klasse mit eigenem Zustand und Verhalten.
@@ -30,7 +30,7 @@ flowchart TD
     L["Layer (Abstraktionsebene)"]:::layer
     S["System (alle Layer & Objekte)"]:::system
 
-    OO -- definiert --> TI
+    OO -- abstraktion als --> TI
     TI -- wird erweitert von --> TA
     TA -- wird realisiert von --> C
     C -- wird instanziiert zu --> O1
