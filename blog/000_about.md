@@ -60,7 +60,7 @@ flowchart TD
 - Die **Abstraktion** von Objekten wird durch Typen beschieben ('interface' oder 'abstract' class), nicht Klassen.
 - Die **Klasse** ist ein "Bauplatz", nicht Bauplan, Vorlage oder Template, sondern der **Konstrukteur** im System.
 - Sie weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen.
-- Ein **Paket** kaselt auschließlich Realisierungen als details bezogen auf Typen oder abstrakten Klassen.
+- Ein **Paket** kaselt auschließlich Realisierungen als Details von Typen oder abstrakten Klassen.
 - **Aggregation** oder **Komposition** beschreiben die gegenseitigen Beziehungen, die ausgehend von Typen für Objekte gelten können.
 
 ***Warum ist eine Klasse kein "Bauplan"?***
