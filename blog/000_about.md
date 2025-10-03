@@ -36,7 +36,7 @@ flowchart TD
     C -- wird instanziiert zu --> O1
 
     P -- kapselt details von --> TI
-    P -- abstrahiert details von --> TA
+    P -- erweitert details von --> TA
     P -- regelt zugriff von --> C
 
     L -- abstrahiert --> P
