@@ -6,11 +6,11 @@
 
 ## OOP-Definition
 
-**Objektorientiert** – Paradigma, das Software als eine abstraktes Zusammenspiel von autonomeren Objekten modelliert.
+**Objektorientiert** – Paradigma, das reale Objeke in der Software als Zusammenspiel von autonomeren Objekten abstrakt modelliert.
 - **Type** –  (Vertrag), der abstrakt vorgibt, welches Verhalten, Regeln, Eigenschaften und Beziehungen für Objekte gelten.
 - **Klasse** – (Bauplatz), der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
-- **Object** – (Instanz) laufende Instanz eines Typs erzeugt durch eine Klasse mit eigenem Zustand und Verhalten.
-- **Paket** – (Namensraum), der die Details/Realisierungen von Typen (interface oder abstract classes) nach fachlichen Konzepten kapselt.
+- **Object** – (Instanz) laufende Instanz eines Typs, erzeugt durch eine Klasse mit eigenem Zustand und Verhalten.
+- **Paket** – (Namensraum), der die Details/Realisierungen (concrete classes) von Typen (interface oder abstract classes) kapselt.
 - **Layer** – Abstraktions(ebene), die Typen nach Verantwortungsgrad hierarchisch in Pakete trennt.
 - **System** – (Gesamtheit) interagierender Objekte und Layer, die gemeinsam Verhalten als ein *Artifakt* realisieren.
 
@@ -60,7 +60,7 @@ flowchart TD
 - Die **Abstraktion** von Objekten wird durch Typen beschieben ('interface' oder 'abstract' class), nicht Klassen.
 - Die **Klasse** ist ein "Bauplatz", nicht Bauplan, Vorlage oder Template, sondern der **Konstrukteur** im System.
 - Sie weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen.
-- Ein **Paket** kaselt nur details (Realisierungen) von Typen oder abstrakten Klassen zusammen.
+- Ein **Paket** kaselt nur details (Realisierungen) von Typen oder abstrakten Klassen.
 - **Aggregation** oder **Komposition** beschreiben die gegenseitigen Beziehungen, die ausgehend von Typen für Objekte gelten können.
 
 ***Warum ist eine Klasse kein "Bauplan"?***
