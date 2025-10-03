@@ -57,10 +57,10 @@ flowchart TD
 ```
 
 ***Anmerkungen***
-- Die **Abstraktion** (Interface/abstract class) gibt die Regeln vor, die Klasse setzt sie aktiv um und erzeugt Instanzen.
+- Die object **Abstraktion** wird durch die elemente 'interface' oder 'abstract' class beschieben wird.
 - **Klasse** = "Bauplatz"/"Konstrukteur", nicht Bauplan oder Template.
-  -- Die Klasse weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen.
-  -- Sie ist _nicht_ bloßer Bauplan oder Vorlage, sondern der Konstrukteur im System.
+-- Die Klasse weiß, wie Instanzen gebaut und welche Verträge eingehalten werden müssen.
+-- Sie ist _nicht_ bloßer Bauplan oder Vorlage, sondern der Konstrukteur im System.
 - Ein **Paket** kaselt nur details (Realisierungen) von Typen oder abstrakten Klassen zusammen.
 - **Aggregation** oder **Komposition** beschreiben die gegenseitigen Beziehungen, die ausgehend von Typen für Objekte gelten können.
 
