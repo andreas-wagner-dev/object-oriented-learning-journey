@@ -2,10 +2,11 @@
 
 ## DEFINITIONEN
 
-- **MainApp**: Einstiegspunkt der Anwendung im Paket `app`; implementiert die Abstraktion `App.java` im Wurzel-Namespace.
-- **Komposition**: Jedes Objekt existiert ausschließlich als Teil einer expliziten Objekt-Komposition, die durch die App initiiert wird.
-- **Domänenobjekt**: Ein objektorientiertes Element, das ein reales Ding der Fachdomäne repräsentiert (kein technischer „-er“/„-Manager“/„-Service“, außer tatsächlich in der Domäne vorhanden).
 - **Kompositionshierarchie**: Die gesamte Anwendung ist als Baum von Kompositionen aufgebaut, rekursiv verschachtelt von außen (App) nach innen (atomare Komponenten).
+- **Komposition**: Jedes Objekt existiert ausschließlich als Teil einer expliziten Objekt-Komposition, die durch eine Abstraktion z .B. `App.java` initiiert wird.
+- **Einstiegspunkt**: der Anwendung im Paket `app` implementiert die Abstraktion `MainApp.java` im Wurzel-Namespace als Einstiegspunkt der Anwendung.
+- **Domänenobjekt**: Ein objektorientiertes Element, das ein reales Ding der Fachdomäne repräsentiert (kein technischer „-er“/„-Manager“/„-Service“, außer tatsächlich in der Domäne vorhanden).
+MainApp: Einstiegspunkt der Anwendung im Paket app; implementiert die Abstraktion App.java im Wurzel-Namespace.
 - **Visualisierung**: Rechteck-Nesting: Die App ist das äußerste Rechteck, alle weiteren Objekte liegen als Rechtecke vollständig darin geschachtelt.
 
 ---
