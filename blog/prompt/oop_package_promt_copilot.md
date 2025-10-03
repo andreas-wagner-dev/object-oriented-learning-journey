@@ -17,7 +17,7 @@
 
 **2. Existenzregel für Packages:**  
  ∃ a[n] ∨ ∃ aa[n.m] : a[n], aa[n.m] ∈ {n[0], n[0].*} ⇒ p[n] darf existieren  
- (Ein Package entsteht auf gleicher Ebene wie die zugehörigen Abstraktionen und enthält deren Implementierungen.)
+ (Ein Package entsteht auf gleicher Ebene wie die zugehörigen Abstraktionen und enthält nur deren Implementierungen.)
 
 **3. Inhaltsregel:**  
  ∀ c ∈ p[n] : c ⊑ a[n] ∨ c ⊑ aa[n.m]  
