@@ -1,6 +1,7 @@
 
 **Blogs Authors**
 - https://www.yegor256.com/tag/oop.html
+- https://github.com/yegor256/blog
 - https://javadevguy.wordpress.com
 - https://amihaiemil.com
 - https://www.vzurauskas.com/
@@ -15,6 +16,7 @@
 **Contract-Constuction:**
 - https://amihaiemil.com/2017/11/04/but-how-do-you-work-without-a-model.html
 - https://www.vzurauskas.com/2019/02/04/its-not-a-contract-if-you-cant-enforce-it
+- https://github.com/yegor256/blog/blob/master/_posts/2025/jun/2025-06-22-retrieve-or-remove.md
 
 **Object-Constuction:**
 - https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
