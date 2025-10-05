@@ -27,12 +27,17 @@
 - https://www.vzurauskas.com/2018/07/24/maintaining-model-integrity
 
 **Getters-and-Setters**
+*Problems*
 - https://www.yegor256.com/2014/09/16/getters-and-setters-are-evil.html
-- https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html
+- https://www.yegor256.com/2016/11/21/naked-data.html
 - https://www.yegor256.com/2016/07/06/data-transfer-object.html
+*Solutions:*
+- https://amihaiemil.com/2017/11/04/but-how-do-you-work-without-a-model.html
+- https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html
+
 - https://amihaiemil.com/2019/06/12/hide-it-all.html
 - https://amihaiemil.com/2018/11/10/an-extension-to-telldontask.html
-
+- https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html
 
 **Composition**
 - https://www.thoughtworks.com/insights/blog/composition-vs-inheritance-how-choose
