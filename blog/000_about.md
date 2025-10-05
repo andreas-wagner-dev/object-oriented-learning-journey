@@ -6,7 +6,7 @@
 
 ## OOP-Definition
 
-**Objektorientiert** – Paradigma, das reale Objeke in der Software als Zusammenspiel von autonomeren Objekten abstrakt modelliert.
+**Objektorientiert** – Paradigma, das reale Objeke in der Software als Zusammenspiel von autonomen Objekten modelliert.
 - **Type** –  (Vertrag), der abstrakt vorgibt, welches Verhalten, Regeln, Eigenschaften und Beziehungen für Objekte gelten.
 - **Klasse** – (Bauplatz), der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
 - **Object** – (Instanz) laufende Instanz eines Typs, erzeugt durch eine Klasse mit eigenem Zustand und Verhalten.
