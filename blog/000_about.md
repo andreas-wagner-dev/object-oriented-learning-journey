@@ -7,6 +7,11 @@
 ## OOP-Definition
 
 **Objektorientiert** – Paradigma, das reale Objeke in der Software als Zusammenspiel von autonomen Objekten modelliert.
+
+[wikipedia(https://de.wikipedia.org/wiki/Objektorientierte_Programmierung#:~:text=Die%20objektorientierte%20Programmierung%20(kurz%20OOP,der%20die%20gegebene%20Anwendung%20betrifft.)]
+
+Die objektorientierte Programmierung (kurz OOP) ist ein auf dem Konzept der Objektorientierung basierendes Programmierparadigma. Die Grundidee besteht darin, die Architektur einer Software an den Grundstrukturen desjenigen Bereichs der Wirklichkeit auszurichten, der die gegebene Anwendung betrifft. Ein Modell dieser Strukturen wird in der Entwurfsphase aufgestellt. Es enthält Informationen über die auftretenden Objekte und deren Abstraktionen, ihre Typen. Die Umsetzung dieser Denkweise erfordert die Einführung verschiedener Konzepte, insbesondere Klassen, Vererbung, Polymorphie und spätes Binden (dynamisches Binden).
+
 - **Type** –  (Vertrag), der abstrakt vorgibt, welches Verhalten, Regeln, Eigenschaften und Beziehungen für Objekte gelten.
 - **Klasse** – (Bauplatz), der aktive Ort, an dem Objektinstanzen entstehen und deren Lebenszyklus verwaltet wird.
 - **Object** – (Instanz) laufende Instanz eines Typs, erzeugt durch eine Klasse mit eigenem Zustand und Verhalten.
