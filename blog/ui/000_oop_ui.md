@@ -358,7 +358,10 @@ public final class TaskController implements Serializable {
     public TaskView getEditingView() { return editingView; }
     public void setEditingView(TaskView view) { this.editingView = view; }
 }
+```
+
 ### 2.6 JSF Template
+
 ```xml
 <!DOCTYPE html>
 <html xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -410,8 +413,11 @@ public final class TaskController implements Serializable {
 ```
 
 ## 3. View-Erweiterungen
-Das View Pattern kann für komplexere UI-Anforderungen erweitert werden.
+
+**Das View Pattern kann für komplexere UI-Anforderungen erweitert werden.**
+
 ### 3.1 Paging (Hollywood Principle)
+
 ```java
 /**
  * Paged - Verhalten für paginierte Anzeige.
