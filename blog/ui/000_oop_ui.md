@@ -10,7 +10,8 @@ Inhaltsverzeichnis
 
 ## 1. Fundamentale OOP-Prinzipien
 ### 1.1 Quellen der Prinzipien
-Basierend auf:
+
+**Basierend auf:**
 
 - Robert Bräutigam (MATHEMA): Object-Oriented Domain-Driven Design, Single Responsibility Principle
 - Yegor Bugayenko: Seven Virtues of Good Objects, SQL-Speaking Objects
@@ -18,7 +19,9 @@ Basierend auf:
 - Mihai Emil Andronache: Self-documenting code
 
 ### 1.2 Kernprinzipien
+
 **Keine Getter/Setter für Business-Daten**
+
 ```java
 // FALSCH - Datenexposition
 public String getDescription() { return description; }
@@ -28,16 +31,20 @@ public void setCompleted(boolean completed) { this.completed = completed; }
 public Task complete() { return new Task(id, description, true); }
 public void showTo(Display display) { /* Task präsentiert sich */ }
 ```
+
 **Tell, Don't Ask**
+
 ```java
 // FALSCH - Fragen und dann tun
 if (task.isCompleted()) {
     task.setStatus("done");
 }
-```
 // RICHTIG - Sagen
 task.complete();
+```
+
 **UI ist Teil der Business-Logik**
+
 ```java
 // FALSCH - Externe View-Klasse holt Daten
 public class TaskView {
