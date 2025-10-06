@@ -292,6 +292,13 @@ public final class TaskView implements Task.View {
         return completed ? "task-completed" : "task-pending";
     }
 }
+
+public interface Action{
+    boolean exists();
+    // JSF expression
+    String call();
+}
+
 ```
 
 ### 2.5 JSF Controller
