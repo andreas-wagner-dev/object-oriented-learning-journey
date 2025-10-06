@@ -14,13 +14,19 @@
 - https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html
 
 **Contract-Constuction:**
+
+*Problems*
+
+- https://www.vzurauskas.com/2019/02/04/its-not-a-contract-if-you-cant-enforce-it
 - https://amihaiemil.com/2017/08/12/how-interfaces-are-refactoring-our-code.html
 - https://amihaiemil.com/2017/11/04/but-how-do-you-work-without-a-model.html
-- https://www.vzurauskas.com/2019/02/04/its-not-a-contract-if-you-cant-enforce-it
+
 - https://github.com/yegor256/blog/blob/master/_posts/2025/jun/2025-06-22-retrieve-or-remove.md
 
 **Object-Constuction:**
+
 *Problems*
+
 - https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
 - https://www.yegor256.com/2015/05/07/ctors-must-be-code-free.html
 - https://www.yegor256.com/2016/04/19/object-must-not-be-configurable.html
@@ -29,16 +35,22 @@
 - https://amihaiemil.com/2018/04/17/dolls-and-maquettes.html
 - https://www.vzurauskas.com/2018/09/09/static-methods-violate-dependency-inversion-principle
 - https://www.vzurauskas.com/2018/07/24/maintaining-model-integrity
+
 *Solutions*
+
 - https://www.vzurauskas.com/2019/08/11/wine-and-potency
 
 **Getters-and-Setters**
+
 *Problems*
+
 - https://www.infoworld.com/article/2161183/why-getter-and-setter-methods-are-evil.html
 - https://www.yegor256.com/2014/09/16/getters-and-setters-are-evil.html
 - https://www.yegor256.com/2016/11/21/naked-data.html
 - https://www.yegor256.com/2016/07/06/data-transfer-object.html
+
 *Solutions:*
+
 - https://amihaiemil.com/2017/11/04/but-how-do-you-work-without-a-model.html
 - https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html
 - **https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html**
@@ -69,8 +81,6 @@
 - https://www.yegor256.com/2015/12/08/temporal-coupling-between-method-calls.html
 - https://www.yegor256.com/2015/02/26/composable-decorators.html
 - https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html
-
-
 
 **Laws**
 - https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/
