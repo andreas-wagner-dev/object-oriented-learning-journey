@@ -99,6 +99,9 @@ public final class UrgentTask implements Task {
 ```
 ## 2. View Pattern - Die praktische Lösung
 ### 2.1 Grundkonzept
+
+bidirektionalen View-Interfaces
+
 Das View Pattern ist der pragmatische Kompromiss zwischen OOP-Reinheit und JSF-Realität.
 **Kernidee:**
 
@@ -120,7 +123,7 @@ public interface Task extends Serializable {
     Task edit(Task.View view);
     
     // Kontrollierte Datenexposition für UI
-    Task.View asView();
+    void display(Task.View view);
     
     /**
      * View - Inneres Interface für JSF-Binding.
