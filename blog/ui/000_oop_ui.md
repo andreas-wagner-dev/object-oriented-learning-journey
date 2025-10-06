@@ -45,6 +45,8 @@ task.complete();
 
 **UI ist Teil der Business-Logik**
 
+- *"Data Should Be Animated, Not Mapped"*
+
 ```java
 // FALSCH - Externe View-Klasse holt Daten
 public class TaskView {
@@ -53,10 +55,19 @@ public class TaskView {
     }
 }
 
-// RICHTIG - Objekt zeigt sich selbst
+// RICHTIG - Objekt zeigt/renderet sich selbst
 public interface Task {
-    Task.View asView();
+     void render(TaskView view);
 }
+
+public class SimpleTaskView {
+    void render(TaskView view) {
+      // no Data leak - animated
+       view.setDescription(description); 
+    }
+}
+
+
 ```
 **Immutability statt Mutation**
 ```java
