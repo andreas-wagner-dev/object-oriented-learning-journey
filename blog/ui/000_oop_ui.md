@@ -1,5 +1,7 @@
-# OOP UI-Patterns für JSF-Anwendungen - Vollständige Dokumentation
-Inhaltsverzeichnis
+# OOP UI-Pattern für OOP-Anwendungen
+
+Diese Dokumentation dient als Referenz für die Entwicklung von UI-Anwendungen nach (echten) OOP-Prinzipien.
+**Inhaltsverzeichnis**
 
 - [Fundamentale OOP-Prinzipien]
 - [View Pattern - Die praktische Lösung]
@@ -13,6 +15,7 @@ Inhaltsverzeichnis
 
 **Basierend auf:**
 
+- https://de.wikipedia.org/wiki/Objektorientierte_Programmierung
 - Robert Bräutigam (MATHEMA): Object-Oriented Domain-Driven Design, Single Responsibility Principle
 - Yegor Bugayenko: Seven Virtues of Good Objects, SQL-Speaking Objects
 - Vytautas Žurauskas: True Encapsulation
@@ -1677,4 +1680,3 @@ Kernpunkte:
 - Erweiterbarer Code durch Decorator
 - JSF-kompatibel ohne OOP zu opfern
 
-Diese Dokumentation dient als Referenz für die Entwicklung moderner JSF-Anwendungen nach echten OOP-Prinzipien.
