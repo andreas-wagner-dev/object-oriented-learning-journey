@@ -191,6 +191,20 @@ public final class SimpleTask implements Task {
 ```
 
 ### 2.4 View Implementation
+
+```java
+/**
+ * Action for View - Mutable DTO für JSF.
+ */
+public interface Action {
+
+    boolean exists();
+    
+    // JSF expression
+    String call();
+}
+```
+
 ```java
 package de.example.todos.task;
 
@@ -293,11 +307,6 @@ public final class TaskView implements Task.View {
     }
 }
 
-public interface Action{
-    boolean exists();
-    // JSF expression
-    String call();
-}
 
 ```
 
