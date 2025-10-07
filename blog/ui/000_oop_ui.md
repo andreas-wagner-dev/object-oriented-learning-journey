@@ -1110,7 +1110,9 @@ Erweiterbarkeit (Paging, Trees, Filtering)
 - Typsicher und testbar
 
 ###  7.2 Wann welches Pattern?
-Szenario|Pattern|Grund|Standard CRUD|View Pattern| JSF-kompatibel, OOP-konformHierarchische DatenView + TreedTree-Logik im ObjektPaging/FilteringView + PageWiederholenClaude hat noch nicht die Fähigkeit, den von ihm generierten Code auszuführen.AWeiterBearbeitenOOP UI-Patterns für JSF-Anwendungen - Vollständige Dokumentation (Fortsetzung)
+|Szenario|Pattern|Grund|Standard CRUD|View Pattern| 
+
+|JSF-kompatibel| OOP-konformHierarchische DatenView + TreedTree-Logik im Objek tPaging/Filtering View + PageWiederholenClaude hat noch nicht die Fähigkeit| den von ihm generierten Code auszuführen.AWeiterBearbeitenOOP UI-Patterns für JSF-Anwendungen - Vollständige Dokumentation (Fortsetzung)
 ### 7.2 Wann welches Pattern? (Fortsetzung)
 SzenarioPatternGrundStandard CRUDView PatternJSF-kompatibel, OOP-konformHierarchische DatenView + TreedTree-Logik im ObjektPaging/FilteringView + Paged (Hollywood)IoC, elegant, testbarKomplexe FormsView erweitertView kann beliebig wachsenRead-Only ListenHorizontale ErweiterungEinfacher, weniger CodeLegacy MigrationView Pattern schrittweiseInkrementelle Refactoring
 ### 7.3 Was NICHT tun
