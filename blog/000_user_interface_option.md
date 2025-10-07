@@ -1,5 +1,7 @@
 # OOP UI-Patterns für Todo-Anwendungen
+
 ## 1. Allgemeine OO UI Prinzipien mit Todo Usecase
+
 Fundamentale OOP-Regeln (aus den Quellen):
 - Keine Getter/Setter: Objekte TUN etwas, statt Daten preiszugeben
 - Tell, Don't Ask: task.complete() statt task.setCompleted(true)
@@ -14,6 +16,7 @@ Fundamentale OOP-Regeln (aus den Quellen):
 - Task weiß, wie er sich abschließt, darstellt und persistiert.
 
 ## 2. Konzepte und Varianten
+
 ### Variante 1: User-Speaking Objects (Direct JSF Communication)
 
 ```java
@@ -42,14 +45,48 @@ public UIComponent speakToUser() {
 
 **Nachteile:**
 
-- Serialization-Probleme mit ActionListeners
-- Viel Boilerplate-Code für UI-Erstellung
-- Schwierig zu debuggen
+- Viel Boilerplate-Code für UI-Erstellung mit JSF EL Expressions 
+- JSF Serialization-Probleme mit ActionListeners
 - JSF Component-IDs müssen manuell verwaltet werden
+- Schwer, UI-Framework zu wechseln
+- Schwierig zu debuggen
 
 **Fazit:** Theoretisch rein, praktisch zu komplex für echte Anwendungen.
 
-### Variante 2: Present Pattern (Presentation Objects)
+### **Variante 2:** Horizontale Interface-Erweiterung
+```java
+public interface Task {
+    // Business
+    Task complete();
+    
+    // Horizontale UI-Erweiterung
+    String text();
+    String style();
+    TaskAction action();
+}
+```
+**Anwendung:**
+
+- Interface wird um UI-Methoden erweitert
+- JSF bindet direkt: `#{task.text()}`, `#{task.style()}`
+- Task entscheidet selbst über Präsentation
+
+**Vorteile:**
+
+- Einfach und direkt
+- Keine zusätzlichen DTOs
+- JSF-Template bleibt deklarativ
+- Objekt kontrolliert Darstellung vollständig
+
+**Nachteile:**
+
+- Interface "vermischt" Business und UI
+- Schwer, UI-Framework zu wechseln
+- Bei komplexen UIs werden Interfaces groß
+
+**Fazit:** Beste Lösung für kleine bis mittlere Apps mit festem UI-Framework.
+
+### Variante 3: Present Pattern (Presentation Objects)
 
 ```java
 public interface Task {
@@ -82,7 +119,7 @@ Decorator-Pattern funktioniert: UrgentPresent(task.present())
 Testbar - Present ist einfach zu mocken
 Serialization-safe
 
-Nachteile:**
+**Nachteile:**
 
 - Zusätzliche Abstraktionsschicht
 - Present-Objekte müssen parallel zu Tasks gepflegt werden
@@ -90,38 +127,6 @@ Nachteile:**
 
 **Fazit:** Guter Kompromiss für mittlere Komplexität.
 
-### **Variante 3:** Horizontale Interface-Erweiterung
-```java
-public interface Task {
-    // Business
-    Task complete();
-    
-    // Horizontale UI-Erweiterung
-    String text();
-    String style();
-    TaskAction action();
-}
-```
-**Anwendung:**
-
-- Interface wird um UI-Methoden erweitert
-- JSF bindet direkt: #{task.text()}, #{task.style()}
-- Task entscheidet selbst über Präsentation
-
-**Vorteile:**
-
-- Einfach und direkt
-- Keine zusätzlichen Objekte (Present, View)
-- JSF-Template bleibt deklarativ
-- Objekt kontrolliert Darstellung vollständig
-
-**Nachteile:**
-
-- Interface "vermischt" Business und UI
-- Schwer, UI-Framework zu wechseln
-- Bei komplexen UIs werden Interfaces groß
-
-**Fazit:** Beste Lösung für kleine bis mittlere Apps mit festem UI-Framework.
 
 ### Variante 4: Strikte Datenkapselung (Question/Display)
 ```java
