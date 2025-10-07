@@ -1432,13 +1432,15 @@ public class PagedTasksTest {
 
 ## 10. Performance-Überlegungen
 ### 10.1 Immutability und Performance
-Problem: Jede Änderung erstellt neue Objekte
-javaTask task = new SimpleTask("Original");
+**Problem:** Jede Änderung erstellt neue Objekte
+```java
+Task task = new SimpleTask("Original");
 task = task.complete();  // Neue Instanz
 task = new UrgentTask(task);  // Noch eine neue Instanz
-Lösungen:
+```
+**Lösungen:**
 
-Structural Sharing (für Collections)
+**Structural Sharing (für Collections)**
 
 ```java
 public final class InMemoryTasks implements Tasks {
@@ -1452,7 +1454,7 @@ public final class InMemoryTasks implements Tasks {
     }
 }
 ```
-Lazy View Creation
+**Lazy View Creation**
 
 ```java
 public final class SimpleTask implements Task {
@@ -1467,7 +1469,7 @@ public final class SimpleTask implements Task {
     }
 }
 ```
-Event Sourcing für große Änderungen
+**Event Sourcing für große Änderungen**
 
 ```java
 public interface Event {
@@ -1480,10 +1482,11 @@ public final class CompleteEvent implements Event {
         return task.complete();
     }
 }
+
 ```
 ## 10.2 Tree-Performance
-Problem: Rekursive Updates durch gesamten Baum
-Lösung: Path-based Updates
+**Problem:** Rekursive Updates durch gesamten Baum
+**Lösung:** Path-based Updates
 ```java
 public final class HierarchicalFolder implements TreedFolder {
     
@@ -1506,8 +1509,8 @@ public final class HierarchicalFolder implements TreedFolder {
 }
 ```
 ## 10.3 Paging-Performance
-Problem: Filter/Sort auf gesamter Collection
-Lösung: Database-backed Implementation
+**Problem:** Filter/Sort auf gesamter Collection
+**Lösung:** Database-backed Implementation
 ```java
 public final class JpaTasks implements Tasks {
     private final EntityManager em;
@@ -1550,19 +1553,23 @@ public final class JpaTasks implements Tasks {
 
 ## 11. Häufige Fehler und Lösungen
 ### 11.1 "Ich brauche doch die ID für JSF!"
-Problem:
-java// User will: #{tasks.complete(item.id)}
+**Problem:**
+```java
+// User will: #{tasks.complete(item.id)}
 // Aber: task.id() exponiert interne Daten!
-Lösung: ID ist OK in View
+```
+**Lösung:** ID ist OK in View
 ```java
 public interface Task.View {
     String getId();  // OK - View ist kontrollierte Grenze
 }
 ```
 // JSF
-```<h:commandButton action="#{tasks.complete(item.id)}" />```
+```xml
+<h:commandButton action="#{tasks.complete(item.id)}" />
+```
 11.2 "View wird zu groß für komplexe Forms"
-Problem:
+**Problem:**
 ```java
 public interface Task.View {
     String getDescription();
@@ -1573,7 +1580,7 @@ public interface Task.View {
     // 20 weitere Properties...
 }
 ```
-Lösung: Verschachtelte Views
+**Lösung:** Verschachtelte Views
 ```java
 public interface Task.View {
     String getDescription();
@@ -1592,7 +1599,7 @@ public interface Priority {
 }
 ```
 ### 11.3 "Decorator-Chain wird zu lang"
-Problem:
+**Problem:**
 ```java 
 Task task = new NotifiedTask(
     new TimestampedTask(
@@ -1606,7 +1613,7 @@ Task task = new NotifiedTask(
     )
 );
 ```
-Lösung: Builder Pattern
+**Lösung:** Builder Pattern???
 ```java
 public final class TaskBuilder {
     private Task task;
@@ -1638,9 +1645,11 @@ Task task = new TaskBuilder("Test")
 ```
 
 ### 11.4 "JSF braucht equals() für Row Selection"
-Problem:
-java// JSF DataTable mit Selection braucht equals()
-Lösung: equals() basierend auf ID
+**Problem:**
+```java
+// JSF DataTable mit Selection braucht equals()
+```
+**Lösung:** equals() basierend auf ID
 ```java
 public final class TaskView implements Task.View {
     private String id;
