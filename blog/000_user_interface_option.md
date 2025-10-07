@@ -14,7 +14,8 @@ Fundamentale OOP-Regeln (aus den Quellen):
 - Task weiß, wie er sich abschließt, darstellt und persistiert.
 
 ## 2. Konzepte und Varianten
-**Variante 1:** User-Speaking Objects (Direct JSF Communication)
+### Variante 1: User-Speaking Objects (Direct JSF Communication)
+
 ```java
 public interface Task {
     UIComponent speakToUser();  // Task erstellt eigene JSF Components
@@ -48,7 +49,7 @@ public UIComponent speakToUser() {
 
 **Fazit:** Theoretisch rein, praktisch zu komplex für echte Anwendungen.
 
-**Variante 2:** Present Pattern (Presentation Objects)
+### Variante 2: Present Pattern (Presentation Objects)
 
 ```java
 public interface Task {
@@ -89,7 +90,7 @@ Nachteile:**
 
 **Fazit:** Guter Kompromiss für mittlere Komplexität.
 
-**Variante 3:** Horizontale Interface-Erweiterung
+### **Variante 3:** Horizontale Interface-Erweiterung
 ```java
 public interface Task {
     // Business
@@ -120,78 +121,9 @@ public interface Task {
 - Schwer, UI-Framework zu wechseln
 - Bei komplexen UIs werden Interfaces groß
 
-Fazit: Beste Lösung für kleine bis mittlere Apps mit festem UI-Framework.
+**Fazit:** Beste Lösung für kleine bis mittlere Apps mit festem UI-Framework.
 
-Variante 4: Paged mit Hollywood Principle (Functional)
-```java
-public interface Paged<T> {
-    void displayOn(Callable<Page> page, Consumer<List<T>> data);
-}
-
-@Override
-public void displayOn(Callable<Page> page, Consumer<List<T>> data) {
-    try {
-        data.accept(display(page.call()));  // Hollywood!
-    } catch (Exception e) {
-        throw new IllegalStateException(e);
-    }
-}
-```
-**Anwendung:**
-
-- Tasks rufen Controller-Callbacks auf
-- Controller gibt Callable/Consumer
-- Inversion of Control - "Don't call us, we'll call you"
-
-**Vorteile:**
-
-- Echte IoC - Objekt kontrolliert Fluss
-- Standard Java Functional Interfaces
-- Lazy Evaluation mit Callable
-- Testbar durch Consumer-Mocking
-
-**Nachteile:**
-
-- Konzept für Anfänger schwer verständlich
-- Exception-Handling nötig (Callable throws)
-- Debugging komplexer
-
-Fazit: Elegant für Paging/Filtering, aber steile Lernkurve.
-
-Variante 5: Tree/Treed für hierarchische Strukturen
-```java
-public interface Treed {
-    String label();
-    String icon();
-    boolean isExpanded();
-    List<Treed> children();
-}
-
-public interface TreedFolder extends Folder, Treed {
-    TreedFolder expand();
-}
-```
-**Anwendung:**
-
-- Objekte wissen, wie sie im Tree dargestellt werden
-- Rekursives JSF-Template ruft children() auf
-- Folder + Tree-Verhalten kombiniert
-
-**Vorteile:**
-
-- Tree-Logik im Objekt, nicht im UI
-- Funktioniert für jede Hierarchie (Folder, Menu, Org-Chart)
-- Rekursive Templates sind einfach
-
-**Nachteile:**
-
-- Komplexe Immutable-Updates durch ganze Hierarchie
-- findFolder() und updateFolder() sind aufwendig
-- Performance bei großen Bäumen
-
-Fazit: Sehr gut für hierarchische Strukturen, wenn richtig implementiert.
-
-Variante 6: Strikte Datenkapselung (Question/Display)
+### Variante 4: Strikte Datenkapselung (Question/Display)
 ```java
 public interface Task {
     boolean answersTo(Question question);
@@ -226,7 +158,7 @@ Unmöglich, Zustand inkonsistent zu machen
 
 **Fazit:** Akademisch korrekt, praktisch zu puristisch für Business-Apps.
 
-**Variante 7:** View Pattern (EMPFOHLEN)
+### **Variante 7:** View Pattern (EMPFOHLEN)
 ```java
 public interface Task {
     Task.View asView();
@@ -285,3 +217,81 @@ AnwendungsfallEmpfohlene VarianteGrundKleine Todo-AppHorizontale Interface-Erwei
 
 **Pragmatischer Ansatz:**
 - View Pattern kombiniert mit horizontaler Erweiterung ist der sweet spot für produktive JSF-Entwicklung mit OOP-Prinzipien.
+
+
+## Options: View in View, Paged - Tree
+
+
+### Option: Paged mit Hollywood Principle (Functional)
+
+### Option: Paged mit Hollywood Principle (Functional)
+```java
+public interface Paged<T> {
+    void displayOn(Callable<Page> page, Consumer<List<T>> data);
+}
+
+@Override
+public void displayOn(Callable<Page> page, Consumer<List<T>> data) {
+    try {
+        data.accept(display(page.call()));  // Hollywood!
+    } catch (Exception e) {
+        throw new IllegalStateException(e);
+    }
+}
+```
+**Anwendung:**
+
+- Tasks rufen Controller-Callbacks auf
+- Controller gibt Callable/Consumer
+- Inversion of Control - "Don't call us, we'll call you"
+
+**Vorteile:**
+
+- Echte IoC - Objekt kontrolliert Fluss
+- Standard Java Functional Interfaces
+- Lazy Evaluation mit Callable
+- Testbar durch Consumer-Mocking
+
+**Nachteile:**
+
+- Konzept für Anfänger schwer verständlich
+- Exception-Handling nötig (Callable throws)
+- Debugging komplexer
+
+Fazit: Elegant für Paging/Filtering, aber steile Lernkurve.
+
+### Option: Tree für hierarchische Strukturen
+```java
+public interface Node<T> {
+    String label();
+    String icon();
+    Node<T> expand();
+    boolean isExpanded();
+    List<Node<T>> children();
+}
+
+public interface Folder extends <Node<Folder>> {
+  //...
+}
+
+```
+**Anwendung:**
+
+- Objekte wissen, wie sie im Tree dargestellt werden
+- Rekursives JSF-Template ruft children() auf
+- Folder + Tree-Verhalten kombiniert
+
+**Vorteile:**
+
+- Tree-Logik im Objekt, nicht im UI
+- Funktioniert für jede Hierarchie (Folder, Menu, Org-Chart)
+- Rekursive Templates sind einfach
+
+**Nachteile:**
+
+- Komplexe Immutable-Updates durch ganze Hierarchie
+- findFolder() und updateFolder() sind aufwendig
+- Performance bei großen Bäumen
+
+**Fazit:** Sehr gut für hierarchische Strukturen, wenn richtig implementiert.
+
