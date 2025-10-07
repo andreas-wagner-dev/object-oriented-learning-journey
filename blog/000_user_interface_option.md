@@ -51,7 +51,8 @@ public UIComponent speakToUser() {
 - Schwer, UI-Framework zu wechseln
 - Schwierig zu debuggen
 
-**Fazit:** Theoretisch rein, praktisch zu komplex für echte Anwendungen.
+**Fazit:**
+--> Theoretisch rein, praktisch zu komplex für echte Anwendungen.
 
 ### **Variante 2:** Horizontale Interface-Erweiterung
 ```java
@@ -84,7 +85,8 @@ public interface Task {
 - Schwer, UI-Framework zu wechseln
 - Bei komplexen UIs werden Interfaces groß
 
-**Fazit:** Beste Lösung für kleine bis mittlere Apps mit festem UI-Framework.
+**Fazit:**
+--> Beste Lösung für kleine bis mittlere Apps mit festem UI-Framework.
 
 ### Variante 3: Present Pattern (Presentation Objects)
 
@@ -114,10 +116,10 @@ public final class TaskPresent implements Present {
 
 **Vorteile:**
 
-Saubere Trennung: Task (Business) / Present (UI)
-Decorator-Pattern funktioniert: UrgentPresent(task.present())
-Testbar - Present ist einfach zu mocken
-Serialization-safe
+- Saubere Trennung: Task (Business) / Present (UI)
+- Decorator-Pattern funktioniert: UrgentPresent(task.present())
+- Testbar - Present ist einfach zu mocken
+- Serialization-safe
 
 **Nachteile:**
 
@@ -125,7 +127,8 @@ Serialization-safe
 - Present-Objekte müssen parallel zu Tasks gepflegt werden
 - Für einfache UIs overhead
 
-**Fazit:** Guter Kompromiss für mittlere Komplexität.
+**Fazit:**
+--> Guter Kompromiss für mittlere Komplexität.
 
 
 ### Variante 4: Strikte Datenkapselung (Question/Display)
@@ -142,6 +145,7 @@ task.answersTo(new DescriptionContains("urgent"));
 // Hollywood Display
 task.showTo(display -> display.show(text, style, action));
 ```
+
 **Anwendung:**
 
 - Keine Getter - nur Fragen beantworten
@@ -161,9 +165,11 @@ Unmöglich, Zustand inkonsistent zu machen
 - Schwer für Team zu verstehen
 - Overhead für einfache Anwendungen
 
-**Fazit:** Akademisch korrekt, praktisch zu puristisch für Business-Apps.
+**Fazit:**
+--> Akademisch korrekt, praktisch zu puristisch für Business-Apps.
 
-### **Variante 7:** View Pattern (EMPFOHLEN)
+### Variante 5: View Pattern (EMPFOHLEN)
+
 ```java
 public interface Task {
     Task.View asView();
@@ -200,7 +206,8 @@ public interface Task {
 - Scheinbar "Getter/Setter" (aber kontrolliert)
 - Edit-State im Controller
 
-**Fazit:** Beste praktische Lösung für echte JSF-Anwendungen. Kompromiss zwischen OOP-Reinheit und JSF-Realität.
+**Fazit:** 
+--> Beste praktische Lösung für echte JSF-Anwendungen. Kompromiss zwischen OOP-Reinheit und JSF-Realität.
 
 ## 3. Empfehlung nach Anwendungsfall
 AnwendungsfallEmpfohlene VarianteGrundKleine Todo-AppHorizontale Interface-ErweiterungEinfach,direkt, wenig CodeEnterprise CRUDView PatternJSF-freundlich, wartbar, skalierbarComplex FormsView PatternView kann beliebig erweitert werdenHierarchische DatenTreed PatternTree-Logik im ObjektPaging/FilteringHollywood PagedElegante IoCLern-ProjektPresent PatternZeigt OOP-Konzepte klarAkademischStrikte KapselungZeigt pure OOP
