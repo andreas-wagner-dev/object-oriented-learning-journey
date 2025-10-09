@@ -82,6 +82,61 @@ public class Order {
 }
 ```
 
+```java
+/**
+ * EmployeeComparison.java
+ *
+ * Vergleicht das Setter-Anti-Pattern (passive DTO) mit dem aktiven OO-DDD-Objekt.
+ *
+ * Passive DTO (Anti-Pattern):
+ * - Logik liegt extern (im Service Layer).
+ * - Daten (Naked Data) sind ungeschützt (Setter).
+ * - Invarianten können leicht gebrochen werden.
+ *
+ * Aktives OO-DDD-Objekt:
+ * - Logik liegt intern (in der Business-Methode).
+ * - Kapselung ist gewährleistet (keine Setter).
+ * - Schutz der Invarianten durch das Objekt selbst.
+ */
+
+// --- ANTI-PATTERN: Passive DTO (Naked Data) ---
+class PassiveEmployeeDTO {
+    private int salary;
+    private boolean isManager;
+
+    // Setter erlaubt JEDEM, den Zustand ohne Validierung zu ändern
+    public void setSalary(int salary) {
+        this.salary = salary;
+    }
+
+    public int getSalary() {
+        return salary;
+    }
+
+    public boolean isManager() {
+        return isManager;
+    }
+
+    public void setIsManager(boolean isManager) {
+        this.isManager = isManager;
+    }
+}
+
+// --- ORCHESTRATOR: Der Gott-Service (Muss alle Regeln prüfen) ---
+class SalaryService {
+    public void grantBonus(PassiveEmployeeDTO employee, int bonusAmount) {
+        // EXTERN: Der Service MUSS die Invarianten prüfen, da das Objekt es nicht tut.
+        if (employee.isManager() && employee.getSalary() + bonusAmount > 10000) {
+            System.err.println("SERVICE: Regelbruch! Manager-Gehalt darf 10000 nicht überschreiten.");
+            return;
+        }
+
+        // Der Service orchestriert die Zustandsänderung
+        employee.setSalary(employee.getSalary() + bonusAmount);
+        System.out.println("SERVICE: Bonus von " + bonusAmount + " gewährt. Neues Gehalt: " + employee.getSalary());
+    }
+}
+```
 
 ### **3. Radikale OO-DDD Kapselung: Das UI of Objects Prinzip**
 
@@ -240,6 +295,103 @@ public final class AccountNumber {
         } catch (IllegalArgumentException e) {
             System.err.println("Fehler abgefangen: " + e.getMessage());
         }
+    }
+}
+```
+
+```java
+// --- OO-DDD: Aktives, Gekapseltes Objekt ---
+class ActiveEmployee {
+    // Zustand ist private und kann nur über den Konstruktor initialisiert werden
+    private int salary;
+    private final boolean isManager;
+
+    public ActiveEmployee(int initialSalary, boolean isManager) {
+        this.salary = initialSalary;
+        this.isManager = isManager;
+    }
+
+    /**
+     * Die Business-Methode (Action Command)
+     * Das Objekt WEISS, wie seine Invarianten geschützt werden müssen (Kapselung).
+     * @param bonusAmount Der zu gewährende Bonus
+     */
+    public void applyBonus(int bonusAmount) {
+        // INTERN: Das Objekt prüft die Invariante selbst.
+        int newSalary = this.salary + bonusAmount;
+
+        if (this.isManager && newSalary > 10000) {
+            throw new IllegalArgumentException("DOMAIN: Manager-Gehalt darf 10000 nicht überschreiten!");
+        }
+
+        // Zustandsänderung ist nur durch diese gültige Business-Aktion möglich
+        this.salary = newSalary;
+        System.out.println("DOMAIN: Bonus von " + bonusAmount + " angewandt. Neues Gehalt: " + this.salary);
+
+        // Nach der Logik ruft das Objekt sich selbst speichernde Logik auf (Self-Persistency)
+        this.persist();
+    }
+
+    // Simuliert die Self-Persistency
+    private void persist() {
+        System.out.println("DOMAIN: Zustand des Mitarbeiters (ID: " + this.hashCode() + ") nach Business-Aktion gespeichert.");
+    }
+
+    // Bietet nur einen unveränderlichen Snapshot (View Contract) an
+    public EmployeeView toView() {
+        return new EmployeeView(this.salary);
+    }
+}
+
+// Immutable View Snapshot für die UI
+class EmployeeView {
+    private final int salary;
+    public EmployeeView(int salary) {
+        this.salary = salary;
+    }
+    // OK: Getter sind hier erlaubt, da dies ein reiner, unveränderlicher Daten-Snapshot ist
+    public int getSalary() { return salary; }
+}
+
+
+public class EmployeeComparison {
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("== 1. Problemfall: Passive DTOs und Service Layer (Orchestrierung) ==");
+        System.out.println("=================================================");
+        PassiveEmployeeDTO passiveManager = new PassiveEmployeeDTO();
+        passiveManager.setSalary(9500);
+        passiveManager.setIsManager(true);
+        
+        SalaryService service = new SalaryService();
+        service.grantBonus(passiveManager, 1000); // Regelbruch wird vom Service abgefangen
+
+        // Der wahre Fehler: Die Kapselung ist zerstört. JEDER kann den Zustand brechen:
+        System.out.println("\n--- Naked Data Exploit (Regelbruch durch Infrastruktur) ---");
+        passiveManager.setSalary(15000); // Setter umgeht JEDE Logik im Service Layer!
+        System.out.println("Exploit-Gehalt: " + passiveManager.getSalary());
+        System.out.println("-> Das DTO ist ungültig, der Service kann das nicht verhindern.");
+
+
+        System.out.println("\n\n=================================================");
+        System.out.println("== 2. Lösung: Aktives OO-DDD Objekt (Autonomie) ==");
+        System.out.println("=================================================");
+        ActiveEmployee activeManager = new ActiveEmployee(9500, true);
+        
+        try {
+            // Das Objekt führt die Logik und Validierung INTERN aus
+            activeManager.applyBonus(300); // Geht durch
+            activeManager.applyBonus(1000); // Führt zum Fehler und verhindert Zustandsänderung
+        } catch (IllegalArgumentException e) {
+            System.err.println("FEHLER: " + e.getMessage());
+        }
+        
+        // Versuch, den Zustand von außen zu manipulieren (nicht möglich, da keine Setter!)
+        // activeManager.salary = 15000; // Würde nicht kompilieren
+        
+        // Lesezugriff nur über den View Contract:
+        EmployeeView view = activeManager.toView();
+        System.out.println("\nUI-Ansicht (Snapshot): " + view.getSalary());
     }
 }
 ```
