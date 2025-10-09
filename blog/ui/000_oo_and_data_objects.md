@@ -108,29 +108,30 @@ Als radikale Form der Kapselung wird die **Persistenz-Logik in das Domänenobjek
 
 Das Domänenobjekt ist aktiv, es kontrolliert die Persistenz (DB) und die Darstellung (View) autonom.
 ```mermaid
-graph TD  
-    subgraph UI/Infrastructure Layer  
-        A[UI Component] -->|1. Ruft IO Action auf| D;  
-        E[Database Interface</br>Low-Level-I/O]  
+graph TD
+
+    subgraph Infrastructure Layer
+        X[UI-Framework/-Library]
+        X -->|1. Ruft Actions auf</br>/Lädt Speichert| A  
+        A -->|6. Animiert Daten| X  
+        A[UI-Component</br>as Part of the</br>Domain Object] -->|2. Importiert</br>UI-Komponenten| D;  
+        E[DB-Interface</br>Low-Level-I/O]  
     end
 
     subgraph Domain Object  
-        D[Order] -->|2. Führt I/O über</br>DB-speaking Part aus| E;  
-        D -->|3. Gibt fertige</br>UI-Komponente zurück| A;  
+        D[UI-/DB-speaking Object</br>Order] -->|3. Führt I/O über</br>DB-speaking Part aus| E;
+        E[UI-/DB-speaking Object</br>Order] -->|4. Führt I/O über</br>DB-speaking Part aus| D;  
+        D -->|5. Exportiert</br>UI-Komponenten | A;  
     end
 
     style A fill:#a2d2ff,stroke:#003366,stroke-width:2px,color:#003366  
     style D fill:#a8dadc,stroke:#1d3557,stroke-width:2px,color:#1d3557  
     style E fill:#f08080,stroke:#8b0000,stroke-width:2px,color:#8b0000
 
-    %% Kontrollfluss  
-    A --> D;  
-    D --> E;  
-    D --> A;
 
     %% Notes als Knoten  
     DNote[(Domänenobjekt</br>Aktiv & Selbstkontrollierend)]  
-    ANote[Ist nur ein Consumer</br>der Domänen-Interfaces]
+    ANote[Ist ein Consumer/Visitor</br>Vertrag für das Domänen-Interface]
 
     classDef noteStyle fill:\#fff9e6,stroke:\#d6b656,stroke-width:1px,color:\#000;  
     class DNote,ANote noteStyle
