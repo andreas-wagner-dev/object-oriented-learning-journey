@@ -4,7 +4,7 @@ Dieses Dokument bietet eine vollständige Analyse des grundlegenden Konflikts zw
 
 Der zentrale Paradigmenwechsel liegt in der Kontrolle des **Kontrollflusses**: weg von der externen **Orchestrierung** (Service Layer) hin zur **Autonomie** des Domänenobjekts.
 
-### **1\. Die Krise der Kapselung: Das Enterprise-Anti-Pattern**
+### **1. Die Krise der Kapselung: Das Enterprise-Anti-Pattern**
 
 OOP verlangt, dass Objekte **Verantwortung** für ihren Zustand übernehmen und diesen schützen. Kapselung bedeutet, **Geheimnisse** zu haben und eine **effektive Abstraktion** zu bieten, sodass Probleme einmal gelöst und danach nie wieder bedacht werden müssen.
 
@@ -64,7 +64,7 @@ graph TD
     classDef noteStyle fill:\#fff9e6,stroke:\#d6b656,stroke-width:1px,color:\#000;  
     class DNote,BNote noteStyle
 ```
-### **3\. Radikale OO-DDD Kapselung: Das UI of Objects Prinzip**
+### **3. Radikale OO-DDD Kapselung: Das UI of Objects Prinzip**
 
 Das **UI of Objects** Prinzip ist die Architekturstrategie zur **strikten Entkopplung** der Domäne von der UI. Es fordert, dass die Domäne die Kontrolle über ihre äußere Repräsentation und ihre Zustandsänderung übernimmt.
 
@@ -111,17 +111,17 @@ Das Domänenobjekt ist aktiv, es kontrolliert die Persistenz (DB) und die Darste
 graph TD
 
     subgraph Infrastructure Layer
-        X[UI-Framework/-Library]
-        X -->|1. Ruft Actions auf</br>/Lädt Speichert| A  
+        X[UI-Framework/-Library</br>Component]
+        X -->|1. Ruft Actions auf</br>Lädt/Ändert Daten| A  
         A -->|6. Animiert Daten| X  
-        A[UI-Component</br>as Part of the</br>Domain Object] -->|2. Importiert</br>UI-Komponenten| D;  
+        A[UI-Component</br>as Part of the</br>Domain Object] -->|2. Import/Action</br>UI-speaking Part| D;  
         E[DB-Interface</br>Low-Level-I/O]  
     end
 
     subgraph Domain Object  
-        D[UI-/DB-speaking Object</br>Order] -->|3. Führt I/O über</br>DB-speaking Part aus| E;
-        E[UI-/DB-speaking Object</br>Order] -->|4. Führt I/O über</br>DB-speaking Part aus| D;  
-        D -->|5. Exportiert</br>UI-Komponenten | A;  
+        D[UI- & DB-speaking</br>Object] -->|3. Input</br>DB-speaking Part| E;
+        E -->|4. Output</br>DB-speaking Part| D;  
+        D -->|5. Export/Action</br>UI-speaking Part | A;  
     end
 
     style A fill:#a2d2ff,stroke:#003366,stroke-width:2px,color:#003366  
@@ -130,8 +130,8 @@ graph TD
 
 
     %% Notes als Knoten  
-    DNote[(Domänenobjekt</br>Aktiv & Selbstkontrollierend)]  
-    ANote[Ist ein Consumer/Visitor</br>Vertrag für das Domänen-Interface]
+    DNote[Domänenobjekt</br>Aktiv und</br>Selbstkontrollierend]  
+    ANote[Consumer-/Visitor-</br>Vertrag von Domänen</br>Interface]
 
     classDef noteStyle fill:\#fff9e6,stroke:\#d6b656,stroke-width:1px,color:\#000;  
     class DNote,ANote noteStyle
@@ -143,14 +143,14 @@ graph TD
     class D Active
 ```
 
-### **4\. Umfassender Architektur-Vergleich**
+### **4. Umfassender Architektur-Vergleich**
 
 | Merkmal | Klassisch (Schichten/Hexagonal) | OO-DDD (UI of Objects) |
 | :---- | :---- | :---- |
 | **Rolle des Domänenobjekts** | **Passiv** (Datenhalter), verletzt **Kapselung**. | **Aktiv** (Invarianten-Beschützer), folgt **Tell, Don't Ask**. |
 | **Kontrollprinzip** | **Ask, then Tell** (Controller/Service steuert und validiert). | **Tell, Don't Ask** (Domäne steuert sich selbst und ihre Invarianten). |
-| **UI-Kommunikation** | **Daten** reisen (Domäne → DTO → UI) und erzeugen Kopplung. | **Views** reisen (Domäne liefert die fertige Darstellung über **View-Vertrag**). |
-| **Validierung** | **Verteilt** (Service/Controller) oder **gebrochen** (durch Setter). | **Gekapselt** (ausschließlich in der Domäne, geschützt durch **Action Commands**). |
+| **UI-Kommunikation** | **Daten** reisen (Domäne → DTO → UI) und erzeugen Kopplung. | **Daten** sind geschützt (Domäne liefert die fertige Darstellung über **UI-Vertrag**). |
+| **Validierung** | **Verteilt** (Service/Controller) oder **gebrochen** (durch Setter). | **Gekapselt** (ausschließlich in der Domäne, geschützt durch **Action Commands/Observers**). |
 | **Persistenz** | Externer Dienst (**Repository**) orchestriert die Speicherung. | Interner Logikblock (**DB-Speaking Part**) steuert die Speicherung (Self-Persistency). |
 | **Ziel** | Klare **Abgrenzung** von technischen Schichten. | Klare **Kapselung** des Objekts, Fokus auf **Wartbarkeit** und **Code-Qualität**. |
 
