@@ -1,4 +1,4 @@
-## **Manifest der Aktiven Objekte: Vertragliche Kapselung in OO-DDD**
+## **Implementing: Object-Oriented Domain Driven Design (OO-DDD)**
 
 Dieses Dokument bietet eine vollständige Analyse des grundlegenden Konflikts zwischen **Objektorientierter Programmierung (OOP)** und der traditionellen **Schichtenarchitektur** in Bezug auf die **Datenkapselung**. Ziel ist die Etablierung eines **aktiven, selbstkontrollierenden Domänenobjekts** als Kernprinzip des Object-Oriented Domain Driven Design (OO-DDD).
 
