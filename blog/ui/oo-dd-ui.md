@@ -1,5 +1,57 @@
 # **Das View/Action-Muster (OO-DDD)**
 
+```mermaid
+classDiagram
+    direction LR
+
+    class Employee {
+        -Name name
+        -Address address
+    }
+
+    class Employees {
+        -List~Employee~ employees
+    }
+
+    interface EmployeeView
+
+    class JsfEmployeeView {
+        -Employee employee
+        -String name
+        -JsfAddressView address
+    }
+
+    interface Action
+
+    class JsfAction {
+        -String elExpression
+    }
+
+    class EmployeeFrom {
+        -Employees employees
+        -View inputView
+    }
+
+    Employee : <<Context/Domain>>
+    Employees : <<Collection Object>>
+    EmployeeView : <<View Contract/Presentation Model>>
+    JsfEmployeeView : <<View Adapter/JSF>>
+    Action : <<Command>>
+    JsfAction : <<Decorator/JSF>>
+    EmployeeFrom : <<Controller/Orchestrator>>
+
+    Employee o-- EmployeeView : defines
+    Employees *-- Employee : manages (Composition)
+    EmployeeView <|-- JsfEmployeeView : implements
+    EmployeeView o-- Action : provides
+    Action <|-- JsfAction : implements
+    JsfEmployeeView --> JsfAction : uses
+    JsfAction --> FacesContext : uses
+    EmployeeFrom *-- Employees : owns
+    EmployeeFrom o-- EmployeeView : manages input view
+    Employees --> EmployeeView : creates adapter (toViews)
+```
+
 Das View/Action-Muster ist eine Architekturstrategie zur **strikten Entkopplung** der Domäne von der Benutzeroberfläche (UI). Es ist eine fortgeschrittene Interpretation des **Presentation-Model/Supervising Controller** Musters, das die Invarianten von Domänenobjekten (Contexts) schützt.
 
 ## **1\. Problemstellung und Konsequenzen**
@@ -98,30 +150,28 @@ Das View/Action-Muster ist die konkrete Umsetzung des Presentation Model/Supervi
 Dieses Zwiebel-Diagramm visualisiert die strikte Entkopplung: Die Abhängigkeiten zeigen immer vom Äußeren (UI) zum Inneren (Domäne). Der innere Kern (Context) ist **UI-agnostisch**.
 
 ```mermaid
-graph TD  
-    subgraph UI (Äußere Schicht \- Instabil)  
-        A(UI / JSF)  
-    end  
-    subgraph Adapter  
-        B(JsfEmployeeView / JsfAction)  
-    end  
-    subgraph Orchestrator  
-        C(EmployeeFrom \- Controller)  
-    end  
-    subgraph Domain\_State  
-        D(Employees \- Collection Object)  
-    end  
-    subgraph Domain\_Core (Innerer Kern \- Stabil)  
-        E(Employee \- Context)  
+graph TD
+    subgraph UI_Layer [Äußere Schicht - UI/JSF]
+        A(UI / JSF Framework)
     end
-
-    A \--\> B  
-    B \--\> C  
-    C \--\> D  
-    D \--\> E  
-      
-    style E fill:\#f4c7c3,stroke:\#600  
-    style A fill:\#d9edf7,stroke:\#31708f
+    subgraph Adapter_Layer [Adapter]
+        B(JsfEmployeeView / JsfAction)
+    end
+    subgraph Orchestrator_Layer [Orchestrator]
+        C(EmployeeFrom - Controller)
+    end
+    subgraph Domain_State_Layer [Domain State]
+        D(Employees - Collection Object)
+    end
+    subgraph Domain_Core_Layer [Innerer Kern - Context]
+        E(Employee - Context)
+    end
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    style E fill:#f4c7c3,stroke:#600
+    style UI_Layer fill:#d9edf7,stroke:#31708f
 
 ```
 
@@ -192,103 +242,38 @@ Das Domänenobjekt (Employee) arbeitet ausschließlich mit dem **View-Interface*
 
 Dieses Diagramm zeigt die Kapselungs- und Implementierungsbeziehungen. Es hebt hervor, dass die Domäne (Employee) nur ihre eigenen Interfaces kennt, während der Controller die Employees-Collection besitzt.
 
-```mermaid
-classDiagram  
-    direction LR
 
-    class Employee {  
-        \+\<\<Context/Domain\>\>  
-        \-Name name  
-        \-Address address  
-        \+display(View view)  
-        \+Employee(View view)  
-    }  
-      
-    class Employees {  
-        \+\<\<Collection Object\>\>  
-        \-List\~Employee\~ employees  
-        \+addOrReplace(Employee e, isEditing)  
-        \+remove(Employee e)  
-        \+toViews() List\~View\~  
-    }  
-      
-    interface EmployeeView {  
-        \+\<\<View Contract/Presentation Model\>\>  
-        \+getName() String  
-        \+setName(String name) void  
-        \+updateAction() Action  
-        \+getAddress() AddressView  
-    }  
-      
-    class JsfEmployeeView {  
-        \+\<\<View Adapter/JSF\>\>  
-        \-Employee employee  
-        \-String name  
-        \-JsfAddressView address  
-        \+getName() String  
-        \+updateAction() JsfAction  
-    }  
-      
-    interface Action {  
-        \+\<\<Command\>\>  
-        \+call() String  
-    }  
-      
-    class JsfAction {  
-        \+\<\<Decorator/JSF\>\>  
-        \-String elExpression  
-        \+call() String  
-    }  
-      
-    class EmployeeFrom {  
-        \+\<\<Controller/Orchestrator\>\>  
-        \-Employees employees  
-        \-View inputView  
-        \+update() String  
-    }
-
-    Employee o-- EmployeeView : defines  
-    Employees \*-- Employee : manages (Composition)  
-    EmployeeView \<|.. JsfEmployeeView : implements  
-    EmployeeView o-- Action : provides  
-    Action \<|.. JsfAction : implements  
-    JsfEmployeeView .\> JsfAction : creates  
-    JsfAction ..\> FacesContext : uses  
-    EmployeeFrom \*-- Employees : owns  
-    EmployeeFrom o-- EmployeeView : manages input view  
-    Employees \--\> EmployeeView : creates adapter (toViews)
-```
 
 ### **7.2 Dynamischer Flow (Sequenzdiagramm: Action-Ausführung)**
 
 Dieses Diagramm veranschaulicht den Delegations-Flow von der UI bis zur Employees-Collection.
 
 ```mermaid
-sequenceDiagram  
-    participant UI as index.xhtml  
-    participant JEV as JsfEmployeeView (Adapter)  
-    participant JA as JsfAction (Decorator)  
-    participant FC as FacesContext API  
-    participant EF as EmployeeFrom (Controller)  
+sequenceDiagram
+    participant UI as index.xhtml
+    participant JEV as JsfEmployeeView (Adapter)
+    participant JA as JsfAction (Decorator)
+    participant FC as FacesContext API
+    participant EF as EmployeeFrom (Controller)
     participant Es as Employees (Collection)
 
-    UI-\>\>JEV: ruft updateAction.call()  
-    JEV-\>\>JA: updateAction() liefert JsfAction object  
-    JA-\>\>JA: ruft call() auf  
-      
-    Note over JA: 1\. Liest elExpression: "\#{employeeFrom.update()}"  
-      
-    JA-\>\>FC: evaluateExpressionGet(elExpression)  
-    FC-\>\>EF: ruft update() Methode auf  
-      
-    Note over EF: 2\. ERSTELLT das immutable Employee-Objekt (Domain-Logik)  
-    EF-\>\>Es: addOrReplace(newEmployee, isEditing)  
-      
-    Note over Es: 3\. Die Collection ersetzt das alte Domain-Objekt  
-      
-    EF--\>\>FC: gibt Navigations-String (z.B. "index.xhtml?faces-redirect=true") zurück  
-    FC--\>\>JA: gibt Navigations-String zurück  
-    JA--\>\>UI: gibt Navigations-String zurück  
-      
-    Note over UI: 4\. JSF verwendet String zur Navigation  
+    UI->>JEV: ruft updateAction.call()
+    JEV->>JA: updateAction() liefert JsfAction object
+    JA->>JA: ruft call() auf
+    
+    Note over JA: 1. Liest EL-Expression
+    
+    JA->>FC: evaluateExpressionGet(elExpression)
+    FC->>EF: ruft update() Methode auf
+    
+    Note over EF: 2. ERSTELLT das immutable Employee-Objekt
+    EF->>Es: addOrReplace(newEmployee, isEditing)
+    
+    Note over Es: 3. Collection ersetzt Domain-Objekt
+    
+    EF-->>FC: gibt Navigations-String zurück
+    FC-->>JA: gibt Navigations-String zurück
+    JA-->>UI: gibt Navigations-String zurück
+    
+    Note over UI: 4. JSF verwendet String zur Navigation
 ```
