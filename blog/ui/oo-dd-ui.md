@@ -529,7 +529,7 @@ public class EmployeeFrom {
 
 ## 8.4 View (.xhtml)
 
-```java
+```xml
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
