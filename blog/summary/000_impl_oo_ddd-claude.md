@@ -24,7 +24,7 @@ Moderne Softwareentwicklung hat sich weit von den ursprünglichen Prinzipien der
 7. [Object Naming: Über die Bedeutung guter Namen](#7-object-naming-über-die-bedeutung-guter-namen)
 8. [Contract-Driven Construction](#8-contract-driven-construction)
 9. [Composition over Inheritance: Decorator Pattern](#9-composition-over-inheritance-decorator-pattern)
-10. [Package Design: Happy Packaging](#10-package-design-happy-packaging)
+10. [Package Design](#10-package-design)
 11. [Persistenz: SQL-Speaking Objects](#11-persistenz-sql-speaking-objects)
 12. [Fallstudien und Beispiele](#12-fallstudien-und-beispiele)
 13. [Fazit und Ausblick](#13-fazit-und-ausblick)
