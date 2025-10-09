@@ -425,7 +425,7 @@ In OO-DDD ist das Domänenobjekt **Self-Controlling**. Es agiert als **DB-Speaki
 graph RL
 
     subgraph OO-DDD Autonomie
-        UI_OO[UI Action Command] -->|Action auslösen| Domain_OO{Aktive Domain & DB-Speaking};
+        UI_OO[UI Action Command] -->|Action auslösen| Domain_OO{Aktive Domain</br>& DB-Speaking};
         Domain_OO -->|this.persist| DB_OO[Database I/O];
         Domain_OO -->|Fertiger UI-Contract| UI_OO;
     end
