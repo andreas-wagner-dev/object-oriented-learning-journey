@@ -20,7 +20,7 @@
 - https://www.vzurauskas.com/2019/02/04/its-not-a-contract-if-you-cant-enforce-it
 - https://amihaiemil.com/2017/08/12/how-interfaces-are-refactoring-our-code.html
 - https://amihaiemil.com/2017/11/04/but-how-do-you-work-without-a-model.html
-
+- https://github.com/yegor256/blog/blob/master/_posts/2025/jun/2025-06-22-retrieve-or-remove.md
 - https://github.com/yegor256/blog/blob/master/_posts/2025/jun/2025-06-22-retrieve-or-remove.md
 
 **Object-Constuction:**
