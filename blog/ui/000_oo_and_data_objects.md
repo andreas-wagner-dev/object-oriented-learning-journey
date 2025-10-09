@@ -94,15 +94,15 @@ Um den Zustand zu ändern, **spricht die UI das Objekt** mit einer gültigen Ges
 
 **Beispiel (JSF Action Command):**
 ```xml
-\\\<\\\!-- Der Action Command als Gatekeeper: Die UI löst eine gekapselte Action aus. \--\\\>  
-\\\<h:commandButton value="Speichern (Action)"  
-                 action="\\\#{employeeFrom.inputView.updateAction.call()}" /\\\>
+<\!-- Der Action Command als Gatekeeper: Die UI löst eine gekapselte Action aus. --\>  
+<h:commandButton value="Speichern (Action)"  
+                 action="\\\#{employeeFrom.inputView.updateAction.call()}" />
 ```
 #### **3.3 Self-Persistency (Der DB-Speaking Part)**
 
 Als radikale Form der Kapselung wird die **Persistenz-Logik in das Domänenobjekt verlagert**. Nach einer erfolgreichen Zustandsänderung (rename()) ruft das Domänenobjekt intern seine I/O-Logik auf, um sich selbst zu persistieren.
 
-* **Resultat:** Das Domänenobjekt ist das einzige, das entscheidet, **wann** und **wie** es gespeichert wird. Der Application Service entfällt als orchestraler Persistenz-Steuerer.
+**Resultat:** Das Domänenobjekt ist das einzige, das entscheidet, **wann** und **wie** es gespeichert wird. Der Application Service entfällt als orchestraler Persistenz-Steuerer.
 
 #### **3.4 Diagramm: Kontrollfluss der OO-DDD-Kapselung (Autonomie)**
 
