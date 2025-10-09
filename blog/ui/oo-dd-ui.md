@@ -291,3 +291,312 @@ sequenceDiagram
     
     Note over UI: 4. JSF verwendet String zur Navigation
 ```
+
+
+## 8. Java Quellcode-Implementierung (Mock-Up)
+Die folgenden Java-Klassen illustrieren die zentralen Komponenten des View/Action-Musters, wobei die JSF-spezifischen Teile (wie @ManagedBean, FacesContext-Aufrufe) zur Vereinfachung auskommentiert oder gemockt sind.
+
+### 8.1 Interfaces und Domain-Objekte
+
+```java
+import java.util.List;
+import java.util.ArrayList;
+import java.util.function.Function;
+
+// -----------------------------------------------------------
+// Mock-Typen für Kontext (Domain Layer)
+// -----------------------------------------------------------
+
+// Schnittstelle für die Adresse (Teil des View Contract)
+public interface AddressView {}
+// Repräsentation eines Domänen-Namens
+public class Name { 
+    private final String value; 
+    public Name(String value) { this.value = value; } 
+    @Override public String toString() { return value; } 
+}
+// Repräsentation einer Domänen-Adresse
+public class Address { 
+    public Address(AddressView view) { 
+        // Logik zur Übernahme der Adressdaten
+    }
+}
+// Mock-Implementierung für die Adress-View
+class JsfAddressView implements AddressView {}
+
+
+// -----------------------------------------------------------
+// Type 1: EmployeeView (View Contract / Presentation Model)
+// -----------------------------------------------------------
+public interface EmployeeView {
+    // Bidirektionaler Datenaustausch
+    String getName();
+    void setName(String name);
+    AddressView getAddress();
+
+    // Action Command, bereitgestellt vom Vertrag
+    Action updateAction();
+}
+
+
+// -----------------------------------------------------------
+// Type 2: Action (Command Interface)
+// -----------------------------------------------------------
+public interface Action {
+    // Führt die gekapselte Logik aus und gibt den Navigations-String zurück
+    String call();
+}
+
+
+// -----------------------------------------------------------
+// Type 3: Employee (Context / Domain Object)
+// -----------------------------------------------------------
+// Das Domänenobjekt ist unveränderlich (immutable) und kennt nur den View-Vertrag.
+public class Employee {
+    private final Name name;
+    private final Address address;
+
+    /**
+     * Import-Logik (Pull-Prinzip): Der Konstruktor erstellt das Domänenobjekt
+     * unveränderlich, indem er die Daten aus dem View-Vertrag zieht.
+     * Hier findet die strenge Validierung der Invarianten statt.
+     */
+    public Employee(EmployeeView view) {
+        if (view.getName() == null || view.getName().isEmpty()) {
+            throw new IllegalArgumentException("Name darf nicht leer sein.");
+        }
+        // Konvertierung und Validierung...
+        this.name = new Name(view.getName());
+        this.address = new Address(view.getAddress());
+    }
+
+    /**
+     * Export-Logik (Push-Prinzip): Das Domänenobjekt formatiert seine
+     * gekapselten Daten zur Darstellung in den View-Vertrag.
+     */
+    public void display(EmployeeView view) {
+        view.setName(this.name.toString());
+        // address.display(view.getAddress()); // Delegation zur Adresse
+    }
+    
+    // Weitere Geschäftslogik-Methoden...
+}
+```
+
+### 8.2 Adapter, Decorator und Collection
+```java
+// -----------------------------------------------------------
+// Type 4: JsfAction (Decorator / JSF Command Implementation)
+// -----------------------------------------------------------
+// Kapselt den EL-Ausdruck und führt ihn manuell im JSF-Lebenszyklus aus.
+public class JsfAction implements Action {
+    private final String elExpression; // z.B. "#{employeeFrom.update}"
+    
+    public JsfAction(String elExpression) {
+        this.elExpression = elExpression;
+    }
+
+    @Override
+    public String call() {
+        // *** Kritischer Entkopplungspunkt: Die Action ruft EL manuell auf ***
+        System.out.println("INFO: JsfAction wird ausgeführt: " + elExpression);
+        
+        // Mock-Code für FacesContext-Interaktion:
+        // FacesContext context = FacesContext.getCurrentInstance();
+        // ... (Logik zur Evaluierung des elExpression MethodExpression) ...
+        // return (String) methodExpression.invoke(...);
+        
+        return "SUCCESS"; // Mock-Rückgabe für Navigation
+    }
+}
+
+// -----------------------------------------------------------
+// Type 5: JsfEmployeeView (View Adapter / JSF Implementation)
+// -----------------------------------------------------------
+// Implementiert den View-Vertrag und dient als JSF-Binding-Target für die UI.
+// @Named @ViewScoped (JSF-spezifische Mock-Annotationen)
+public class JsfEmployeeView implements EmployeeView {
+    // Rohe, unvalidierte UI-Daten (Strings, direkt gebunden durch JSF)
+    private String name;
+    private final JsfAddressView address;
+    private Employee employee; // Optional: Halten des Domain-Objekts für IDs/Kontext
+
+    public JsfEmployeeView() { 
+        this.address = new JsfAddressView(); 
+    }
+    
+    // Konstruktor für die Darstellung (Export)
+    public JsfEmployeeView(Employee employee) {
+        this();
+        this.employee = employee;
+        employee.display(this); // Domain-Objekt befüllt den Adapter (Push)
+    }
+
+    @Override public String getName() { return name; }
+    @Override public void setName(String name) { this.name = name; }
+    @Override public AddressView getAddress() { return this.address; }
+    
+    @Override
+    public Action updateAction() {
+        // Die View kapselt die Referenz auf den Controller als JsfAction Command
+        return new JsfAction("#{employeeFrom.update}");
+    }
+}
+
+// -----------------------------------------------------------
+// Type 6: Employees (Collection Object)
+// -----------------------------------------------------------
+// Kapselt die Liste der Domänenobjekte und verwaltet den Zustand der Sammlung.
+public class Employees {
+    private final List<Employee> employees = new ArrayList<>();
+
+    // Ersetzt ein bestehendes oder fügt ein neues Employee-Objekt hinzu
+    public void addOrReplace(Employee newEmployee, boolean isEditing) {
+        if (isEditing) {
+            // Logik zum Finden und Ersetzen
+            System.out.println("INFO: Bestehenden Mitarbeiter ersetzt.");
+        } else {
+            this.employees.add(newEmployee);
+            System.out.println("INFO: Neuen Mitarbeiter hinzugefügt.");
+        }
+    }
+
+    /**
+     * Erstellt für jedes Domänenobjekt einen passenden View-Adapter.
+     * Die Domänenobjekte befüllen diese Adapter selbstständig (Export-Logik).
+     */
+    public List<EmployeeView> toViews(Function<Employee, EmployeeView> adapterFactory) {
+        return employees.stream()
+                .map(adapterFactory) // Erzeugt JsfEmployeeView(employee)
+                .collect(Collectors.toList());
+    }
+}
+```
+
+## 8.3 Controller
+```java
+import java.util.stream.Collectors;
+
+// -----------------------------------------------------------
+// Type 7: EmployeeFrom (Controller / Orchestrator)
+// -----------------------------------------------------------
+// Koordiniert den Fluss, überwacht die InputView und delegiert an die Collection.
+// @Named @SessionScoped (JSF-spezifische Mock-Annotationen)
+public class EmployeeFrom {
+    private final Employees employees = new Employees(); 
+    private final EmployeeView inputView = new JsfEmployeeView(); // Der Input-Adapter
+
+    /**
+     * Die Update-Methode wird über die JsfAction aufgerufen (z.B. von #{employeeFrom.update}).
+     * Sie ist der Supervising Controller.
+     */
+    public String update() {
+        try {
+            // 1. Import: Erstellung des IMMUTABLE Domänenobjekts (Context)
+            Employee newEmployee = new Employee(inputView); 
+
+            // 2. Zustandsspeicherung/Delegation:
+            boolean isEditing = false; // Logik müsste über inputView ermittelt werden
+            employees.addOrReplace(newEmployee, isEditing); 
+
+            // 3. UI-Feedback & Navigation
+            System.out.println("INFO: Daten erfolgreich gespeichert.");
+            return "index.xhtml?faces-redirect=true";
+
+        } catch (IllegalArgumentException e) {
+            // 4. Fehlerbehandlung (z.B. FacesMessage senden)
+            System.err.println("FEHLER (Validierung): " + e.getMessage());
+            return null; // Bleibt auf der Seite
+
+        } catch (Exception e) {
+            System.err.println("Unerwarteter Fehler: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    // Getter für die UI zur Anzeige der vorhandenen Mitarbeiter
+    public List<EmployeeView> getAllEmployeeViews() {
+        // Factory-Methode für toViews, die den Adaptertyp liefert
+        return employees.toViews(employee -> new JsfEmployeeView(employee));
+    }
+    
+    // Getter für die UI zur Bindung des Eingabe-Formulars
+    public EmployeeView getInputView() {
+        return inputView;
+    }
+}
+```
+
+## 8.4 View (.xhtml)
+
+```java
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>View/Action Muster Demo</title>
+</h:head>
+<h:body>
+    <h1>Mitarbeiterverwaltung (View/Action Pattern)</h1>
+
+    <h:form id="employeeForm">
+        <!-- 
+            Bindung des Formulars an den Input-Adapter (EmployeeFrom.inputView).
+            Der Controller stellt den Adapter bereit, der das EmployeeView-Interface implementiert.
+            Alle Eingabefelder binden an die rohen String-Properties dieses Adapters.
+        -->
+        <h2>Neuen/Existierenden Mitarbeiter bearbeiten</h2>
+        
+        <h:panelGrid columns="3">
+            <h:outputLabel for="nameInput" value="Name:" />
+            <h:inputText id="nameInput" value="#{employeeFrom.inputView.name}" required="true"/>
+            <h:message for="nameInput" style="color: red;"/>
+            
+            <h:outputLabel for="addressInput" value="Adresse (Mock):" />
+            <h:inputText id="addressInput" value="#{employeeFrom.inputView.address.street}" disabled="true" />
+            <h:outputText value="*über AddressView implem."/>
+        </h:panelGrid>
+
+        <br/>
+
+        <!-- 
+            Der zentrale Entkopplungsmechanismus: Action Command.
+            Anstatt direkt die Controller-Methode (z.B. #{employeeFrom.update}) aufzurufen,
+            wird die gekapselte JsfAction über den View-Vertrag aufgerufen.
+            JsfAction.call() führt dann den EL-String manuell aus.
+        -->
+        <h:commandButton value="Speichern (Action)" 
+                         action="#{employeeFrom.inputView.updateAction.call()}" />
+        
+        <h:messages globalOnly="true" style="color: blue;" />
+    </h:form>
+
+    <hr/>
+
+    <h2>Aktuelle Mitarbeiter (Liste)</h2>
+    <!-- 
+        Anzeige der Mitarbeiter. Die Liste wird von Employees.toViews() erzeugt.
+        Jede Zeile im Data-Table ist eine separate JsfEmployeeView Instanz (Adapter).
+    -->
+    <h:dataTable value="#{employeeFrom.allEmployeeViews}" var="e">
+        <h:column>
+            <f:facet name="header">ID (Mock)</f:facet>
+            <h:outputText value="#{e.id}" />
+        </h:column>
+        <h:column>
+            <f:facet name="header">Name</f:facet>
+            <h:outputText value="#{e.name}" />
+        </h:column>
+        <h:column>
+            <f:facet name="header">Aktion</f:facet>
+            <!-- Beispiel für eine weitere Action, die direkt an den Controller delegiert -->
+            <h:commandLink value="Bearbeiten" 
+                           action="#{employeeFrom.edit(e)}" />
+        </h:column>
+    </h:dataTable>
+
+</h:body>
+</html>
+```
