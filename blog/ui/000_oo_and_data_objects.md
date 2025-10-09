@@ -17,7 +17,7 @@ Das häufigste Anti-Pattern in der Unternehmenssoftware (**"Enterprise"-Code**) 
 | **Aktiv:** Das Objekt führt die Logik selbst aus: cat.speak(). | **Passiv:** Der Service fragt den Zustand ab: service.speak(cat.getSpeech()). |
 | Das Cat-Objekt entscheidet in seiner speak()-Methode, *wie* und *was* es sagt. | Der Service ist für die Logik verantwortlich. Die **Invarianten** des Objekts sind gefährdet. |
 
-### **2\. Die Klassische Schichtenarchitektur (Das Passive Domänenobjekt)**
+### **2. Die Klassische Schichtenarchitektur (Das Passive Domänenobjekt)**
 
 In der klassischen Layered Architecture wird die Domäne auf eine **Datenstruktur** reduziert. Der Use Case (Application Service) agiert als Controller, der Domäne, Repository und UI orchestriert.
 
