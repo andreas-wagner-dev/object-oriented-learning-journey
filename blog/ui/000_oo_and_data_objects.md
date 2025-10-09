@@ -338,8 +338,8 @@ class ActiveEmployee {
     }
 
     // Bietet nur einen unveränderlichen Snapshot (View Contract) an
-    public EmployeeView toView() {
-        return new EmployeeView(this.salary);
+    public void display(EmployeeView view) {
+         view.setSalary(this.salary);
     }
 }
 
@@ -390,7 +390,8 @@ public class EmployeeComparison {
         // activeManager.salary = 15000; // Würde nicht kompilieren
         
         // Lesezugriff nur über den View Contract:
-        EmployeeView view = activeManager.toView();
+        EmployeeView view = new EmployeeView(); 
+        activeManager.display(view);
         System.out.println("\nUI-Ansicht (Snapshot): " + view.getSalary());
     }
 }
