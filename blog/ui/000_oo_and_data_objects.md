@@ -64,6 +64,25 @@ graph TD
     classDef noteStyle fill:\#fff9e6,stroke:\#d6b656,stroke-width:1px,color:\#000;  
     class DNote,BNote noteStyle
 ```
+
+```java
+// Das passive Domänenobjekt im "Enterprise"-Code
+public class Order {  
+    private int amount;  
+    
+    // Setter für Data Binding – Verletzung der Invarianten
+    public void setAmount(int amount) {  
+        // KEIN SCHUTZ. Der Zustand kann von außen jederzeit ungültig gesetzt werden.
+        this.amount = amount;   
+    }  
+    // Getter – lädt externe Services zur Orchestrierung ein.
+    public int getAmount() {  
+        return amount;
+    }
+}
+```
+
+
 ### **3. Radikale OO-DDD Kapselung: Das UI of Objects Prinzip**
 
 Das **UI of Objects** Prinzip ist die Architekturstrategie zur **strikten Entkopplung** der Domäne von der UI. Es fordert, dass die Domäne die Kontrolle über ihre äußere Repräsentation und ihre Zustandsänderung übernimmt.
@@ -143,7 +162,133 @@ graph TD
     class D Active
 ```
 
-### **4. Umfassender Architektur-Vergleich**
+```java
+/**
+ * AccountNumber.java
+ *
+ * Repräsentiert eine Kontonummer im OO-DDD.
+ * Dieses Objekt ist aktiv und stellt einen View Contract zur Verfügung (UI of Objects).
+ * Es gibt KEINE öffentlichen Getter oder Setter, um die Invariante (den Wert selbst) zu schützen.
+ */
+
+// Mock-Klassen zur Simulation eines UI-Frameworks (z.B. Wicket)
+class Component {}
+class Label extends Component {
+    public Label(String componentId, String value) {
+        // Simuliert die Erzeugung eines Labels in der UI
+        System.out.println("UI: Label-Komponente '" + componentId + "' mit Wert: " + value + " erstellt.");
+    }
+}
+class TextField<T> extends Component {
+    public TextField(String componentId) {
+        // Simuliert die Erzeugung eines editierbaren Feldes
+        System.out.println("UI: Eingabefeld '" + componentId + "' für AccountNumber erstellt.");
+    }
+}
+
+public final class AccountNumber {
+    // Der Zustand ist private und final (unveränderlich)
+    private final String accountNumber;
+
+    /**
+     * Konstruktor zur Validierung und Initialisierung.
+     * Stellt sicher, dass die Kontonummer nur im gültigen Zustand erzeugt werden kann (Invariante).
+     */
+    public AccountNumber(String accountNumber) {
+        if (accountNumber == null || !accountNumber.matches("\\d{10}")) {
+            throw new IllegalArgumentException("Ungültige Kontonummer. Muss 10 Ziffern sein.");
+        }
+        this.accountNumber = accountNumber;
+    }
+
+    /**
+     * Der Lese-Vertrag (View Contract):
+     * Liefert dem UI die fertige Darstellung, ohne den internen Wert preiszugeben.
+     * @param componentId Die ID der UI-Komponente.
+     * @return Eine UI-Komponente zur Anzeige.
+     */
+    public Component display(String componentId) {
+        // Hier könnte Domänenlogik enthalten sein, z.B. Maskierung von Ziffern.
+        String maskedNumber = "XXXXXX" + this.accountNumber.substring(6);
+        return new Label(componentId, maskedNumber);
+    }
+
+    /**
+     * Der Bearbeitungs-Vertrag:
+     * Liefert dem UI eine editierbare Komponente, falls das Objekt diese Funktion unterstützt.
+     * @param componentId Die ID der UI-Komponente.
+     * @return Eine editierbare UI-Komponente.
+     */
+    public Component displayEditable(String componentId) {
+        return new TextField<AccountNumber>(componentId);
+    }
+
+    // KEIN public String getAccountNumber() !!!
+
+    public static void main(String[] args) {
+        try {
+            System.out.println("--- 1. OO-DDD Kapselung in Aktion ---");
+            AccountNumber validAccount = new AccountNumber("1234567890");
+            
+            // Die UI interagiert über Verträge (display/displayEditable)
+            validAccount.display("accountDisplayField");
+            validAccount.displayEditable("accountEditField");
+
+            System.out.println("\n--- 2. Verletzung der Invariante verhindern ---");
+            // Dieses Objekt wird NIE in einem ungültigen Zustand existieren
+            AccountNumber invalidAccount = new AccountNumber("123"); 
+        } catch (IllegalArgumentException e) {
+            System.err.println("Fehler abgefangen: " + e.getMessage());
+        }
+    }
+}
+```
+
+### 4. Vergleich: Layered Architecture vs. OO-DDD (Kontrollfluss)
+
+Der fundamentalste Unterschied liegt in der Umkehrung der Kontrolle von einem externen **Orchestrator** (Application Service) zur **Autonomie** des Domänenobjekts.
+
+#### 4.1 Klassische Layered Architecture (Orchestrierung)
+
+In der klassischen Architektur steuert der Application Service alle Aktionen. Die Domäne ist eine passive Ressource.
+
+* **Rolle des Application Service:** Er ist der Dirigent. Er lädt Daten (Repository), validiert, ruft Setter auf (Domäne), speichert (Repository), und steuert die Transaktion.
+* **Architektonische Konsequenz:** Der Domänenkern wird zu einem kleinen Teil (oft nur $\approx 1/4$) der Anwendung reduziert und von technischen Layern dominiert (vgl. MATHEMA).
+
+#### 4.2 OO-DDD (Autonomie)
+
+In OO-DDD ist das Domänenobjekt **Self-Controlling**. Es agiert als **DB-Speaking Part** seiner selbst und entscheidet, wann und wie es gespeichert wird.
+
+**Kontrollfluss-Umkehr:**
+
+1.  Die UI sendet einen **Action Command** an die Domäne.
+2.  Das Domänenobjekt führt die Geschäftslogik aus (**Invarianten werden geschützt**).
+3.  Das Domänenobjekt ruft intern seine I/O-Logik auf (`this.persist()`).
+4.  Das Objekt gibt entweder eine Fehlermeldung oder eine fertige **View-Darstellung** zurück.
+
+**Diagramm: Verschiebung des Kontrollflusses** 
+
+```mermaid
+graph RL
+
+    subgraph OO-DDD Autonomie
+        UI_OO[UI Action Command] -->|Action auslösen| Domain_OO{Aktive Domain & DB-Speaking};
+        Domain_OO -->|this.persist| DB_OO[Database I/O];
+        Domain_OO -->|Fertiger UI-Contract| UI_OO;
+    end
+
+    subgraph Layered Architecture Orchestrator
+        UI_L[UI] -->|Setzer aufrufen| Service_L(Application Service);
+        Service_L -->|Getter/Setter| Domain_L{Passive Domain};
+        Service_L -->|Speichern/Laden| Repo_L[Repository];
+    end
+
+    style Service_L fill:#ffcccc
+    style Domain_L fill:#dddddd
+    style Domain_OO fill:#ccffcc
+```
+
+### **5. Umfassender Architektur-Vergleich**
 
 | Merkmal | Klassisch (Schichten/Hexagonal) | OO-DDD (UI of Objects) |
 | :---- | :---- | :---- |
