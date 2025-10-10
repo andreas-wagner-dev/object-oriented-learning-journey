@@ -1827,31 +1827,696 @@ Robert C. Martin's Package Design Principles (aus den bereitgestellten PDFs) zei
 
 ### 10.2 Package Cohesion Principles
 
-**Common Closure Principle (CCP)**: "Classes which change together belong together"
-
+#### 10.2.1 Common Closure Principle (CCP)
+**"Classes which change together belong together"**
 Klassen, die sich aus den gleichen Gründen ändern, sollten im gleichen Package sein. Dies minimiert die Anzahl der Packages, die bei einer Änderung angefasst werden müssen.
 
-**Common Reuse Principle (CRP)**: "Classes in packages should be reused together"
 
+```mermaid
+graph TB
+    subgraph "BAD: Classes that change together are separated"
+        B1["TaskController.java<br/>in controller/"]
+        B2["TaskValidator.java<br/>in validation/"]
+        B3["TaskFormatter.java<br/>in formatting/"]
+        
+        CHANGE1["Business Rule Change:<br/>Add 'priority' field"]
+        
+        CHANGE1 -.->|Must modify| B1
+        CHANGE1 -.->|Must modify| B2
+        CHANGE1 -.->|Must modify| B3
+        
+        style B1 fill:#ffe3e3
+        style B2 fill:#ffe3e3
+        style B3 fill:#ffe3e3
+        style CHANGE1 fill:#ff6b6b
+    end
+```
+
+```mermaid
+graph TB
+    subgraph "GOOD: Classes that change together are together"
+        G1["com.app.task/<br/>TaskController.java<br/>TaskValidator.java<br/>TaskFormatter.java"]
+        
+        CHANGE2["Business Rule Change:<br/>Add 'priority' field"]
+        
+        CHANGE2 -.->|Modify only| G1
+        
+        style G1 fill:#d3f9d8
+        style CHANGE2 fill:#51cf66
+    end
+
+```
+
+#### 10.2.2 Common Reuse Principle (CRP): 
+**"Classes in packages should be reused together"**
 Klassen in einem Package sollten gemeinsam wiederverwendet werden. Wenn ein Client nur eine Klasse aus einem Package braucht, sollte das Package aufgeteilt werden.
 
-**Reuse Release Equivalence Principle (REP)**: "The unit of reuse is the unit of release"
+```mermaid
+graph TB
+    subgraph "BAD: Package contains unrelated classes"
+        direction LR
+        BP["utils/ Package"]
+        
+        BC1["StringUtils<br/>Used by 80% of clients"]
+        BC2["DateUtils<br/>Used by 20% of clients"]
+        BC3["MathUtils<br/>Used by 15% of clients"]
+        BC4["FileUtils<br/>Used by 30% of clients"]
+        
+        BP --- BC1
+        BP --- BC2
+        BP --- BC3
+        BP --- BC4
+        
+        CLIENT1["Client A<br/>Only needs StringUtils"]
+        CLIENT1 -->|Must depend on entire package| BP
+        
+        style BP fill:#ffe3e3
+        style BC1 fill:#ffd43b
+        style BC2 fill:#ffd43b
+        style BC3 fill:#ffd43b
+        style BC4 fill:#ffd43b
+        style CLIENT1 fill:#ff6b6b
+    end
+```
+```mermaid
+graph TB   
+    subgraph "GOOD: Split into cohesive packages"
+        direction LR
+        
+        GP1["text/<br/>StringUtils<br/>TextFormatter"]
+        GP2["time/<br/>DateUtils<br/>TimeParser"]
+        GP3["math/<br/>MathUtils<br/>Calculator"]
+        GP4["io/<br/>FileUtils<br/>StreamHelper"]
+        
+        CLIENT2["Client A"]
+        CLIENT2 -->|Only depends on what it needs| GP1
+        
+        style GP1 fill:#d3f9d8
+        style GP2 fill:#d3f9d8
+        style GP3 fill:#d3f9d8
+        style GP4 fill:#d3f9d8
+        style CLIENT2 fill:#51cf66
+    end
+    
+    CRP1["CRP minimizes:<br/>• Unnecessary dependencies<br/>• Recompilation scope<br/>• Release coupling"]
+        
+    style CRP1 fill:#e7f5ff
+```
 
+#### 10.2.2 Reuse Release Equivalence Principle (REP)
+**"The unit of reuse is the unit of release"**
 Ein Package sollte als Einheit versioniert und released werden können. Einzelne Klassen sind keine sinnvollen Reuse-Einheiten.
+
+```mermaid
+graph TB
+
+    subgraph "BAD: Classes released individually"
+        BR1["Task.java v1.2.3"]
+        BR2["TaskValidator.java v1.3.1"]
+        BR3["TaskFormatter.java v2.0.0"]
+        
+        CONFUSED["Client confused:<br/>Which versions work together?<br/>What are the dependencies?<br/>Where is the documentation?"]
+        
+        BR1 -.-> CONFUSED
+        BR2 -.-> CONFUSED
+        BR3 -.-> CONFUSED
+        
+        style BR1 fill:#ffe3e3
+        style BR2 fill:#ffe3e3
+        style BR3 fill:#ffe3e3
+        style CONFUSED fill:#ff6b6b
+    end
+
+```
+
+```mermaid
+graph TB
+    
+    subgraph "GOOD: Package released as unit"
+        GR1["task-management-1.2.3.jar<br/>├── Task.java<br/>├── TaskValidator.java<br/>└── TaskFormatter.java"]
+        
+        CLEAR["Client benefits:<br/>✓ Single version number<br/>✓ Clear compatibility<br/>✓ Complete documentation<br/>✓ Tested together"]
+        
+        GR1 -.-> CLEAR
+        
+        style GR1 fill:#d3f9d8
+        style CLEAR fill:#51cf66
+    end
+    
+    REP1["REP ensures:<br/>• Trackable versions<br/>• Release notes<br/>• Dependency management<br/>• Backward compatibility"]
+    
+    style REP1 fill:#e7f5ff
+```
+
+```mermaid
+graph TB
+    subgraph "Real World Example: Task Management"
+        direction TB
+        
+        PKG1["task-core-2.1.0.jar<br/>(REP: Released as unit)"]
+        
+        subgraph "Package Contents (CCP: Change together)"
+            T1["Task.java"]
+            T2["Tasks.java"]
+            T3["TaskView.java"]
+            T4["TaskStatistics.java"]
+        end
+        
+        PKG1 --- T1
+        PKG1 --- T2
+        PKG1 --- T3
+        PKG1 --- T4
+        
+        subgraph "Clients (CRP: Reused together)"
+            C1["WebApp<br/>Uses all classes"]
+            C2["MobileApp<br/>Uses all classes"]
+            C3["ReportService<br/>Uses all classes"]
+        end
+        
+        C1 --> PKG1
+        C2 --> PKG1
+        C3 --> PKG1
+        
+        CHANGE3["When adding 'priority':<br/>• All 4 classes change (CCP)<br/>• All clients need update (CRP)<br/>• Release 2.2.0 as unit (REP)"]
+        
+        style PKG1 fill:#51cf66
+        style T1 fill:#d3f9d8
+        style T2 fill:#d3f9d8
+        style T3 fill:#d3f9d8
+        style T4 fill:#d3f9d8
+        style C1 fill:#e7f5ff
+        style C2 fill:#e7f5ff
+        style C3 fill:#e7f5ff
+        style CHANGE3 fill:#a9e34b
+    end
+```
+
+```mermaid
+graph TB  
+    subgraph "The Tension Triangle"
+        direction TB
+        
+        TCCP["CCP:<br/>Make packages large<br/>(keep change together)"]
+        TCRP["CRP:<br/>Make packages small<br/>(minimize dependencies)"]
+        TREP["REP:<br/>Make packages meaningful<br/>(releasable units)"]
+        
+        TCCP <-.->|Tension| TCRP
+        TCRP <-.->|Tension| TREP
+        TREP <-.->|Tension| TCCP
+        
+        BALANCE["Balance all three!<br/>There is no perfect solution,<br/>only trade-offs"]
+        
+        style TCCP fill:#ffd43b
+        style TCRP fill:#ffd43b
+        style TREP fill:#ffd43b
+        style BALANCE fill:#e7f5ff
+    end
+```
+```mermaid
+graph TB    
+    subgraph "Decision Guide"
+        direction TB
+        
+        Q1["Do these classes change<br/>for the same reasons?"]
+        Q2["Are these classes always<br/>used together?"]
+        Q3["Should these be versioned<br/>and released together?"]
+        
+        Q1 -->|Yes| SAME["Put in same package"]
+        Q1 -->|No| DIFF1["Consider separate packages"]
+        
+        Q2 -->|Yes| SAME
+        Q2 -->|No| DIFF2["Consider separate packages"]
+        
+        Q3 -->|Yes| SAME
+        Q3 -->|No| DIFF3["Consider separate packages"]
+        
+        SAME --> CHECK["Final check:<br/>Does package have<br/>single cohesive purpose?"]
+        
+        style Q1 fill:#fff9db
+        style Q2 fill:#fff9db
+        style Q3 fill:#fff9db
+        style SAME fill:#d3f9d8
+        style DIFF1 fill:#ffe3e3
+        style DIFF2 fill:#ffe3e3
+        style DIFF3 fill:#ffe3e3
+        style CHECK fill:#e7f5ff
+    end
+```
+
+```mermaid
+graph TB      
+    subgraph "Anti-Patterns to Avoid"
+        direction TB
+        
+        AP1["❌ God Package<br/>Everything in one package<br/>Violates CRP"]
+        AP2["❌ Scattered Functionality<br/>Related classes separated<br/>Violates CCP"]
+        AP3["❌ Individual Class Releases<br/>No cohesive versioning<br/>Violates REP"]
+        AP4["❌ Kitchen Sink Package<br/>Unrelated utilities together<br/>Violates all three!"]
+        
+        style AP1 fill:#ffe3e3
+        style AP2 fill:#ffe3e3
+        style AP3 fill:#ffe3e3
+        style AP4 fill:#ff6b6b
+    end
+```
 
 ### 10.3 Package Coupling Principles
 
-**Acyclic Dependencies Principle (ADP)**: "The dependency structure for packages must be a Directed Acyclic Graph"
+#### 10.3.1 Acyclic Dependencies Principle (ADP)
+**"The dependency structure for packages must be a Directed Acyclic Graph"**
 
-Es darf keine zyklischen Abhängigkeiten zwischen Packages geben. Zyklen führen zum "Morning After Syndrome" - man kommt morgens und der Code ist kaputt, weil jemand ein abhängiges Package geändert hat.
+Es darf keine zyklischen Abhängigkeiten zwischen Packages geben. 
+- Zyklen führen zum "Morning After Syndrome"
+- man kommt morgens und der Code ist kaputt, weil jemand ein abhängiges Package geändert hat.
 
-**Stable Dependencies Principle (SDP)**: "Dependencies should point in the direction of stability"
+**BAD: Cyclic Dependencies - Morning After Syndrome**
+
+```mermaid
+%% Acyclic Dependencies Principle (ADP)
+graph TB
+    subgraph "BAD: Cyclic Dependencies - Morning After Syndrome"
+        A1[Package A]
+        B1[Package B]
+        C1[Package C]
+        D1[Package D]
+        
+        A1 -->|depends on| B1
+        B1 -->|depends on| C1
+        C1 -->|depends on| D1
+        D1 -->|depends on| A1
+        
+        style A1 fill:#ff6b6b
+        style B1 fill:#ff6b6b
+        style C1 fill:#ff6b6b
+        style D1 fill:#ff6b6b
+    end
+```
+
+**GOOD: Acyclic Dependencies - DAG Structure**
+
+```mermaid
+graph TB  
+    subgraph "GOOD: Acyclic Dependencies - DAG Structure"
+        A2[Package A]
+        B2[Package B]
+        C2[Package C]
+        D2[Package D]
+        E2[Package E]
+        
+        A2 -->|depends on| B2
+        A2 -->|depends on| C2
+        B2 -->|depends on| D2
+        C2 -->|depends on| D2
+        D2 -->|depends on| E2
+        
+        style A2 fill:#51cf66
+        style B2 fill:#51cf66
+        style C2 fill:#51cf66
+        style D2 fill:#51cf66
+        style E2 fill:#51cf66
+    end
+  ```
+
+**Breaking Cycles with DIP**
+```mermaid
+graph TB 
+    subgraph "Breaking Cycles with DIP"
+        X1[Package X]
+        Y1[Package Y]
+        I1[Interface Package]
+        
+        X1 -->|depends on| I1
+        Y1 -->|depends on| I1
+        Y1 -.->|implements| I1
+        
+        style I1 fill:#4dabf7
+        style X1 fill:#51cf66
+        style Y1 fill:#51cf66
+    end
+```
+
+#### 10.3.2 Stable Dependencies Principle (SDP)
+**"Dependencies should point in the direction of stability"**
 
 Instabile Packages (die sich oft ändern) sollten von stabilen Packages (die sich selten ändern) abhängen, nicht umgekehrt.
 
-**Stable Abstractions Principle (SAP)**: "Stable packages should be abstract packages"
+**BAD: Dependencies Point Away From Stability**
+BAD Example: Stabiles Package hängt von instabilem ab
+- DatabaseCore (stabil) → ExperimentalFeature (instabil)
+- Problem: Änderungen propagieren aufwärts
+```mermaid
+graph TB
+    subgraph "BAD: Dependencies Point Away From Stability"
+        direction LR
+        
+        BS1["Stable Package<br/>DatabaseCore<br/>I = 0.2<br/>Hard to change"]
+        BU1["Unstable Package<br/>ExperimentalFeature<br/>I = 0.9<br/>Changes daily"]
+        
+        BS1 -->|Wrong Direction!| BU1
+        
+        style BS1 fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px
+        style BU1 fill:#ffd43b,stroke:#f08c00,stroke-width:3px
+    end
+```
+**Problem: Change Propagation**
+
+```mermaid
+graph TB    
+    subgraph "Problem: Change Propagation"
+        BP1["When ExperimentalFeature changes<br/>DatabaseCore must change too!"]
+        BP2["Stable component forced to be unstable"]
+        BP3["Many other packages depend on DatabaseCore"]
+        BP4["= Change ripples through entire system"]
+        
+        style BP1 fill:#ffe0e0
+        style BP2 fill:#ffe0e0
+        style BP3 fill:#ffe0e0
+        style BP4 fill:#ffe0e0
+    end
+```
+**GOOD: Dependencies Point Toward Stability**
+GOOD Example: Instabile Packages hängen von stabilen ab
+- UIController → BusinessLogic → CoreInterfaces
+- Korrekte Stabilität-Hierarchie
+```mermaid
+graph TB
+    subgraph "GOOD: Dependencies Point Toward Stability"
+        direction LR
+        
+        GU1["Unstable Package<br/>UIController<br/>I = 0.9<br/>Easy to change"]
+        GM1["Medium Stable<br/>BusinessLogic<br/>I = 0.5<br/>Moderate change"]
+        GS1["Stable Package<br/>CoreInterfaces<br/>I = 0.1<br/>Rarely changes"]
+        
+        GU1 -->|Correct!| GM1
+        GM1 -->|Correct!| GS1
+        
+        style GU1 fill:#ffd43b,stroke:#f08c00,stroke-width:3px
+        style GM1 fill:#a9e34b,stroke:#5c940d,stroke-width:3px
+        style GS1 fill:#51cf66,stroke:#2b8a3e,stroke-width:3px
+    end
+```
+**Benefits: Change Isolation**
+```mermaid
+graph TB   
+    subgraph "Benefits: Change Isolation"
+        GB1["UIController can change freely"]
+        GB2["Does not affect BusinessLogic or Core"]
+        GB3["BusinessLogic protected by Core stability"]
+        GB4["Changes flow downstream, not upstream"]
+        
+        style GB1 fill:#d3f9d8
+        style GB2 fill:#d3f9d8
+        style GB3 fill:#d3f9d8
+        style GB4 fill:#d3f9d8
+    end
+```
+**SDP Metrics**
+Berechnung der **Instability (I)**
+```
+Ca = Afferent Coupling (incoming)
+Ce = Efferent Coupling (outgoing)
+I = Ce / (Ca + Ce)
+```
+```mermaid
+graph TB   
+    subgraph "SDP Metrics"
+        direction TB
+        
+        M1["Instability (I) = Ce / (Ca + Ce)"]
+        M2["Ce = Efferent Coupling (outgoing dependencies)"]
+        M3["Ca = Afferent Coupling (incoming dependencies)"]
+        M4["I = 0: Maximum Stability (many depend on it)"]
+        M5["I = 1: Maximum Instability (depends on many)"]
+        
+        style M1 fill:#e7f5ff
+        style M2 fill:#e7f5ff
+        style M3 fill:#e7f5ff
+        style M4 fill:#d3f9d8
+        style M5 fill:#ffd43b
+    end
+```
+
+**Real Example: Task Management System**
+Task Management System mit echten Metrikwerten
+- TaskController: I = 0.83 (sehr instabil)
+- UrgentTask: I = 0.60 (moderat instabil)
+- SqlTask: I = 0.40 (moderat stabil)
+- Task Interface: I = 0.00 (maximal stabil)
+```mermaid
+graph TB  
+    subgraph "Real Example: Task Management System"
+        direction TB
+        
+        UI["TaskController<br/>(UI Layer)<br/>Ca=1, Ce=5<br/>I = 0.83<br/>Very Unstable"]
+        
+        DEC["UrgentTask<br/>(Decorator)<br/>Ca=2, Ce=3<br/>I = 0.60<br/>Moderately Unstable"]
+        
+        IMPL["SqlTask<br/>(Implementation)<br/>Ca=3, Ce=2<br/>I = 0.40<br/>Moderately Stable"]
+        
+        INT["Task Interface<br/>(Core)<br/>Ca=10, Ce=0<br/>I = 0.00<br/>Maximum Stability"]
+        
+        UI --> DEC
+        UI --> INT
+        DEC --> INT
+        IMPL --> INT
+        
+        style UI fill:#ff922b,stroke:#e8590c,stroke-width:3px
+        style DEC fill:#ffd43b,stroke:#f08c00,stroke-width:3px
+        style IMPL fill:#a9e34b,stroke:#5c940d,stroke-width:3px
+        style INT fill:#51cf66,stroke:#2b8a3e,stroke-width:4px
+    end
+```
+**Dependency Flow Visualization**
+Visualisierung der Stabilität-Ebenen
+```mermaid
+graph TB
+    subgraph "Dependency Flow Visualization"
+        direction LR
+        
+        L1["Most Unstable<br/>I = 0.9-1.0<br/>UI, Controllers"]
+        L2["Moderately Unstable<br/>I = 0.6-0.8<br/>Decorators, Adapters"]
+        L3["Moderately Stable<br/>I = 0.3-0.5<br/>Implementations"]
+        L4["Most Stable<br/>I = 0.0-0.2<br/>Core Interfaces"]
+        
+        L1 -->|depends on| L2
+        L2 -->|depends on| L3
+        L3 -->|depends on| L4
+        
+        style L1 fill:#ff922b
+        style L2 fill:#ffd43b
+        style L3 fill:#a9e34b
+        style L4 fill:#51cf66
+    end
+```
+
+**Package Stability Analysis**
+Konkrete Berechnungsbeispiele
+```mermaid
+graph TB   
+    subgraph "Package Stability Analysis"
+        direction TB
+        
+        P1["Package A<br/>5 packages depend on it (Ca=5)<br/>Depends on 1 package (Ce=1)<br/>I = 1/(5+1) = 0.17<br/>STABLE"]
+        
+        P2["Package B<br/>1 package depends on it (Ca=1)<br/>Depends on 5 packages (Ce=5)<br/>I = 5/(1+5) = 0.83<br/>UNSTABLE"]
+        
+        P3["Rule: B should depend on A<br/>NOT: A should depend on B"]
+        
+        style P1 fill:#51cf66
+        style P2 fill:#ffd43b
+        style P3 fill:#e7f5ff
+    end
+```
+
+**Violation Detection**
+Wie man Verstöße erkennt:
+```mermaid
+graph TB  
+    subgraph "Violation Detection"
+        direction TB
+        
+        V1["❌ Stable depends on Unstable<br/>I(dependent) < I(dependency)"]
+        V2["✓ Unstable depends on Stable<br/>I(dependent) > I(dependency)"]
+        V3["✓ Equal stability OK<br/>I(dependent) = I(dependency)"]
+        
+        style V1 fill:#ffe0e0
+        style V2 fill:#d3f9d8
+        style V3 fill:#fff9db
+    end
+```
+
+**How to Fix Violations**
+Drei Optionen zur Behebung von SDP-Verletzungen:
+```mermaid
+graph TB
+    subgraph "How to Fix Violations"
+        direction TB
+        
+        F1["Option 1: Extract Interface<br/>Create stable abstraction<br/>Apply Dependency Inversion"]
+        F2["Option 2: Move Classes<br/>Reorganize to balance stability<br/>Increase Ca or decrease Ce"]
+        F3["Option 3: Break Dependency<br/>Remove coupling entirely<br/>Use events or mediator"]
+        
+        style F1 fill:#e7f5ff
+        style F2 fill:#e7f5ff
+        style F3 fill:#e7f5ff
+    end
+```
+
+Die Diagramme machen klar: Dependencies müssen in Richtung Stabilität zeigen, damit Änderungen lokalisiert bleiben!
+
+#### 10.3.3 Stable Abstractions Principle (SAP)
+**"Stable packages should be abstract packages"**
 
 Stabile Packages sollten abstrakt sein (Interfaces), damit sie erweiterbar bleiben trotz ihrer Stabilität.
+
+```mermaid
+graph TB
+    subgraph "BAD: Stable but Concrete Package"
+        direction TB
+        SC["TaskUtils<br/>(Concrete Package)<br/>I = 0.1 (Very Stable)<br/>A = 0.0 (No Abstractions)"]
+        
+        D1[Package A] --> SC
+        D2[Package B] --> SC
+        D3[Package C] --> SC
+        D4[Package D] --> SC
+        D5[Package E] --> SC
+        
+        style SC fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px
+        style D1 fill:#ffe3e3
+        style D2 fill:#ffe3e3
+        style D3 fill:#ffe3e3
+        style D4 fill:#ffe3e3
+        style D5 fill:#ffe3e3
+    end
+```
+**Problem: Rigid Design**
+```mermaid
+graph TB
+    subgraph "Problem: Rigid Design"
+        P1["❌ Cannot extend without breaking dependents"]
+        P2["❌ Changes propagate to all 5 packages"]
+        P3["❌ Difficult to test in isolation"]
+        P4["❌ Violation of Open/Closed Principle"]
+        
+        style P1 fill:#ffe0e0
+        style P2 fill:#ffe0e0
+        style P3 fill:#ffe0e0
+        style P4 fill:#ffe0e0
+    end
+```
+**Stable and Abstract Package**
+```mermaid
+graph TB    
+    subgraph "GOOD: Stable and Abstract Package"
+        direction TB
+        SA["Task Interface<br/>(Abstract Package)<br/>I = 0.1 (Very Stable)<br/>A = 1.0 (Pure Interfaces)"]
+        
+        C1[Package A] --> SA
+        C2[Package B] --> SA
+        C3[Package C] --> SA
+        C4[Package D] --> SA
+        C5[Package E] --> SA
+        
+        IMPL1[SimpleTask] -.->|implements| SA
+        IMPL2[SqlTask] -.->|implements| SA
+        IMPL3[UrgentTask] -.->|implements| SA
+        
+        style SA fill:#51cf66,stroke:#2b8a3e,stroke-width:3px
+        style C1 fill:#d3f9d8
+        style C2 fill:#d3f9d8
+        style C3 fill:#d3f9d8
+        style C4 fill:#d3f9d8
+        style C5 fill:#d3f9d8
+        style IMPL1 fill:#a9e34b
+        style IMPL2 fill:#a9e34b
+        style IMPL3 fill:#a9e34b
+    end
+```
+**Flexible Design**
+```mermaid
+graph TB    
+    subgraph "Benefits: Flexible Design"
+        B1["✓ Can extend via new implementations"]
+        B2["✓ Changes do not affect dependents"]
+        B3["✓ Easy to test with mocks"]
+        B4["✓ Follows Open/Closed Principle"]
+        
+        style B1 fill:#d3f9d8
+        style B2 fill:#d3f9d8
+        style B3 fill:#d3f9d8
+        style B4 fill:#d3f9d8
+    end
+```
+**SAP Formula**
+```mermaid
+graph TB    
+    subgraph "SAP Formula"
+        direction LR
+        F1["Abstractness (A) = Abstract Classes / Total Classes"]
+        F2["A = 0: Completely Concrete"]
+        F3["A = 1: Completely Abstract"]
+        F4["Stable packages (I < 0.3) should have A > 0.7"]
+        
+        style F1 fill:#e7f5ff
+        style F2 fill:#ffe3e3
+        style F3 fill:#d3f9d8
+        style F4 fill:#fff9db
+    end
+```
+**Real World Example**
+```mermaid
+graph TB    
+    subgraph "Real World Example"
+        direction TB
+        
+        CORE["com.app.Task<br/>interface Task { }<br/>I = 0.0, A = 1.0<br/>Perfect!"]
+        
+        DEP1[TaskController]
+        DEP2[TaskService]
+        DEP3[TaskView]
+        
+        DEP1 --> CORE
+        DEP2 --> CORE
+        DEP3 --> CORE
+        
+        IMP1[SimpleTask.java]
+        IMP2[SqlTask.java]
+        IMP3[UrgentTask.java]
+        
+        IMP1 -.->|implements| CORE
+        IMP2 -.->|implements| CORE
+        IMP3 -.->|implements| CORE
+        
+        style CORE fill:#51cf66,stroke:#2b8a3e,stroke-width:4px
+        style DEP1 fill:#ffd43b
+        style DEP2 fill:#ffd43b
+        style DEP3 fill:#ffd43b
+        style IMP1 fill:#a9e34b
+        style IMP2 fill:#a9e34b
+        style IMP3 fill:#a9e34b
+    end
+```
+**Stability vs Abstractness Matrix**
+```mermaid
+graph TB  
+    subgraph "Stability vs Abstractness Matrix"
+        direction LR
+        
+        M1["Stable + Abstract<br/>I=0.1, A=1.0<br/>✓ IDEAL"]
+        M2["Stable + Concrete<br/>I=0.1, A=0.0<br/>✗ RIGID"]
+        M3["Unstable + Abstract<br/>I=0.9, A=1.0<br/>⚠ USELESS"]
+        M4["Unstable + Concrete<br/>I=0.9, A=0.0<br/>✓ FLEXIBLE"]
+        
+        style M1 fill:#51cf66
+        style M2 fill:#ff6b6b
+        style M3 fill:#ffd43b
+        style M4 fill:#a9e34b
+    end
+```
+
+Das Diagramm visualisiert klar, warum stabile Packages abstrakt sein sollten: 
+- Sie bleiben stabil (viele hängen davon ab), aber durch Abstraktion flexibel und erweiterbar!
+
 
 ### 10.4 3 Paketdesign Regeln
 
