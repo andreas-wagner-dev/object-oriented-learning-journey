@@ -1794,6 +1794,9 @@ Composition mit Interfaces erzeugt gutes Coupling:
 - Tests sind einfach (Mock das Interface)
 
 ---
+### 9.10 Smart Collections
+The Iterator Design Pattern allows us to access the elements of a collection without exposing its internal data structure.
+https://blog.stackademic.com/mastering-java-collections-deep-dive-with-real-world-problems-dd6336a48a53
 
 ## 10. Package Design
 
