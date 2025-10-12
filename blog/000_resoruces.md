@@ -50,7 +50,7 @@
 - https://www.yegor256.com/2016/07/06/data-transfer-object.html
 
 *Solutions:*
-
+- https://www.yegor256.com/2016/07/27/no-getters-no-setters-no-properties.html
 - https://amihaiemil.com/2017/11/04/but-how-do-you-work-without-a-model.html
 - https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html
 - **https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html**
@@ -97,8 +97,10 @@
 **Packaging**
 - https://javadevguy.wordpress.com/2017/12/18/happy-packaging/
 
-**Data-boundaries:** 
+**Architecture:**
+*Problems*
 - https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/
 - https://javadevguy.wordpress.com/2019/01/06/reevaluating-the-layered-architecture/
 - https://amihaiemil.com/2020/05/14/the-almighty-service-layer.html
-
+*Solutions:*
+- https://www.vzurauskas.com/2018/07/24/maintaining-model-integrity
