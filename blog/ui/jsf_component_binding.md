@@ -68,29 +68,24 @@ In your `.xhtml` file, use the binding attribute to link the component to a back
 
 ```xml
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
-    <title>JSF Binding Example</title>
+    <title>JSF Component Binding</title>
 </h:head>
 <h:body>
     <h:form id="form">
-
-        <!-- Bound inputText component -->
         <!-- The component instance is bound to the bean, and the value is also bound -->
         <p:inputText id="input"
                      binding="#{bindingBean.inputText}"
-                     value="#{bindingBean.userInput}"
-                    /><br/>
+                     value="#{bindingBean.userInput}"/> 
+                     <br/>
 
         <!-- Bound commandButton component -->
         <!-- The component instance is bound to the bean -->
         <p:commandButton id="submitBtn"
                          binding="#{bindingBean.commandButton}"
-                         value="Submit"
-                        input -->
+                         value="Submit"/>
+         
         <h:outputText id="output"
                       binding="#{bindingBean.outputText}"
                       value="You entered: #{bindingBean.userInput}" />
