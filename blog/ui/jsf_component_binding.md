@@ -1,8 +1,8 @@
 # JSF Component Binding
 
-The binding attribute in JSF allows you to programmatically access and manipulate UI components from a backing bean<br>
-by linking the component instance to a property in the bean. When the page is rendered, if the bean property is null,<br> 
-JSF creates a new component instance and assigns it to the property via the setter. This is useful when you need to<br>
+The binding attribute in JSF allows you to programmatically access and **manipulate UI components** from a backing bean
+**by linking the component instance to a property** in the bean. When the page is rendered, if the bean property is **null**, 
+JSF creates a new component instance and assigns it to the property via the setter. This is useful when you need to 
 change a component's attributes, like rendered, dynamically based on application logic, as opposed to just binding the component's value.
 
 **Key considerations**
