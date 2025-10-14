@@ -16,7 +16,6 @@ change a component's attributes, like rendered, dynamically based on application
 - **Dynamic manipulation:** The bean can then use this component instance to modify its properties, such as setting the rendered attribute to true or false to show or hide elements on the page.
 - **Component instance vs. value:** It's crucial to understand the difference between binding and value. binding attaches the entire component instance to a bean property, while value attaches the component's value (the data it displays). 
 
-
 ```mermaid 
 graph TD
     A[JSF page with UI component and binding attribute] --> B{Is bean property null?}
@@ -47,7 +46,6 @@ graph TD
     linkStyle 5 stroke:#38a169,stroke-width:2px;
     linkStyle 6 stroke:#e53e3e,stroke-width:2px,stroke-dasharray: 5 5;
 ```
-
 **Explanation:**
 - **binding attribute:** Links a UI component directly to a property in the backing bean.
 - **Null check:** JSF checks if the property is null during rendering.
@@ -56,6 +54,7 @@ graph TD
 
 **🟢 Green Path: Desired flow**
 When the bean property is null, JSF creates the component, assigns it, renders it, and allows dynamic manipulation.
+
 **🚫 Red Dashed Path: Forbidden/undesired path**
 If the bean property is not null, JSF uses the existing component, which might bypass the intended initialization logic.
 
