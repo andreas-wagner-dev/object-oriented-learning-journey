@@ -6,8 +6,10 @@ JSF creates a new component instance and assigns it to the property via the sett
 change a component's attributes, like rendered, dynamically based on application logic, as opposed to just binding the component's value.
 
 **Key considerations**
-**Scope:** 
-- Be mindful of the backing bean's scope. Binding a request-scoped component to a session-scoped bean can lead to errors, such as duplicate IDs if you navigate between pages. 
+
+**Scope:**
+- Be mindful of the backing bean's scope. Binding a request-scoped component to a session-scoped bean can lead to errors, such as duplicate IDs if you navigate between pages.
+
 **Necessity:**
 - While powerful, component binding is often unnecessary in JSF 2.x and later. Many functional requirements can be met with alternative approaches like value binding or standard JSF/JSTL tags, which can lead to cleaner code. 
 
