@@ -66,35 +66,117 @@ If the bean property is not null, JSF uses the existing component, which might b
 In your `.xhtml` file, use the binding attribute to link the component to a backing bean property:
 
 ```xml
-<h:outputText binding="#{taskFrom.taskOutputText}" ... />
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>JSF Binding Example</title>
+</h:head>
+<h:body>
+    <h:form id="form">
+
+        <!-- Bound inputText component -->
+        <!-- The component instance is bound to the bean, and the value is also bound -->
+        <p:inputText id="input"
+                     binding="#{bindingBean.inputText}"
+                     value="#{bindingBean.userInput}"
+                    /><br/>
+
+        <!-- Bound commandButton component -->
+        <!-- The component instance is bound to the bean -->
+        <p:commandButton id="submitBtn"
+                         binding="#{bindingBean.commandButton}"
+                         value="Submit"
+                        input -->
+        <h:outputText id="output"
+                      binding="#{bindingBean.outputText}"
+                      value="You entered: #{bindingBean.userInput}" />
+
+    </h:form>
+</h:body>
+</html>
 ```
 - In your backing bean (e.g., taskFrom), have the corresponding property:
-
-```java
-      private UIOutput taskOutputText;
-
-      // Getter and setter for taskOutputText
-      public UIOutput getTaskOutputText() {
-          return taskOutputText;
-      }
-
-      public void setTaskOutputText(UIOutput taskOutputText) {
-          this.taskOutputText = taskOutputText;
-      }
-```
 - In a method within the backing bean that is called by the button, you can now access and change the rendered property:
 
-
 ```java
-   public void submit() {
-            // ... your other logic ...
-            if (customer.isLargeOrder()) {
-                taskOutputText.getAttributes().put("rendered", true);
-            } else {
-                taskOutputText.getAttributes().put("rendered", false);
-            }
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import java.io.Serializable;
+
+import org.primefaces.component.inputtext.InputText;
+import org.primefaces.component.commandbutton.CommandButton;
+import jakarta.faces.component.html.HtmlOutputText;
+
+@Named
+@ViewScoped
+public class BindingBean implements Serializable {
+
+    private InputText inputText;
+    private CommandButton commandButton;
+    private HtmlOutputText outputText;
+
+    private String userInput;
+
+    // Getters and setters for binding
+    public InputText getInputText() {
+        return inputText;  // 1. must be null
+    }
+
+    public void setInputText(InputText inputText) {
+        this.inputText = inputText; // 2. when not null, can be animate
+    }
+
+    public CommandButton getCommandButton() {
+        return commandButton; // 1. must be null
+    }
+
+    public void setCommandButton(CommandButton commandButton) {
+        this.commandButton = commandButton; // 2. when not null, can be animate
+    }
+
+    public HtmlOutputText getOutputText() {
+        return outputText; // 1. must be null
+    }
+
+    public void setOutputText(HtmlOutputText outputText) {
+        this.outputText = outputText; // 2. when not null, can be animate
+    }
+
+    // Value binding
+    public String getUserInput() {
+        return userInput;
+    }
+
+    public void setUserInput(String userInput) {
+        this.userInput = userInput;
+    }
+
+    // Action method
+    public void submit() {
+        System.out.println("Submitted: " + userInput);
+
+        // Example: dynamically change button label
+        if (commandButton != null) {
+            commandButton.setValue("Submitted!");
         }
+
+        // Example: dynamically style output text
+        if (outputText != null) {
+            outputText.setStyle("color: green; font-weight: bold;");
+        }
+    }
+}
 ```
+
+**🧠 What This Demonstrates**
+
+- **binding on p:inputText:** Allows you to enable/disable or style the input field programmatically.
+- **binding on p:commandButton:** Lets you change the label, disable the button, or even hide it dynamically.
+- **Dynamic UI control:** You can now fully control the UI components from the backing bean, not just their values.
+
 ## References
 
 - https://docs.oracle.com/javaee/6/tutorial/doc/bnatg.html
