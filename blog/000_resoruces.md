@@ -85,7 +85,7 @@
 **Laws**
 - https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/
 
-**Database**
+**Database ORM/Active Record**
 - https://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html
 - https://www.yegor256.com/2016/07/26/active-record.html
 
