@@ -53,10 +53,10 @@ graph TD
 - **Manipulation:** The component can be accessed and modified programmatically in the bean, e.g., to dynamically control visibility or styling.
 
 **🟢 Green Path: Desired flow**
-When the bean property is null, JSF creates the component, assigns it, renders it, and allows dynamic manipulation.
+- When the bean property is null, JSF creates the component, assigns it, renders it, and allows dynamic manipulation.
 
 **🚫 Red Dashed Path: Forbidden/undesired path**
-If the bean property is not null, JSF uses the existing component, which might bypass the intended initialization logic.
+- If the bean property is not null, JSF uses the existing component, which might bypass the intended initialization logic.
 
 
 ## Example scenario
