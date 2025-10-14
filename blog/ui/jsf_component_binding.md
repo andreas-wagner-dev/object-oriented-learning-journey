@@ -14,9 +14,9 @@ change a component's attributes, like rendered, dynamically based on application
 - While powerful, component binding is often unnecessary in JSF 2.x and later. Many functional requirements can be met with alternative approaches like value binding or standard JSF/JSTL tags, which can lead to cleaner code. 
 
 ## How it works
-- **Initial rendering:** When a page is built, the JSF framework processes the binding attribute. If the corresponding (getter) property in the backing bean should be null, JSF creates an instance of the UI component (e.g., h:outputText) and sets it on the bean (setter) property.
+- **Initial rendering:** When a page is built, the JSF framework processes the binding attribute. If the corresponding (getter) property in the backing bean is **null**, JSF creates an instance of the UI component (e.g., h:outputText) and sets it on the bean (setter) property.
 - **Dynamic manipulation:** The bean can then use this component instance to modify its properties, such as setting the rendered attribute to true or false to show or hide elements on the page.
-- **Component instance vs. value:** It's crucial to understand the difference between binding and value. binding attaches the entire component instance to a bean property, while value attaches the component's value (the data it displays). 
+- **Component instance vs. value:** It's crucial to understand the difference between binding and value. Binding attaches the entire component instance to a bean property, while value attaches the component's value (the data it displays). 
 
 ```mermaid 
 graph TD
