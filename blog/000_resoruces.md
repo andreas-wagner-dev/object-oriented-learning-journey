@@ -6,12 +6,12 @@
 - https://amihaiemil.com
 - https://www.vzurauskas.com/
 
-**Beachte Object Nameing hier:**
+**Object Nameing:**
+- https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
+- https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html
 - https://www.yegor256.com/2015/03/09/objects-end-with-er.html
 - https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html
 - https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html
-- https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
-- https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html
 
 **Contract-Constuction:**
 
