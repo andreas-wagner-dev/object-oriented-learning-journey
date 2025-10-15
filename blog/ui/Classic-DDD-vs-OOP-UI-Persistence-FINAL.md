@@ -1,15 +1,11 @@
 # Classic DDD vs. Object-Oriented UI & Persistence
 
-**A practical comparison with Java & JSF examples, diagrams, and lessons learned from modern OOP, DDD, and the “UI of Objects” approach.**
-
+**A practical comparison with Java & JSF examples, diagrams, and lessons learned from (forgotten Art of) OOP, DDD, and the “UI of Objects” approach.**
 ---
-
-
-
 ## Introduction
 
 Classic Domain-Driven Design (DDD) has long separated domain logic, persistence, and UI into distinct layers. 
-But modern object-oriented thinking—championed by Robert Bräutigam, Yegor Bugayenko, and Allen Holub—challenges this, 
+But object-oriented thinking by Yegor Bugayenko, Robert Bräutigam, Allen Holub —challenges and Others this, 
 proposing that objects should encapsulate not just data and business logic, but also know how to present and persist themselves.
 
 However, this shift is not just about encapsulation—it addresses deeper architectural issues:
@@ -41,10 +37,11 @@ However, this shift is not just about encapsulation—it addresses deeper archit
 - Favor delegation over service layers.
 - Preserve model integrity by avoiding data leaks.
 
+*Model the problem, not the technology! Find suitable abstractions straight from the business requirements and hide implementation details, like the fact that you are using MVC.*(R. Bräutigam)
+
 This post compares **Classic DDD** with two object-oriented alternative, where an object know how to present and persist themselves.
 
-- **Direct UI of Objects**
-- **Extended UI of Objects**
+- **UI and Database speaking Objects**
 
 You’ll see diagrams, code, and a full JSF + H2 example using the “Extended” approach.
 
@@ -76,10 +73,17 @@ classDiagram
     class View {
         +render(DomainObject)
     }
+
+    UIComponent <.. View : displayTo()
+    Connection <.. Repository : persistTo()
+
     Controller --> Repository : uses
     Controller --> DomainObject : uses
     View --> DomainObject : renders
     Repository --> DomainObject : persists
+
+   style UIComponent fill:#d9edf7,stroke:#31708f
+   style Connection fill:#72f278,stroke:#600
 ```
 
 ### Java Example
@@ -152,7 +156,7 @@ public class AccountNumberView {
 
 ---
 
-## 2. Direct UI of Objects
+## 2. UI of Objects
 
 **Principle:**
 - The domain object directly implements UI and persistence logic.
@@ -168,6 +172,9 @@ classDiagram
     }
     UIComponent <.. AccountNumber : displayTo()
     Connection <.. AccountNumber : persistTo()
+
+   style UIComponent fill:#d9edf7,stroke:#31708f
+   style Connection fill:#72f278,stroke:#600
 ```
 
 ### Java Example
@@ -200,7 +207,125 @@ public final class AccountNumber {
 
 ---
 
-## 3. Extended UI of Objects
+## 3. UI of Objects
+
+
+**Principle:**  
+- The business object (AccountNumber) does not expose getters/setters.  
+- Instead, it delegates representation (UI, HTML, XML, etc.) to separate Exporter/Builder objects via an interface.  
+- This isolates the business object from its representations and keeps it pure and maintainable.
+
+### Diagram
+
+```mermaid
+classDiagram
+    class AccountNumber {
+        -value: String
+        +export(Exporter)
+    }
+    class Exporter {
+        <<interface>>
+        +addValue(String)
+    }
+    class AccountNumberPanel
+    class AccountNumberHTMLExporter
+    class AccountNumberXMLExporter
+
+    AccountNumberPanel ..|> Exporter
+    AccountNumberHTMLExporter ..|> Exporter
+    AccountNumberXMLExporter ..|> Exporter
+
+    AccountNumber --> Exporter : uses
+```
+
+### Java Example: Exporter Pattern for Multiple Representations
+
+**1. The Domain Object**
+
+```java
+public class AccountNumber {
+    private final String value;
+
+    public interface Exporter {
+        void addValue(String value);
+    }
+
+    public AccountNumber(String value) {
+        this.value = value;
+    }
+
+    public void export(Exporter builder) {
+        builder.addValue(value);
+    }
+}
+```
+
+**2. Swing UI Exporter**
+
+```java
+import javax.swing.*;
+
+public class AccountNumberPanel extends JPanel implements AccountNumber.Exporter {
+    private final JLabel valueLabel = new JLabel();
+
+    public AccountNumberPanel() {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(new JLabel("Account Number:"));
+        add(valueLabel);
+    }
+
+    @Override
+    public void addValue(String value) {
+        valueLabel.setText(value);
+    }
+}
+```
+
+**3. HTML Exporter**
+
+```java
+public class AccountNumberHTMLExporter implements AccountNumber.Exporter {
+    private final StringBuilder out = new StringBuilder();
+
+    @Override
+    public void addValue(String value) {
+        out.append("<tr><td>Account Number:</td><td>")
+           .append("<input type="text" name="accountNumber" value="")
+           .append(value)
+           .append(""/></td></tr>
+");
+    }
+
+    public String extractHTML() {
+        return "<table>" + out.toString() + "</table>";
+    }
+}
+```
+
+**4. XML Exporter**
+
+```java
+public class AccountNumberXMLExporter implements AccountNumber.Exporter {
+    private final StringBuilder out = new StringBuilder();
+
+    @Override
+    public void addValue(String value) {
+        out.append("<AccountNumber>").append(value).append("</AccountNumber>");
+    }
+
+    public String extractXML() {
+        return out.toString();
+    }
+}
+```
+
+**Benefits:**
+- No getters/setters.
+- UI logic is encapsulated.
+- Changes to UI representation are localized.
+- Fully object-oriented and cohesive.
+
+## 4. UI/DB Part of Objects
 
 **Principle:**
 - The domain object delegates UI and persistence to internal collaborators.
@@ -226,11 +351,111 @@ classDiagram
     AccountNumber --> AccountNumberDB : delegates
     AccountNumberUI <.. UIOutput : displayTo()
     AccountNumberDB <.. Connection : persistTo()
+
+   style UIOutput fill:#d9edf7,stroke:#31708f
+   style Connection fill:#72f278,stroke:#31708f
 ```
 
 ### Full JSF + H2 Example
+### Full JSF + H2 Example
 
-(See full code in the previous section)
+```java
+package com.example.account;
+
+import jakarta.faces.component.UIOutput;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+public final class AccountNumber {
+    private final String value;
+    private final AccountNumberUI uiPart;
+    private final AccountNumberDB dbPart;
+
+    public AccountNumber(String value) {
+        this.value = value;
+        this.uiPart = new AccountNumberUI(value);
+        this.dbPart = new AccountNumberDB(value);
+    }
+
+    public boolean isValid() {
+        return value != null && value.matches("\\d{10}");
+    }
+
+    // Delegates UI rendering
+    public void displayTo(UIOutput outputComponent) {
+        uiPart.displayTo(outputComponent);
+    }
+
+    // Delegates persistence
+    public void persistTo(Connection connection) throws SQLException {
+        dbPart.persistTo(connection);
+    }
+}
+```
+
+```java
+
+package com.example.account;
+
+import jakarta.faces.component.UIOutput;
+
+public final class AccountNumberUI {
+    private final String value;
+
+    public AccountNumberUI(String value) {
+        this.value = value;
+    }
+
+    public void displayTo(UIOutput outputComponent) {
+        outputComponent.setValue(value);
+    }
+}
+
+package com.example.account;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public final class AccountNumberDB {
+    private final String value;
+
+    public AccountNumberDB(String value) {
+        this.value = value;
+    }
+
+    public void persistTo(Connection connection) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "INSERT INTO account_numbers (number) VALUES (?)")) {
+            stmt.setString(1, value);
+            stmt.executeUpdate();
+        }
+    }
+}
+```
+
+```xml
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+    <title>Account Number Entry</title>
+</h:head>
+<h:body>
+    <h:form>
+        <h:outputLabel for="acc" value="Account Number:" />
+        <h:inputText id="acc" value="#{accountNumberBean.input}" />
+        #{accountNumberBean.submit}
+        <br/>
+        <!-- Bound outputText component for displayTo() -->
+        <h:outputText id="out" binding="#{accountNumberBean.out}" />
+        <br/>
+        <h:outputText value="#{accountNumberBean.message}" />
+    </h:form>
+</h:body>
+</html>
+```
 
 ---
 
@@ -238,11 +463,11 @@ classDiagram
 
 ```mermaid
 flowchart TD
-    UserInput["User Input (JSF Form)"]
-    Bean["JSF Backing Bean (AccountNumberBean)"]
-    Domain["Domain Object (AccountNumber)"]
-    UI["UI Part (AccountNumberUI)"]
-    DB["DB Part (AccountNumberDB)"]
+    UserInput["User Input JSF Form"]
+    Bean["JSF Backing Bean AccountNumberBean"]
+    Domain["Domain Object AccountNumber"]
+    UI["UI Part AccountNumberUI"]
+    DB["DB Part AccountNumberDB"]
     H2["H2 In-Memory Database"]
     OutputText["JSF OutputText (binding)"]
 
@@ -251,8 +476,12 @@ flowchart TD
     Bean -->|binding| OutputText
     Domain -->|delegates| UI
     Domain -->|delegates| DB
-    UI -->|displayTo(binding)| OutputText
+    UI -->|displayTo| OutputText
     DB -->|persistTo| H2
+
+   style UserInput fill:#d9edf7,stroke:#31708f
+   style OutputText fill:#d9edf7,stroke:#31708f
+   style H2 fill:#72f278,stroke:#31708f
 ```
 
 ---
