@@ -206,12 +206,12 @@ public final class AccountNumber {
 
 ---
 
-## 3. UI of Objects
+## 3. UI Bilder of Objects
 
 
 **Principle:**  
 - The business object (AccountNumber) does not expose getters/setters.  
-- Instead, it delegates representation (UI, HTML, XML, etc.) to separate Exporter/Builder objects via an interface.  
+- Instead, it delegates representation (UI, HTML, XML, etc.) to separate Exporter-/Import-`Builder` objects via an `interface`.  
 - This isolates the business object from its representations and keeps it pure and maintainable.
 
 ### Diagram
@@ -506,15 +506,17 @@ Classic DDD separates domain, UI, and persistence, but often leads to anemic mod
 - UI of Objects: Maximum encapsulation, but tight coupling.
 - UI Bilder of Objects: Delegates UI and DB logic internally, maintaining encapsulation and flexibility.
 
-
-
 ---
 
 ## 7. References
 
+- [Robert Bräutigam: Data boundaries are the root cause of maintenance problems](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/)
+- [Robert Bräutigam: Reevaluating the layered architecture](https://javadevguy.wordpress.com/2019/01/06/reevaluating-the-layered-architecture/)
+- [Amihai Emil: The almighty service layer](https://amihaiemil.com/2020/05/14/the-almighty-service-layer.html)
+- [Vytautas Žurauskas: Maintaining Model Integrity)](https://www.vzurauskas.com/2018/07/24/maintaining-model-integrity)
+- [Allen Holub: More on Getters and Setters (InfoWorld)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)
 - [Yegor Bugayenko: ORM Offensive Anti-Pattern](https://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html)
 - [Yegor Bugayenko: Active Record](https://www.yegor256.com/2016/07/26/active-record.html)
-- [Allen Holub: More on Getters and Setters (InfoWorld)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)
 - [JSF Component Binding (Oracle Docs)](https://docs.oracle.com/javaee/6/tutorial/doc/bnatg.html)
 - [StackOverflow: How to use component binding in JSF](https://stackoverflow.com/questions/18667927/how-to-use-component-binding-in-jsf-right-request-scoped-component-in-session)
 
