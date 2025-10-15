@@ -1,11 +1,16 @@
 # Classic DDD vs. Object-Oriented UI & Persistence
 
-**A practical comparison of OOP with DDD, based on Java & JSF examples, diagrams, and lessons learned from the “UI of Objects” approach.**
+This post compares **Classic DDD** with  object-oriented alternative, where an object know how to present and persist themselves.
+
+- **UI and Database speaking Objects**
+
+You’ll see diagrams, code, and a full JSF + H2 example using the OOP approach.
+
 ---
 ## Introduction
 
 Classic Domain-Driven Design (DDD) has long separated domain logic, persistence, and UI into distinct layers. 
-But object-oriented thinking by Yegor Bugayenko, Robert Bräutigam, Allen Holub —challenges and Others this, 
+But object-oriented thinking by Yegor Bugayenko, Robert Bräutigam, Allen Holub and Others, 
 proposing that objects should encapsulate not just data and business logic, but also know how to present and persist themselves.
 
 However, this shift is not just about encapsulation—it addresses deeper architectural issues:
@@ -37,13 +42,10 @@ However, this shift is not just about encapsulation—it addresses deeper archit
 - Favor delegation over service layers.
 - Preserve model integrity by avoiding data leaks.
 
-*Model the problem, not the technology! Find suitable abstractions straight from the business requirements and hide implementation details, like the fact that you are using MVC.*(R. Bräutigam)
-
-This post compares **Classic DDD** with two object-oriented alternative, where an object know how to present and persist themselves.
-
-- **UI and Database speaking Objects**
-
-You’ll see diagrams, code, and a full JSF + H2 example using the “Extended” approach.
+(R. Bräutigam) 
+- *Model the problem, not the technology!*
+- *Find suitable abstractions straight from the business requirements and*
+- ***hide implementation details, like the fact that you are using MVC.***
 
 ---
 
