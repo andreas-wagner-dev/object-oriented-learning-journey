@@ -1,6 +1,6 @@
 # Classic DDD vs. Object-Oriented UI & Persistence
 
-**A practical comparison with Java & JSF examples, diagrams, and lessons learned from (forgotten Art of) OOP, DDD, and the “UI of Objects” approach.**
+**A practical comparison of OOP with DDD, based on Java & JSF examples, diagrams, and lessons learned from the “UI of Objects” approach.**
 ---
 ## Introduction
 
@@ -46,7 +46,6 @@ This post compares **Classic DDD** with two object-oriented alternative, where a
 You’ll see diagrams, code, and a full JSF + H2 example using the “Extended” approach.
 
 ---
-
 
 ## 1. Classic DDD
 
@@ -357,7 +356,8 @@ classDiagram
 ```
 
 ### Full JSF + H2 Example
-### Full JSF + H2 Example
+
+With JSF and the `binding` attribute, objects can directly manipulate UI components (`displayTo()`), while persisting themselves to a database like H2.
 
 ```java
 package com.example.account;
@@ -394,23 +394,6 @@ public final class AccountNumber {
 ```
 
 ```java
-
-package com.example.account;
-
-import jakarta.faces.component.UIOutput;
-
-public final class AccountNumberUI {
-    private final String value;
-
-    public AccountNumberUI(String value) {
-        this.value = value;
-    }
-
-    public void displayTo(UIOutput outputComponent) {
-        outputComponent.setValue(value);
-    }
-}
-
 package com.example.account;
 
 import java.sql.Connection;
@@ -432,6 +415,26 @@ public final class AccountNumberDB {
         }
     }
 }
+```
+
+```java
+
+package com.example.account;
+
+import jakarta.faces.component.UIOutput;
+
+public final class AccountNumberUI {
+    private final String value;
+
+    public AccountNumberUI(String value) {
+        this.value = value;
+    }
+
+    public void displayTo(UIOutput outputComponent) {
+        outputComponent.setValue(value);
+    }
+}
+
 ```
 
 ```xml
@@ -491,8 +494,8 @@ flowchart TD
 | Approach         | Domain Logic | UI Logic | Persistence Logic | Encapsulation | Flexibility | Boilerplate | DTOs/Entities |
 |------------------|-------------|----------|------------------|---------------|-------------|-------------|---------------|
 | Classic DDD      | Domain Obj  | View     | Repository       | Medium        | High        | High        | Yes           |
-| Direct UI Obj    | Domain Obj  | Domain Obj | Domain Obj     | High          | Low         | Low         | No            |
-| Extended UI Obj  | Domain Obj  | Internal Part | Internal Part | High          | High        | Medium      | No            |
+| OOP UI Object    | Domain Obj  | Domain Obj | Domain Obj     | High          | Low         | Low         | No            |
+| OOP UI Bilder    | Domain Obj  | Internal Part | Internal Part | High          | High        | Medium      | No            |
 
 ---
 
@@ -500,10 +503,10 @@ flowchart TD
 
 Classic DDD separates domain, UI, and persistence, but often leads to anemic models and boilerplate. The Object-Oriented UI & Persistence approach brings behavior back into the object:
 
-- Direct UI of Objects: Maximum encapsulation, but tight coupling.
-- Extended UI of Objects: Delegates UI and DB logic internally, maintaining encapsulation and flexibility.
+- UI of Objects: Maximum encapsulation, but tight coupling.
+- UI Bilder of Objects: Delegates UI and DB logic internally, maintaining encapsulation and flexibility.
 
-With JSF and the `binding` attribute, objects can directly manipulate UI components (`displayTo()`), while persisting themselves to a database like H2.
+
 
 ---
 
