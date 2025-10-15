@@ -114,7 +114,7 @@ Dies verhindert, dass UI-Frameworks direkt Setter aufrufen und somit die Validie
     die geschäftliche Domänenmethode aufruft.  
 \--\>  
 \<h:commandButton value="Speichern (Action)"   
-                 action="\#{employeeFrom.inputView.updateAction.call()}" /\>
+                 action="\#{employeeFrom.updateAction}" /\>
 ```
 #### **3.3 Self-Persistency (Der DB-Speaking Part)**
 
