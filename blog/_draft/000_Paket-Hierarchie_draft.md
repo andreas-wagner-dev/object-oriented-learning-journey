@@ -5,8 +5,6 @@ m: Anzahl aller Abstraktionen innerhalb der Grenze n[0].
 Hierarchieebenen: n[0] bis n[m], wobei jede Ebene eine Abstraktion mit dem gleichen Name repräsentiert.
 
 
-
-
 # Pakete nach Abstraktionsgrad
 
 Pakete sind nach ihrem Abstraktionsgrad organisiert und benannt.  
