@@ -23,8 +23,8 @@ graph TB
             %% 3. Technical Object Layers<br/>(Real World Interface)
             subgraph Object-Layer
              direction LR
-                C["UI (Behavior)"]
-                D["DB (Behavior)"]
+                C["UI Proxy (Behavior)"]
+                D["DB Proxy (Behavior)"]
 
                 style C fill:#BBDEFB,stroke:#1976D2
                 style D fill:#BBDEFB,stroke:#1976D2
