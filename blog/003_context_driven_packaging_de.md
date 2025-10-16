@@ -64,7 +64,7 @@ Falsch wäre:
 Packages sollten **Business-Terminologie** und **fachliche Konzepte** reflektieren, und nicht die technischen.  
 Dadurch wird die Software auch für Fachfremde nachvollziehbar.
 
-### Technische Business-Aspekte
+### Business-Aspekte
 
 Die Konzepte die eine Appliction realisiert hängen stark von der Perspektive des Betrachters ab.
 
@@ -95,7 +95,11 @@ Sie gehören entweder klar zu einem bestehenden Business-Konzept oder werden dur
 
 - **Falsch** wäre: ein generisches `com.example.util` -Paket.
 - **Richtig** wäre: technische Helfer Klasse lokal in dem Business-Paket ablegen, wo sie fachlich Sinn ergeben.
-
+```
+├── rule/
+│ │── ISO.java <- utilisiert Unit
+│ └── Unit.java <- Geschäftsregeln im Sub Kontext (nicht UnitUtil.java oder Units.java)
+```
 ---
 
 ## Praktische Aspekte
