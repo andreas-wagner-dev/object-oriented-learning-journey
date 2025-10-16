@@ -1,7 +1,6 @@
 # Layered Architecture vs. Object-Oriented UI & Persistence
 
-This post compares **DDD Layered Architecture** with **Object-Oriented Design** alternative, 
-* where an object know how to present and persist themselves.
+This post compares **DDD divided Layered Architecture** with **Object Oriented Architecture**, where an **object** *know how to present and persist themselves*.
 
 - **UI and Database speaking Objects**
 
