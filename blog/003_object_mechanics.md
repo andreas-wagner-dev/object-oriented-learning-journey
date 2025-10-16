@@ -129,6 +129,200 @@ doc.title("Titel B"); // External storage is changed
 // doc is still the SAME object
 ```
 
+### 3.1 Horizontale Zerlegung mit Interfaces und Decorator Pattern
+Technische Aspekte ```(Caching, Logging, UI-Benachrichtigung)``` werden horizontal als Decorator um die Schnittstellen gewickelt.
+
+**Java-Beispiel 3.1: Das unveränderliche Proxy-Objekt (Kernstruktur)***
+```java
+import java.util.Map;
+import java.util.HashMap;
+
+// 1. Vertical Interface (Domain behavior)
+interface Document {
+    String title();
+    void title(String text);
+}
+
+// 2. Interface for the technical layer (Persistence behavior)
+interface DocumentStorage {
+    String readTitle(int id);
+    void writeTitle(int id, String title);
+}
+
+// 3. The Immutable Proxy Object (Encapsulates only the ID)
+// @Immutable
+class DocumentThree implements Document {  
+    private final DocumentStorage externalStorage;
+    private final int id;
+
+    public DocumentThree(int id, DocumentStorage storage) {  
+        this.id = id;  
+        this.externalStorage = storage;
+    }
+
+    @Override
+    public String title() {  
+        return this.externalStorage.readTitle(this.id);  
+    }
+
+    @Override
+    public void title(String text) {  
+        this.externalStorage.writeTitle(this.id, text);  
+    }
+
+    // equals() and hashCode() are based ONLY on the ID (the identity)
+    @Override  
+    public boolean equals(Object doc) {  
+        return doc instanceof DocumentThree && DocumentThree.class.cast(doc).id == this.id;  
+    }  
+}
+
+// 4. The base implementation of the storage
+class SimpleExternalStorage implements DocumentStorage {  
+    private static final Map<Integer, String> storage = new HashMap<>();  
+    
+    @Override
+    public String readTitle(int id) {  
+        System.out.println("-> DB: Reading title from the database.");
+        return storage.getOrDefault(id, "Title not found");  
+    }  
+    
+    @Override
+    public void writeTitle(int id, String title) {  
+        System.out.println("-> DB: Writing title to the database.");
+        storage.put(id, title);  
+    }  
+}
+```
+
+#### **3.1.1 Horizontaler Decorator: Caching für die Persistenz (DB-Aspekt)**
+
+Der ```CachedDocumentStorage``` umschließt den Basisspeicher ```(SimpleExternalStorage)``` und fügt die Caching-Logik hinzu.
+
+```java
+// CachedDocumentStorage.java
+class CachedDocumentStorage implements DocumentStorage {
+    private final DocumentStorage origin; // The wrapped storage
+    private final Map<Integer, String> cache = new HashMap<>();
+
+    public CachedDocumentStorage(DocumentStorage origin) {
+        this.origin = origin;
+    }
+
+    @Override
+    public String readTitle(int id) {
+        if (cache.containsKey(id)) {
+            System.out.println("-> CACHE: Title retrieved from cache.");
+            return cache.get(id);
+        }
+        // Only delegate to original logic on a cache miss
+        String title = this.origin.readTitle(id);
+        cache.put(id, title);
+        return title;
+    }
+
+    @Override
+    public void writeTitle(int id, String title) {
+        this.origin.writeTitle(id, title);
+        cache.put(id, title); // Update the cache
+    }
+}
+```
+
+#### **3.1.2. Horizontaler Decorator: UI-Verhalten (View-Aspekt)***
+**a) Beobachtbarkeit (Event-Auslösung):**
+```java
+class ObservableDocument implements Document {
+    private final Document origin; // The wrapped domain object
+
+    public ObservableDocument(Document origin) {
+        this.origin = origin;
+    }
+    
+    @Override
+    public String title() {
+        // Pure read operations are delegated directly
+        return this.origin.title();
+    }
+
+    @Override
+    public void title(String text) {
+        // First, execute the technical logic (UI notification event)
+        System.out.println("-> EVENT: Notifying all listeners about title update.");
+        
+        // Then, delegate the domain logic (persistence update)
+        this.origin.title(text);
+    }
+}
+```
+
+**b) Präsentation (Echte UI-Interaktion):**
+* Der PresentableDocument ist der finale Decorator, der die simulierte UI-Komponente injiziert.
+
+```java
+// Simulates a simple UI component that can display changes
+class FakeUIComponent {
+    public void displayTitleUpdate(String newTitle) {
+        System.out.println("-> FAKE UI: Updating title display to: " + newTitle);
+    }
+}
+
+// The final decorator that controls presentation
+class PresentableDocument implements Document {
+    private final Document origin;
+    private final FakeUIComponent uiComponent;
+
+    public PresentableDocument(Document origin, FakeUIComponent uiComponent) {
+        this.origin = origin;
+        this.uiComponent = uiComponent;
+    }
+
+    @Override
+    public String title() {
+        // First, read the title (goes through all decorators back to storage)
+        String currentTitle = this.origin.title();
+        this.uiComponent.displayTitleUpdate(currentTitle); // Display title
+        return currentTitle;
+    }
+
+    @Override
+    public void title(String text) {
+        // First, delegate the change to the Observable layer (triggers event, writes to DB/Cache)
+        this.origin.title(text);
+        
+        // After the change, update the UI immediately
+        this.uiComponent.displayTitleUpdate(text);
+    }
+}
+```
+
+### 3.2 Typsichere Verwendung (Kombination)
+* Der Client kombiniert die Aspekte über Interfaces.
+
+```java
+// 1. The base storage (DB connection)
+DocumentStorage dbStorage = new SimpleExternalStorage(); 
+
+// 2. Horizontally add Caching
+DocumentStorage cachedStorage = new CachedDocumentStorage(dbStorage);
+
+// 3. The immutable Proxy Object uses the cache
+Document documentProxy = new DocumentThree(50, cachedStorage); 
+
+// 4. Horizontally add UI behavior (Observability)
+Document observableDocument = new ObservableDocument(documentProxy);
+
+// 5. Add the final presentation layer (with UI component)
+FakeUIComponent ui = new FakeUIComponent();
+Document finalDocument = new PresentableDocument(observableDocument, ui);
+
+System.out.println("\n--- First Call: Writes to DB, Cache, and fires UI Event ---");
+finalDocument.title("New, cached Title"); 
+
+System.out.println("\n--- Second Call: Reads from Cache (no DB access) and updates UI ---");
+finalDocument.title(); 
+```
+
 ## **Fazit: Animator von Daten**
 
 Die Schlussfolgerung ist, dass die Rolle eines Objekts darin besteht, ein **Animator von Daten** zu sein.
