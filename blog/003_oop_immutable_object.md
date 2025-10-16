@@ -9,7 +9,7 @@ Die zentrale These des Blogbeitrags von Yegor Bugayenko ist, dass **gute Objekte
 %% Diagram 3: Simplified Flow of Data Animation and Behavior Delegation
 graph TB
     %% 1. Immutable Domain Object 
-    subgraph Model-World
+    subgraph Model World
 
         A["Object (Identity)"]
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
