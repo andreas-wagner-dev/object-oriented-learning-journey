@@ -11,7 +11,7 @@ graph TB
     %% 1. Immutable Domain Object 
     subgraph Model World
 
-        A["Object (Identity)"]
+        A["Object<br/>(Proxy with Identity)"]
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
 
         %% 2. The Contract and Behavior Delegation
