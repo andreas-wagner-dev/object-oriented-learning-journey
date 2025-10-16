@@ -93,8 +93,8 @@ Pakete wie `api` oder `app` die die Application ansich als eine Abstration darst
 ---
 Sie gehören entweder klar zu einem bestehenden Business-Konzept oder werden durch objektorientierte Patterns (z. B. **Decorator**) realisiert.  
 
-- ✖ **Falsch** wäre: ein generisches `com.example.util`-Paket.
-- ✅ **Richtig** wäre: technische Helfer Klasse lokal in dem Business-Paket ablegen, wo sie fachlich Sinn ergeben.
+- **Falsch** wäre: ein generisches `com.example.util` -Paket.
+- **Richtig** wäre: technische Helfer Klasse lokal in dem Business-Paket ablegen, wo sie fachlich Sinn ergeben.
 
 ---
 
@@ -251,16 +251,16 @@ com.test.catalog
 │ └── CatalogFacesConfig.java (enable or configure JSF)
 ├── jira/  <- Fachliche Deteils zum Item bezüglich eines externen Business-Kontextes 
 │ ├── Jira.java
-│ ├── IssueItem.java
-│ └── StorySync.java
+│ ├── JiraItem.java
+│ └── JiraSync.java
 ├── codebeamer/  <- Fachliche Deteils zum Item bezüglich eines externen Business-Kontextes  
 │ ├── Codebeamer.java
-│ ├── RequirementItem.java
-│ └── RequirementSync.java
+│ ├── CodebeamerItem.java
+│ └── CodebeamerSync.java
 ├── doors/ <- Fachliche Deteils zum Item Konzept bezüglich eines externen Business-Kontextes 
 │ ├── Doors.java
-│ ├── DocumentItem.java
-│ └── DocumentSync.java
+│ ├── DoorsItem.java
+│ └── DoorsSync.java
 ├── catalog/ <- Fachliche Deteils zum Catalog Konzept 
 │ ├── CatalogView.java
 │ ├── CatalogApi.java ← JAX-RS Einstiegspunkt
@@ -269,17 +269,23 @@ com.test.catalog
 │ └── CatalogList.java
 ├── item/ <- Fachliche Deteils zum Item Konzept 
 │ ├── ItemView.java
-│ ├── IssueItemView.java
-│ ├── RequirementItemView.java
-│ ├── DocumentItemView.java
-│ ├── ItemSyncTask.java ← Fachlicher Task direkt im Root
-│ ├── ItemCleanupTask.java ← Fachlicher Task direkt im Root
+│ ├── RequirementItemFrom.java
+│ ├── DocumentItemFrom.java
 │ ├── ItemApi.java
 │ ├── ItemResource.java
 │ └── ItemList.java
+├── sync/ <- Fachliche Deteils zum Sync Konzept 
+│ ├── SyncedItem.java
+│ ├── SyncedItemFrom.java
+│ └── SyncedItemTable.java
+├── task/ <- Fachliche Deteils zum Task Konzept 
+│ ├── SyncedView.java
+│ ├── SyncedItemTask.java
+│ └── CeanedItemTask.java
 ├── Catalog.java
 ├── Item.java
-└── Synchronization.java
+├── Task.java
+└── Sync.java
 ```
 
 ---
@@ -292,20 +298,21 @@ Tasks bleiben jedoch im Root, da sie **fachliche Prozesse** sind und kein API-Su
 com.test.catalog
 ├── api/
 │ ├── user/ 
-│ │ ├── catalog/ <- Fachlicher Begriff im Menu
-│ │ │ ├── CatalogView.java
+│ │ ├── catalog/ <- Fachlicher Begriff im *main* Menu
+│ │ │ ├── CatalogMenu.java
 │ │ │ ├── CatalogForm.java
 │ │ │ └── CatalogTable.java
-│ │ ├── item/ <- Fachlicher Begriff im Menu
-│ │ │ ├── ItemView.java
+│ │ ├── item/ <- Fachlicher Begriff im *main* Menu
+│ │ │ ├── Itemenu.java
 │ │ │ ├── IssueItemView.java
 │ │ │ ├── RequirementItemView.java
 │ │ │ ├── DocumentItemView.java
 │ │ │ ├── ItemForm.java
 │ │ │ └── ItemTable.java
-│ │ ├── DataTable.java
-│ │ ├── DataForm.java
-│ │ └── CatalogMenu.java
+│ │ ├── Table.java
+│ │ ├── Table.java
+│ │ ├── Form.java
+│ │ └── Menu.java
 │ ├── resource/
 │ │ ├── CatalogApi.java
 │ │ ├── CatalogResource.java
@@ -329,11 +336,14 @@ com.test.catalog
 │ ├── Doors.java
 │ ├── DocumentItem.java
 │ └── DocumentSync.java
-├── ItemCleanupTask.java ← Fachlicher Task im Root
-├── ItemSyncTask.java ← Fachlicher Task im Root
+├── sync/ <- Fachliche Deteils zum Sync, Item und Task Konzept 
+│ └── SyncItem.java
+│ ├── SyncItemTask.java
+│ └── CeanedItemTask.java
 ├── Catalog.java
 ├── Item.java
-└── Synchronization.java
+├── Task.java
+└── Sync.java
 ```
 
 ---
@@ -366,16 +376,16 @@ com.test.catalog
 │ ├── CatalogResource.java
 │ └── CatalogList.java
 ├── item/
+│ ├── ItemCleanupTask.java
+│ ├── ItemSyncTask.java
 │ ├── ItemView.java
 │ ├── IssueItemView.java
 │ ├── RequirementItemView.java
 │ ├── DocumentItemView.java
 │ └── ItemList.java
-├── ItemCleanupTask.java
-├── ItemSyncTask.java
 ├── Catalog.java
 ├── Item.java
-└── Synchronization.java
+└── Sync.java
 ```
 
 ---
@@ -388,7 +398,7 @@ catalog-core (Modul)
 ├── com.test.catalog.core
 │ ├── Catalog.java
 │ ├── Item.java
-│ └── Synchronization.java
+│ └── Synch.java
 ```
 
 ```
@@ -441,7 +451,7 @@ catalog-root (Modul)
 ├── com.test.catalog
 │ ├── ItemCleanupTask.java
 │ ├── ItemSyncTask.java
-│ └── (optional) Synchronization.java
+│ └── (optional) Sync.java
 ```
 
 **Visualisierung: Modul-Abhängigkeiten**
