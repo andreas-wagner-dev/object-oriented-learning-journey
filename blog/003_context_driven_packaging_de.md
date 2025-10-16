@@ -64,19 +64,37 @@ Falsch wäre:
 Packages sollten **Business-Terminologie** und **fachliche Konzepte** reflektieren, und nicht die technischen.  
 Dadurch wird die Software auch für Fachfremde nachvollziehbar.
 
-Die Business-Konzepte hängen jedoch stark von der Perspektive des Betrachters ab.
+### Technische Business-Aspekte
 
-Während vom Kunden in erster Linie seine Geschäftsprozesse als Business-Konzepte angesehen werden,
-sieht meist der Endnutzer 'user' die Benuzteroberfläche als für Ihn relevantes Business-Konzept.
-Beispiel 1:
+Die Konzepte die eine Appliction realisiert hängen stark von der Perspektive des Betrachters ab.
+
+- Während vom *Kunden* in erster Linie seine **Geschäftsprozesse** als Business-Konzepte angesehen werden,
+sieht meist der *Endnutzer* `user` die **Benuzteroberfläche** als für Ihn relevantes Business-Konzept.
+
+**Beispiel 1:**
 - `com.example.billing.user` (Business-Konzept für Interaktion menschlicher Benutzer)
-Beispiel 2:
+
+Die **Abhängigkeiten** und **Konfigurationen** einer `app` können aus der Perspektive vom *Deployment* ein gefordertes Business-Konzpt sein.
+Zudem werden oft verschidene Dienste oder Resourcen als `api` für externe Systeme als Business-Konzept gefordert.
+
+**Beispiel 2:**
 - `com.example.billing.api.user`  (Business-Konzept für Interaktion menschlicher Benutzer)  
-- `com.example.billing.api.resource` (Business-Konzept für externe Systeme, die Business-Daten konsumieren)  
+- `com.example.billing.api.resource` (Business-Konzept für externe Systeme, die Business-Resourcen konsumieren)  
 - `com.example.billing.api.service` (Business-Konzept für Dienste, die Business-Logik ausführen)
 
-Auch das Deployment sowie die Verwaltug von Abhängigkeiten und Konfigurationen können jenach Berachterperspektive ein Business-Konzpt sein. 
-Ein Paket wie `app` oder 'config' ist meist in einem Bibliothekenartigen Codestruktur nicht notwendig, im Gegensatz zu Business-Applikationen ist es oft notwendig, um auch dem technischen *Übel* Herr zu werden.
+Pakete wie `api` oder `app` die die Application ansich als eine Abstration darstellt sind meist in einem Bibliothekenartigen Codestruktur nicht notwendig, im Gegensatz zu Business-Applikationen ist es oft notwendig, um auch dem technischen *Übel* Herr zu werden.
+
+**Beispiel 3:**
+- `com.example.billing.app`  (Business-Konzept für Verwaltug von Abhängigkeiten und Konfigurationen)  
+- `com.example.billing.app.audit` (Business-Konzept fürs audit, die Business-Daten konsumieren)  
+- `com.example.billing.app.log` (Business-Konzept für Logging, die Business-Logik ausführen)
+
+**Utilities** und technische Hilfsklassen sollten **kein eigenes Business-Konzept** sein.
+---
+Sie gehören entweder klar zu einem bestehenden Business-Konzept oder werden durch objektorientierte Patterns (z. B. **Decorator**) realisiert.  
+
+- ✖ **Falsch** wäre: ein generisches `com.example.util`-Paket.
+- ✅ **Richtig** wäre: technische Helfer Klasse lokal in dem Business-Paket ablegen, wo sie fachlich Sinn ergeben.
 
 ---
 
