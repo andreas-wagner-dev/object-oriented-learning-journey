@@ -238,4 +238,5 @@ graph TB
 - **Analogie:** Ein Objekt impliziert einen Daten-Animator.
 - **Bedeutung:** Diese Aussage fasst die vorherigen Punkte zusammen und interpretiert sie im Kontext der Datenvisualisierung.
 - Wenn ein Object einen State (Data) und ein Behavior (Animation) hat, dann ist ein Objekt im Wesentlichen ein Data Animator.
-- Die Daten (State) definieren, was visualisiert werden soll.Der Animator (Behavior) sorgt dafür, dass die Darstellung der Daten sich verändert oder bewegt.
+- Die **Daten** (State) definieren, was visualisiert werden soll.
+- Der **Animator** (Behavior) sorgt dafür, dass die Darstellung der Daten sich verändert oder bewegt.
