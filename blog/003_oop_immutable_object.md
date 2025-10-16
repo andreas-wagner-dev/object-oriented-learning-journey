@@ -1,6 +1,6 @@
 # **Die Essenz of Immutable Object**
 
-***Data = State != Behavior == Animation => Data Animation***
+***Data == State != Behavior == Animation => Data Animation***
 
 Die zentrale These des Blogbeitrags von Yegor Bugayenko ist, dass **gute Objekte immer unveränderlich** (immutable) sein sollten. Dies gilt auch dann, wenn sie Entitäten der realen Welt repräsentieren, die sich häufig ändern, wie z. B. ein Dokumententitel.
 
