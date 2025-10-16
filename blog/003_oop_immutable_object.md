@@ -4,17 +4,78 @@
 
 Die zentrale These des Blogbeitrags von Yegor Bugayenko ist, dass **gute Objekte immer unveränderlich** (immutable) sein sollten. Dies gilt auch dann, wenn sie Entitäten der realen Welt repräsentieren, die sich häufig ändern, wie z. B. ein Dokumententitel.
 
+
+```mermaid
+%% Diagram 3: Simplified Flow of Data Animation and Behavior Delegation
+graph TB
+    %% 1. Immutable Domain Object 
+    subgraph Domain-World
+
+        A["Object (Identity)"]
+        style A fill:#4CAF50,stroke:#388E3C,color:#fff
+
+        %% 2. The Contract and Behavior Delegation
+        subgraph Contract-Layer
+        direction LR
+            B["Interface (Behavior)"]
+            style B fill:#C8E6C9,stroke:#388E3C
+        
+            %% 3. Technical Object Layers<br/>(Real World Interface)
+            subgraph Object-Layer
+             direction LR
+                C["UI (Behavior)"]
+                D["DB (Behavior)"]
+
+                style C fill:#BBDEFB,stroke:#1976D2
+                style D fill:#BBDEFB,stroke:#1976D2
+            
+                %% Internal interface communication.
+            
+   
+
+            end
+
+        end
+
+    end
+
+    %% 4. The Real Mutable Data Storage
+    subgraph Real World
+        F["Database (State)"]
+        style F fill:#FFC107,stroke:#FF8F00
+
+        C <-.->|Reads/Writes<br/>UI Data| E["UI Component (State)"]
+        C <-.->|Observes/Notify<br/>UI State| E
+        D -.->|Reads/Writes Persistence| F
+    end
+    
+    %% The Immutable Object holds the key and delegates all work to the interface.
+
+
+    A -- Behavior --> B
+    D -- Read Identity ID --> F
+
+    %% The Interface is implemented by the technical components.
+
+    B -- UI Update Read --> C
+    B -- DB Update Write --> D
+
+   C -- Input --> D
+   D -- Output --> C
+```
+
 ## **1. Das Problem: Zustand vs. Identität**
 
 Ein typisches Objekt besteht aus Identität, Zustand und Verhalten. Ein Objekt ist dann **veränderlich** (mutable), wenn seine interne gekapselte Information (der Zustand) nach der Erstellung geändert werden kann.
 
-**Kritik:** Wenn eine Eigenschaft (z. B. der Titel eines Dokuments) häufig geändert wird, sollte sie nicht Teil des **internen Zustands** des Objekts sein.
+**Kritik:** 
+- Wenn eine Eigenschaft (z. B. der Titel eines Dokuments) häufig geändert wird, sollte sie nicht Teil des **internen Zustands** des Objekts sein.
 
 ### **Java-Beispiel 1: Das veränderliche (schlechte) Objekt**
 
 Dieses Objekt ist schlecht, da es seine interne Identität (die Speicheradresse) beibehält, obwohl sich sein Zustand ändert.
 ```java
-class DocumentOne {  
+class Document {  
     private int id;  
     private String title;
 
@@ -43,11 +104,11 @@ Beim konventionellen unveränderlichen Design wird bei jeder Änderung ein **neu
 ### **Java-Beispiel 2: Das unveränderliche Wertobjekt (Ineffizient bei häufigen Änderungen)**
 ```java
 @Immutable  
-class DocumentTwo {  
+class Document {  
     private final int id;  
     private final String title; // Part of the internal state
 
-    public DocumentTwo(int id, String title) {  
+    public Document(int id, String title) {  
         this.id = id;  
         this.title = title;  
     }
@@ -57,7 +118,7 @@ class DocumentTwo {
         return new DocumentTwo(this.id, newTitle);  
     }
 
-    // ... Getters and equals/hashCode (based on id AND title)  
+    // ... printer methods like id() or title() and equals/hashCode (based on id AND title)  
 }
 
 // Usage: Two distinct objects (identities)  
@@ -65,7 +126,8 @@ DocumentTwo first = new DocumentTwo(50, "Titel A");
 DocumentTwo second = first.withTitle("Titel B"); // Creates a new object
 ```
 
-**Kritik:** Wenn ein Dokument sehr groß ist, ist es ineffizient, bei jeder kleinen Änderung (wie einem Titel-Update) die gesamte Datenstruktur zu klonen.
+**Kritik:** 
+- Wenn ein Dokument sehr groß ist, ist es ineffizient, bei jeder kleinen Änderung (wie einem Titel-Update) die gesamte Datenstruktur zu klonen.
 
 ## **3. Die Lösung: Unveränderliches Proxy-Objekt**
 
@@ -76,38 +138,42 @@ Ein gutes unveränderliches Objekt sollte nur seine **Identität** intern kapsel
 ### **Java-Beispiel 3: Das unveränderliche Proxy-Objekt (Der empfohlene Ansatz)**
 
 Das Objekt selbst ist unveränderlich (nur die ID ist final), aber seine Methoden manipulieren eine externe, veränderliche Ressource (hier simuliert durch ExternalStorage).
+
 ```java
 @Immutable  
-class DocumentThree {  
+class Document {  
+
+    private final ExternalStorage externalStorage = new ExternalStorage();
+     
     // The ONLY internal state is the identity to the real world  
     private final int id;
 
-    public DocumentThree(int id) {  
+    public Document(int id) {  
         this.id = id;  
     }
 
     // BEHAVIOR: Reads the title from the external world  
     public String title() {  
-        return ExternalStorage.readTitle(this.id);  
+        return externalStorage.readTitle(this.id);  
     }
 
     // BEHAVIOR: Writes the title to the external world  
     public void title(String text) {  
         // Manipulates the external entity, not the object itself  
-        ExternalStorage.writeTitle(this.id, text);  
+        externalStorage.writeTitle(this.id, text);  
     }
 
     // equals() and hashCode() are based ONLY on the ID (the identity)  
     @Override  
     public boolean equals(Object doc) {  
-        return doc instanceof DocumentThree  
-            && DocumentThree.class.cast(doc).id == this.id;  
+        return doc instanceof Document  
+            && Document.class.cast(doc).id == this.id;  
     }  
 }
 
 // Simulates the external, mutable storage (database, file, etc.)  
 class ExternalStorage {  
-    private static final Map<Integer, String> storage = new HashMap<>();  
+    private static final Map<Integer, String> storage = new HashMap<>(0);  
     public static String readTitle(int id) {  
         return storage.getOrDefault(id, "Titel nicht gefunden");  
     }  
