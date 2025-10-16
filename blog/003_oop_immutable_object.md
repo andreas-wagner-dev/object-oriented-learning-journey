@@ -1,6 +1,10 @@
 # **Die Essenz of Immutable Object**
-
-***Data == State != Behavior == Animation => Data Animation***
+- ***Object ==  Proxy***
+- ***State ∧ Behavior E Object***
+- ***State != Behavior***
+- ***State == Data***
+- ***Behavior == Animation***
+- ***Object => Data Animator***
 
 Die zentrale These des Blogbeitrags von Yegor Bugayenko ist, dass **gute Objekte immer unveränderlich** (immutable) sein sollten. Dies gilt auch dann, wenn sie Entitäten der realen Welt repräsentieren, die sich häufig ändern, wie z. B. ein Dokumententitel.
 
@@ -11,7 +15,7 @@ graph TB
     %% 1. Immutable Domain Object 
     subgraph Model World
 
-        A["Object<br/>(Proxy with immutable Identity)"]
+        A["Proxy Object<br/>(with immutable Identity)"]
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
 
         %% 2. The Contract and Behavior Delegation
