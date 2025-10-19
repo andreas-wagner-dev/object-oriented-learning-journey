@@ -97,6 +97,9 @@
 **Packaging**
 - https://javadevguy.wordpress.com/2017/12/18/happy-packaging/
 
+**MVC in OOP**
+- https://www.yegor256.com/2016/12/13/mvc-vs-oop.html
+
 **Architecture:**
 
 *Problems*
