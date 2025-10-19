@@ -96,6 +96,7 @@
 
 **Packaging**
 - https://javadevguy.wordpress.com/2017/12/18/happy-packaging/
+- https://www.informatik-aktuell.de/entwicklung/programmiersprachen/next-level-lesbarkeit.html
 
 **MVC in OOP**
 - https://www.yegor256.com/2016/12/13/mvc-vs-oop.html
