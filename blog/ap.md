@@ -32,7 +32,10 @@ graph TB
         V1_RESULT["<b>Durchschnitt D: 0.3</b><br/>Bewertung: GUT ✓<br/>Kompakt, klare Story"]
         style V1_RESULT fill:#d3f9d8,color:#000
     end
-    
+
+```
+```mermaid
+graph TB    
     subgraph "Variante 2: Differenzierte technische Trennung"
         direction TB
         
@@ -79,7 +82,9 @@ graph TB
         V2_RESULT["<b>Durchschnitt D: 0.42</b><br/>Bewertung: AKZEPTABEL<br/>Mehr Pakete, schwächere Kohäsion"]
         style V2_RESULT fill:#fff9db,color:#000
     end
-    
+```
+```mermaid
+graph TB    
     subgraph "Variante 3: Fachliche Decomposition"
         direction TB
         
@@ -117,7 +122,9 @@ graph TB
         V3_RESULT["<b>Durchschnitt D: 0.38</b><br/>Bewertung: GUT ✓<br/>Bessere fachliche Trennung"]
         style V3_RESULT fill:#d3f9d8,color:#000
     end
-    
+```
+```mermaid
+graph TB
     subgraph "Variante 4: Datenorientiert (ANTI-PATTERN)"
         direction TB
         
@@ -156,7 +163,9 @@ graph TB
         V4_RESULT["<b>Durchschnitt D: 0.35</b><br/>Bewertung: SCHLECHT ✗<br/>Technisches Grouping,<br/>hohe semantische Kopplung"]
         style V4_RESULT fill:#ffe3e3,color:#000
     end
-    
+```
+```mermaid
+graph TB
     subgraph "Variante 5: Abstraktionsorientiert"
         direction TB
         
@@ -199,7 +208,9 @@ graph TB
         V5_RESULT["<b>Durchschnitt D: 0.42</b><br/>Bewertung: GUT ✓<br/>Hohe Abstraktion,<br/>beste Erweiterbarkeit"]
         style V5_RESULT fill:#d3f9d8,color:#000
     end
-    
+```
+```mermaid
+graph TB
     subgraph "Ranking"
         direction TB
         
@@ -228,7 +239,9 @@ graph TB
         style L4 fill:#fff9db,color:#000
 
     end
-    
+```
+```mermaid
+graph TB
     subgraph "Vergleichs-Zusammenfassung"
         direction TB
         
