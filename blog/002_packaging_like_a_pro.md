@@ -459,7 +459,7 @@ com.example.todos/
 ```
 
 * ```storage/``` - alle Realisierungen für die Kommunikation mit der realen Datenbank  
-* ```email/``` - automatische Benachrichtigung bei bestimmten Ereignissen / Hilfsklassen für Kommunikation mit Emailserver  
+* ```email/``` - alle Hilfsklassen für Kommunikation mit Emailserver  
 * ```browser/``` - alle Benutzeroberflächen mit grafischen Steuerelementen.  
 * ```expose/``` - Austausch von allen Resourcen über Http  
 * ```setup/``` - Einsteigspunkt für Initialisierung und Konfiguration der gesamten Anwendung.
@@ -698,14 +698,14 @@ com.example.todo/
 │ └── WebUser.java  
 ├── App.java   
 ├── Db.java  
-├── Resource.java  
 ├── Message.java   
 ├── Folder.java  
-├── Person.java  
+├── Person.java
+├── Served.java  
 ├── Task.java  
 └── User.java
 ```
-Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **Folder, Task, Person, Message** und **User** als Interfaces direkt im Root-Paket abgelegt, ergänzt durch technische Abstraktionen wie **App, Db,** und **Resource.** Die Unterpakete beziehen sich dabei ausschließlich auf die Abstraktionen im nächsthöheren Package und kapseln die Implementierungsdetails. Gleichermaßen wird dadurch eine strikte Abhängigkeitsumkehr gewährleistet (Inversion of Control). Das Root-Paket bleibt somit unabhängig von den Implementierungsdetails.
+Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **Folder, Task, Person, Message** und **User** als Interfaces direkt im Root-Paket abgelegt, ergänzt durch technische Abstraktionen wie **App, Db,** sowie **Served** und **Dislayed.** Die Unterpakete beziehen sich dabei ausschließlich auf die Abstraktionen im nächsthöheren Package und kapseln die Implementierungsdetails. Gleichermaßen wird dadurch eine strikte Abhängigkeitsumkehr gewährleistet (Inversion of Control). Das Root-Paket bleibt somit unabhängig von den Implementierungsdetails.
 
 #### **5.2.1. Initialisierung, Dependency Injection und Konfiguration (app/)**
 
