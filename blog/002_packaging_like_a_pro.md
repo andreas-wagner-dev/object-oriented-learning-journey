@@ -1,4 +1,4 @@
-# **Packaging like a “Pro..”**
+# **Packaging like a “Pro...”**
 
 “with 3 golden Rules…”
 
