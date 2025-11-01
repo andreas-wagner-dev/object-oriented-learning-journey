@@ -8,7 +8,7 @@
 
 “… so that your Code tells a Customer 🗺 Story”
 
-**Guter Code** ist nicht nur fehlerfrei, sondern auch wartbar, wiederverwendbar und vor **allem leicht verständlich**. 
+**Guter Code** ist nicht nur fehlerfrei, sondern auch wartbar, wiederverwendbar und vor allem **leicht verständlich**. 
 --> Der **Schlüssel** dazu liegt in einer domänenorientierten Paketstruktur, die den Prinzipien des **objektorientierten Paket-Designs** (OOPD) folgt.
 
 In diesem Zusammenhand darf ein **Paket** nicht als ein Ordner für die Gruppierung zusammengehöriger Klassen verstanden werden, wie es bei einer *'Layered Architecture'* oft der Fall ist. 
