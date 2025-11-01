@@ -1,12 +1,12 @@
-# **Packaging like a “Pro...”**
+# **📦Packaging like a “Pro...” 🤹‍♀️**
 
-“with 3 golden Rules…”
+“with 3 🎇 golden Rules…”
 
 1. Packages should never depend on sub-packages.  
 2. Sub-packages should not introduce new concepts, just more details.  
 3. Packages should reflect business-concepts, not technical ones.
 
-“… so that your Code tells a Customer Story”
+“… so that your Code tells a Customer 🗺 Story”
 
 **Guter Code** ist nicht nur fehlerfrei, sondern auch wartbar, wiederverwendbar und vor **allem leicht verständlich**. 
 --> Der **Schlüssel** dazu liegt in einer domänenorientierten Paketstruktur, die den Prinzipien des **objektorientierten Paket-Designs** (OOPD) folgt.
