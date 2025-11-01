@@ -123,7 +123,7 @@ Der Übergang von **Level 3** (Anforderungsrelevant) zu **Level 4** (Organisiert
 * **Beispiel (Besser):** ``pet/``, ``owner/``, ``visit/``.  
 * **Vorteil:** Man wählt direkt den **fachlichen Kontext** der Änderung aus und geht dann in die Details. Das Wissen ist **lokalisiert**.
 
-## **4. Pragmatische Regeln**
+## **4. 3 - Pragmatische Regeln**
 
 Um diesen fachlichen, progressiven Informationsfluss zu gewährleisten, beachte die folgenden drei Regeln von Robert Bräutigam, die die theoretischen Prinzipien (ADP, SDP) in die Praxis umsetzen:
 
@@ -206,9 +206,9 @@ Das **Herzstück** jeder Anwendung ist das **Root-Paket** (c``om.example.todo``)
 
 * “Model the problem, not the technology! …hide implementation details, like the fact that you are using MVC.”
 
-### 5.2.1. **Paketstruktur: Variante 1**
-
 Somit werden **Details nicht als eigenständige Pakete abgebildet**, sondern in den fachlichen Paketen als konkrete Implementierung verborgen, folge der Paketstruktur von Variante 1.
+
+### 5.2.1. **Paketstruktur: Variante 1**
 
 **Layer 0: Root Package**
 * **Frage:** Was macht die App?
