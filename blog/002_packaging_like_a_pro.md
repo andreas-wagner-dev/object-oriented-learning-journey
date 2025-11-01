@@ -740,11 +740,11 @@ Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **F
 
 ## **6. Fazit: Der Profi als Architekt**
 
-Der wahre "Profi" zeichnet sich dadurch aus, dass er:
+Der wahre **"Profi"** zeichnet sich dadurch aus, dass er:
 
 * **Stets die Fachlichkeit reflektiert:** Er verwendet ausschließlich die Sprache der Domäne in der Paketstruktur, um eine Navigationshilfe zu schaffen, die direkt der Geschäftslogik folgt (Regel 3).  
-* **Die OO-Prinzipien und Messverfahren kennt:** Er nutzt die Komponentenprinzipien (REP, CCP, CRP, ADP, SDP, SAP) und **Metriken (A und I) zur Quantifizierung der Code-Qualitä**t und zur Identifizierung von Problemfällen in der Architektur.  
-* **Pragmatisch nach den Regeln handelt, misst und gegebenenfalls anpasst:** Er setzt die drei goldenen Regeln (keine Abhängigkeit zu Sub-Packages, progressive Detaillierung, fachliche Namen) als pragmatische Leitlinien ein, um Zyklen zu verhindern (Regel 1) und eine progressive Story zu gewährleisten (Regel 2).
+* **Die OOPD-Prinzipien und Messverfahren kennt:** Er nutzt die Komponentenprinzipien (REP, CCP, CRP, ADP, SDP, SAP) und **Metriken (A und I) zur Quantifizierung der Code-Qualitä**t und zur Identifizierung von Problemfällen in der Architektur.  
+* **Pragmatisch nach Regeln handelt, misst und gegebenenfalls anpasst:** Er setzt die drei goldenen Regeln (keine Abhängigkeit zu Sub-Packages, progressive Detaillierung, fachliche Namen) als pragmatische Leitlinien ein, um Zyklen zu verhindern (Regel 1) und eine progressive Story zu gewährleisten (Regel 2).
 
 Gutes Packaging ist eine architektonische Entscheidung, die den Grundstein für den langfristigen Erfolg deines Projekts legt.
 
