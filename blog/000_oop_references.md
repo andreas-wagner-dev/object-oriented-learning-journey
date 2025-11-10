@@ -104,6 +104,7 @@
 **Architecture:**
 
 *Problems*
+- https://javadevguy.wordpress.com/2017/07/27/a-detailed-analysis-of-the-clean-architecture-from-an-object-oriented-perspective/
 - https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/
 - https://javadevguy.wordpress.com/2019/01/06/reevaluating-the-layered-architecture/
 - https://amihaiemil.com/2020/05/14/the-almighty-service-layer.html
