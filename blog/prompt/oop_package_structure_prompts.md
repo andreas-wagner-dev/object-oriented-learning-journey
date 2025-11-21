@@ -1,7 +1,7 @@
 # OOP Paketstruktur - KI Prompts zur Reproduktion
 
 ## Übersicht
-Diese Prompts ermöglichen die Generierung einer objektorientierten Paketstruktur nach bewährten Prinzipien (Yegor256 + Package Design Principles) mit automatischer Metrik-Optimierung.
+Diese Prompts ermöglichen die Generierung einer objektorientierten Paketstruktur nach bewährten Prinzipien (Package Design Principles) mit automatischer Metrik-Optimierung.
 
 ---
 
@@ -356,16 +356,16 @@ STRUKTUR:
 src/
   main/
     com.company.app/
-      Users.java (interface)
-      users/
+      User.java (interface)
+      user/
         Cached.java
         Persistent.java
   test/
     com.company.app/
-      UsersContract.java (test alle Implementierungen)
-      users/
-        CachedTest.java (extends UsersContract)
-        PersistentTest.java (extends UsersContract)
+      UserContract.java (test alle Implementierungen)
+      user/
+        CachedTest.java (extends UserContract)
+        PersistentTest.java (extends UserContract)
         FakeUsers.java (für andere Tests)
 ```
 
@@ -479,8 +479,13 @@ Verwende com.company.ecommerce als Root-Package.
 - [ ] Abstrakte Packages sind stabil (I < 0.3)
 - [ ] Konkrete Packages sind instabil (I > 0.7)
 - [ ] Alle Klassen in p[n] implementieren a[n]
-- [ ] Keine Utility-Klassen (nur static methods)
-- [ ] Keine DTOs ohne Verhalten
+- [ ] Keine Utility-Klassen (nur static methods oder Lösung mit Decorator)
+- [ ] Keine getter und setter
+- [ ] Keine Service Klassen (die Logik ist in der Damain Klasse z.B. User)
+- [ ] Keine Repositories Klassen (Lösung mit Decorator z.B. DbUser)
+- [ ] Keine Aggregate Klassen (nur Damain Klassen z.B. User oder Users oder UserGroup)
+- [ ] Keine DTOs ohne Verhalten (Daten sind ein Geheimnis von Damain Klassen)
+
 
 ---
 
