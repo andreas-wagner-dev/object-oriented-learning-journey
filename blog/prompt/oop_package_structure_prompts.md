@@ -97,8 +97,8 @@ DDD Namen → OOP Namen:
 ❌ DocumentRepository   → ✅ Documents
 ❌ UserService          → ✅ User (oder spezifischer Aspekt)
 ❌ AuthenticationService → ✅ Authentication (Interface)
-❌ PasswordValidator    → ✅ Validated (Adjektiv/Zustand)
-❌ EmailValidator       → ✅ Email (im validation Package)
+❌ PasswordValidator    → ✅ Password (Object)
+❌ EmailValidator       → ✅ Email (Object)
 
 Struktur-Beispiel:
 VORHER (DDD):
@@ -108,15 +108,14 @@ VORHER (DDD):
 
 NACHHER (OOP):
 - User (interface in n[0])
-- user/ (package)
-  - Authenticated
-  - Registered  
-  - Anonymous
 - Users (interface in n[0])
-- users/ (package)
-  - Cached
-  - Persistent
-  - InMemory
+- user/ (package für die Realisierung des Benutzer-Konzepts)
+  - AuthenticatedUser
+  - RegisteredUser  
+  - AnonymousUser
+  - CachedUsers
+  - PersistentUsers
+  - InMemoryUsers
 
 Eingabe: [DDD-STRUKTUR]
 ```
