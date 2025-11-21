@@ -96,9 +96,9 @@ DDD Namen → OOP Namen:
 ❌ UserRepository       → ✅ Users (Collection-Konzept)
 ❌ DocumentRepository   → ✅ Documents
 ❌ UserService          → ✅ User (oder spezifischer Aspekt)
-❌ AuthenticationService → ✅ Authentication (Interface)
-❌ PasswordValidator    → ✅ Password (Object)
-❌ EmailValidator       → ✅ Email (Object)
+❌ AuthenticationService → ✅ Authentication (Interface or Object)
+❌ PasswordValidator    → ✅ Password (Interface or Object)
+❌ EmailValidator       → ✅ Email (Interface or Object)
 
 Struktur-Beispiel:
 VORHER (DDD):
@@ -301,6 +301,10 @@ public interface UserRepository extends JpaRepository<User, Long> {}
 
 NACHHER:
 ```java
+// n[0]/User.java
+interface User {
+    String id(); // printer not getter
+}
 // n[0]/Users.java
 interface Users {
     User with(Id id);
