@@ -222,7 +222,7 @@ com.example.todo/
 ├── Task.java  
 └── User.java
 ```
-* **Resultat** für den Leser: Der Leser weiß jetzt, dass die "```App``` ```Task```(s) in ```Folder```(s) für ```User```(s) verwaltet."
+**Resultat** für den Leser: Der Leser weiß jetzt, dass die App "```Task```(s) in ```Folder```(s) für ```User```(s) verwaltet."
 
 **Layer 1: Subpackages**
 * **Frage:** Wie ist es implementiert?
@@ -245,7 +245,7 @@ com.example.todo/
 │ └── InMemTask.java
 ├── Task.java 
 ```
-* **Resultat für den Leser:** Der Leser weiß jetzt, dass "Task In-Memory-, DB- und JSON-Varianten" hat.
+**Resultat für den Leser:** Der Leser weiß jetzt, dass "Task In-Memory-, DB- und JSON-Varianten" hat.
 
 **Layer 2: Klassen-Details**
 * **Frage:** Wie funktioniert ```DbTask```?
@@ -263,13 +263,13 @@ public final class DbTask implements Task {
         this.completed = false;
     }
     // Select * From Task...
-   }  
+   }
 ```
-* **Resultat für den Leser:** Der Leser weiß jetzt, dass "```DbTask``` direkt mit SQL spricht."
+**Resultat für den Leser:** Der Leser weiß jetzt, dass "```DbTask``` direkt mit SQL spricht."
 
-* ```folder/``` - Datenbank, Benutzeroberflächen und Austausch über Http.  
-* ```task/``` - Datenbank, Benutzeroberflächen und Austausch über Http.  
-* ```user/``` - Datenbank, Benutzeroberflächen, Austausch über Http, Emailversand und Authorisierung.  
+* ```folder/``` - Datenbank, Benutzeroberflächen und Austausch über Http.
+* ```task/``` - Datenbank, Benutzeroberflächen und Austausch über Http.
+* ```user/``` - Datenbank, Benutzeroberflächen, Austausch über Http, Emailversand und Authorisierung.
 * ```main/``` - Einsteigspunkt, Initialisierung und Konfiguration der gesamten Anwendung.
 
 ```mermaid
@@ -325,11 +325,11 @@ com.example.todo/
 └── User.java
 ```
 
-* ```folder/, task/, user/``` - konkrete Realisierungen z. B. für die Kommunikation mit der **realen** Datenbank  
-* ```alert/``` - automatische Benachrichtigung bei bestimmten Ereignissen  
-* ```human/``` - Benutzeroberflächen mit grafischen Steuerelementen.  
-* ```exchange/``` - Austausch über Http  
-* ```main/``` - Einsteigspunkt für Initialisierung und Konfiguration der gesamten Anwendung.
+- ```folder/, task/, user/``` - konkrete Realisierungen z. B. für die Kommunikation mit der **realen** Datenbank.
+- ```alert/``` - automatische Benachrichtigung bei bestimmten Ereignissen.
+- ```human/``` - Benutzeroberflächen mit grafischen Steuerelementen.  
+- ```exchange/``` - Austausch über Http.
+- ```main/``` - Einsteigspunkt für Initialisierung und Konfiguration der gesamten Anwendung.
   
 ```mermaid
 graph TB    
@@ -384,22 +384,24 @@ graph TB
 ### 5.2.3. **Paketstruktur: Variante 3**
 Eine differenziertere Trennung (**Decomposition**) der fachlichen Aspekte als Pakete beeinflusst die Lesefreundlichkeit ehe**r** **positiv**, siehe Variante 3. (z. B. durch **Decomposition vom** User Aspketen UI und Person wird zu Person und User = UI)
 ```
-com.example.todo/  
-├── folder/  
-├── person/  
-├── main/  
-├── task/  
-├── user/  
-├── Folder.java  
-├── Task.java  
-├── Person.java  
+com.example.todo/
+├── folder/
+├── person/
+├── main/
+├── task/
+├── user/
+├── Folder.java
+├── Task.java
+├── Person.java
 └── User.java
 ```
-* ```folder/``` - Datenbank, Benutzeroberflächen und Austausch über Http.  
-* ```task/``` - Datenbank, Benutzeroberflächen und Austausch über Http.  
-* ```person/``` - Datenbank, Benutzeroberflächen, Austausch über Http.  
-* ```user/``` - Benutzeroberflächen, Austausch über Http, Emailversand und Authorisierung.  
-* ```main/``` - Einsteigspunkt, Initialisierung und Konfiguration der gesamten Anwendung.
+
+- ```folder/``` - Datenbank, Benutzeroberflächen und Austausch über Http.
+- ```task/``` - Datenbank, Benutzeroberflächen und Austausch über Http.
+- ```person/``` - Datenbank, Benutzeroberflächen, Austausch über Http.
+- ```user/``` - Benutzeroberflächen, Austausch über Http, Emailversand und Authorisierung.
+- ```main/``` - Einsteigspunkt, Initialisierung und Konfiguration der gesamten Anwendung.
+
 ---
 
 ```mermaid
@@ -458,10 +460,10 @@ com.example.todos/
 └── User.java
 ```
 
-* ```storage/``` - alle Realisierungen für die Kommunikation mit der realen Datenbank  
-* ```email/``` - alle Hilfsklassen für Kommunikation mit Emailserver  
-* ```browser/``` - alle Benutzeroberflächen mit grafischen Steuerelementen.  
-* ```expose/``` - Austausch von allen Resourcen über Http  
+* ```storage/``` - alle Realisierungen für die Kommunikation mit der realen Datenbank
+* ```email/``` - alle Hilfsklassen für Kommunikation mit Emailserver
+* ```browser/``` - alle Benutzeroberflächen mit grafischen Steuerelementen.
+* ```expose/``` - Austausch von allen Resourcen über Http
 * ```setup/``` - Einsteigspunkt für Initialisierung und Konfiguration der gesamten Anwendung.
 
 ```mermaid
@@ -541,11 +543,12 @@ com.example.todo/
 
 Die zwangsläufig zu realisierenden technischen Aspekte wie Initialisierung, Integration von Konfiguration, UI, Persistenz und API-Schnittstellen werden ebenfalls als eine Abstraktion im Root-Paket abgebildet, um die Lesbarkeit und Wartbarkeit zu maximieren.
 
-* **App** - **abstrahiert** die Anwendung selbst. - Einsteigspunkt, Initialisierung und Konfiguration der **gesamten** Anwendung.  
-* **Db** - **abstrahiert** Persistenz in der Anwendung. - Kommunikation mit der realen Datenbank.  
-* **User** - **abstrahiert** benutzerspezifische Steuer- und Layoutelemente  
-* **Resource** - **abstrahiert** Austausch von **Ressourcen**  
+* **App** - **abstrahiert** die Anwendung selbst. - Einsteigspunkt, Init.. und Konfig... der **gesamten** Anwendung.
+* **Db** - **abstrahiert** Persistenz in der Anwendung. - Kommunikation mit der realen Datenbank.
+* **User** - **abstrahiert** benutzerspezifische Steuer- und Layoutelemente.
+* **Resource** - **abstrahiert** Austausch von **Ressourcen**.
 * **Message** - **abstrahiert** die optionale Funktionalität für Benachrichtigungen.
+
 ```mermaid
 graph TB
     subgraph "Variante 5: Abstraktionsorientiert"
@@ -717,25 +720,25 @@ Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **F
 #### **5.2.2. Benutzeroberfläche (user/ und seine Unterpakete)**
 
 * **Fachliche Begründung:** Die Benutzeroberfläche **(UI)** ist aus Endanwender-Sicht ein zentrales Business-Konzept **("Wie interagiere ich mit meinen Aufgaben?")**. Die Abstraktionen ```User.java```, ```Page.java``` und ```Control.java``` definieren die Schnittstelle der UI, während das Unterpaket ```user/``` deren Implementierungsdetails kapselt.  
-* **Paketname:** ```user/```. Das Paket ist dem fachlichen Konzept "User" gewidmet und implementiert dessen UI-Interaktion.  
+* **Paketname:** ```user/```. Das Paket ist dem fachlichen Konzept "User" gewidmet und implementiert dessen UI-Interaktion.
 * **Inhalt:** Das Unterpaket enthält die Implementierung von WebUser.java. Es beinhaltet auch interne, UI-spezifische Unterpakete wie control/ (Wiederverwendbare UI-Steuerelemente) und ```page/``` (Vollständige Seitenansichten), die die technischen Details der gewählten UI-Technologie (z. B. HTML/CSS/JS, Frameworks) vollständig kapseln.
 
 #### **5.2.3. Datenbank-Persistenz (Decorator-Muster)**
 
-* **Fachliche Begründung:** Die Persistenz ist ein internes Detail zur Realisierung der fachlichen Konzepte (```Folder, Task, Person```). Statt eines technischen ```db/```-Pakets wird das Decorator-Entwurfsmuster verwendet, um die Objekte mit Persistenzverhalten zu erweitern. Das Db.java-Interface im Root-Paket abstrahiert den Datenbankzugriff.  
-* **Paketierung:** Die Persistenzlogik wird direkt in die fachlichen Pakete (```folder/, task/, person/, user/```) integriert.  
+* **Fachliche Begründung:** Die Persistenz ist ein internes Detail zur Realisierung der fachlichen Konzepte (```Folder, Task, Person```). Statt eines technischen ```db/```-Pakets wird das Decorator-Entwurfsmuster verwendet, um die Objekte mit Persistenzverhalten zu erweitern. Das Db.java-Interface im Root-Paket abstrahiert den Datenbankzugriff.
+* **Paketierung:** Die Persistenzlogik wird direkt in die fachlichen Pakete (```folder/, task/, person/, user/```) integriert.
 * **Beispiel:** ```DbFolder.java``` **(Decorator):** Eine Klasse, die das Folder-Interface implementiert und ein anderes Folder-Objekt dekoriert, um es persistent zu machen. Sie injiziert die Db-Abstraktion. Die Details der Datenbankimplementierung (JDBC, ORM) sind innerhalb dieser Klasse gekapselt.
 
 #### **5.2.4. API-Schnittstelle (exchange/ und seine Unterpakete)**
 
-* **Fachliche Begründung:** Die API ist das fachliche Konzept des Informationsaustauschs mit externen Systemen. Sie ist durch das Resource.java-Interface im Root-Paket abstrahiert. Das Unterpaket ```resource/``` realisiert diese Schnittstelle und fasst alle technischen Details der API-Bereitstellung zusammen (z. B. JAX-RS, SOAP).  
-* **Paketname:** ```exchange/```. Dieser Name ist fachlich und beschreibt den Informationsaustausch zwischen den externen Anwendungen.  
+* **Fachliche Begründung:** Die API ist das fachliche Konzept des Informationsaustauschs mit externen Systemen. Sie ist durch das Resource.java-Interface im Root-Paket abstrahiert. Das Unterpaket ```resource/``` realisiert diese Schnittstelle und fasst alle technischen Details der API-Bereitstellung zusammen (z. B. JAX-RS, SOAP).
+* **Paketname:** ```exchange/```. Dieser Name ist fachlich und beschreibt den Informationsaustausch zwischen den externen Anwendungen.
 * **Inhalt:** Es enthält Implementierungen von ```Resource.java``` (z. B. ```TodoResource.java``` für JAX-RS), Message.java und Service.java, sowie technische Unterpakete wie ```envelop/``` und ```media/``` zur Kapselung von I/O-Objekten und Formaten (z. B. HATEOAS).
 
 #### **5.2.5. Hilfsklassen (Vermeidung von util/)**
 
-* **Fachliche Begründung:** In einer strikt objektorientierten Welt existieren keine statischen Utility-Klassen. Logik sollte immer in einem Objekt gekapselt und über Komposition oder das Decorator-Muster wiederverwendet werden.  
-* **Vermeidung von util/-Paketen:** Pakete wie ```util/``` oder ```helper/``` sind zu technisch und **verstoßen gegen Regel 3**.  
+* **Fachliche Begründung:** In einer strikt objektorientierten Welt existieren keine statischen Utility-Klassen. Logik sollte immer in einem Objekt gekapselt und über Komposition oder das Decorator-Muster wiederverwendet werden.
+* **Vermeidung von util/-Paketen:** Pakete wie ```util/``` oder ```helper/``` sind zu technisch und **verstoßen gegen Regel 3**.
 * **Lösung:** Package-private Hilfsklassen innerhalb der fachlichen Pakete oder eigenständige Objekte (z. B. ```JsonPerson.java``` mit eigener JSON-Logik), die per Komposition eingebunden werden. Dies fördert die Einhaltung des SRP und die Testbarkeit.
 
 ## **6. Fazit: Der Profi als Architekt**
