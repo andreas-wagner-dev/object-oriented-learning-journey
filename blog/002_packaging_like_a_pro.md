@@ -145,11 +145,11 @@ Benutze in Paketnamen die Sprache der Fachlichkeit (der Domain), nicht die des F
 
 | Technisch (Schlecht) | Fachlich (Besser) |
 | :---- | :---- |
-| ``controller/, adapter/, web/, ui/, api/`` | ``checkout/, expose/, exchange/, **human/**, page/, site/, display/, control/`` |
-| ``service/, usecase/, **producer/**, job/`` | ``billing/, payment/, audit/, alert/, task/, notification/`` |
-| ``entity/, model/, value/, db/, aggregate/, repository/`` | ``bill/, **order/**, car/, **customer/**, account/, store/, storage/, base/`` |
-| ``common/, util/, client/, lib/, logger/, security/`` | ``tax/``, ``rule/``, ``unit/``, ``unit.iso/``, ``jira/``, ``jira.http/``,   ``log/``, ``text/``, ``text.regex/``,  ``some-concept-need-security.sha2/`` |
-| ``config/, properties/, injections/`` | ``<name-of-main-concept>/``, (z. B. ``com.company.todolist.todo``) ``game/``, ``main/``, **launch/** oder eher technisch: ``startup/, setup/, boot`` oder sehr abstrakt: ``com.company.todo.app/`` |
+| ``controller/``,  ``adapter/``,  ``web/``,  ``ui/``,  ``api/`` | ``checkout/``, ``expose/``, ``exchange/``, ``human/``, ``page/``, ``site/``, ``display/``, ``control/`` |
+| ``service/``, ``usecase/``, ``consumer/``, ``producer/``, ``job/`` | ``billing/``, ``payment/``, ``audit/``, ``alert/``, ``task/``, ``notification/``|
+| ``entity/``, ``model/``, ``value/``, ``db/``, ``aggregate/``, ``repository/`` | ``bill/``, ``order/``, ``car/``, ``customer/``, ``account/``, ``store/``, ``storage/``, ``base/`` |
+| ``common/``, ``util/``, ``client/``, ``client.http/``, ``lib/``, ``logger/``, ``security/`` | ``tax/``, ``rule/``, ``unit/``, ``unit.iso/``, ``jira/``, ``jira.http/``,   ``log/``, ``text/``, ``text.regex/``,  ``some-concept-need-security.sha2/`` |
+| ``config/``, ``properties/``, ``injections/`` | root compostition: ``com.company.todolist.todo/``, ``game/`` oder abstrakt: ``com.company.todo.app/`` eher technisch: ``boot``, ``startup/``, ``setup/``, ``main/``, ``launch/``|
 
 **Vorteil:**
 
@@ -648,7 +648,7 @@ com.example.todo/
 │ ├── TodoApp.java  
 │ ├── TodoDb.java  
 │ └── WebApp.java  
-├── resource/   
+├── exchange/   
 │ ├── envelop/  
 │ │ ├── WrappedRequest.java  
 │ │ └── WrappedResponse.java  
@@ -660,7 +660,7 @@ com.example.todo/
 │ │ └── TodoService.java  
 │ ├── Envelop.java   
 │ ├── Media.java   
-│ └── Service.java   
+│ └── Served.java   
 ├── folder/   
 │ ├── DbFolder.java  
 │ └── JsonFolder.java  
@@ -704,11 +704,10 @@ com.example.todo/
 ├── Message.java   
 ├── Folder.java  
 ├── Person.java
-├── Served.java  
 ├── Task.java  
 └── User.java
 ```
-Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **Folder, Task, Person, Message** und **User** als Interfaces direkt im Root-Paket abgelegt, ergänzt durch technische Abstraktionen wie **App, Db,** sowie **Served** und **Dislayed.** Die Unterpakete beziehen sich dabei ausschließlich auf die Abstraktionen im nächsthöheren Package und kapseln die Implementierungsdetails. Gleichermaßen wird dadurch eine strikte Abhängigkeitsumkehr gewährleistet (Inversion of Control). Das Root-Paket bleibt somit unabhängig von den Implementierungsdetails.
+Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **Folder, Task, Person, Message** und **User** als Interfaces direkt im Root-Paket abgelegt, ergänzt durch technische Abstraktionen wie **App, Db,** sowie **Served**. Die Unterpakete beziehen sich dabei ausschließlich auf die Abstraktionen im nächsthöheren Package und kapseln die Implementierungsdetails. Gleichermaßen wird dadurch eine strikte Abhängigkeitsumkehr gewährleistet (Inversion of Control). Das Root-Paket bleibt somit unabhängig von den Implementierungsdetails.
 
 #### **5.2.1. Initialisierung, Dependency Injection und Konfiguration (app/)**
 
