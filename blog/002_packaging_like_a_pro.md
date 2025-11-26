@@ -215,8 +215,8 @@ Bevor jedoch die ersten Zeilen Code entstehen, ist es notwendig, das fachliche K
 
 ### **6.2. Implementierung der Kernlogik**
 
-Das **Herzstück** jeder Anwendung ist das **Root-Paket** (c``om.example.todo``), das als die stabile, fachliche API der gesamten Anwendung dient.
-**Technische Aspekte** wie: Initialisierung ``app/``, Konfiguration ``config/``, Persistenz ``db/``, humane ``ui/`` und maschinelle Schnittstellen ``api/``, **sind Realisierungsdetails** und werden ganz nach dem Motto (von Robert Bräutigam at stackexchange):
+Das **Herzstück** jeder Anwendung ist das **Root-Paket** (``com.example.todo``), das als die stabile, fachliche API der gesamten Anwendung dient.
+**Technische Aspekte** wie: Initialisierung ``app/``, Konfiguration ``config/``, Persistenz ``db/``, humane ``ui/`` und maschinelle Schnittstellen ``api/``, **sind Realisierungsdetails** und werden ganz nach dem Motto:
 
 * “Model the problem, not the technology! …hide implementation details, like the fact that you are using MVC.”
 
@@ -288,7 +288,7 @@ public final class DbTask implements Task {
 
 ```mermaid
 graph TB
-    subgraph "Variante 1: Minimale<br/>technische Trennung"
+    subgraph "Variante 1: Minimale technische Trennung"
         direction TB
         
         V1_ROOT["<b>com.example.todo/</b><br/>Folder, Task, User<br/>Ca=0, Ce=4<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
@@ -347,7 +347,7 @@ com.example.todo/
   
 ```mermaid
 graph TB    
-    subgraph "Variante 2:<br/>Differenzierte<br/>technische Trennung"
+    subgraph "Variante 2: Differenzierte technische Trennung"
         direction TB
         
         V2_ROOT["<b>com.example.todo/</b><br/>Folder, Task, User<br/>Ca=0, Ce=7<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
@@ -396,7 +396,7 @@ graph TB
 ```
 
 ### 6.2.3. **Paketstruktur: Variante 3**
-Eine differenziertere Trennung (**Decomposition**) der fachlichen Aspekte als Pakete beeinflusst die Lesefreundlichkeit ehe**r** **positiv**, siehe Variante 3. (z. B. durch **Decomposition vom** User Aspketen UI und Person wird zu Person und User = UI)
+Eine differenziertere Trennung (**Decomposition**) der fachlichen Aspekte als Pakete beeinflusst die Lesefreundlichkeit eher **positiv**, siehe Variante 3. (z. B. durch **Decomposition vom** User Aspketen UI und Person wird zu Person und User = UI)
 ```
 com.example.todo/
 ├── folder/
@@ -482,7 +482,7 @@ com.example.todos/
 
 ```mermaid
 graph TB
-    subgraph "Variante 4: Datenorientiert<br/>(ANTI-PATTERN)"
+    subgraph "Variante 4: Datenorientiert (ANTI-PATTERN)"
         direction TB
         
         V4_ROOT["<b>com.example.todos/</b><br/>Folder, Task, User<br/>Ca=0, Ce=4<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
@@ -732,7 +732,7 @@ Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **F
 * **Inhalt:** Das Paket enthält die konkreten Implementierungen des ```App.java```-Interfaces, wie ```TodoApp.java```, ```ConsoleApp.java``` oder ```WebApp.java```.  
 * **DI-Container:** Um die Konstruktion des Objektdiagramms transparent und nachvollziehbar zu halten, wird auf externe DI-Container verzichtet. Die Abhängigkeitsinjektion und Konfiguration erfolgen an einem einzigen Ort in den App.java-Implementierungen.
 
-### **7.2. Benutzeroberfläche (user/ und seine Unterpakete)**
+### **7.2. Benutzeroberfläche und seine Unterpakete (user/)**
 
 * **Fachliche Begründung:** Die Benutzeroberfläche **(UI)** ist aus Endanwender-Sicht ein zentrales Business-Konzept **("Wie interagiere ich mit meinen Aufgaben?")**. Die Abstraktionen ```User.java```, ```Page.java``` und ```Control.java``` definieren die Schnittstelle der UI, während das Unterpaket ```user/``` deren Implementierungsdetails kapselt.  
 * **Paketname:** ```user/```. Das Paket ist dem fachlichen Konzept "User" gewidmet und implementiert dessen UI-Interaktion.
@@ -744,13 +744,13 @@ Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **F
 * **Paketierung:** Die Persistenzlogik wird direkt in die fachlichen Pakete (```folder/, task/, person/, user/```) integriert.
 * **Beispiel:** ```DbFolder.java``` **(Decorator):** Eine Klasse, die das Folder-Interface implementiert und ein anderes Folder-Objekt dekoriert, um es persistent zu machen. Sie injiziert die Db-Abstraktion. Die Details der Datenbankimplementierung (JDBC, ORM) sind innerhalb dieser Klasse gekapselt.
 
-### **7.4. API-Schnittstelle (exchange/ und seine Unterpakete)**
+### **7.4. API-Schnittstelle und seine Unterpakete (exchange/)**
 
 * **Fachliche Begründung:** Die API ist das fachliche Konzept des Informationsaustauschs mit externen Systemen. Sie ist durch das Resource.java-Interface im Root-Paket abstrahiert. Das Unterpaket ```resource/``` realisiert diese Schnittstelle und fasst alle technischen Details der API-Bereitstellung zusammen (z. B. JAX-RS, SOAP).
 * **Paketname:** ```exchange/```. Dieser Name ist fachlich und beschreibt den Informationsaustausch zwischen den externen Anwendungen.
 * **Inhalt:** Es enthält Implementierungen von ```Resource.java``` (z. B. ```TodoResource.java``` für JAX-RS), Message.java und Service.java, sowie technische Unterpakete wie ```envelop/``` und ```media/``` zur Kapselung von I/O-Objekten und Formaten (z. B. HATEOAS).
 
-### **7.5. Hilfsklassen (Vermeidung von util/)**
+### **7.5. Hilfsklassen - Vermeidung von (util/)**
 
 * **Fachliche Begründung:** In einer strikt objektorientierten Welt existieren keine statischen Utility-Klassen. Logik sollte immer in einem Objekt gekapselt und über Komposition oder das Decorator-Muster wiederverwendet werden.
 * **Vermeidung von util/-Paketen:** Pakete wie ```util/``` oder ```helper/``` sind zu technisch und **verstoßen gegen Regel 3**.
