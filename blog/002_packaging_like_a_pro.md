@@ -1,6 +1,6 @@
 # **📦Packaging like a “Pro...” 🤹‍♀️**
 
-“with 3 🪙 golden Rules…”
+“with 🥉 golden Rules…”
 
 1. Packages should never depend on sub-packages.  
 2. Sub-packages should not introduce new concepts, just more details.  
@@ -8,8 +8,12 @@
 
 “… so that your Code tells a Customer 🛣️ Story”
 
+---
+
+## 1. Abgrenzung
+
 **Guter Code** ist nicht nur fehlerfrei, sondern auch wartbar, wiederverwendbar und vor allem **leicht verständlich**. 
---> Der **Schlüssel** dazu liegt in einer domänenorientierten Paketstruktur, die den Prinzipien des **objektorientierten Paket-Designs** (OOPD) folgt.
+Der 🔑 **Schlüssel** dazu liegt in einer domänenorientierten Paketstruktur, die den Prinzipien des **objektorientierten Paket-Designs** (OOPD) folgt.
 
 In diesem Zusammenhand darf ein **Paket** nicht als ein Ordner für die Gruppierung zusammengehöriger Klassen verstanden werden, wie es bei einer *'Layered Architecture'* oft der Fall ist. 
 --> Vielmehr stellt es eine **logische, modulare Einheit** dar, die die **technische Realisierung** fachlicher Konzepte **kapselt**.
@@ -41,15 +45,17 @@ Die **logische Rolle** des Pakets folgt den OOD Prinzipien der **Modularität** 
 * **Kapselung der Realisierungsdetails:** Ein Modul soll die Implementierungsdetails (wie z.B. Datenbankzugriff, externe API-Aufrufe oder komplexe Algorithmen) vor der Außenwelt verbergen. Die Klassen innerhalb des Moduls arbeiten zusammen, um eine einzige, abstrakte Geschäftslogik (Business Concept) zu erfüllen.  
 * **Fokus auf Geschäftskonzepte:** Im *Idealfall* repräsentiert das Paket als Modul ein abstraktes Geschäftskonzept wie z.B.: (Bestellverwaltung) ``Orders``, (Kundenstamm) ``Customer``, **``Customerbase``** oder (Zahlungsabwicklung) ``Bill``, ``Billing`` oder externe API (Jira-Integration) ``Jira``, ``Issue`` **und nicht** eine technische Schicht wie z.B.: ``Entity``, ``Model``, ``Service``, ``Repository``, ``Controller``, ``JiraClient``, ``JiraModel``, ``JiraAdapter`` und **auch nicht** technische Schichten wie: ``Domain``, ``Application``, ``Infrastructure``, ``Presentation``.
 
-| Merkmal | Layered Architecture (Schichten) | Objektorientiertes Paket/Modul |
+| Merkmal | Layered Architecture (Schichten) | Objektorientiertes Paket (Modul) |
 | :---- | :---- | :---- |
 | Gruppierung | **Vertikal nach technischen Aufgaben** (z.B. ``UI, Business Logic, Data Access``). | **Horizontal nach logischen, geschäftlichen Konzepten** (z.B. ``Customer, Order, Inventory``). |
 | Kapselung | **Eher schwach**; Realisierungsdetails (z.B. ``Datenbank``) liegen meist in der untersten Schicht (``Data``). | **Stark**; die Implementierungsdetails (z.B. welche Datenbank genutzt wird) bleiben innerhalb des Pakets. |
 | Ziel | **Trennung** der technischen Verantwortlichkeiten. | **Kapselung** der fachlichen Konzepte und deren Realisierung. |
 
-## **1. Paket-Design Prinzipien**
+---
 
-Weitere **Paket-Design-Prinzipien** (nach Robert C. Martin) helfen, die perfekte Balance zwischen Wiederverwendbarkeit und Änderungsfreundlichkeit zu finden.
+## **2. Paket-Design Prinzipien**
+
+Die **Paket-Design-Prinzipien** (nach Robert C. Martin) helfen, ein perfekte Balance zwischen Wiederverwendbarkeit und Änderungsfreundlichkeit zu finden.
 
 ### **Prinzipien für Kohäsion (Innere Organisation)**
 
@@ -74,7 +80,9 @@ Diese Prinzipien steuern die Beziehungen zwischen Paketen in einem großen Proje
 | **Stable Dependencies Principle (SDP)** | Abhängigkeiten sollen in Richtung der **Stabilität** zeigen. | Ein Paket sollte nur von Paketen abhängen, die stabiler sind als es selbst. Stabile Pakete sind schwer zu ändern und haben viele eingehende Abhängigkeiten. |
 | **Stable Abstractions Principle (SAP)** | Stabile Pakete sollten **abstrakt** sein. Instabile Pakete sollten **konkret** sein. | Stabile (schwer zu ändernde) Pakete sollten durch Interfaces und abstrakte Klassen leicht erweiterbar sein (Open-Closed Principle auf Paket-Ebene). |
 
-## **2. Metriken: Messbare Code-Qualität**
+---
+
+## **3. Metriken: Messbare Code-Qualität**
 
 Wie können wir "Stabilität" und "Abstraktion" messen? Mit zwei einfachen Metriken!
 
@@ -94,7 +102,9 @@ Die idealen Pakete liegen auf oder nahe der **Hauptsequenz:** A + I = 1.
 
 Wenn ein Paket weit von dieser Linie entfernt ist (z. B. A = 0, I = 0 – stabil und konkret), ist es ein **Problemfall**: schwer zu ändern *und* schwer zu erweitern.
 
-## **3. Der Weg zum Profi: Storytelling-Ansatz**
+---
+
+## **4. Der Weg zum Profi: Storytelling-Ansatz**
 
 Um wirklich wie ein Profi zu *packagen*, müssen wir aufhören, nur Code zu schreiben, der *funktioniert*, und anfangen, Code zu schreiben, der eine **Geschichte** erzählt. Die Fähigkeit, Information über die Fachlichkeit (Domain) effizient an den Leser zu übermitteln, kann in 5 Stufen betrachtet werden.
 
@@ -123,20 +133,22 @@ Der Übergang von **Level 3** (Anforderungsrelevant) zu **Level 4** (Organisiert
 * **Beispiel (Besser):** ``pet/``, ``owner/``, ``visit/``.  
 * **Vorteil:** Man wählt direkt den **fachlichen Kontext** der Änderung aus und geht dann in die Details. Das Wissen ist **lokalisiert**.
 
-## **4. 3 - Pragmatische Regeln**
+---
+
+## **5. Drei - Pragmatische Regeln**
 
 Um diesen fachlichen, progressiven Informationsfluss zu gewährleisten, beachte die folgenden drei Regeln von Robert Bräutigam, die die theoretischen Prinzipien (ADP, SDP) in die Praxis umsetzen:
 
 **Regel 1: Pakete sollten niemals von Unterpaketen abhängen.**
 
-* Dies ist die wichtigste Regel, um den ``Directed Acyclic Graph (DAG)`` zu gewährleisten und das ``Acyclic Dependencies Principle (ADP)`` zu erfüllen.  
-* Das Root-Package ist der **Startpunkt der Story**. Es muss die wichtigsten, abstraktesten Konzepte enthalten (z. B. Interfaces), ohne die Implementierungs-Details in den Sub-Packages zu kennen.  
+Dies ist die wichtigste Regel, um den ``Directed Acyclic Graph (DAG)`` zu gewährleisten und das ``Acyclic Dependencies Principle (ADP)`` zu erfüllen.
+* Das **Root-Package** ist der **Startpunkt der Story**. Es muss die wichtigsten, abstraktesten Konzepte enthalten (z. B. Interfaces), ohne die Implementierungs-Details in den Sub-Packages zu kennen.  
 * **Konsequenz:** Änderungen in einem Sub-Package können das übergeordnete Package nicht versehentlich beeinflussen. Dies **eliminiert zirkuläre Abhängigkeiten**.
 
 **Regel 2: Unterpakete sollten keine neuen Konzepte einführen.**
 
-* Das gesamte logische Feature-Set der Applikation muss bereits im übergeordneten Package erkennbar sein, meist in Form von Interfaces oder abstrakten Klassen.  
-* Sub-Packages dienen nur dazu, **mehr Details** (Implementierungen, Spezialisierungen) der im Eltern-Package definierten Konzepte zu liefern.  
+Das gesamte logische Feature-Set der Applikation muss bereits im übergeordneten Package erkennbar sein, meist in Form von Interfaces oder abstrakten Klassen.
+* **Unterpakete** dienen nur dazu, **mehr Details** (Implementierungen, Spezialisierungen) der im Eltern-Package definierten Konzepte zu liefern.  
 * **Konsequenz:** Der Leser muss nicht in alle Sub-Packages abtauchen, um sicherzustellen, dass er kein wichtiges Feature verpasst hat. Er kann sich progressiv und sicher durch die Hierarchie arbeiten.
 
 **Regel 3: Pakete sollten Geschäfts-Konzepte, nicht technische Konzepte reflektieren.**
@@ -156,13 +168,15 @@ Benutze in Paketnamen die Sprache der Fachlichkeit (der Domain), nicht die des F
 * Die Paket-Struktur bildet eine **Navigationshilfe** für den Leser, die den Geschäftsanforderungen folgt.  
 * Wenn eine geschäftliche Änderung ansteht, weist der Paketname direkt auf den Ort der Änderung hin.
 
-## **5. Praktische Anwendung**
+---
+
+## **6. Praktische Anwendung**
 
 Die Pakete eines objektorientierten Systems basieren auf klaren OOPD-Prinzipien. Es gibt keine Schichten im traditionellen Sinne von Clean Architecture oder DDD. Stattdessen werden Pakete hierarchisch nach fachlichen Konzepten organisiert. Die Abhängigkeiten fließen von spezifischen Details zu allgemeinen Abstraktionen, wodurch eine saubere und nachvollziehbare Struktur entsteht. Die drei Regeln von Robert Bräutigam sind ein pragmatischer Ansatz für eine OOP-konforme Paketstruktur, welche im Folgenden anhand einer Todo-Anwendung veranschaulicht werden.
 
 Bevor jedoch die ersten Zeilen Code entstehen, ist es notwendig, das fachliche Konzept und die damit verbundenen Anforderungen genau zu verstehen und festzuhalten.
 
-### **5.1. Fachliche Analyse und Entwurf**
+### **6.1. Fachliche Analyse und Entwurf**
 
 * **Fachlichkeit identifizieren und befragen**, wie das Konzept in der realen Welt funktioniert und welche Geschäftsregeln gelten.  
 * **Domänenmodell erstellen**, das die Fachlogik mit relevanten Objekt-Entitäten, die zu diesem Konzept gehören, abbildet.  
@@ -173,33 +187,33 @@ Bevor jedoch die ersten Zeilen Code entstehen, ist es notwendig, das fachliche K
 
 ***Kurzbeschreibung:** Diese Anwendung bietet Benutzern die Möglichkeit, persönliche Aufgaben über eine Weboberfläche in Ordnern zu organisieren. Optional werden Benutzer automatisch von der Anwendung über ihre Aufgaben benachrichtigt. Um die Integration in andere Anwendungen zu ermöglichen, stellt das System zusätzlich eine externe API bereit.*
 
-#### **5.1.1. Benutzerverwaltung**
+#### **6.1.1. Benutzerverwaltung**
 
 * **Identifizierung und Authentifizierung:** Die Anwendung muss in der Lage sein, Benutzer zu identifizieren und zu verwalten.  
 * **Personalisierung:** Die Aufgaben und Ordner müssen bestimmten Benutzern zugeordnet werden können.
 
-#### **5.1.2. Aufgaben- und Ordnerverwaltung**
+#### **6.1.2. Aufgaben- und Ordnerverwaltung**
 
 * **Aufgaben:** Benutzer müssen in der Lage sein, einzelne Aufgaben zu erstellen, zu bearbeiten, zu löschen und zu verwalten.  
 * **Ordner:** Benutzer müssen Aufgaben in Ordnern organisieren können (Ordner zu erstellen, zu bearbeiten und zu löschen).  
 * **Beziehungen:** Eine Aufgabe muss einem Ordner und einem Benutzer zugeordnet werden. Ein Ordner muss einem Benutzer zugeordnet werden.
 
-#### **5.1.3. Benachrichtigungsfunktion**
+#### **6.1.3. Benachrichtigungsfunktion**
 
 * **Optionalität:** Die Anwendung muss die Möglichkeit bieten, Benutzer optional und automatisch über ihre Aufgaben zu benachrichtigen.  
 * **Mechanismus:** Es muss einen Mechanismus zur automatischen Benachrichtigung geben, der auf den Aufgaben basiert.
 
-#### **5.1.4. Integration mit externen Systemen**
+#### **6.1.4. Integration mit externen Systemen**
 
 * **API-Bereitstellung:** Die Anwendung muss eine externe API bereitstellen, um die Integration mit anderen Anwendungen zu ermöglichen.  
 * **Zugriff auf Funktionalität:** Die API sollte den Zugriff auf die Kernfunktionen der Todo-Anwendung ermöglichen (z. B. das Erstellen, Lesen, Aktualisieren und Löschen von Aufgaben und Ordnern).
 
-#### **5.1.5. Benutzeroberfläche**
+#### **6.1.5. Benutzeroberfläche**
 
 * **Weboberfläche:** Die Anwendung muss eine Weboberfläche bereitstellen, über die Benutzer mit der Anwendung interagieren können.  
 * **Interaktion:** Über die Weboberfläche sollten Benutzer in der Lage sein, Aufgaben und Ordner zu verwalten und die Benachrichtigungsoptionen zu konfigurieren.
 
-### **5.2. Implementierung der Kernlogik**
+### **6.2. Implementierung der Kernlogik**
 
 Das **Herzstück** jeder Anwendung ist das **Root-Paket** (c``om.example.todo``), das als die stabile, fachliche API der gesamten Anwendung dient.
 **Technische Aspekte** wie: Initialisierung ``app/``, Konfiguration ``config/``, Persistenz ``db/``, humane ``ui/`` und maschinelle Schnittstellen ``api/``, **sind Realisierungsdetails** und werden ganz nach dem Motto (von Robert Bräutigam at stackexchange):
@@ -208,7 +222,7 @@ Das **Herzstück** jeder Anwendung ist das **Root-Paket** (c``om.example.todo``)
 
 Somit werden **Details nicht als eigenständige Pakete abgebildet**, sondern in den fachlichen Paketen als konkrete Implementierung verborgen, folge der Paketstruktur von Variante 1.
 
-### 5.2.1. **Paketstruktur: Variante 1**
+### 6.2.1. **Paketstruktur: Variante 1**
 
 **Layer 0: Root Package**
 * **Frage:** Was macht die App?
@@ -308,7 +322,7 @@ graph TB
 
 ```
 
-### 5.2.2. **Paketstruktur: Variante 2**
+### 6.2.2. **Paketstruktur: Variante 2**
 
 Eine **differenziertere Trennung** der **technischen Aspekte** als Pakete beeinflusst die Lesefreundlichkeit eher **negativ**, siehe Variante 2.
 ```
@@ -380,8 +394,8 @@ graph TB
         style V2_RESULT fill:#fff9db,color:#000
     end
 ```
----
-### 5.2.3. **Paketstruktur: Variante 3**
+
+### 6.2.3. **Paketstruktur: Variante 3**
 Eine differenziertere Trennung (**Decomposition**) der fachlichen Aspekte als Pakete beeinflusst die Lesefreundlichkeit ehe**r** **positiv**, siehe Variante 3. (z. B. durch **Decomposition vom** User Aspketen UI und Person wird zu Person und User = UI)
 ```
 com.example.todo/
@@ -445,7 +459,7 @@ graph TB
     end
 ```
 
-### 5.2.4. **Paketstruktur: Variante 4**
+### 6.2.4. **Paketstruktur: Variante 4**
 
 Eine **datenorientierte Trennung** der **technischen** Aspekte als Pakete beeinträchtigt nun definitiv **negativ** die Lesefreundlichkeit, siehe Variante 4 und vergleiche mit Paketstrukturen von den Varianten 1, 2 und 3.
 ```
@@ -507,7 +521,8 @@ graph TB
         style V4_RESULT fill:#ffe3e3,color:#000
     end
 ```
-### 5.2.5. **Paketstruktur: Variante 5**
+
+### 6.2.5. **Paketstruktur: Variante 5**
 
 Eine **abstraktionsorientierte Trennung** der fachlichen und der technischen Aspekte als Pakete kann die **Lesefreundlichkeit eher positiv** beeinflussen, siehe Variante 5.
 
@@ -614,7 +629,7 @@ graph TB
     end
 ```
 
-### 5.2.6. **Vergleich und Zusammenfassung**
+### 6.2.6. **Vergleich und Zusammenfassung**
 
 **Ranking nach Durchschnitt D:**
 * Variante 1: 0.30 (Beste Balance)
@@ -633,8 +648,9 @@ graph TB
 * Variante 1 oder 3
 * Balance zwischen Metriken und fachlicher Klarheit
 
+---
 
-### 5.2.7. **Fullstack-Anwendung**
+## 7. **Fullstack-Beispiel**
 
 Das Endbeispiel (Fullstack-Anwendung) demonstriert, wie das Root-Paket (```com.example.todo/```) als stabile API dient und
 alle **Implementierungsdetails** in den **fachlich** organisierten Unterpaketen **gekapselt** sind. **Ziel** ist es, 
@@ -709,38 +725,40 @@ com.example.todo/
 ```
 Als Kern-Abstraktionen aus den Geschäftsanforderungen werden die Entitäten **Folder, Task, Person, Message** und **User** als Interfaces direkt im Root-Paket abgelegt, ergänzt durch technische Abstraktionen wie **App, Db,** sowie **Served**. Die Unterpakete beziehen sich dabei ausschließlich auf die Abstraktionen im nächsthöheren Package und kapseln die Implementierungsdetails. Gleichermaßen wird dadurch eine strikte Abhängigkeitsumkehr gewährleistet (Inversion of Control). Das Root-Paket bleibt somit unabhängig von den Implementierungsdetails.
 
-#### **5.2.1. Initialisierung, Dependency Injection und Konfiguration (app/)**
+### **7.1. Initialisierung, Dependency Injection und Konfiguration (app/)**
 
 * **Fachliche Begründung:** Die ```App``` ist die höchste Abstraktion der Anwendung. Die Initialisierung, Konfiguration und der Aufbau des Objektdiagramms **(DI)** sind Realisierungsdetails der App-Abstraktion und gehören daher in das Unterpaket app/.  
 * **Paketname:** ```app/```. Dieser Name ist fachlich-abstrakt und beschreibt den Kern der Anwendung.  
 * **Inhalt:** Das Paket enthält die konkreten Implementierungen des ```App.java```-Interfaces, wie ```TodoApp.java```, ```ConsoleApp.java``` oder ```WebApp.java```.  
 * **DI-Container:** Um die Konstruktion des Objektdiagramms transparent und nachvollziehbar zu halten, wird auf externe DI-Container verzichtet. Die Abhängigkeitsinjektion und Konfiguration erfolgen an einem einzigen Ort in den App.java-Implementierungen.
 
-#### **5.2.2. Benutzeroberfläche (user/ und seine Unterpakete)**
+### **7.2. Benutzeroberfläche (user/ und seine Unterpakete)**
 
 * **Fachliche Begründung:** Die Benutzeroberfläche **(UI)** ist aus Endanwender-Sicht ein zentrales Business-Konzept **("Wie interagiere ich mit meinen Aufgaben?")**. Die Abstraktionen ```User.java```, ```Page.java``` und ```Control.java``` definieren die Schnittstelle der UI, während das Unterpaket ```user/``` deren Implementierungsdetails kapselt.  
 * **Paketname:** ```user/```. Das Paket ist dem fachlichen Konzept "User" gewidmet und implementiert dessen UI-Interaktion.
 * **Inhalt:** Das Unterpaket enthält die Implementierung von WebUser.java. Es beinhaltet auch interne, UI-spezifische Unterpakete wie control/ (Wiederverwendbare UI-Steuerelemente) und ```page/``` (Vollständige Seitenansichten), die die technischen Details der gewählten UI-Technologie (z. B. HTML/CSS/JS, Frameworks) vollständig kapseln.
 
-#### **5.2.3. Datenbank-Persistenz (Decorator-Muster)**
+### **7.3. Datenbank-Persistenz (Decorator-Muster)**
 
 * **Fachliche Begründung:** Die Persistenz ist ein internes Detail zur Realisierung der fachlichen Konzepte (```Folder, Task, Person```). Statt eines technischen ```db/```-Pakets wird das Decorator-Entwurfsmuster verwendet, um die Objekte mit Persistenzverhalten zu erweitern. Das Db.java-Interface im Root-Paket abstrahiert den Datenbankzugriff.
 * **Paketierung:** Die Persistenzlogik wird direkt in die fachlichen Pakete (```folder/, task/, person/, user/```) integriert.
 * **Beispiel:** ```DbFolder.java``` **(Decorator):** Eine Klasse, die das Folder-Interface implementiert und ein anderes Folder-Objekt dekoriert, um es persistent zu machen. Sie injiziert die Db-Abstraktion. Die Details der Datenbankimplementierung (JDBC, ORM) sind innerhalb dieser Klasse gekapselt.
 
-#### **5.2.4. API-Schnittstelle (exchange/ und seine Unterpakete)**
+### **7.4. API-Schnittstelle (exchange/ und seine Unterpakete)**
 
 * **Fachliche Begründung:** Die API ist das fachliche Konzept des Informationsaustauschs mit externen Systemen. Sie ist durch das Resource.java-Interface im Root-Paket abstrahiert. Das Unterpaket ```resource/``` realisiert diese Schnittstelle und fasst alle technischen Details der API-Bereitstellung zusammen (z. B. JAX-RS, SOAP).
 * **Paketname:** ```exchange/```. Dieser Name ist fachlich und beschreibt den Informationsaustausch zwischen den externen Anwendungen.
 * **Inhalt:** Es enthält Implementierungen von ```Resource.java``` (z. B. ```TodoResource.java``` für JAX-RS), Message.java und Service.java, sowie technische Unterpakete wie ```envelop/``` und ```media/``` zur Kapselung von I/O-Objekten und Formaten (z. B. HATEOAS).
 
-#### **5.2.5. Hilfsklassen (Vermeidung von util/)**
+### **7.5. Hilfsklassen (Vermeidung von util/)**
 
 * **Fachliche Begründung:** In einer strikt objektorientierten Welt existieren keine statischen Utility-Klassen. Logik sollte immer in einem Objekt gekapselt und über Komposition oder das Decorator-Muster wiederverwendet werden.
 * **Vermeidung von util/-Paketen:** Pakete wie ```util/``` oder ```helper/``` sind zu technisch und **verstoßen gegen Regel 3**.
 * **Lösung:** Package-private Hilfsklassen innerhalb der fachlichen Pakete oder eigenständige Objekte (z. B. ```JsonPerson.java``` mit eigener JSON-Logik), die per Komposition eingebunden werden. Dies fördert die Einhaltung des SRP und die Testbarkeit.
 
-## **6. Fazit: Der Profi als Architekt**
+---
+
+## **8. Fazit: Der Profi als Architekt**
 
 Der wahre **"Profi"** zeichnet sich dadurch aus, dass er:
 
@@ -750,7 +768,9 @@ Der wahre **"Profi"** zeichnet sich dadurch aus, dass er:
 
 Gutes Packaging ist eine architektonische Entscheidung, die den Grundstein für den langfristigen Erfolg deines Projekts legt.
 
-## **7. Quellen und weiterführende Links**
+---
+
+## **9. Quellen und weiterführende Links**
 
 Dieser Artikel basiert auf den etablierten Komponentenprinzipien von Robert C. Martin und den pragmatischen Regeln für objektorientiertes Packaging, wie sie von Robert Bräutigam zusammengefasst wurden.
 
@@ -769,9 +789,11 @@ Dieser Artikel basiert auf den etablierten Komponentenprinzipien von Robert C. M
   * Die theoretischen Grundlagen und Metriken für Kopplung (ADP, SDP, SAP) und Kohäsion (REP, CCP, CRP).  
   * *Quelle:* Robert C. Martin, *Agile Software Development, Principles, Patterns, and Practices*. Prentice Hall, 2002.
 
-## 8. Anhänge
+---
 
-## 8.2 OO vs Layered Architecture 
+## 10. Anhänge
+
+### 10.1 OO vs Layered Architecture 
 ```mermaid
 graph TB
     subgraph "TRADITIONAL: Layered Architecture (Clean Architecture / DDD)"
@@ -976,7 +998,7 @@ graph TB
     end
   ```
 
-## 8.2 Dependencies Principles
+## 10.2 Dependencies Principles
 
 ```mermaid
 %% Acyclic Dependencies Principle (ADP)
