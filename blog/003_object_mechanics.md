@@ -1,6 +1,6 @@
 # **The Mechanics of Good Object**
 
-Die zentrale These der Blogbeiträge von Yegor Bugayenko und Mihai A. 🇷🇴🇩🇪🇬🇧🇫🇷 ist, dass **gute Objekte immer unveränderliche Proxies** sein sollten, die Daten nicht mappen sondern animieren. 
+Die zentrale These der Blogbeiträge von Yegor Bugayenko und Mihai A. 🇷🇴🇩🇪🇬🇧🇫🇷 ist, dass **gute Objekte immer unveränderliche Proxies** sein sollten, **die Daten** nicht mappen sondern **animieren**. 
 
 Dies gilt auch dann, wenn sie *Entitäten* der realen Welt vertreten, die sich häufig ändern, wie z. B. ein Dokumententitel (mutable).
 
