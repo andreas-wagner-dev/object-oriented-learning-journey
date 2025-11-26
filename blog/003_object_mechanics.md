@@ -1,25 +1,27 @@
 # **The Mechanics of Good Object**
 
-Die zentrale These des Blogbeitrags von Yegor Bugayenko ist, dass **gute Objekte immer unveränderliche Proxies** (immutable) sein sollten. 
-* Dies gilt auch dann, wenn sie *Entitäten* der realen Welt vertreten, die sich häufig ändern, wie z. B. ein Dokumententitel (mutable).
+Die zentrale These der Blogbeiträge von Yegor Bugayenko und Mihai A. 🇷🇴🇩🇪🇬🇧🇫🇷 ist, dass **gute Objekte immer unveränderliche Proxies** sein sollten, die Daten nicht mappen sonder animieren. 
+
+Dies gilt auch dann, wenn sie *Entitäten* der realen Welt vertreten, die sich häufig ändern, wie z. B. ein Dokumententitel (mutable).
 
 ## **1. Das Problem: Zustand vs. Identität**
 
 * Ein typisches Objekt besteht aus Identität, Zustand und Verhalten. 
 * Ein Objekt ist dann **veränderlich** (mutable), wenn seine interne gekapselte Information (der Zustand) nach der Erstellung geändert werden kann.
 
-**Kritik:** 
+**Problem:** 
 - Wenn eine Eigenschaft (z. B. der Titel eines Dokuments) häufig geändert wird, sollte sie nicht Teil des **internen Zustands** des Objekts sein.
 
 ### **Java-Beispiel 1: Das veränderliche (schlechte) Objekt**
 
 Dieses Objekt ist schlecht, da es seine interne Identität (die Speicheradresse) beibehält, obwohl sich sein Zustand ändert.
 ```java
-class Document {  
+public class Document {
+
     private int id;  
     private String title;
 
-    public DocumentOne(int id, String title) {  
+    public Document(int id, String title) {  
         this.id = id;  
         this.title = title;  
     }
@@ -33,7 +35,7 @@ class Document {
 }
 
 // Usage: The same object (identity) with new state  
-DocumentOne doc = new DocumentOne(50, "Alter Titel");  
+Document doc = new Document(50, "Alter Titel");  
 doc.setTitle("Neuer Titel"); // State changes, identity remains
 ```
 
@@ -43,8 +45,9 @@ Beim konventionellen unveränderlichen Design wird bei jeder Änderung ein **neu
 
 ### **Java-Beispiel 2: Das unveränderliche Wertobjekt (Ineffizient bei häufigen Änderungen)**
 ```java
-@Immutable  
-class Document {  
+
+public class Document {
+
     private final int id;  
     private final String title; // Part of the internal state
 
@@ -54,16 +57,16 @@ class Document {
     }
 
     // Returns a new object on change (Wither)  
-    public DocumentTwo withTitle(String newTitle) {  
-        return new DocumentTwo(this.id, newTitle);  
+    public Document withTitle(String newTitle) {  
+        return new Document(this.id, newTitle);  
     }
 
     // ... printer methods like id() or title() and equals/hashCode (based on id AND title)  
 }
 
 // Usage: Two distinct objects (identities)  
-DocumentTwo first = new DocumentTwo(50, "Titel A");  
-DocumentTwo second = first.withTitle("Titel B"); // Creates a new object
+Document first = new Document(50, "Titel A");  
+Document second = first.withTitle("Titel B"); // Creates a new object
 ```
 
 **Kritik:** 
@@ -80,8 +83,8 @@ Ein gutes unveränderliches Objekt sollte nur seine **Identität** intern kapsel
 Das Objekt selbst ist unveränderlich (nur die ID ist final), aber seine Methoden manipulieren eine externe, veränderliche Ressource (hier simuliert durch ExternalStorage).
 
 ```java
-@Immutable  
-class Document {  
+ 
+public class Document {  
 
     private final ExternalStorage externalStorage = new ExternalStorage();
      
@@ -112,7 +115,7 @@ class Document {
 }
 
 // Simulates the external, mutable storage (database, file, etc.)  
-class ExternalStorage {  
+public class ExternalStorage {  
     private static final Map<Integer, String> storage = new HashMap<>(0);  
     public static String readTitle(int id) {  
         return storage.getOrDefault(id, "Titel nicht gefunden");  
@@ -123,7 +126,7 @@ class ExternalStorage {
 }
 
 // Usage: The object (identity) remains constant, only the behavior changes the external world  
-DocumentThree doc = new DocumentThree(50);  
+Document doc = new Document(50);  
 doc.title("Titel A"); // External storage is changed  
 doc.title("Titel B"); // External storage is changed  
 // doc is still the SAME object
@@ -138,20 +141,21 @@ import java.util.Map;
 import java.util.HashMap;
 
 // 1. Vertical Interface (Domain behavior)
-interface Document {
+public interface Document {
     String title();
     void title(String text);
 }
 
 // 2. Interface for the technical layer (Persistence behavior)
-interface DocumentStorage {
+public interface DocumentStorage {
     String readTitle(int id);
     void writeTitle(int id, String title);
 }
 
 // 3. The Immutable Proxy Object (Encapsulates only the ID)
-// @Immutable
-class DocumentThree implements Document {  
+
+public class DocumentThree implements Document {
+
     private final DocumentStorage externalStorage;
     private final int id;
 
@@ -178,7 +182,7 @@ class DocumentThree implements Document {
 }
 
 // 4. The base implementation of the storage
-class SimpleExternalStorage implements DocumentStorage {  
+public class SimpleExternalStorage implements DocumentStorage {  
     private static final Map<Integer, String> storage = new HashMap<>();  
     
     @Override
@@ -201,7 +205,7 @@ Der ```CachedDocumentStorage``` umschließt den Basisspeicher ```(SimpleExternal
 
 ```java
 // CachedDocumentStorage.java
-class CachedDocumentStorage implements DocumentStorage {
+public class CachedDocumentStorage implements DocumentStorage {
     private final DocumentStorage origin; // The wrapped storage
     private final Map<Integer, String> cache = new HashMap<>();
 
@@ -232,7 +236,8 @@ class CachedDocumentStorage implements DocumentStorage {
 #### **3.1.2. Horizontaler Decorator: UI-Verhalten (View-Aspekt)***
 **a) Beobachtbarkeit (Event-Auslösung):**
 ```java
-class ObservableDocument implements Document {
+public class ObservableDocument implements Document {
+
     private final Document origin; // The wrapped domain object
 
     public ObservableDocument(Document origin) {
@@ -261,14 +266,17 @@ class ObservableDocument implements Document {
 
 ```java
 // Simulates a simple UI component that can display changes
-class FakeUIComponent {
+public class FakeUIComponent {
+
     public void displayTitleUpdate(String newTitle) {
         System.out.println("-> FAKE UI: Updating title display to: " + newTitle);
     }
+    
 }
 
 // The final decorator that controls presentation
-class PresentableDocument implements Document {
+public class PresentableDocument implements Document {
+
     private final Document origin;
     private final FakeUIComponent uiComponent;
 
@@ -323,21 +331,12 @@ System.out.println("\n--- Second Call: Reads from Cache (no DB access) and updat
 finalDocument.title(); 
 ```
 
-## **Fazit: Animator von Daten**
+## **Fazit: Objekt == Proxy == Animator von Daten**
 
-Die Schlussfolgerung ist, dass die Rolle eines Objekts darin besteht, ein **Animator von Daten** zu sein.
+Ein gutes Objekt sollte ein Proxy für die [effektive Animation](https://observablehq.com/blog/effective-animation) von Daten sein.
 
 * Die Daten selbst (im Speicher, in einer Datei, in einer Datenbank) sind **tot** und **veränderlich**.  
 * Das Objekt ist **lebendig** und **unveränderlich** und nutzt seine Identität (ID) als Schlüssel, um auf diese externen, veränderlichen Daten zuzugreifen und sie zu manipulieren.
-
-**Ein gutes Objekt ist ein unveränderlicher Animator von veränderlichen Daten.**
-
-- ***Object ==  Proxy***
-- ***State ∧ Behavior E Object***
-- ***State != Behavior***
-- ***State == Data***
-- ***Behavior == Animation***
-- ***Object => Data Animator***
 
 ```mermaid
 %% Diagram 3: Simplified Flow of Data Animation and Behavior Delegation
@@ -345,17 +344,17 @@ graph TB
     %% 1. Immutable Domain Object 
     subgraph Model World
 
-        A["Proxy Object<br/>(with immutable Identity)"]
+        A["Proxy Objec (with immutable Identity)"]
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
 
         %% 2. The Contract and Behavior Delegation
-        subgraph Contract-Layer
+        subgraph Contract-Area
         direction LR
             B["Interface (Behavior)"]
             style B fill:#C8E6C9,stroke:#388E3C
         
-            %% 3. Technical Object Layers<br/>(Real World Interface)
-            subgraph Object-Layer
+            %% 3. Technical Object Area (Real World Interface)
+            subgraph Object-Area
              direction LR
                 C["UI Proxy (Behavior)"]
                 D["DB Proxy (Behavior)"]
@@ -365,8 +364,6 @@ graph TB
             
                 %% Internal interface communication.
             
-   
-
             end
 
         end
@@ -434,3 +431,23 @@ graph TB
 - Wenn ein Object einen State (Data) und ein Behavior (Animation) hat, dann ist ein Objekt im Wesentlichen ein Data Animator.
 - Die **Daten** (State) definieren, was visualisiert werden soll.
 - Der **Animator** (Behavior) sorgt dafür, dass die Darstellung der Daten sich verändert oder bewegt.
+
+**Ein gutes Objekt ist ein unveränderlicher Animator von veränderlichen Daten.**
+
+# Quellen:
+
+**How an Immutable Object Can Have State and Behavior?**
+- https://www.yegor256.com/2014/12/09/immutable-object-state-and-behavior.html
+
+**Data Should Be Animated, Not Mapped**
+- https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html
+
+**Gradients of Immutability**
+- https://www.yegor256.com/2016/09/07/gradients-of-immutability.html
+
+**Objects Should Be Immutable**
+- https://www.yegor256.com/2014/06/09/objects-should-be-immutable.html
+
+**Immutable Objects Are Not Dumb**
+- https://www.yegor256.com/2014/12/22/immutable-objects-not-dumb.html
+
