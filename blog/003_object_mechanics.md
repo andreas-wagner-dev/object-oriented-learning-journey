@@ -1,6 +1,6 @@
 # **The Mechanics of Good Object**
 
-Die zentrale These der Blogbeiträge von Yegor Bugayenko und Mihai A. 🇷🇴🇩🇪🇬🇧🇫🇷 ist, dass **gute Objekte immer unveränderliche Proxies** sein sollten, die Daten nicht mappen sonder animieren. 
+Die zentrale These der Blogbeiträge von Yegor Bugayenko und Mihai A. 🇷🇴🇩🇪🇬🇧🇫🇷 ist, dass **gute Objekte immer unveränderliche Proxies** sein sollten, die Daten nicht mappen sondern animieren. 
 
 Dies gilt auch dann, wenn sie *Entitäten* der realen Welt vertreten, die sich häufig ändern, wie z. B. ein Dokumententitel (mutable).
 
@@ -9,7 +9,7 @@ Dies gilt auch dann, wenn sie *Entitäten* der realen Welt vertreten, die sich h
 * Ein typisches Objekt besteht aus Identität, Zustand und Verhalten. 
 * Ein Objekt ist dann **veränderlich** (mutable), wenn seine interne gekapselte Information (der Zustand) nach der Erstellung geändert werden kann.
 
-**Problem:** 
+**Forderung:** 
 - Wenn eine Eigenschaft (z. B. der Titel eines Dokuments) häufig geändert wird, sollte sie nicht Teil des **internen Zustands** des Objekts sein.
 
 ### **Java-Beispiel 1: Das veränderliche (schlechte) Objekt**
@@ -69,7 +69,7 @@ Document first = new Document(50, "Titel A");
 Document second = first.withTitle("Titel B"); // Creates a new object
 ```
 
-**Kritik:** 
+**Forderung:** 
 - Wenn ein Dokument sehr groß ist, ist es ineffizient, bei jeder kleinen Änderung (wie einem Titel-Update) die gesamte Datenstruktur zu klonen.
 
 ## **3. Die Lösung: Unveränderliches Proxy-Objekt**
@@ -154,12 +154,12 @@ public interface DocumentStorage {
 
 // 3. The Immutable Proxy Object (Encapsulates only the ID)
 
-public class DocumentThree implements Document {
+public class MyDocument implements Document {
 
     private final DocumentStorage externalStorage;
     private final int id;
 
-    public DocumentThree(int id, DocumentStorage storage) {  
+    public MyDocument(int id, DocumentStorage storage) {  
         this.id = id;  
         this.externalStorage = storage;
     }
@@ -177,7 +177,7 @@ public class DocumentThree implements Document {
     // equals() and hashCode() are based ONLY on the ID (the identity)
     @Override  
     public boolean equals(Object doc) {  
-        return doc instanceof DocumentThree && DocumentThree.class.cast(doc).id == this.id;  
+        return doc instanceof MyDocument && MyDocument.class.cast(doc).id == this.id;  
     }  
 }
 
@@ -315,7 +315,7 @@ DocumentStorage dbStorage = new SimpleExternalStorage();
 DocumentStorage cachedStorage = new CachedDocumentStorage(dbStorage);
 
 // 3. The immutable Proxy Object uses the cache
-Document documentProxy = new DocumentThree(50, cachedStorage); 
+Document documentProxy = new MyDocument(50, cachedStorage); 
 
 // 4. Horizontally add UI behavior (Observability)
 Document observableDocument = new ObservableDocument(documentProxy);
