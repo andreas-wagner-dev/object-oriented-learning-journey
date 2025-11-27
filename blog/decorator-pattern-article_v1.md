@@ -1,5 +1,7 @@
 # Decorate it All...
 
+*Dieser Artikel basiert auf den Erkenntnissen und Konzepten von Yegor Bugayenko zur objektorientierten Programmierung und dem Elegant Objects Ansatz.*
+
 ## 1. Einleitung und Definition
 
 Das Decorator-Pattern ist eines der elegantesten und mächtigsten Entwurfsmuster der objektorientierten Programmierung. Es ermöglicht, Funktionalität zu Objekten hinzuzufügen, ohne deren Interface zu verändern. Im Gegensatz zu vielen anderen Patterns, die oft überkomplex wirken, besticht das Decorator-Pattern durch seine Einfachheit und gleichzeitige Vielseitigkeit.
@@ -602,6 +604,3 @@ Das Decorator-Pattern ist mächtig, aber wie alle Patterns sollte es mit Bedacht
 - Bugayenko, Y. (2017). *Elegant Objects, Volume 2*
 - Gang of Four: *Design Patterns: Elements of Reusable Object-Oriented Software*
 
----
-
-*Dieser Artikel basiert auf den Erkenntnissen und Konzepten von Yegor Bugayenko zur objektorientierten Programmierung und dem Elegant Objects Ansatz.*
