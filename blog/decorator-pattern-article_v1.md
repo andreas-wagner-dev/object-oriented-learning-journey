@@ -10,9 +10,6 @@ Das Decorator-Pattern ist eines der elegantesten und mächtigsten Entwurfsmuster
 
 Ein Decorator ist eine Klasse, die ein Interface implementiert und dabei eine Instanz desselben Interfaces kapselt. Durch diese Komposition können Decorators zusätzliches Verhalten hinzufügen, ohne die ursprüngliche Implementierung zu verändern. Der größte Vorteil von Decorators liegt in ihrer Kompositionsfähigkeit - sie machen unseren Code komponierbar.
 
-### Das Problem mit Utility-Methoden
-
-In vielen Codebases findet man statt Decorators häufig imperative Utility-Methoden. Klassen wie `StringUtils`, `FileUtils` oder `IOUtils` sind typische Beispiele für diesen Ansatz. Utility-Klassen besitzen nur statische Methoden und kapseln keinen Zustand. Sie führen zu prozeduralem Code, der schwer testbar und wenig wartbar ist.
 
 ## 2. Praktische Beispiele
 
@@ -159,6 +156,8 @@ Klassen-Funktionalität sowohl umfangreich als auch thread-safe zu gestalten, ve
 
 ### 2.4 Composable Decorators vs. Imperative Utility Methods
 
+In vielen Codebases findet man statt Decorators häufig imperative Utility-Methoden. Klassen wie `StringUtils`, `FileUtils` oder `IOUtils` sind typische Beispiele für diesen Ansatz. Utility-Klassen besitzen nur statische Methoden und kapseln keinen Zustand. Sie führen zu prozeduralem Code, der schwer testbar und wenig wartbar ist.
+
 Betrachten wir ein Text-Interface:
 
 ```java
@@ -180,7 +179,7 @@ content = removeUnprintable(content);
 **Deklarativ mit Decorators (gutes Design):**
 
 ```java
-final Text text = new AllCapsText(
+Text text = new AllCapsText(
     new TrimmedText(
         new PrintableText(
             new TextInFile(new File("/tmp/a.txt"))
