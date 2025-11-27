@@ -14,42 +14,7 @@ In vielen Codebases findet man statt Decorators häufig imperative Utility-Metho
 
 ## 2. Praktische Beispiele
 
-### 2.1 Composable Decorators vs. Imperative Utility Methods
-
-Betrachten wir ein Text-Interface:
-
-```java
-interface Text {
-    String read();
-}
-```
-
-**Imperativ mit Utility-Methoden (schlechtes Design):**
-
-```java
-Text text = new TextInFile(new File("/tmp/a.txt"));
-String content = text.read();
-content = StringUtils.trim(content);
-content = StringUtils.toUpperCase(content);
-content = removeUnprintable(content);
-```
-
-**Deklarativ mit Decorators (gutes Design):**
-
-```java
-final Text text = new AllCapsText(
-    new TrimmedText(
-        new PrintableText(
-            new TextInFile(new File("/tmp/a.txt"))
-        )
-    )
-);
-String content = text.read();
-```
-
-Bei der deklarativen Variante wird zuerst eine Text-Instanz durch Komposition mehrerer Decorators erstellt, ohne dass etwas ausgeführt wird. Erst wenn read() aufgerufen wird, beginnt die Verarbeitung. Dies ist ein wesentlicher Unterschied zum imperativen Stil.
-
-### 2.2 Vertical und Horizontal Decorating
+### 2.1 Vertical und Horizontal Decorating
 
 Es gibt zwei grundlegende Ansätze beim Decorating: vertikal und horizontal. 
 
@@ -87,7 +52,7 @@ Numbers numbers = new Modified(
 
 Vertical Decorating ist einfacher zu implementieren und eignet sich für kleinere Objekte mit wenigen Methoden. Bei wachsender Anzahl von Decorators bietet sich ein Wechsel zu Horizontal Decorating an.
 
-### 2.3 Defensive Programming mit Validating Decorators
+### 2.2 Defensive Programming mit Validating Decorators
 
 Anstatt Validierungslogik direkt in eine Klasse zu packen, sollten wir Validierungs-Decorators verwenden:
 
@@ -142,7 +107,7 @@ report.export(file);
 
 Dieser Ansatz führt zu kleineren Objekten, und kleinere Objekte bedeuten höhere Wartbarkeit. Die DefaultReport-Klasse bleibt klein, unabhängig davon, wie viele Validierungen in Zukunft hinzukommen.
 
-### 2.4 Synchronized Decorators für Thread-Safety
+### 2.3 Synchronized Decorators für Thread-Safety
 
 Keine Klasse sollte thread-safe sein müssen, stattdessen sollten alle Klassen synchronized Decorators bereitstellen.
 
@@ -189,6 +154,41 @@ Position position = new SimplePosition();
 ```
 
 Klassen-Funktionalität sowohl umfangreich als auch thread-safe zu gestalten, verletzt das Single Responsibility Principle.
+
+### 2.4 Composable Decorators vs. Imperative Utility Methods
+
+Betrachten wir ein Text-Interface:
+
+```java
+interface Text {
+    String read();
+}
+```
+
+**Imperativ mit Utility-Methoden (schlechtes Design):**
+
+```java
+Text text = new TextInFile(new File("/tmp/a.txt"));
+String content = text.read();
+content = StringUtils.trim(content);
+content = StringUtils.toUpperCase(content);
+content = removeUnprintable(content);
+```
+
+**Deklarativ mit Decorators (gutes Design):**
+
+```java
+final Text text = new AllCapsText(
+    new TrimmedText(
+        new PrintableText(
+            new TextInFile(new File("/tmp/a.txt"))
+        )
+    )
+);
+String content = text.read();
+```
+
+Bei der deklarativen Variante wird zuerst eine Text-Instanz durch Komposition mehrerer Decorators erstellt, ohne dass etwas ausgeführt wird. Erst wenn read() aufgerufen wird, beginnt die Verarbeitung. Dies ist ein wesentlicher Unterschied zum imperativen Stil.
 
 ### 2.5 Decorating Envelopes
 
@@ -272,7 +272,6 @@ Es scheint einen Konflikt zwischen Benutzerfreundlichkeit und Wartbarkeit zu geb
 
 Dieser Konflikt existiert jedoch nur, wenn man an große Klassen und prozedurales Programmieren gewöhnt ist. Für echte OOP-Entwickler ist eine große Anzahl kleiner Klassen ein Vorteil, kein Nachteil.
 
-
 ## 2.7 Delegation effizient gestalten: Boilerplate reduzieren
 
 Delegation ist das technische Fundament des Decorator-Patterns. Bei großen Interfaces kann die reine Weiterleitung vieler Methoden jedoch zu Boilerplate führen. Die folgenden Techniken reduzieren diesen Aufwand, ohne die Prinzipien **True Encapsulation**, **Immutability** und **Composition over Inheritance** zu kompromittieren.
@@ -291,16 +290,27 @@ public interface Document {
 
 // Zentrale Delegations-Basisklasse
 public abstract class DocumentEnvelope implements Document {
+
     protected final Document origin;
 
     protected DocumentEnvelope(final Document origin) {
         this.origin = origin;
     }
 
-    @Override public String read() { return origin.read(); }
-    @Override public void write(final String content) { origin.write(content); }
-    @Override public int pageCount() { return origin.pageCount(); }
-    @Override public void print() { origin.print(); }
+    @Override public String read() {
+        return origin.read();
+    }
+
+    @Override public void write(final String content) {
+        origin.write(content);
+    }
+    @Override public int pageCount() {
+        return origin.pageCount();
+    }
+    
+    @Override public void print() {
+        origin.print();
+    }
 }
 
 // Kleiner, fokussierter Decorator
@@ -340,7 +350,10 @@ public interface Text {
 }
 
 // Nutzung ohne neue Klassen:
-Text t = new TextInFile(Path.of("/tmp/a.txt")).trimmed().upperCased();
+Text t = new TextInFile(Path.of("/tmp/a.txt"))
+                        .trimmed()
+                        .upperCased();
+                        
 String content = t.read();
 ```
 
@@ -356,16 +369,17 @@ Häufige Decorator-Kombinationen werden in einer **Mini‑Factory**/Envelope gek
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public final class PermissionCheckedDocument extends DocumentEnvelope {
+public class PermissionCheckedDocument extends DocumentEnvelope {
 
     private final Supplier<Boolean> allowed;
 
-    public PermissionCheckedDocument(final Document origin, final Supplier<Boolean> allowed) {
+    public PermissionCheckedDocument(Document origin, Supplier<Boolean> allowed) {
         super(origin);
         this.allowed = Objects.requireNonNull(allowed);
     }
 
-    @Override public void write(final String content) {
+    @Override
+    public void write(final String content) {
         if (!allowed.get()) {
             throw new SecurityException("Write not allowed");
         }
@@ -373,15 +387,22 @@ public final class PermissionCheckedDocument extends DocumentEnvelope {
     }
 }
 
-public final class SecureLoggedDocument extends DocumentEnvelope {
-    public SecureLoggedDocument(final Document origin, final Supplier<Boolean> allowed) {
+public class SecureLoggedDocument extends DocumentEnvelope {
+
+    public SecureLoggedDocument(Document origin, Supplier<Boolean> allowed) {
         // Kombiniert Permission-Check + Logging
         super(new LoggingDocument(new PermissionCheckedDocument(origin, allowed)));
     }
 }
 
 // Verwendung:
-Document doc = new SecureLoggedDocument(new FileDocument(Path.of("doc.pdf")), () -> currentUser().canWrite());
+Document doc = new SecureLoggedDocument(
+                new FileDocument(
+                    Path.of("doc.pdf")
+                ),
+                () -> currentUser().canWrite()
+);
+
 doc.write("…");
 ```
 
@@ -400,17 +421,18 @@ public interface Text {
 }
 
 // Universeller, composabler Decorator
-public final class MappedText implements Text {
+public class MappedText implements Text {
 
-    private final Text origin;
-    private final java.util.function.Function<String, String> mapping;
+    private Text origin;
+    private Function<String, String> mapping;
 
-    public MappedText(final Text origin, final java.util.function.Function<String, String> mapping) {
+    public MappedText(Text origin, Function<String, String> mapping) {
         this.origin = origin;
         this.mapping = mapping;
     }
 
-    @Override public String read() {
+    @Override
+    public String read() {
         return mapping.apply(origin.read());
     }
 }
