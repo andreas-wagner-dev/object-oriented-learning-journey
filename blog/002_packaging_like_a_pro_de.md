@@ -10,10 +10,10 @@
 
 ---
 
-## 1. Abgrenzung
+## 1. Terminologie und Abgrenzung
 
 **Guter Code** ist nicht nur fehlerfrei, sondern auch wartbar, wiederverwendbar und vor allem **leicht verständlich**. 
-Der 🔑 **Schlüssel** dazu liegt in einer domänenorientierten Paketstruktur, die den Prinzipien des **objektorientierten Paket-Designs** (OOPD) folgt.
+Der **Schlüssel** dazu liegt in einer domänenorientierten Paketstruktur, die den Prinzipien des **objektorientierten Paket-Designs** (OOPD) folgt.
 
 In diesem Zusammenhang darf ein **Paket** nicht als ein Ordner für die Gruppierung zusammengehöriger Klassen verstanden werden, wie es bei einer *'Layered Architecture'* oft der Fall ist. 
 --> Vielmehr stellt es eine **logische, modulare Einheit** dar, die die **technische Realisierung** fachlicher Konzepte **kapselt**.
@@ -23,15 +23,29 @@ Die bekannten Vertreter wie Clean Architecture oder die oft in Domain-Driven Des
 Obwohl diese Ansätze durch die **Trennung von Aspekten in Paket-Schichten** die Wartbarkeit und Weiterentwicklung fördern sollen, bewirken sie in der Praxis oft das Gegenteil und **widersprechen dem Single Responsibility Principle (SRP)**.  
 
 Robert Bräutigam beschreibt in seinen Blog-Artikeln die Kernprobleme:
-* **Datenorientierte Abstraktionen durch Daten-Grenzen:** Die ständige Übertragung von Daten über Schichtgrenzen hinweg (``User -> UserDTO -> UserViewModel``) erzeugt unnötigen Code und lässt die ursprüngliche, fachliche Abstraktion zerfallen. Jede Schicht muss die Daten für ihren eigenen Zweck transformieren, was zu starren und wartungsaufwändigen Systemen führt.  
-* **Technische Kommunikation über die Architektur:** Eine geschichtete Architektur beschreibt die technischen Abhängigkeiten, nicht die fachlichen. Ein neuer Entwickler muss erst die gesamte Architektur verstehen, bevor er sich in die fachliche Logik einarbeiten kann.  
-* **Semantische Kopplung:** Dieser kritischste Art von Kopplung wird die oft durch Getter verursacht. Wenn ein Objekt zu viel über die internen Details (private fields) eines anderen Objekts weiß, sind beide Klassen semantisch gekoppelt. Änderungen im Detailobjekt propagieren dann unsichtbar durch die gesamte Anwendung.  
-* **Subjektive Interpretation des „Single Responsibility Principle“:** Die Definition von SRP nach Clean Architecture *"Eine Klasse sollte nur einen Grund zur Änderung haben"* ist sehr **subjektiv** und nahezu dahingedreht. Indem die Daten von der Business-Logik getrennt und über Schichtgrenzen hinweg transportiert werden, entzieht man den Objekten jegliche Verantwortung. Dies führt zu unnötigen Paket-Schichten und prozeduralem Code, der um Datentransferobjekte (DTOs) herum aufgebaut ist.
+
+**Datenorientierte Abstraktionen durch Daten-Grenzen:**  
+Die ständige Übertragung von Daten über Schichtgrenzen hinweg (``User -> UserDTO -> UserViewModel``) erzeugt unnötigen Code und lässt die ursprüngliche, fachliche Abstraktion zerfallen. Jede Schicht muss die Daten für ihren eigenen Zweck transformieren, was zu starren und wartungsaufwändigen Systemen führt.
+
+**Technische Kommunikation über die Architektur:**  
+Eine geschichtete Architektur beschreibt die technischen Abhängigkeiten, nicht die fachlichen. Ein neuer Entwickler muss erst die gesamte Architektur verstehen, bevor er sich in die fachliche Logik einarbeiten kann.  
+
+**Semantische Kopplung:**  
+Dieser kritischste Art von Kopplung wird die oft durch Getter verursacht. Wenn ein Objekt zu viel über die internen Details (private fields) eines anderen Objekts weiß, sind beide Klassen semantisch gekoppelt. Änderungen im Detailobjekt propagieren dann unsichtbar durch die gesamte Anwendung.
+
+* **Subjektive Interpretation des „Single Responsibility Principle“:**  
+
+Die Definition von SRP nach Clean Architecture:
+
+> "Eine Klasse sollte nur einen Grund zur Änderung haben"
+
+ist sehr subjektiv und oft zu weit ausgelegt. Indem die Daten von der Business-Logik getrennt und über Schichtgrenzen hinweg transportiert werden, entzieht man den Objekten jegliche Verantwortung. Dies führt zu unnötigen Paket-Schichten und prozeduralem Code, der um Datentransferobjekte (DTOs) herum aufgebaut ist.
+
 
 Robert Bräutigam definiert das **SRP** pragmatischer und objektiver durch die Prinzipien der **Kopplung (Coupling)** und **Kohäsion (Cohesion)**:
-```
-SRP = maximizing(cohesion) and minimizing(coupling).
-```
+
+> **SRP = Maximiere Kohäsion und minimiere Kopplung.**
+
 * **Kohäsion (Cohesion):** Bezieht sich auf die Abhängigkeiten innerhalb eines Objekts. Eine hohe Kohäsion bedeutet, dass Methoden (Verhalten) und Felder (Daten) eines Objekts stark aufeinander bezogen sind (physische Abhängigkeit).  
 * **Kopplung (Coupling):** Bezieht sich auf die Abhängigkeiten zwischen Objekten. Eine niedrige Kopplung minimiert, dass Änderungen in einem Objekt weitreichende Auswirkungen auf andere haben.
 
@@ -40,10 +54,29 @@ Ein **Paket** ist im Sinne des *Single Responsibility Principle* eine **logische
 * Es definiert eine **klare Schnittstelle** (API) nach außen und schützt die interne Komplexität – die Implementierungsdetails – nach innen.  
 * Man spricht hier oft von **Component-Based Design**, wo Pakete und Module direkt die **Domänenkonzepte** widerspiegeln.
 
-Die **logische Rolle** des Pakets folgt den OOD Prinzipien der **Modularität** (Modularity) und dem **Geheimnisprinzip** (Information Hiding).
+Die logische Rolle eines Pakets folgt den OOD-Prinzipien der Modularität (Modularity) und dem Geheimnisprinzip (Information Hiding).
 
-* **Kapselung der Implementierungsdetails:** Ein Modul soll die Implementierungsdetails (wie z.B. Datenbankzugriff, externe API-Aufrufe oder komplexe Algorithmen) vor der Außenwelt verbergen. Die Klassen innerhalb des Moduls arbeiten zusammen, um eine einzige, abstrakte Geschäftslogik (Business Concept) zu erfüllen.  
-* **Fokus auf Geschäftskonzepte:** Im *Idealfall* repräsentiert das Paket als Modul ein abstraktes Geschäftskonzept wie z.B.: (Bestellverwaltung) ``Orders``, (Kundenstamm) ``Customer``, **``Customerbase``** oder (Zahlungsabwicklung) ``Bill``, ``Billing`` oder externe API (Jira-Integration) ``Jira``, ``Issue`` **und nicht** eine technische Schicht wie z.B.: ``Entity``, ``Model``, ``Service``, ``Repository``, ``Controller``, ``JiraClient``, ``JiraModel``, ``JiraAdapter`` und **auch nicht** technische Schichten wie: ``Domain``, ``Application``, ``Infrastructure``, ``Presentation``.
+**Modularität:**  
+Software wird in unabhängige, klar abgegrenzte Module (Pakete) strukturiert. Jedes Paket bildet eine logische Einheit, die ein fachliches Konzept kapselt.
+
+**Geheimnisprinzip:**  
+Jedes Modul (Paket) verbirgt seine Implementierungsdetails und stellt nur eine klar definierte Schnittstelle nach außen bereit.
+
+**Kapselung der Implementierungsdetails:**  
+Ein Modul soll die Implementierungsdetails (z. B. Datenbankzugriff, externe API-Aufrufe oder komplexe Algorithmen) vor der Außenwelt verbergen. Die Klassen innerhalb des Moduls arbeiten zusammen, um eine einzige, abstrakte Geschäftslogik (Business Concept) zu erfüllen.
+
+**Fokus auf Geschäftskonzepte:**  
+Im Idealfall repräsentiert das Paket als Modul ein abstraktes Geschäftskonzept wie z. B.:
+- Bestellverwaltung (`Orders`)
+- Kundenstamm (`Customer`, `Customerbase`)
+- Zahlungsabwicklung (`Bill`, `Billing`)
+- externe API-Integration (`Jira`, `Issue`)
+
+und **nicht** eine technische Schicht wie z. B.:
+- `Entity`, `Model`, `Service`, `Repository`, `Controller`, `JiraClient`, `JiraModel`, `JiraAdapter`
+
+sowie **auch nicht** technische Schichten wie:
+- `Domain`, `Application`, `Infrastructure`, `Presentation`
 
 | Merkmal | Layered Architecture (Schichten) | Objektorientiertes Paket (Modul) |
 | :---- | :---- | :---- |
@@ -55,7 +88,7 @@ Die **logische Rolle** des Pakets folgt den OOD Prinzipien der **Modularität** 
 
 ## **2. Paket-Design Prinzipien**
 
-Die **Paket-Design-Prinzipien** (nach Robert C. Martin) helfen, ein perfekte Balance zwischen Wiederverwendbarkeit und Änderungsfreundlichkeit zu finden.
+Um eine perfekte Balance zwischen Wiederverwendbarkeit und Änderungsfreundlichkeit zu finden, helfen die **Paket-Design-Prinzipien** (nach Robert C. Martin).
 
 ### **Prinzipien für Kohäsion (Innere Organisation)**
 
@@ -86,27 +119,90 @@ Diese Prinzipien steuern die Beziehungen zwischen Paketen in einem großen Proje
 
 Wie können wir "Stabilität" und "Abstraktion" messen? Mit zwei einfachen Metriken!
 
-* **Instabilität (**I**):** Zeigt an, wie leicht sich ein Paket ändern **I = C_e / (C_a + C_e)** 
-  * **C_e:** Anzahl der ausgehenden Abhängigkeiten (Das Paket hängt von so vielen anderen Paketen ab).  
-  * **C_a:** Anzahl der eingehenden Abhängigkeiten (So viele andere Pakete hängen von diesem Paket ab).  
-  * **Interpretation:**  **I = 0** ist maximal stabil (viele hängen davon ab), **I = 1** ist maximal instabil (hängt von vielen ab, aber niemand hängt davon ab).  
-* **Abstraktheit (**A**):** Zeigt den Anteil abstrakter Klassen (Interfaces) im Paket **A = Anzahl abstrakter Klassen und Interfaces / Gesamtanzahl der Klassen im Paket**  
-  * **Interpretation:**  **A = 0** ist komplett konkret (schwer zu ändern, schwer zu erweitern), **A = 1** ist komplett abstrakt (leicht zu erweitern).
+### Instabilität (I)
+Gibt an, wie leicht sich ein Paket ändern lässt.
 
-### **Die Hauptsequenz (A-I-Plot)**
+- **Formel:**  
+  I = C_e / (C_a + C_e)
 
-Die idealen Pakete liegen auf oder nahe der **Hauptsequenz:** A + I = 1.
+- **C_e:** Anzahl der ausgehenden Abhängigkeiten  
+  *(Wie viele andere Pakete werden von diesem Paket verwendet?)*
 
-* **Ideale Lage 1**  (``Oben links``): A = 1, I = 0 (Maximal stabil und abstrakt). Das sind eure Kern-Interfaces und Frameworks.  
-* **Ideale Lage 2**  (``Unten rechts``): A = 0, I = 1 (Maximal instabil und konkret). Das sind eure konkreten Implementierungen oder Anwendungslogik, die sich häufig ändern.
+- **C_a:** Anzahl der eingehenden Abhängigkeiten  
+  *(Wie viele andere Pakete verwenden dieses Paket?)*
 
-Wenn ein Paket weit von dieser Linie entfernt ist (z. B. A = 0, I = 0 – stabil und konkret), ist es ein **Problemfall**: schwer zu ändern *und* schwer zu erweitern.
+**Interpretation:**  
+- I = 0 → maximal stabil (viele Pakete hängen davon ab, es selbst hängt von wenigen ab)
+- I = 1 → maximal instabil (hängt von vielen ab, aber niemand hängt davon ab)
+
+### Abstraktheit (A)
+Zeigt den Anteil abstrakter Klassen (Interfaces) im Paket.
+
+- **Formel:**  
+  A = Anzahl abstrakter Klassen und Interfaces / Gesamtanzahl der Klassen im Paket
+
+**Interpretation:**  
+- A = 0 → komplett konkret (schwer zu ändern, schwer zu erweitern)
+- A = 1 → komplett abstrakt (leicht zu erweitern)
+
+### Die Hauptsequenz (A-I-Plot)
+Ideale Pakete liegen auf oder nahe der Hauptsequenz:  
+A + I = 1
+
+- **Ideale Lage 1 (Oben links):**  
+  A = 1, I = 0  
+  *Maximal stabil und abstrakt (Kern-Interfaces, Frameworks)*
+
+- **Ideale Lage 2 (Unten rechts):**  
+  A = 0, I = 1  
+  *Maximal instabil und konkret (Implementierungen, die sich oft ändern)*
+
+- **Problemfall:**  
+  A = 0, I = 0  
+  *Stabil und konkret – schwer zu ändern und schwer zu erweitern.*
+
+Mit diesen Metriken kannst du die Architekturqualität eines Pakets objektiv bewerten und gezielt verbessern.
+
+### **Beispiel für Berechnung:**
+
+**Annahme**  
+Im Paket `todo` gibt es 1 Interface (`Task.java`). Im Unterpaket `task` existieren 4 konkrete Klassen:
+```
+com.example.todo/
+├── exchange/
+├── folder/
+├── task/
+│   ├── DbTask.java
+│   ├── JsonTask.java
+│   ├── NotifiedTask.java
+│   └── InMemTask.java
+├── main/
+├── Task.java
+```
+**Metriken**
+
+- **Abstraktheit (A):**
+  - 1 Interface (`Task.java`)
+  - 4 konkrete Klassen
+  - Gesamt: 5 Klassen
+  - A = 1 / 5 = 0,2
+
+- **Instabilität (I):**
+  - Das Paket `task` hängt von keinem anderen Paket ab → C_e = 0
+  - 4 andere Pakete nutzen `task` (z. B. `main`, `folder`, `exchange`, `user`) → C_a = 4
+  - I = 0 / (4 + 0) = 0 / 4 = 0
+
+- **Hauptsequenz:**  
+  A + I = 0,2 + 0 = 0,2
+
+**Interpretation:**  
+Das Paket ist konkret und maximal stabil. Es liegt deutlich unterhalb der Hauptsequenz (ideal: 1).
 
 ---
 
 ## **4. Der Weg zum Profi: Storytelling-Ansatz**
 
-Um wirklich wie ein Profi zu *packagen*, müssen wir aufhören, nur Code zu schreiben, der *funktioniert*, und anfangen, Code zu schreiben, der eine **Geschichte** erzählt. Die Fähigkeit, Information über die Fachlichkeit (Domain) effizient an den Leser zu übermitteln, kann in 5 Stufen betrachtet werden.
+Um wirklich wie ein Profi *Pakete und Code* zu strukturieren, müssen wir aufhören, nur Code zu schreiben, der *funktioniert*, und anfangen, Code zu schreiben, der eine **Geschichte** erzählt. Die Fähigkeit, Information über die Fachlichkeit (Domain) effizient an den Leser zu übermitteln, kann in 5 Stufen betrachtet werden.
 
 | Level | Fokus | Beschreibung |
 | :---- | :---- | :---- |
