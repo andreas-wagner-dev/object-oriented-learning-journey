@@ -10,12 +10,54 @@ Das Decorator-Pattern ist eines der elegantesten und mächtigsten Entwurfsmuster
 
 Ein Decorator ist eine Klasse, die ein Interface implementiert und dabei eine Instanz desselben Interfaces kapselt. Durch diese Komposition können Decorators zusätzliches Verhalten hinzufügen, ohne die ursprüngliche Implementierung zu verändern. Der größte Vorteil von Decorators liegt in ihrer Kompositionsfähigkeit - sie machen unseren Code komponierbar.
 
+Das folgende Diagramm visualisiert die Struktur und die Rollen im Decorator-Pattern. 
+```mermaid
+classDiagram
+    class Component {
+        <<interface>>
+        +operation()
+    }
+    class ConcreteComponent {
+        +operation()
+    }
+    class Decorator {
+        <<abstract>>
+        -Component component
+        +operation()
+    }
+    class ConcreteDecoratorA {
+        +operation()
+    }
+    class ConcreteDecoratorB {
+        +operation()
+    }
+
+    Component <|.. ConcreteComponent
+    Component <|.. Decorator
+    Decorator <|-- ConcreteDecoratorA
+    Decorator <|-- ConcreteDecoratorB
+    Decorator o-- Component
+```
+
+**Erklärung der Rollen:**
+
+```Component```
+* Interface oder die Basisklasse, das/die das Verhalten definiert.
+
+```ConcreteComponent```
+* Basisklasse, die das Standardverhalten implementiert.
+
+```Decorator```
+*  abstrakte Klasse, die das gleiche Interface wie Component implementiert und eine Referenz auf ein Component-Objekt hält (Delegation).
+
+```ConcreteDecoratorA``` und ```ConcreteDecoratorB```
+*  konkrete Decoratoren, die das Verhalten erweitern, indem sie Methoden überschreiben und an das „innere“ Objekt delegieren.
 
 ## 2. Praktische Beispiele
 
 ### 2.1 Vertical und Horizontal Decorating
 
-Es gibt zwei grundlegende Ansätze beim Decorating: vertikal und horizontal. 
+Es gibt zwei grundlegende Ansätze beim Decorating: **vertikal** und **horizontal**. 
 
 **Vertical Decorating:**
 
