@@ -254,66 +254,134 @@ class RsHtml implements Response {
 
 Anstatt die Komposition von Decorators überall zu wiederholen, verwendet man RsHtml. Es ist sehr praktisch, aber die Implementierung ist verbose, da alle Methodenaufrufe weitergeleitet werden müssen.
 
-### 2.6 Fluent Interfaces vs. Decorators
+### 2.6 Decorating MVC: OOP statt klassisch
+In klassischen MVC-Architekturen (Model-View-Controller) ist die Präsentationslogik von der Domänenlogik getrennt. Mit dem Decorator-Pattern kann die Präsentationslogik jedoch als Erweiterung des Modells durch Komposition realisiert werden.
 
-Fluent Interfaces wurden von Martin Fowler geprägt und sind eine sehr bequeme Art, mit Objekten zu kommunizieren. Sie machen Facades einfacher zu benutzen, ruinieren aber das interne Design und erschweren die Wartbarkeit erheblich.
+### 2.6.1 Klassisches MVC
 
-**Beispiel eines Fluent Interface:**
+**Trennung von Model und View:**  
+Das Model enthält nur die Daten und Geschäftslogik. Die View ist ein separater Layer, der das Model „beobachtet“ und dessen Daten darstellt.
+  
+**Controller:**  
+Vermittelt zwischen Model und View, nimmt Benutzereingaben entgegen und aktualisiert Model und/oder View.
+  
+**Präsentationslogik:**  
+Liegt in der View oder im Controller. Das Model weiß nichts über seine Darstellung.  
+
+**Typisch:**  
+View fragt das Model nach Daten (z. B. ```user.getName()```) und rendert sie.
+
+Beispiel (klassisch):
 
 ```java
-String html = new JdkRequest("https://www.google.com")
-    .method("GET")
-    .fetch()
-    .as(RestResponse.class)
-    .assertStatus(200)
-    .body();
+// Model
+class User {
+
+    String name;
+    String getName() { return name; }
+}
+
+// View
+class UserView {
+
+    void render(User user) {
+        System.out.println("<span>" + user.getName() + "</span>");
+    }
+
+}
+```
+### 2.6.2 MVC mit Decorator (OOP)
+
+Beispiel: Präsentations-Decorator für ein Model
+
+```java
+public interface User {
+    String name();
+}
+
+public class SimpleUser implements User {
+
+    private final String name;
+
+    public SimpleUser(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String name() {
+        return name;
+    }
+}
+
+// Decorator für HTML-Präsentation
+public class HtmlUser implements User {
+
+    private final User origin;
+
+    public HtmlUser(User origin) {
+        this.origin = origin;
+    }
+
+    @Override
+    public String name() {
+        return "<span class='user'>" + origin.name() + "</span>";
+    }
+}
+
+// Decorator für JSON-Präsentation
+public class JsonUser implements User {
+
+    private final User origin;
+
+    public JsonUser(User origin) {
+        this.origin = origin;
+    }
+
+    @Override
+    public String name() {
+        return "{\"user\": \"" + origin.name() + "\"}";
+    }
+}
 ```
 
-Dies sieht elegant aus und liest sich fast wie natürliche Sprache. Aber das interne Design leidet massiv:
-
-**Die Probleme mit Fluent Interfaces:**
-
-1. **Große, aufgeblähte Klassen**: Die `JdkRequest`-Klasse muss die Methoden `method()`, `fetch()` und viele weitere enthalten. Wenn neue Funktionalität benötigt wird, muss die Klasse immer größer werden.
-
-2. **Schwierige Erweiterbarkeit**: Jede neue Funktion bedeutet neue Methoden in bereits großen Klassen. Dies verletzt das Single Responsibility Principle massiv.
-
-3. **Wartungsprobleme**: Bei 43 Methoden (wie in Java's Stream-API) wird die Klasse zum Alptraum für Maintainer.
-
-4. **Verletzung der OOP-Prinzipien**: Fluent Interfaces führen zu schlechter Kohäsion und enger Kopplung.
-
-**Die bessere Alternative mit Decorators:**
+**Verwendung**
 
 ```java
-String html = new BodyOfResponse(
-    new ResponseAssertStatus(
-        new FetchedResponse(
-            new RequestWithMethod(
-                new JdkRequest("https://www.google.com"),
-                "GET"
-            )
-        ),
-        200
+// view
+User user = new HtmlUser(
+    // controller
+    new JsonUser(
+        // model
+        new SimpleUser("Alice")
     )
-).toString();
+);
+
+System.out.println(user.name());  // <span class='user'>{"user": "Alice"}</span>
 ```
 
-**Vorteile dieser Lösung:**
+**Auswirkungen auf Wartbarkeit**
 
-1. **Kleine, fokussierte Klassen**: Jede Klasse hat eine einzige Verantwortung
-2. **Einfache Erweiterbarkeit**: Neue Funktionalität = neue Decorator-Klasse, keine Änderung bestehender Klassen
-3. **Vereinfachtes Testing**: Kleine Klassen sind einfacher zu testen
-4. **Immutability**: Alle Klassen können unveränderlich sein
-5. **Lose Kopplung**: Decorators sind unabhängig voneinander
+- Modularität: Präsentationslogik ist sauber gekapselt. Neue Darstellungsformen (z. B. Markdown, XML) können als weitere Decorators hinzugefügt werden, ohne bestehende Klassen zu ändern.
+- Offen für Erweiterung: Das Model bleibt unverändert, Decorators können beliebig kombiniert werden.
+- Keine Vererbungshierarchie: Keine tiefen Vererbungsbäume, sondern flache, unabhängige Decorator-Klassen.
 
-Der Nachteil ist, dass IDE-Auto-Completion nicht so gut funktioniert und die Syntax weniger wie ein DSL aussieht. Aber das ist ein geringer Preis für die erheblich bessere Wartbarkeit.
+**Auswirkungen auf Teststrategie**
 
-**Der Konflikt:**
+- Isolierte Tests: Jeder Decorator kann unabhängig getestet werden. Beispielsweise kann HtmlUser mit einem Mock-User getestet werden, ohne die Implementierung von SimpleUser zu kennen.
+- Kombinatorik testbar: Die Kombination verschiedener Decorators lässt sich gezielt testen, um sicherzustellen, dass sie korrekt zusammenarbeiten.
+- Mocking unnötig: Da Decorators das Interface implementieren, können sie direkt als Testdoubles verwendet werden.
 
-Es scheint einen Konflikt zwischen Benutzerfreundlichkeit und Wartbarkeit zu geben:
-- Fluent Interfaces sind gut für Benutzer, aber schlecht für Entwickler
-- Kleine Objekte sind gut für Entwickler, aber schwieriger zu verwenden
+**Beispiel für einen Unit-Test (JUnit):**
+```java
+@Test
+void rendersHtmlUser() {
+    User user = new HtmlUser(() -> "Bob");
+    assertEquals("<span class='user'>Bob</span>", user.name());
+}
+```
 
-Dieser Konflikt existiert jedoch nur, wenn man an große Klassen und prozedurales Programmieren gewöhnt ist. Für echte OOP-Entwickler ist eine große Anzahl kleiner Klassen ein Vorteil, kein Nachteil.
+**Fazit:**  
+Mit MVC Decoration wird Präsentationslogik **modular**, **testbar** und beliebig **erweiterbar**. Die strikte Trennung von Model und View wird durch Komposition ersetzt – das erhöht die Wartbarkeit und vereinfacht die Teststrategie erheblich.
 
 ## 2.7 Delegation effizient gestalten: Boilerplate reduzieren
 
@@ -453,7 +521,7 @@ doc.write("…");
 
 ---
 
-### 2.8.4 Single‑Method‑Interfaces (SAM) ohne Reflection und Lombok
+### 2.7.4 Single‑Method‑Interfaces (SAM) ohne Reflection und Lombok
 
 Bei **Single‑Abstract‑Method** (SAM) Interfaces lässt sich Delegation extrem leichtgewichtig gestalten
 
@@ -492,16 +560,73 @@ Text t = () -> original.read().trim().toUpperCase();
 
 **Vorteil:** Minimaler Code, maximale Komposition. Ideal für *Printers statt Getters* und verhaltensorientierte APIs.
 
+### 2.8 Fluent Interfaces vs. Decorators
+
+Fluent Interfaces wurden von Martin Fowler geprägt und sind eine sehr bequeme Art, mit Objekten zu kommunizieren. Sie machen Facades einfacher zu benutzen, ruinieren aber das interne Design und erschweren die Wartbarkeit erheblich.
+
+**Beispiel eines Fluent Interface:**
+
+```java
+String html = new JdkRequest("https://www.google.com")
+    .method("GET")
+    .fetch()
+    .as(RestResponse.class)
+    .assertStatus(200)
+    .body();
+```
+
+Dies sieht elegant aus und liest sich fast wie natürliche Sprache. Aber das interne Design leidet massiv:
+
+**Die Probleme mit Fluent Interfaces:**
+
+1. **Große, aufgeblähte Klassen**: Die `JdkRequest`-Klasse muss die Methoden `method()`, `fetch()` und viele weitere enthalten. Wenn neue Funktionalität benötigt wird, muss die Klasse immer größer werden.
+2. **Schwierige Erweiterbarkeit**: Jede neue Funktion bedeutet neue Methoden in bereits großen Klassen. Dies verletzt das Single Responsibility Principle massiv.
+3. **Wartungsprobleme**: Bei 43 Methoden (wie in Java's Stream-API) wird die Klasse zum Alptraum für Maintainer.
+4. **Verletzung der OOP-Prinzipien**: Fluent Interfaces führen zu schlechter Kohäsion und enger Kopplung.
+
+**Die bessere Alternative mit Decorators:**
+
+```java
+String html = new BodyOfResponse(
+    new ResponseAssertStatus(
+        new FetchedResponse(
+            new RequestWithMethod(
+                new JdkRequest("https://www.google.com"),
+                "GET"
+            )
+        ),
+        200
+    )
+).toString();
+```
+
+**Vorteile dieser Lösung:**
+
+1. **Kleine, fokussierte Klassen**: Jede Klasse hat eine einzige Verantwortung
+2. **Einfache Erweiterbarkeit**: Neue Funktionalität = neue Decorator-Klasse, keine Änderung bestehender Klassen
+3. **Vereinfachtes Testing**: Kleine Klassen sind einfacher zu testen
+4. **Immutability**: Alle Klassen können unveränderlich sein
+5. **Lose Kopplung**: Decorators sind unabhängig voneinander
+
+Der Nachteil ist, dass IDE-Auto-Completion nicht so gut funktioniert und die Syntax weniger wie ein DSL aussieht. Aber das ist ein geringer Preis für die erheblich bessere Wartbarkeit.
+
+**Der Konflikt:**
+
+Es scheint einen Konflikt zwischen Benutzerfreundlichkeit und Wartbarkeit zu geben:
+- Fluent Interfaces sind gut für Benutzer, aber schlecht für Entwickler
+- Kleine Objekte sind gut für Entwickler, aber schwieriger zu verwenden
+
+Dieser Konflikt existiert jedoch nur, wenn man an große Klassen und prozedurales Programmieren gewöhnt ist. Für echte OOP-Entwickler ist eine große Anzahl kleiner Klassen ein Vorteil, kein Nachteil.
+
 ---
 
 **Pragmatische Checkliste**
 
-- **ISP anwenden:** Große Interfaces fachlich zerlegen (Readable/Writable/Printable …).
+- **ISP anwenden:** Große Interfaces fachlich zerlegen (```Readable/Writable/Printable``` …).
 - **Envelope‑Basisklasse:** Einmal zentral delegieren, pro Decorator nur das Delta überschreiben.
 - **Default‑Methoden:** Nur bei stabiler, semantisch korrekter Standardlogik.
 - **Mini‑Factory/Envelopes:** Wiederkehrende Ketten kapseln, kein Copy‑Paste.
 - **SAM‑Interfaces:** Für verhaltensorientierte, kleine Verträge bevorzugen.
-- **Lombok:** Optional – wenn Projektpolicy es erlaubt.
 
 ## 3. Grenzen und Nachteile des Decorator-Patterns
 
