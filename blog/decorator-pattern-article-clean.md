@@ -22,7 +22,7 @@ Betrachten wir ein Text-Interface:
 interface Text {
     String read();
 }
-```java
+```
 
 **Imperativ mit Utility-Methoden (schlechtes Design):**
 
@@ -32,7 +32,7 @@ String content = text.read();
 content = StringUtils.trim(content);
 content = StringUtils.toUpperCase(content);
 content = removeUnprintable(content);
-```java
+```
 
 **Deklarativ mit Decorators (gutes Design):**
 
@@ -45,7 +45,7 @@ final Text text = new AllCapsText(
     )
 );
 String content = text.read();
-```java
+```
 
 Bei der deklarativen Variante wird zuerst eine Text-Instanz durch Komposition mehrerer Decorators erstellt, ohne dass etwas ausgeführt wird. Erst wenn read() aufgerufen wird, beginnt die Verarbeitung. Dies ist ein wesentlicher Unterschied zum imperativen Stil.
 
@@ -65,7 +65,7 @@ Numbers numbers = new Sorted(
         )
     )
 );
-```java
+```
 
 Jeder Decorator implementiert das `Numbers`-Interface und fügt eine Funktionalität hinzu.
 
@@ -83,7 +83,7 @@ Numbers numbers = new Modified(
     new Unique(),
     new Sorted()
 );
-```java
+```
 
 Vertical Decorating ist einfacher zu implementieren und eignet sich für kleinere Objekte mit wenigen Methoden. Bei wachsender Anzahl von Decorators bietet sich ein Wechsel zu Horizontal Decorating an.
 
@@ -127,7 +127,7 @@ class NoWriteOverReport implements Report {
         this.origin.export(file);
     }
 }
-```java
+```
 
 Verwendung:
 
@@ -138,7 +138,7 @@ Report report = new NoNullReport(
     )
 );
 report.export(file);
-```java
+```
 
 Dieser Ansatz führt zu kleineren Objekten, und kleinere Objekte bedeuten höhere Wartbarkeit. Die DefaultReport-Klasse bleibt klein, unabhängig davon, wie viele Validierungen in Zukunft hinzukommen.
 
@@ -174,19 +174,19 @@ class SyncPosition implements Position {
         this.origin.increment();
     }
 }
-```java
+```
 
-Wenn Thread-Safety benötigt wird:
+**Wenn Thread-Safety benötigt wird:**
 
 ```java
 Position position = new SyncPosition(new SimplePosition());
-```java
+```
 
-Wenn nicht:
+**Wenn nicht:**
 
 ```java
 Position position = new SimplePosition();
-```java
+```
 
 Klassen-Funktionalität sowohl umfangreich als auch thread-safe zu gestalten, verletzt das Single Responsibility Principle.
 
@@ -207,62 +207,11 @@ class RsHtml implements Response {
     
     // Alle Response-Methoden werden weitergeleitet
 }
-```java
+```
 
 Anstatt die Komposition von Decorators überall zu wiederholen, verwendet man RsHtml. Es ist sehr praktisch, aber die Implementierung ist verbose, da alle Methodenaufrufe weitergeleitet werden müssen.
 
-### 2.6 Temporal Coupling vermeiden
-
-Temporal Coupling tritt zwischen sequenziellen Methodenaufrufen auf, wenn diese in einer bestimmten Reihenfolge bleiben müssen. Dies ist ein häufiges Anti-Pattern in der objektorientierten Programmierung, das die Wartbarkeit erheblich beeinträchtigt.
-
-**Schlechtes Beispiel (mit Temporal Coupling):**
-
-```java
-class Cash {
-    private int dollars;
-    
-    public void setDollars(int dlr) {
-        this.dollars = dlr;
-    }
-    
-    public void setEuro(int eur) {
-        this.dollars = eur * 1.20;
-    }
-}
-
-// Verwendung:
-Cash price = new Cash();
-price.setDollars(29);
-price.setEuro(20);  // Das zerstört den vorherigen Wert!
-```java
-
-Die Reihenfolge der Methodenaufrufe ist entscheidend. Wenn wir zuerst `setDollars()` und dann `setEuro()` aufrufen, geht der erste Wert verloren. Das ist Temporal Coupling.
-
-**Gutes Beispiel (ohne Temporal Coupling):**
-
-Die Lösung liegt in unveränderlichen Objekten (Immutability):
-
-```java
-class Cash {
-    private final int dollars;
-    
-    Cash(int dlr) {
-        this.dollars = dlr;
-    }
-    
-    public Cash euro(int eur) {
-        return new Cash(eur * 1.20);
-    }
-}
-
-// Verwendung:
-Cash five = new Cash(5);
-Cash ten = five.euro(10);
-```java
-
-Jeder Methodenaufruf erstellt ein neues Objekt, anstatt das bestehende zu modifizieren. Die ideale Methode in OOP hat nur eine einzige Anweisung, und diese Anweisung ist `return`. Noch besser wäre die Verwendung von Composable Decorators anstelle von Buildern oder Settern.
-
-### 2.7 Fluent Interfaces vs. Decorators
+### 2.6 Fluent Interfaces vs. Decorators
 
 Fluent Interfaces wurden von Martin Fowler geprägt und sind eine sehr bequeme Art, mit Objekten zu kommunizieren. Sie machen Facades einfacher zu benutzen, ruinieren aber das interne Design und erschweren die Wartbarkeit erheblich.
 
@@ -275,7 +224,7 @@ String html = new JdkRequest("https://www.google.com")
     .as(RestResponse.class)
     .assertStatus(200)
     .body();
-```java
+```
 
 Dies sieht elegant aus und liest sich fast wie natürliche Sprache. Aber das interne Design leidet massiv:
 
@@ -303,7 +252,7 @@ String html = new BodyOfResponse(
         200
     )
 ).toString();
-```java
+```
 
 **Vorteile dieser Lösung:**
 
@@ -345,7 +294,7 @@ String result = new UpperCaseText(
         )
     )
 ).read();
-```java
+```
 
 Bei zu vielen Decorators wird es schwierig, den Überblick zu behalten.
 
@@ -361,7 +310,7 @@ Text decorated = new UpperCaseText(original);
 if (decorated instanceof SimpleText) {
     // Wird nie ausgeführt
 }
-```java
+```
 
 ### 3.3 Increased Number of Classes
 
@@ -390,7 +339,7 @@ Das Object Mother Pattern ist ein Versuch, komplexe Testobjekte bereitzustellen:
 ```java
 // Object Mother Ansatz
 Invoice invoice = TestInvoices.newDeerstalkerAndCapeInvoice();
-```java
+```
 
 Das Problem: Mit der Zeit wird die Object Mother aufgebläht, unübersichtlich und schwer zu warten. Bei jeder neuen Variation muss eine neue Factory-Methode hinzugefügt werden.
 
@@ -402,7 +351,7 @@ Invoice invoice = new InvoiceBuilder()
     .withAddress("221b Baker Street")
     .withItem(new ItemBuilder().withName("Deerstalker").build())
     .build();
-```java
+```
 
 Test Data Builders machen es einfacher, Testdaten inline zu erstellen, ohne Tests brüchig zu machen oder viel Duplikation zu erzeugen. Tests sind von den Aspekten der Objektstruktur isoliert, die für den Test keine Bedeutung haben.
 
