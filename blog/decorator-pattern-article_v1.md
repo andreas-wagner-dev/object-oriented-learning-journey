@@ -211,58 +211,7 @@ class RsHtml implements Response {
 
 Anstatt die Komposition von Decorators überall zu wiederholen, verwendet man RsHtml. Es ist sehr praktisch, aber die Implementierung ist verbose, da alle Methodenaufrufe weitergeleitet werden müssen.
 
-### 2.6 Temporal Coupling vermeiden
-
-Temporal Coupling tritt zwischen sequenziellen Methodenaufrufen auf, wenn diese in einer bestimmten Reihenfolge bleiben müssen. Dies ist ein häufiges Anti-Pattern in der objektorientierten Programmierung, das die Wartbarkeit erheblich beeinträchtigt.
-
-**Schlechtes Beispiel (mit Temporal Coupling):**
-
-```java
-class Cash {
-    private int dollars;
-    
-    public void setDollars(int dlr) {
-        this.dollars = dlr;
-    }
-    
-    public void setEuro(int eur) {
-        this.dollars = eur * 1.20;
-    }
-}
-
-// Verwendung:
-Cash price = new Cash();
-price.setDollars(29);
-price.setEuro(20);  // Das zerstört den vorherigen Wert!
-```
-
-Die Reihenfolge der Methodenaufrufe ist entscheidend. Wenn wir zuerst `setDollars()` und dann `setEuro()` aufrufen, geht der erste Wert verloren. Das ist Temporal Coupling.
-
-**Gutes Beispiel (ohne Temporal Coupling):**
-
-Die Lösung liegt in unveränderlichen Objekten (Immutability):
-
-```java
-class Cash {
-    private final int dollars;
-    
-    Cash(int dlr) {
-        this.dollars = dlr;
-    }
-    
-    public Cash euro(int eur) {
-        return new Cash(eur * 1.20);
-    }
-}
-
-// Verwendung:
-Cash five = new Cash(5);
-Cash ten = five.euro(10);
-```
-
-Jeder Methodenaufruf erstellt ein neues Objekt, anstatt das bestehende zu modifizieren. Die ideale Methode in OOP hat nur eine einzige Anweisung, und diese Anweisung ist `return`. Noch besser wäre die Verwendung von Composable Decorators anstelle von Buildern oder Settern.
-
-### 2.7 Fluent Interfaces vs. Decorators
+### 2.6 Fluent Interfaces vs. Decorators
 
 Fluent Interfaces wurden von Martin Fowler geprägt und sind eine sehr bequeme Art, mit Objekten zu kommunizieren. Sie machen Facades einfacher zu benutzen, ruinieren aber das interne Design und erschweren die Wartbarkeit erheblich.
 
@@ -324,11 +273,11 @@ Es scheint einen Konflikt zwischen Benutzerfreundlichkeit und Wartbarkeit zu geb
 Dieser Konflikt existiert jedoch nur, wenn man an große Klassen und prozedurales Programmieren gewöhnt ist. Für echte OOP-Entwickler ist eine große Anzahl kleiner Klassen ein Vorteil, kein Nachteil.
 
 
-## 2.8 Delegation effizient gestalten: Boilerplate reduzieren
+## 2.7 Delegation effizient gestalten: Boilerplate reduzieren
 
 Delegation ist das technische Fundament des Decorator-Patterns. Bei großen Interfaces kann die reine Weiterleitung vieler Methoden jedoch zu Boilerplate führen. Die folgenden Techniken reduzieren diesen Aufwand, ohne die Prinzipien **True Encapsulation**, **Immutability** und **Composition over Inheritance** zu kompromittieren.
 
-### 2.8.1 Abstrakte Envelope-Basisklasse (Delegation zentralisieren)
+### 2.7.1 Abstrakte Envelope-Basisklasse (Delegation zentralisieren)
 
 Eine zentrale **Envelope**-Basisklasse implementiert das Interface vollständig und leitet alle Aufrufe an `origin` weiter. Konkrete Decorators überschreiben nur die Methoden, die sie tatsächlich verändern.
 
@@ -356,7 +305,10 @@ public abstract class DocumentEnvelope implements Document {
 
 // Kleiner, fokussierter Decorator
 public final class LoggingDocument extends DocumentEnvelope {
-    public LoggingDocument(final Document origin) { super(origin); }
+
+    public LoggingDocument(final Document origin) {
+        super(origin);
+    }
 
     @Override public void print() {
         System.out.println("print() called");
@@ -369,7 +321,7 @@ public final class LoggingDocument extends DocumentEnvelope {
 
 ---
 
-### 2.8.2 Default-Methoden im Interface (Java 8+)
+### 2.7.2 Default-Methoden im Interface (Java 8+)
 
 Wenn Standardverhalten semantisch sinnvoll ist, können **Default-Methoden** die Delegation für häufige Varianten kapseln. Der Decorator (oder das Objekt) implementiert nur die wirklich abweichenden Methoden.
 
@@ -396,7 +348,7 @@ String content = t.read();
 
 ---
 
-### 2.8.3 Mini‑Factory (Decorating Envelope) für wiederkehrende Ketten
+### 2.7.3 Mini‑Factory (Decorating Envelope) für wiederkehrende Ketten
 
 Häufige Decorator-Kombinationen werden in einer **Mini‑Factory**/Envelope gekapselt, damit die Verkabelung nicht überall wiederholt wird.
 
@@ -405,6 +357,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class PermissionCheckedDocument extends DocumentEnvelope {
+
     private final Supplier<Boolean> allowed;
 
     public PermissionCheckedDocument(final Document origin, final Supplier<Boolean> allowed) {
@@ -438,14 +391,17 @@ doc.write("…");
 
 ### 2.8.4 Single‑Method‑Interfaces (SAM) ohne Reflection und Lombok
 
-Bei **Single‑Abstract‑Method** (SAM) Interfaces lässt sich Delegation extrem leichtgewichtig gestalten – ohne Dynamic Proxies oder Lombok.
+Bei **Single‑Abstract‑Method** (SAM) Interfaces lässt sich Delegation extrem leichtgewichtig gestalten
 
 ```java
 @FunctionalInterface
-public interface Text { String read(); }
+public interface Text {
+    String read();
+}
 
 // Universeller, composabler Decorator
 public final class MappedText implements Text {
+
     private final Text origin;
     private final java.util.function.Function<String, String> mapping;
 
@@ -454,7 +410,9 @@ public final class MappedText implements Text {
         this.mapping = mapping;
     }
 
-    @Override public String read() { return mapping.apply(origin.read()); }
+    @Override public String read() {
+        return mapping.apply(origin.read());
+    }
 }
 
 // Nutzung
@@ -471,34 +429,6 @@ Text t = () -> original.read().trim().toUpperCase();
 
 ---
 
-### 2.8.5 Lombok‑gestützte Delegation (optional)
-
-Wenn Lombok im Projekt erlaubt ist, reduziert `@Delegate` die Schreibarbeit drastisch. Für einzelne Methoden kann die Delegation explizit überschrieben werden.
-
-```java
-import lombok.Delegate;
-
-public final class LombokLoggingDocument implements Document {
-    @Delegate(excludes = PrintingExclusion.class)
-    private final Document origin;
-
-    interface PrintingExclusion { void print(); }
-
-    public LombokLoggingDocument(final Document origin) {
-        this.origin = origin;
-    }
-
-    @Override public void print() {
-        System.out.println("print() called");
-        origin.print();
-    }
-}
-```
-
-**Hinweis:** Lombok erfordert einen Annotation‑Prozessor im Build. In sicherheitskritischen oder strikten Umgebungen (z. B. Code‑Reviews mit formalen Anforderungen) ist der Einsatz vorher mit dem Team abzustimmen.
-
----
-
 **Pragmatische Checkliste**
 
 - **ISP anwenden:** Große Interfaces fachlich zerlegen (Readable/Writable/Printable …).
@@ -507,9 +437,6 @@ public final class LombokLoggingDocument implements Document {
 - **Mini‑Factory/Envelopes:** Wiederkehrende Ketten kapseln, kein Copy‑Paste.
 - **SAM‑Interfaces:** Für verhaltensorientierte, kleine Verträge bevorzugen.
 - **Lombok:** Optional – wenn Projektpolicy es erlaubt.
-```
-
-# Ende der neuen Sektion
 
 ## 3. Grenzen und Nachteile des Decorator-Patterns
 
@@ -633,10 +560,7 @@ Das Decorator-Pattern ist mächtig, aber wie alle Patterns sollte es mit Bedacht
 6. **OOP Alternative to Utility Classes** (2014)  
    https://www.yegor256.com/2014/05/05/oop-alternative-to-utility-classes.html
 
-7. **Temporal Coupling Between Method Calls** (2015)  
-   https://www.yegor256.com/2015/12/08/temporal-coupling-between-method-calls.html
-
-8. **Fluent Interfaces Are Bad for Maintainability** (2018)  
+7. **Fluent Interfaces Are Bad for Maintainability** (2018)  
    https://www.yegor256.com/2018/03/13/fluent-interfaces.html
 
 ### Sekundärquellen
