@@ -887,6 +887,19 @@ Dieser Artikel basiert auf den etablierten Komponentenprinzipien von Robert C. M
 
 ---
 
+**Beispiel für Änderung "Add Priority"**
+
+| Architekturansatz         | Anzahl geänderter Dateien | Anzahl geänderter Pakete | Änderungsaufwand | Beispiel für Änderung "Add Priority" |
+|--------------------------|--------------------------|-------------------------|------------------|--------------------------------------|
+| **Layered Architecture** | 5–6                      | 4                       | Hoch             | Task (Domain), TaskDTO (Application), TaskMapper (Application), TaskService (Application), TaskController (Presentation), TaskEntity (Infrastructure) |
+| **OO Package Design**    | 1–2                      | 1                       | Niedrig          | Task.java (Interface): Add priority() method<br>SimpleTask.java / DbTask.java: Implement priority |
+
+**Ergebnis:**  
+- Layered: 6 Dateien, 4 Pakete müssen angepasst werden  
+- OO: 2 Dateien, 1 Paket muss angepasst werden  
+- **→ 70% weniger Änderungen bei OO Package Design!**
+
+
 ## 10. Anhänge
 
 ### 10.1 OO vs Layered Architecture 
