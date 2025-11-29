@@ -1,12 +1,12 @@
-# **📦Packaging like a “Pro...” 🤹‍♀️**
+# Structure your Code like a "Pro…"
 
-“with 🥉 golden Rules…”
+*"with 3 [Happy Packaging](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/) Rules…"* 
 
 1. Packages should never depend on sub-packages.  
 2. Sub-packages should not introduce new concepts, just more details.  
 3. Packages should reflect business-concepts, not technical ones.
 
-“… so that your Code tells a Customer 🛣️ Story”
+*"… so that your code tells a customer story and achieves the [next level of readability](https://www.informatik-aktuell.de/entwicklung/programmiersprachen/next-level-lesbarkeit.html).*
 
 ---
 
