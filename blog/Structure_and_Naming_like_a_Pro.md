@@ -58,10 +58,10 @@ repository/
 
 **Problem:** 
 - Objects without responsibility
-- Compound names of objects with suffixes describe the architecture patterns  
+- Compound names of objects with **suffixes** describe the architecture patterns  
 - Many transformations between packages
 - Logic scattered in Service layer
-- Technical package names (```controller```, ```service```, ```repository```)
+- Technical package names (```controller```, ```service```, ```domain```, ```repository```)
 
 **OOP without DTOs**
 
@@ -77,7 +77,7 @@ user/
 - One object, one responsibility
 - One Concept, one Name (```User.java```)
 - No transformations needed
-- Logic where it belongs -> to the Object implementation named with prefixe(s) (```DbUser.java```) 
+- Logic where it belongs, within the object's implementation, identified by a prefix (like ```DbUser.java```).
 - Domain-oriented package names (```user```)
 
 This is why and how Robert Bräutigam defines the **SRP** more pragmatically and objectively through the principles of **Coupling** and **Cohesion**:
