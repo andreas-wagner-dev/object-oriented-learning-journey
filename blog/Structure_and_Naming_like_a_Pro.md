@@ -58,7 +58,7 @@ repository/
 
 **Problem:** 
 - Objects without responsibility
-- Compound names of objects with suffixes describes the architecture patterns  
+- Compound names of objects with suffixes describe the architecture patterns  
 - Many transformations between packages
 - Logic scattered in Service layer
 - Technical package names (```controller```, ```service```, ```repository```)
@@ -92,29 +92,29 @@ A **package** in the sense of the *Single Responsibility Principle* is a **logic
 * It defines a **clear interface** (API) outwards and protects the internal complexity — the implementation details — inwards.  
 * This is often referred to as **Component-Based Design**, where packages and modules directly reflect the **domain concepts**.
 
-The logical role of a package follows the OOD principles of **Modularity** and **Information Hiding**.
+The logical role of a package should follows the OOD principles of **Modularity** and **Information Hiding**.
 
 **Modularity:**  
 Software is structured into independent, clearly defined modules (packages). Each package forms a logical unit that encapsulates a domain concept.  
 
 **Information Hiding:**  
-Each module (package) conceals its implementation details and provides only a clearly defined interface to the outside.  
+Each module (package) hide its implementation details and provides only a clearly defined interface to the outside.  
 
-**Encapsulation**
+**Encapsulation:**  
 A module (package) should hide the implementation details (e.g., ```database access```, ```external API calls```, or ```complex algorithms```) from the outside world. The classes within the module work together to fulfill a single, abstract business logic (```Business Concept```).
 
 **Focus on Business Concepts:**  
 Ideally, the **package** as a module represents an **abstract business concept**, such as:
 
-* Order management (```Orders```)  
+* Order management (```Order```)  
 * Customer master data (```Customer```, ```Customerbase```)  
-* Payment processing (```Bill```, ```Billing```)  
-* External API integration (```Jira```, ```Issue```)
+* Payment processing (```Bill```, ```Billing``` , ```Payment```)  
+* External API integration (```Jira```, ```Http```)
 
 and **not** a technical view, such as:
 * ```Entity```, ```Model```, ```Service```, ```Repository```, ```Controller```, ```JiraClient```, ```JiraModel```, ```JiraAdapter```
 as well as **not** technical layers, such as:
-* ```domain```, ```application```, ```infrastructure```, ```presentation```
+* ```Domain```, ```Application```, ```Infrastructure```, ```Presentation```
 
 | Feature | Layered Architecture (Layers) | Object-Oriented Package (Module) |
 | :---- | :---- | :---- |
@@ -150,59 +150,53 @@ These principles govern the relationships between packages in a large project.
 | **Stable Dependencies Principle (SDP)** | Dependencies should point in the direction of **stability**. | A package should only depend on packages that are more stable than itself. Stable packages are hard to change and have many incoming dependencies. |
 | **Stable Abstractions Principle (SAP)** | Stable packages should be **abstract**. Unstable packages should be **concrete**. | Stable (hard to change) packages should be easily extensible through interfaces and abstract classes (Open-Closed Principle at the package level). |
 
-## **3 Object and Methods Naming Conventions**
+## **3 Object and Methods Naming**
 
-While package structure defines the architecture, class and method naming determines clarity at the micro level. Names should reflect real-world concepts and responsibilities, not technical mechanics.
+While package structure defines the architecture, class and method naming determines clarity at the micro level. 
+* Names of classes and methods should reflect real-world concepts and responsibilities, not technical mechanics.
 
 ### **3.1 Object Naming**
 
-**Objects are Nouns:** 
-A class name should represent the entity (**thing, person, concept**) it models—not the action it performs. Name an object after **what it *is*** (e.g., ```Invoice, User, Order```), **not what it *does***.
+**Objects are Nouns:**  
+A class name should represent the entity (**thing, person, concept**) it models not the action it performs.  
+Name an object after **what it *is*** (e.g., ```Invoice```, ```User```, ```Order```), **not what it *does***.
 
-* **Bas! Names:** ```Processor, Generator, Calculator```
-* **Good! Names:** ```Report, RandomNumber, BmiMetric```
+* **Bad! Names:** ```Processor```, ```Generator```, ```Calculator```
+* **Good! Names:** ```Report```, ```RandomNumber```, ```BmiMetric```
+
+**One Concept, One Name:**  
+A domain-driven object should have a single, clear noun. If the name becomes long, it usually means the object mixes responsibilities that should be split.
+* **Compound names** like ```CustomerDataProcessor``` or ```FileContentWriter``` are a code smell.
+* **Examples of corrections:** ```UserAccountManager``` → ```User``` or ```Account```, ```DatabaseConnectionHolder``` → ```Connection```.
+
+**Avoid Functional Endings:** 
+* **Name Endings:** ```FileWriter → File```, ```DataValidator → Rule``` , ```JiraClient → Jira``` or just ```Http``` instead of ```HttpClient```.
 
 **Avoid “Utility”**:
 * **Suffixes like** ```-Manager```, ```-Controller```, ```-Helper```, ```-Util```, ```-Service```, or ```-Client``` often indicate a violation of the **Single Responsibility Principle** (SRP). They suggest that the object coordinates multiple unrelated tasks instead of owning a clear, domain-focused responsibility.
 * Also **Suffixes** such as ```-er```, ```-or```, ```-able``` often signal procedural decomposition or “naked data.”
 
-**Avoid Functional Endings:** 
-* **Name Endings:** ```FileWriter → File```, ```DataValidator → Rule``` , ```JiraClient → Jira``` or just ```Http``` instead of ```HttpClient```.
-
-**One Concept, One Name:**  
-* **Compound names** like ```CustomerDataProcessor``` or ```FileContentWriter``` are a code smell. A domain-driven object should have a single, clear noun. If the name becomes long, it usually means the object mixes responsibilities that should be split.
-* **Examples of corrections:** ```UserAccountManager``` → ```User``` or ```Account```, ```DatabaseConnectionHolder``` → ```Connection```.
-
 ### **3.2 Methods Naming**
 
-#### **3.2.1 Single Action Rule (Exclusivity)**
+#### **3.2.1 Single Action Rule (Exclusivity)**  
+Each method performs one clear, complete action related to the object itself. 
+* **Avoid:** Methods that combine multiple responsibilities, e.g., ```createAndPersistUser(User u)```.
+* **Compliant:** ```user.persist()```.
 
-**Anti-Pattern:** Methods that combine multiple responsibilities, e.g., ```createAndPersistUser(User u)```.
+#### **3.2.2 Command Naming (Mutators)**  
+Methods that change state or produce a modified object should be named as commands (imperative). 
+* **Avoid:** Using verbs like update, set, modify. Example: ```updateThePrice(NewPrice p)```.
+* **Compliant:** ```price(NewPrice p)```, ```increase(Amount a)```, ```complete()```.
 
-**Compliant:** Each method performs one clear, complete action related to the object itself.  
-**Example:** ```user.persist()```.
+#### **3.2.3 Query Naming (Accessors)**  
+Methods without side effects should be named as queries, clearly expressing their nature.
+*  **Avoid:** Using **get** or **set** as a prefix, e.g., ```getFirstName()``` or```setFirstName(String firstName)```.  
+*  **Compliant:** ```firstName()```, ```isCompleted()```, ```hasPermissions()```, ```toXml()```.
 
-#### **3.2.2 Command Naming (Mutators)**
-
-**Anti-Pattern:** Using verbs like update, set, modify. Example: updateThePrice(NewPrice p).
-
-**Compliant:** Methods that change state or produce a modified object should be named as commands (imperative). 
-**Examples:** ```price(NewPrice p)```, ```increase(Amount a)```, ```complete()```.
-
-#### **3.2.3 Query Naming (Accessors)**
-
-**Anti-Pattern:** Using get as a prefix, e.g., ```getFirstName()```.
-
-**Compliant:** Methods without side effects should be named as queries, clearly expressing their nature.  
-**Examples:** ```firstName()```, ```isCompleted()```, ```hasPermissions()```, ```toXml()```.
-
-#### **3.2.4 Method Chaining (Access to Objects)**
-
-**Anti-Pattern:** Calls like user.getGroup().getRights() (violates 4.2.3).
-
-**Compliant:** Methods returning domain objects (```value objects```, ```entities```, ```collections```) should be named after the returned object. This supports fluent APIs and encapsulation.  
-**Example**: ```user.group().rights()```. In the chain, no internal variables are exposed—each call returns a new object.
-
+#### **3.2.4 Method Chaining (Access to Objects)**  
+Methods returning domain objects (```value objects```, ```entities```, ```collections```) should be named after the returned object. This supports fluent APIs and encapsulation.
+* **Avoid:** Calls like ```user.getGroup().getRights()``` (violates 4.2.3).
+* **Compliant**: ```user.group().rights()```. In the chain, no internal variables are exposed—each call returns a new object.
 
 ## **4 Measurable Code Quality**
 
