@@ -18,7 +18,7 @@ The **demarcation** of Object-Oriented Package Design from **"Layered Architectu
 
 Robert Bräutigam describes the core problems in his blog articles:
 
-**Data-Oriented Abstractions through Data Boundaries:**  
+**Data-Oriented Abstractions through [Data Boundaries](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/):**  
 The constant transfer of data across layer boundaries (```User``` -> ```UserDTO``` -> ```UserViewModel```) creates unnecessary code and causes the original, domain-specific abstraction to disintegrate. Each layer must transform the data for its own purpose, leading to rigid and maintenance-intensive systems.
 
 **Technical Communication via Architecture:**  
@@ -195,9 +195,9 @@ Methods without side effects should be named as queries, clearly expressing thei
 *  **Compliant:** ```firstName()```, ```isCompleted()```, ```hasPermissions()```, ```toXml()```.
 
 #### **3.2.4 Method Chaining (Access to Objects)**  
-Methods returning domain objects (```value objects```, ```entities```, ```collections```) should be named after the returned object. This supports fluent APIs and encapsulation.
+Methods returning domain objects (```value objects```, ```entities```, ```collections```) should be named after the returned object. This supports encapsulation and Fluent APIs according to the [Law-of-Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/).
 * **Avoid:** Calls like ```user.getGroup().getRights()``` (violates 4.2.3).
-* **Compliant**: ```user.group().rights()```. In the chain, no internal variables are exposed—each call returns a new object.
+* **Compliant**: ```user.group().rights()```. In the chain, where no internal variables are exposed and each call returns a **new object**.
 
 ## **4 Measurable Code Quality**
 
