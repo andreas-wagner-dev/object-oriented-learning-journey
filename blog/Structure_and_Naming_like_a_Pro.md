@@ -147,9 +147,9 @@ These principles govern the relationships between packages in a large project.
 
 | Principle | Summary | Goal |
 | :---- | :---- | :---- |
-| **Acyclic Dependencies Principle (ADP)** | The dependency structure of the packages must be a Directed ```Acyclic Graph (DAG)```. | ```Cycles (circular dependencies)``` between packages are forbidden! They make releases difficult and lead to the "Morning-After-Syndrome". |
+| **Acyclic Dependencies Principle (ADP)** | The dependency structure of the packages must be a Directed ```Acyclic Graph (DAG)```. | ```Cycles (circular dependencies)``` between packages are forbidden! They make releases difficult and lead to the ["Morning-After-Syndrome"](https://stackoverflow.com/questions/45783173/acyclic-dependency-principle-how-could-component-dependency-cycles-be-reason-f). |
 | **Stable Dependencies Principle (SDP)** | Dependencies should point in the direction of **stability**. | A package should only depend on packages that are more stable than itself. Stable packages are hard to change and have many incoming dependencies. |
-| **Stable Abstractions Principle (SAP)** | Stable packages should be **abstract**. Unstable packages should be **concrete**. | Stable (hard to change) packages should be easily extensible through interfaces and abstract classes (Open-Closed Principle at the package level). |
+| **Stable Abstractions Principle (SAP)** | Stable packages should be **abstract**. Unstable packages should be **concrete**. | Stable (hard to change) packages should be easily extensible through interfaces and abstract classes (**Open-Closed Principle** at the package level). |
 
 ## **3 Object and Methods Naming**
 
@@ -170,12 +170,16 @@ A domain-driven object should have a single, clear noun. If the name becomes lon
 * **Compound names** like ```CustomerDataProcessor``` or ```FileContentWriter``` are a code smell.
 * **Examples of corrections:** ```UserAccountManager``` → ```User``` or ```Account```, ```DatabaseConnectionHolder``` → ```Connection```.
 
+**[Prefixed Maming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)**
+
+
 **Avoid Functional Endings:** 
 * **Name Endings:** ```FileWriter → File```, ```DataValidator → Rule``` , ```JiraClient → Jira``` or just ```Http``` instead of ```HttpClient```.
 
 **Avoid “Utility”**:
 * **Suffixes like** ```-Manager```, ```-Controller```, ```-Helper```, ```-Util```, ```-Service```, or ```-Client``` often indicate a violation of the **Single Responsibility Principle** (SRP). They suggest that the object coordinates multiple unrelated tasks instead of owning a clear, domain-focused responsibility.
 * Also **Suffixes** such as ```-er```, ```-or```, ```-able``` often signal procedural decomposition or “naked data.”
+
 
 ### **3.2 Methods Naming**
 
