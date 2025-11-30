@@ -113,6 +113,7 @@ Ideally, the **package** as a module represents an **abstract business concept**
 
 and **not** a technical view, such as:
 * ```Entity```, ```Model```, ```Service```, ```Repository```, ```Controller```, ```JiraClient```, ```JiraModel```, ```JiraAdapter```  
+
 as well as **not** technical layers, such as:
 * ```Domain```, ```Application```, ```Infrastructure```, ```Presentation```
 
