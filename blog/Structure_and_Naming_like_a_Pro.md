@@ -170,16 +170,19 @@ A domain-driven object should have a single, clear noun. If the name becomes lon
 * **Compound names** like ```CustomerDataProcessor``` or ```FileContentWriter``` are a code smell.
 * **Examples of corrections:** ```UserAccountManager``` → ```User``` or ```Account```, ```DatabaseConnectionHolder``` → ```Connection```.
 
-**[Prefixed Maming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)**
-
-
 **Avoid Functional Endings:** 
 * **Name Endings:** ```FileWriter → File```, ```DataValidator → Rule``` , ```JiraClient → Jira``` or just ```Http``` instead of ```HttpClient```.
 
-**Avoid “Utility”**:
+**Avoid “Utility” Suffixes:**:
 * **Suffixes like** ```-Manager```, ```-Controller```, ```-Helper```, ```-Util```, ```-Service```, or ```-Client``` often indicate a violation of the **Single Responsibility Principle** (SRP). They suggest that the object coordinates multiple unrelated tasks instead of owning a clear, domain-focused responsibility.
 * Also **Suffixes** such as ```-er```, ```-or```, ```-able``` often signal procedural decomposition or “naked data.”
 
+**Prefixed Maming**  
+According to best practices (see [Amihai Emil](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html) and [Yegor Bugayenko](https://www.yegor256.com/2020/03/03/prefixed-naming.html)), classes should start with a prefix that reflects their role or context, especially when multiple implementations exist. **For example:**
+* ```AwsInvoice``` vs. ```AzureInvoice``` (prefix indicates environment)
+* ```HttpRequest``` vs. FtpRequest``` (prefix indicates protocol)  
+
+This approach improves clarity without resorting to suffixes like Manager or Service.
 
 ### **3.2 Methods Naming**
 
