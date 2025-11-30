@@ -75,9 +75,9 @@ user/
 
 **Advantage:**
 - One object, one responsibility
-- One Concept, one Name (```User.java```) with prefixe(s) (```DbUser.java```) 
+- One Concept, one Name (```User.java```)
 - No transformations needed
-- Logic where it belongs -> to the Object
+- Logic where it belongs -> to the Object implementation named with prefixe(s) (```DbUser.java```) 
 - Domain-oriented package names (```user```)
 
 This is why and how Robert Bräutigam defines the **SRP** more pragmatically and objectively through the principles of **Coupling** and **Cohesion**:
