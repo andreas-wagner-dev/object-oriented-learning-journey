@@ -1,4 +1,4 @@
-# **Structure and Naming your Code like a "Pro..."**
+# How to Structure and Naming Code "like a Pro…"
 
 *"with 3 [Happy Packaging](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/) Rules..."*
 
