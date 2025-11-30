@@ -115,11 +115,14 @@ public class Document {
 }
 
 // Simulates the external, mutable storage (database, file, etc.)  
-public class ExternalStorage {  
-    private static final Map<Integer, String> storage = new HashMap<>(0);  
+public class ExternalStorage {
+
+    private static final Map<Integer, String> storage = new HashMap<>(0);
+  
     public static String readTitle(int id) {  
         return storage.getOrDefault(id, "Titel nicht gefunden");  
-    }  
+    }
+
     public static void writeTitle(int id, String title) {  
         storage.put(id, title);  
     }  
@@ -182,8 +185,9 @@ public class MyDocument implements Document {
 }
 
 // 4. The base implementation of the storage
-public class SimpleExternalStorage implements DocumentStorage {  
-    private static final Map<Integer, String> storage = new HashMap<>();  
+public class SimpleExternalStorage implements DocumentStorage {
+  
+    private static final Map<Integer, String> storage = new HashMap<>(0);  
     
     @Override
     public String readTitle(int id) {  
@@ -206,8 +210,9 @@ Der ```CachedDocumentStorage``` umschließt den Basisspeicher ```(SimpleExternal
 ```java
 // CachedDocumentStorage.java
 public class CachedDocumentStorage implements DocumentStorage {
+
     private final DocumentStorage origin; // The wrapped storage
-    private final Map<Integer, String> cache = new HashMap<>();
+    private final Map<Integer, String> cache = new HashMap<>(0);
 
     public CachedDocumentStorage(DocumentStorage origin) {
         this.origin = origin;
@@ -252,6 +257,7 @@ public class ObservableDocument implements Document {
 
     @Override
     public void title(String text) {
+
         // First, execute the technical logic (UI notification event)
         System.out.println("-> EVENT: Notifying all listeners about title update.");
         
@@ -344,7 +350,7 @@ graph TB
     %% 1. Immutable Domain Object 
     subgraph Model World
 
-        A["Proxy Objec (with immutable Identity)"]
+        A["Proxy Object (with immutable Identity)"]
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
 
         %% 2. The Contract and Behavior Delegation
@@ -381,7 +387,6 @@ graph TB
     end
     
     %% The Immutable Object holds the key and delegates all work to the interface.
-
 
     A -- Behavior --> B
     D -- Read Identity ID --> F
