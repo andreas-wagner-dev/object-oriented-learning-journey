@@ -156,13 +156,12 @@ public interface DocumentStorage {
 }
 
 // 3. The Immutable Proxy Object (Encapsulates only the ID)
+public class DefaultDocument implements Document {
 
-public class MyDocument implements Document {
-
-    private final DocumentStorage externalStorage;
     private final int id;
+    private final DocumentStorage externalStorage;
 
-    public MyDocument(int id, DocumentStorage storage) {  
+    public DefaultDocument(int id, DocumentStorage storage) {  
         this.id = id;  
         this.externalStorage = storage;
     }
@@ -187,7 +186,7 @@ public class MyDocument implements Document {
 // 4. The base implementation of the storage
 public class SimpleExternalStorage implements DocumentStorage {
   
-    private static final Map<Integer, String> storage = new HashMap<>(0);  
+    private final Map<Integer, String> storage = new HashMap<>(0);  
     
     @Override
     public String readTitle(int id) {  
@@ -241,11 +240,11 @@ public class CachedDocumentStorage implements DocumentStorage {
 #### **3.1.2. Horizontaler Decorator: UI-Verhalten (View-Aspekt)***
 **a) Beobachtbarkeit (Event-Auslösung):**
 ```java
-public class ObservableDocument implements Document {
+public class ObservedDocument implements Document {
 
     private final Document origin; // The wrapped domain object
 
-    public ObservableDocument(Document origin) {
+    public ObservedDocument(Document origin) {
         this.origin = origin;
     }
     
@@ -320,16 +319,16 @@ DocumentStorage dbStorage = new SimpleExternalStorage();
 DocumentStorage cachedStorage = new CachedDocumentStorage(dbStorage);
 
 // 3. The immutable Proxy Object uses the cache
-Document documentProxy = new MyDocument(50, cachedStorage); 
+Document documentProxy = new DefaultDocument(50, cachedStorage); 
 
 // 4. Horizontally add UI behavior (Observability)
-Document observableDocument = new ObservableDocument(documentProxy);
+Document observedDocument = new ObservedDocument(documentProxy);
 
 // 5. Add the final presentation layer (with UI component)
 FakeUIComponent ui = new FakeUIComponent();
-Document finalDocument = new PresentableDocument(observableDocument, ui);
+Document finalDocument = new PresentableDocument(observedDocument, ui);
 
-System.out.println("\n--- First Call: Writes to DB, Cache, and fires UI Event ---");
+System.out.println("\n--- First Call: Writes to DB, Cache, and fires UI Event to animate data ---");
 finalDocument.title("New, cached Title"); 
 
 System.out.println("\n--- Second Call: Reads from Cache (no DB access) and updates UI ---");
