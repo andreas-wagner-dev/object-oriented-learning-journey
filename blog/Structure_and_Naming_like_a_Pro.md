@@ -12,7 +12,7 @@
 
 **Good code** is not just bug-free, but also maintainable, reusable, and above all, **easy to understand**. The **key** to this lies in a domain-oriented package structure that follows the principles of **Object-Oriented *Package* Design** (OOPD).
 
-In this context, a **package** should not be understood as a folder for grouping related classes, as is often the case in a *'Layered Architecture'*. Instead, it represents a **logical, modular unit** that **encapsulates the technical realization** of domain concepts.
+In this context, a **package** should not be understood as a folder for grouping related classes, as is often the case in a *[Layered Architecture](https://javadevguy.wordpress.com/2019/01/06/reevaluating-the-layered-architecture/)*. Instead, it represents a **logical, modular unit** that **encapsulates the technical realization** of domain concepts.
 
 The **demarcation** of Object-Oriented Package Design from **"Layered Architecture"** is the crucial point. Well-known representatives like Clean Architecture or the package structures often proposed in Domain-Driven Design (DDD) organize code according to technical layers (```domain```, ```application```, ```infrastructure```, ```presentation```). Although these approaches are intended to promote maintainability and further development through the **separation of concerns into package layers**, in practice, they often achieve the opposite and **contradict the Single Responsibility Principle (SRP)**.
 
@@ -40,7 +40,7 @@ is very subjective and often too broad. By separating the data from the business
 controller/
     ├── UserController (no logic)
     │       ↓
-    └── UserDTO (data only)
+    └── UserViewModel (data only)
             ↓
 service/
     ├── UserService (procedural logic)
@@ -50,7 +50,7 @@ service/
 domain/
     ├── UserEntity (data only)
     │       ↓
-    └── UserDTO (data only)
+    └── UserDbModel (data only)
             ↓
 repository/
     └── UserRepository (no logic)
