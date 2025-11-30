@@ -112,7 +112,7 @@ Ideally, the **package** as a module represents an **abstract business concept**
 * External API integration (```Jira```, ```Http```)
 
 and **not** a technical view, such as:
-* ```Entity```, ```Model```, ```Service```, ```Repository```, ```Controller```, ```JiraClient```, ```JiraModel```, ```JiraAdapter```
+* ```Entity```, ```Model```, ```Service```, ```Repository```, ```Controller```, ```JiraClient```, ```JiraModel```, ```JiraAdapter```  
 as well as **not** technical layers, such as:
 * ```Domain```, ```Application```, ```Infrastructure```, ```Presentation```
 
@@ -207,40 +207,40 @@ How can we measure **"stability"** and **"abstraction"**? With three simple metr
 Indicates how easy it is to change a package.
 
 * **Formula:**  
-  I \= C\_e / (C\_a \+ C\_e)  
-* $C\_e$**:** Number of outgoing dependencies  
+  I = C_e / (C_a + C_e)  
+* $C_e$**:** Number of outgoing dependencies  
   *(How many other packages are used by this package?)*  
-* $C\_a$**:** Number of incoming dependencies  
+* $C_a$**:** Number of incoming dependencies  
   *(How many other packages use this package?)*
 
 **Interpretation:**
 
-* I \= 0 → maximally stable (many packages depend on it, it depends on few)  
-* I \= 1 → maximally unstable (depends on many, but nobody depends on it)
+* I = 0 → maximally stable (many packages depend on it, it depends on few)  
+* I = 1 → maximally unstable (depends on many, but nobody depends on it)
 
 ### **Abstractness (A)**
 
 Shows the proportion of abstract classes (interfaces) in the package.
 
 * **Formula:**  
-  A \= Number of abstract classes and interfaces / Total number of classes in the package
+  A = Number of abstract classes and interfaces / Total number of classes in the package
 
 **Interpretation:**
 
-* A \= 0 → completely concrete (hard to change, hard to extend)  
-* A \= 1 → completely abstract (easy to extend)
+* A = 0 → completely concrete (hard to change, hard to extend)  
+* A = 1 → completely abstract (easy to extend)
 
 ### **Distance from the Main Sequence (D)**
 
-Measures the distance of a package from the ideal balance line (Main Sequence: $A \+ I \= 1$). A smaller $D$ value indicates a better architectural quality of the package.
+Measures the distance of a package from the ideal balance line (Main Sequence: $A + I = 1$). A smaller $D$ value indicates a better architectural quality of the package.
 
 * **Formula:**  
-  D \= |A \+ I \- 1|
+  D = |A + I - 1|
 
 **Interpretation:**
 
-* D \= 0 → ideal package (perfect balance of stability and abstraction)  
-* D $\\approx$ 1 → problem case (either concrete and stable, or abstract and unstable)
+* D = 0 → ideal package (perfect balance of stability and abstraction)  
+* D $approx$ 1 → problem case (either concrete and stable, or abstract and unstable)
 
 ### **The Main Sequence (A-I Plot)**
 
@@ -249,13 +249,13 @@ Ideal packages lie on or near the main sequence:
 A + I = 1
 ```
 * Ideal Location 1 (Top left):  
-  A \= 1, I \= 0  
+  A = 1, I = 0  
   Maximally stable and abstract (core interfaces, frameworks)  
 * Ideal Location 2 (Bottom right):  
-  A \= 0, I \= 1  
+  A = 0, I = 1  
   Maximally unstable and concrete (implementations that change often)  
 * Problem Case:  
-  A \= 0, I \= 0  
+  A = 0, I = 0  
   Stable and concrete – hard to change and hard to extend.
 
 With these metrics, you can objectively evaluate the architectural quality of a package and systematically improve it.
@@ -263,7 +263,8 @@ With these metrics, you can objectively evaluate the architectural quality of a 
 ### **Example Calculation:**
 
 **Assumption**  
-In the package todo, there is 1 Interface (```Task.java```). In the subpackage task, there are 4 concrete classes:  
+In the package todo, there is 1 Interface (```Task.java```). In the subpackage task, there are 4 concrete classes:
+
 ```
 com.example.todo/  
 ├── exchange/  
@@ -276,21 +277,22 @@ com.example.todo/
 ├── main/  
 ├── Task.java
 ```
+
 **Metrics**
 
 * **Abstractness (A):**  
   * 1 Interface (Task.java)  
   * 4 concrete classes  
   * Total: 5 classes  
-  * A \= 1 / 5 \= 0.2  
+  * A = 1 / 5 = 0.2  
 * **Instability (I):**  
-  * The package task does not depend on any other package → $C\_e$ \= 0  
-  * 4 other packages use task (e.g., main, folder, exchange, user) → $C\_a$ \= 4  
-  * I \= 0 / (4 \+ 0\) \= 0 / 4 \= 0  
+  * The package task does not depend on any other package → $C_e$ = 0  
+  * 4 other packages use task (e.g., main, folder, exchange, user) → $C_a$ = 4  
+  * I = 0 / (4 + 0) = 0 / 4 = 0  
 * **Main Sequence:**  
-  A \+ I \= 0.2 \+ 0 \= 0.2  
+  A + I = 0.2 + 0 = 0.2  
 * **Distance (D):**  
-  D \= $|0.2 \+ 0 \- 1| \= 0.8$
+  D = $|0.2 + 0 - 1| = 0.8$
 
 **Interpretation:**  
 The package is concrete and maximally stable. It lies significantly below the main sequence (ideal: 1).
@@ -343,7 +345,7 @@ The entire logical feature set of the application must already be recognizable i
 * **Sub-packages** only serve to provide **more details** (```implementations```, ```specializations```) of the concepts defined in the parent package.  
 * **Consequence:** The reader does not have to dive into all sub-packages to ensure they haven't missed an important feature. They can progressively and safely work through the hierarchy.
 
-**Rule 3: Packages should reflect business concepts, not technical concepts. (Do not use technical grouping\!)**
+**Rule 3: Packages should reflect business concepts, not technical concepts. (Do not use technical grouping!)**
 
 Use the language of the domain, not that of the framework or an architectural pattern, in package names.
 
@@ -407,7 +409,7 @@ However, before the first lines of code are written, it is necessary to precisel
 ### **7.2. Implementation of the Core Logic**
 
 The heart of every application is the Root Package (com.example.todo), which serves as the stable, domain-specific API of the entire application.  
-Technical aspects such as: initialization ```app/```, configuration ```config/```, persistence ```db/```, human ```ui/``` and machine interfaces ```api/```, are implementation details and are hidden according to the motto:
+Technical aspects such as: initialization ```init/```, configuration ```config/```, persistence ```db/```, human ```ui/``` and machine interfaces ```api/```, are implementation details and are hidden according to the motto:
 
 > * “Model the problem, not the technology! …hide implementation details, like the fact that you are using MVC.”
 
@@ -422,17 +424,20 @@ Thus, **details are not mapped as separate packages**, but are hidden as concret
 com.example.todo/
 ```
 * **Content:** 3 files provide an overview, 100 % of the features are visible.
+
 ```
 com.example.todo/  
 ├── Folder.java  
 ├── Task.java  
 └── User.java
 ```
+
 **Result** for the reader: The reader now knows that the app manages (```Task```(s) in ```Folder```(s) for ```User```(s).")
 
 **Layer 1: Subpackages**
 
 * **Question:** How is it implemented?
+
 ```
 com.example.todo/  
 ├── app/  
@@ -443,7 +448,9 @@ com.example.todo/
 ├── Task.java  
 └── User.java
 ```
+
 * **Content:** 3–4 classes per concept, various implementations.
+
 ```
 ├── task/  
 │ ├── DbTask.java  
@@ -452,12 +459,14 @@ com.example.todo/
 │ └── InMemTask.java  
 ├── Task.java
 ```
-**Result for the reader:** The reader now knows that "Task has In-Memory, DB, and JSON variants."
+
+**Result for the reader:** The reader now knows that "```Task.java``` has ```InMemory...```, ```DB...```, and ```Json...``` variants of implementation as decoration."
 
 **Layer 2: Class Details**
 
 * **Question:** How does DbTask work?  
 * **Content:** SQL Queries and Connection Handling.
+
 ```java
 public final class DbTask implements Task {
 
@@ -473,7 +482,8 @@ public final class DbTask implements Task {
     // Select * From Task...  
 }
 ```
-**Result for the reader:** The reader now knows that ("DbTask speaks directly with SQL.")
+
+**Result for the reader:** The reader now knows that ("```DbTask.java``` speaks directly with SQL.")
 
 * ```app/``` - Entry point, initialization, and configuration of the entire application.
 * ```folder/``` - Database, user interfaces, and exchange via Http.  
@@ -482,7 +492,7 @@ public final class DbTask implements Task {
 
 ```mermaid
 graph TB
-    subgraph "Variante 1: Minimale technische Trennung"
+    subgraph "Variant 1: Minimal Technical Separation"
         direction TB
         
         V1_ROOT["<b>com.example.todo/</b><br/>Folder, Task, User<br/>Ca=0, Ce=4<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
@@ -493,12 +503,12 @@ graph TB
         
         V1_USER["<b>user/</b><br/>DbUser, UiUser<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.0</b><br/><b>D=0.5</b>"]
         
-        V1_APP["<b>main/</b><br/>TodoApp, Config<br/>Ca=0, Ce=4<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
+        V1_MAIN["<b>main/</b><br/>TodoApp, Config<br/>Ca=0, Ce=4<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
         
-        V1_APP --> V1_ROOT
-        V1_APP --> V1_FOLDER
-        V1_APP --> V1_TASK
-        V1_APP --> V1_USER
+        V1_MAIN --> V1_ROOT
+        V1_MAIN --> V1_FOLDER
+        V1_MAIN --> V1_TASK
+        V1_MAIN --> V1_USER
         
         V1_FOLDER --> V1_ROOT
         V1_TASK --> V1_ROOT
@@ -508,9 +518,9 @@ graph TB
         style V1_FOLDER fill:#ffd43b,color:#000
         style V1_TASK fill:#ffd43b,color:#000
         style V1_USER fill:#ffd43b,color:#000
-        style V1_APP fill:#a9e34b,color:#000
+        style V1_MAIN fill:#a9e34b,color:#000
         
-        V1_RESULT["<b>Durchschnitt D: 0.3</b><br/>Bewertung: GUT ✓<br/>Kompakt, klare Story"]
+        V1_RESULT["<b>Average D: 0.3</b><br/>Rating: GOOD ✓<br/>Compact, clear story"]
         style V1_RESULT fill:#d3f9d8,color:#000
     end
 
@@ -519,8 +529,9 @@ graph TB
 
 ### **7.2.2. Package Structure: Variant 2**
 
-A **more differentiated separation** of **technical aspects** as packages tends to **negatively** affect readability, see Variant 2
+A **more differentiated separation** of **technical aspects** as packages tends to **negatively** affect readability, see Variant 2.
 
+```
 com.example.todo/  
 ├── alert/  
 ├── exchange/  
@@ -532,65 +543,69 @@ com.example.todo/
 ├── Folder.java  
 ├── Task.java  
 └── User.java
+```
 
-* folder/, task/, user/ \- concrete realizations, e.g., for communication with the **real** database.  
-* alert/ \- automatic notification upon certain events.  
-* human/ \- user interfaces with graphical controls.  
-* exchange/ \- exchange via Http.  
-* main/ \- entry point for initialization and configuration of the entire application.
+* ```folder/```, ```task/```, ```user/``` - concrete realizations, e.g., for communication with the **real** database.  
+* ```alert/``` - automatic notification upon certain events.  
+* ```human/``` - user interfaces with graphical controls.  
+* ```exchange/``` - exchange via Http.  
+* ```main/``` - entry point for initialization and configuration of the entire application.
 
-graph TB      
-    subgraph "Variant 2: Differentiated Technical Separation"  
-        direction TB  
-          
-        V2\_ROOT\["\<b\>com.example.todo/\</b\>\<br/\>Folder, Task, User\<br/\>Ca=0, Ce=7\<br/\>\<b\>I=1.0, A=1.0\</b\>\<br/\>\<b\>D=0.0 ✓\</b\>"\]  
-          
-        V2\_ALERT\["\<b\>alert/\</b\>\<br/\>EmailNotifier\<br/\>Ca=1, Ce=1\<br/\>\<b\>I=0.5, A=0.0\</b\>\<br/\>\<b\>D=0.5\</b\>"\]  
-          
-        V2\_EXCHANGE\["\<b\>exchange/\</b\>\<br/\>HttpApi\<br/\>Ca=1, Ce=1\<br/\>\<b\>I=0.5, A=0.0\</b\>\<br/\>\<b\>D=0.5\</b\>"\]  
-          
-        V2\_FOLDER\["\<b\>folder/\</b\>\<br/\>DbFolder\<br/\>Ca=2, Ce=1\<br/\>\<b\>I=0.33, A=0.0\</b\>\<br/\>\<b\>D=0.67 ⚠\</b\>"\]  
-          
-        V2\_HUMAN\["\<b\>human/\</b\>\<br/\>UiFolders, UiTasks\<br/\>Ca=1, Ce=3\<br/\>\<b\>I=0.75, A=0.0\</b\>\<br/\>\<b\>D=0.25\</b\>"\]  
-          
-        V2\_TASK\["\<b\>task/\</b\>\<br/\>DbTask\<br/\>Ca=2, Ce=1\<br/\>\<b\>I=0.33, A=0.0\</b\>\<br/\>\<b\>D=0.67 ⚠\</b\>"\]  
-          
-        V2\_USER\["\<b\>user/\</b\>\<br/\>DbUser\<br/\>Ca=2, Ce=1\<br/\>\<b\>I=0.33, A=0.0\</b\>\<br/\>\<b\>D=0.67 ⚠\</b\>"\]  
-          
-        V2\_MAIN\["\<b\>main/\</b\>\<br/\>TodoApp\<br/\>Ca=0, Ce=7\<br/\>\<b\>I=1.0, A=0.0\</b\>\<br/\>\<b\>D=0.0 ✓\</b\>"\]  
-          
-        V2\_MAIN \--\> V2\_ROOT  
-        V2\_MAIN \--\> V2\_ALERT  
-        V2\_MAIN \--\> V2\_EXCHANGE  
-        V2\_MAIN \--\> V2\_FOLDER  
-        V2\_MAIN \--\> V2\_HUMAN  
-        V2\_MAIN \--\> V2\_TASK  
-        V2\_MAIN \--\> V2\_USER  
-          
-        V2\_ALERT \--\> V2\_USER  
-        V2\_EXCHANGE \--\> V2\_ROOT  
-        V2\_HUMAN \--\> V2\_ROOT  
-        V2\_FOLDER \--\> V2\_ROOT  
-        V2\_TASK \--\> V2\_ROOT  
-        V2\_USER \--\> V2\_ROOT  
-          
-        style V2\_ROOT fill:\#51cf66,stroke:\#2b8a3e,stroke-width:3px,color:\#000  
-        style V2\_ALERT fill:\#ffd43b,color:\#000  
-        style V2\_EXCHANGE fill:\#ffd43b,color:\#000  
-        style V2\_FOLDER fill:\#ff922b,color:\#000  
-        style V2\_HUMAN fill:\#a9e34b,color:\#000  
-        style V2\_TASK fill:\#ff922b,color:\#000  
-        style V2\_USER fill:\#ff922b,color:\#000  
-        style V2\_MAIN fill:\#a9e34b,color:\#000  
-          
-        V2\_RESULT\["\<b\>Average D: 0.42\</b\>\<br/\>Rating: ACCEPTABLE\<br/\>More packages, weaker cohesion"\]  
-        style V2\_RESULT fill:\#fff9db,color:\#000  
+```mermaid
+graph TB    
+    subgraph "Variant 2: Differentiated Technical Separation"
+        direction TB
+        
+        V2_ROOT["<b>com.example.todo/</b><br/>Folder, Task, User<br/>Ca=0, Ce=7<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
+        
+        V2_ALERT["<b>alert/</b><br/>EmailNotifier<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.0</b><br/><b>D=0.5</b>"]
+        
+        V2_EXCHANGE["<b>exchange/</b><br/>HttpApi<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.0</b><br/><b>D=0.5</b>"]
+        
+        V2_FOLDER["<b>folder/</b><br/>DbFolder<br/>Ca=2, Ce=1<br/><b>I=0.33, A=0.0</b><br/><b>D=0.67 ⚠</b>"]
+        
+        V2_HUMAN["<b>human/</b><br/>UiFolders, UiTasks<br/>Ca=1, Ce=3<br/><b>I=0.75, A=0.0</b><br/><b>D=0.25</b>"]
+        
+        V2_TASK["<b>task/</b><br/>DbTask<br/>Ca=2, Ce=1<br/><b>I=0.33, A=0.0</b><br/><b>D=0.67 ⚠</b>"]
+        
+        V2_USER["<b>user/</b><br/>DbUser<br/>Ca=2, Ce=1<br/><b>I=0.33, A=0.0</b><br/><b>D=0.67 ⚠</b>"]
+        
+        V2_MAIN["<b>main/</b><br/>TodoApp<br/>Ca=0, Ce=7<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
+        
+        V2_MAIN --> V2_ROOT
+        V2_MAIN --> V2_ALERT
+        V2_MAIN --> V2_EXCHANGE
+        V2_MAIN --> V2_FOLDER
+        V2_MAIN --> V2_HUMAN
+        V2_MAIN --> V2_TASK
+        V2_MAIN --> V2_USER
+        
+        V2_ALERT --> V2_USER
+        V2_EXCHANGE --> V2_ROOT
+        V2_HUMAN --> V2_ROOT
+        V2_FOLDER --> V2_ROOT
+        V2_TASK --> V2_ROOT
+        V2_USER --> V2_ROOT
+        
+        style V2_ROOT fill:#51cf66,stroke:#2b8a3e,stroke-width:3px,color:#000
+        style V2_ALERT fill:#ffd43b,color:#000
+        style V2_EXCHANGE fill:#ffd43b,color:#000
+        style V2_FOLDER fill:#ff922b,color:#000
+        style V2_HUMAN fill:#a9e34b,color:#000
+        style V2_TASK fill:#ff922b,color:#000
+        style V2_USER fill:#ff922b,color:#000
+        style V2_MAIN fill:#a9e34b,color:#000
+        
+        V2_RESULT["<b>Average D: 0.42</b><br/>Rating: ACCEPTABLE<br/>More packages, weaker cohesion"]
+        style V2_RESULT fill:#fff9db,color:#000
     end
+```
 
 ### **7.2.3. Package Structure: Variant 3**
 
-A more differentiated separation (**Decomposition**) of the domain aspects as packages tends to **positively** affect readability, see Variant 3 (e.g., through **Decomposition of** User aspects UI and Person becomes Person and User \= UI)
+A more differentiated separation (**Decomposition**) of the domain aspects as packages tends to **positively** affect readability, see Variant 3 (e.g., through **Decomposition of** User aspects UI and Person becomes Person and User = UI)
 
+```
 com.example.todo/  
 ├── folder/  
 ├── person/  
@@ -601,56 +616,60 @@ com.example.todo/
 ├── Task.java  
 ├── Person.java  
 └── User.java
+```
 
-* folder/ \- Database, user interfaces, and exchange via Http.  
-* task/ \- Database, user interfaces, and exchange via Http.  
-* person/ \- Database, user interfaces, exchange via Http.  
-* user/ \- User interfaces, exchange via Http, email sending, and authorization.  
-* main/ \- Entry point for initialization and configuration of the entire application.
+* ```folder/``` - Database, user interfaces, and exchange via Http.  
+* ```task/``` - Database, user interfaces, and exchange via Http.  
+* ```person/``` - Database, user interfaces, exchange via Http.  
+* ```user/``` - User interfaces, exchange via Http, email sending, and authorization.  
+* ```main/``` - Entry point for initialization and configuration of the entire application.
 
-graph TB      
-    subgraph "Variant 3: Domain Decomposition"  
-        direction TB  
-          
-        V3\_ROOT\["\<b\>com.example.todo/\</b\>\<br/\>Folder, Task, Person, User\<br/\>Ca=0, Ce=5\<br/\>\<b\>I=1.0, A=1.0\</b\>\<br/\>\<b\>D=0.0 ✓\</b\>"\]  
-          
-        V3\_FOLDER\["\<b\>folder/\</b\>\<br/\>DbFolder, UiFolder\<br/\>Ca=1, Ce=1\<br/\>\<b\>I=0.5, A=0.0\</b\>\<br/\>\<b\>D=0.5\</b\>"\]  
-          
-        V3\_PERSON\["\<b\>person/\</b\>\<br/\>DbPerson, ApiPerson\<br/\>Ca=2, Ce=1\<br/\>\<b\>I=0.33, A=0.0\</b\>\<br/\>\<b\>D=0.67 ⚠\</b\>"\]  
-          
-        V3\_TASK\["\<b\>task/\</b\>\<br/\>DbTask, UiTask\<br/\>Ca=1, Ce=1\<br/\>\<b\>I=0.5, A=0.0\</b\>\<br/\>\<b\>D=0.5\</b\>"\]  
-          
-        V3\_USER\["\<b\>user/\</b\>\<br/\>UiUser, ApiUser\<br/\>Ca=1, Ce=2\<br/\>\<b\>I=0.67, A=0.0\</b\>\<br/\>\<b\>D=0.33\</b\>"\]  
-          
-        V3\_MAIN\["\<b\>main/\</b\>\<br/\>TodoApp\<br/\>Ca=0, Ce=5\<br/\>\<b\>I=1.0, A=0.0\</b\>\<br/\>\<b\>D=0.0 ✓\</b\>"\]  
-          
-        V3\_MAIN \--\> V3\_ROOT  
-        V3\_MAIN \--\> V3\_FOLDER  
-        V3\_MAIN \--\> V3\_PERSON  
-        V3\_MAIN \--\> V3\_TASK  
-        V3\_MAIN \--\> V3\_USER  
-          
-        V3\_FOLDER \--\> V3\_ROOT  
-        V3\_PERSON \--\> V3\_ROOT  
-        V3\_TASK \--\> V3\_ROOT  
-        V3\_USER \--\> V3\_ROOT  
-        V3\_USER \--\> V3\_PERSON  
-          
-        style V3\_ROOT fill:\#51cf66,stroke:\#2b8a3e,stroke-width:3px,color:\#000  
-        style V3\_FOLDER fill:\#ffd43b,color:\#000  
-        style V3\_PERSON fill:\#ff922b,color:\#000  
-        style V3\_TASK fill:\#ffd43b,color:\#000  
-        style V3\_USER fill:\#a9e34b,color:\#000  
-        style V3\_MAIN fill:\#a9e34b,color:\#000  
-          
-        V3\_RESULT\["\<b\>Average D: 0.38\</b\>\<br/\>Rating: GOOD ✓\<br/\>Better domain separation"\]  
-        style V3\_RESULT fill:\#d3f9d8,color:\#000  
+```mermaid
+graph TB    
+    subgraph "Variant 3: Domain Decomposition"
+        direction TB
+        
+        V3_ROOT["<b>com.example.todo/</b><br/>Folder, Task, Person, User<br/>Ca=0, Ce=5<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
+        
+        V3_FOLDER["<b>folder/</b><br/>DbFolder, UiFolder<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.0</b><br/><b>D=0.5</b>"]
+        
+        V3_PERSON["<b>person/</b><br/>DbPerson, ApiPerson<br/>Ca=2, Ce=1<br/><b>I=0.33, A=0.0</b><br/><b>D=0.67 ⚠</b>"]
+        
+        V3_TASK["<b>task/</b><br/>DbTask, UiTask<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.0</b><br/><b>D=0.5</b>"]
+        
+        V3_USER["<b>user/</b><br/>UiUser, ApiUser<br/>Ca=1, Ce=2<br/><b>I=0.67, A=0.0</b><br/><b>D=0.33</b>"]
+        
+        V3_MAIN["<b>main/</b><br/>TodoApp<br/>Ca=0, Ce=5<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
+        
+        V3_MAIN --> V3_ROOT
+        V3_MAIN --> V3_FOLDER
+        V3_MAIN --> V3_PERSON
+        V3_MAIN --> V3_TASK
+        V3_MAIN --> V3_USER
+        
+        V3_FOLDER --> V3_ROOT
+        V3_PERSON --> V3_ROOT
+        V3_TASK --> V3_ROOT
+        V3_USER --> V3_ROOT
+        V3_USER --> V3_PERSON
+        
+        style V3_ROOT fill:#51cf66,stroke:#2b8a3e,stroke-width:3px,color:#000
+        style V3_FOLDER fill:#ffd43b,color:#000
+        style V3_PERSON fill:#ff922b,color:#000
+        style V3_TASK fill:#ffd43b,color:#000
+        style V3_USER fill:#a9e34b,color:#000
+        style V3_MAIN fill:#a9e34b,color:#000
+        
+        V3_RESULT["<b>Average D: 0.38</b><br/>Rating: GOOD ✓<br/>Better domain separation"]
+        style V3_RESULT fill:#d3f9d8,color:#000
     end
+```
 
 ### **7.2.4. Package Structure: Variant 4**
 
-A **data-oriented separation** of the **technical** aspects as packages now definitely **negatively** affects readability, see Variant 4 and compare with package structures of Variants 1, 2, and 3
+A **data-oriented separation** of the **technical** aspects as packages now definitely **negatively** affects readability, see Variant 4 and compare with package structures of Variants 1, 2, and 3.
 
+```
 com.example.todos/  
 ├── browser/ (All details for graphical controls)  
 ├── expose/ (All details for exchange via Http)  
@@ -660,57 +679,60 @@ com.example.todos/
 ├── Folder.java  
 ├── Task.java  
 └── User.java
+```
 
-* storage/ \- all realizations for communication with the real database  
-* email/ \- all helper classes for communication with email server  
-* browser/ \- all user interfaces with graphical controls.  
-* expose/ \- exchange of all resources via Http  
-* setup/ \- entry point for initialization and configuration of the entire application.
+* ```storage/``` - all realizations for communication with the real database  
+* ```email/``` - all helper classes for communication with email server  
+* ```browser/``` - all user interfaces with graphical controls.  
+* ```expose/``` - exchange of all resources via Http  
+* ```setup/``` - entry point for initialization and configuration of the entire application.
 
-graph TB  
-    subgraph "Variant 4: Data-Oriented (ANTI-PATTERN)"  
-        direction TB  
-          
-        V4\_ROOT\["\<b\>com.example.todos/\</b\>\<br/\>Folder, Task, User\<br/\>Ca=0, Ce=4\<br/\>\<b\>I=1.0, A=1.0\</b\>\<br/\>\<b\>D=0.0 ✓\</b\>"\]  
-          
-        V4\_BROWSER\["\<b\>browser/\</b\>\<br/\>AllUiComponents\<br/\>Ca=1, Ce=3\<br/\>\<b\>I=0.75, A=0.0\</b\>\<br/\>\<b\>D=0.25\</b\>"\]  
-          
-        V4\_EXPOSE\["\<b\>expose/\</b\>\<br/\>AllApiResources\<br/\>Ca=1, Ce=3\<br/\>\<b\>I=0.75, A=0.0\</b\>\<br/\>\<b\>D=0.25\</b\>"\]  
-          
-        V4\_EMAIL\["\<b\>email/\</b\>\<br/\>SmtpClient\<br/\>Ca=1, Ce=1\<br/\>\<b\>I=0.5, A=0.0\</b\>\<br/\>\<b\>D=0.5\</b\>"\]  
-          
-        V4\_STORAGE\["\<b\>storage/\</b\>\<br/\>AllDbClasses\<br/\>Ca=3, Ce=3\<br/\>\<b\>I=0.5, A=0.0\</b\>\<br/\>\<b\>D=0.5\</b\>"\]  
-          
-        V4\_SETUP\["\<b\>setup/\</b\>\<br/\>TodoApp\<br/\>Ca=0, Ce=5\<br/\>\<b\>I=1.0, A=0.0\</b\>\<br/\>\<b\>D=0.0 ✓\</b\>"\]  
-          
-        V4\_SETUP \--\> V4\_ROOT  
-        V4\_SETUP \--\> V4\_BROWSER  
-        V4\_SETUP \--\> V4\_EXPOSE  
-        V4\_SETUP \--\> V4\_EMAIL  
-        V4\_SETUP \--\> V4\_STORAGE  
-          
-        V4\_BROWSER \--\> V4\_ROOT  
-        V4\_BROWSER \--\> V4\_STORAGE  
-        V4\_EXPOSE \--\> V4\_ROOT  
-        V4\_EXPOSE \--\> V4\_STORAGE  
-        V4\_EMAIL \--\> V4\_STORAGE  
-        V4\_STORAGE \--\> V4\_ROOT  
-          
-        style V4\_ROOT fill:\#51cf66,stroke:\#2b8a3e,stroke-width:3px,color:\#000  
-        style V4\_BROWSER fill:\#ffd43b,color:\#000  
-        style V4\_EXPOSE fill:\#ffd43b,color:\#000  
-        style V4\_EMAIL fill:\#ffd43b,color:\#000  
-        style V4\_STORAGE fill:\#ffd43b,color:\#000  
-        style V4\_SETUP fill:\#a9e34b,color:\#000  
-          
-        V4\_RESULT\["\<b\>Average D: 0.35\</b\>\<br/\>Rating: POOR ✗\<br/\>Technical Grouping,\<br/\>high semantic coupling"\]  
-        style V4\_RESULT fill:\#ffe3e3,color:\#000  
+```mermaid
+graph TB
+    subgraph "Variant 4: Data-Oriented (ANTI-PATTERN)"
+        direction TB
+        
+        V4_ROOT["<b>com.example.todos/</b><br/>Folder, Task, User<br/>Ca=0, Ce=4<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
+        
+        V4_BROWSER["<b>browser/</b><br/>AllUiComponents<br/>Ca=1, Ce=3<br/><b>I=0.75, A=0.0</b><br/><b>D=0.25</b>"]
+        
+        V4_EXPOSE["<b>expose/</b><br/>AllApiResources<br/>Ca=1, Ce=3<br/><b>I=0.75, A=0.0</b><br/><b>D=0.25</b>"]
+        
+        V4_EMAIL["<b>email/</b><br/>SmtpClient<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.0</b><br/><b>D=0.5</b>"]
+        
+        V4_STORAGE["<b>storage/</b><br/>AllDbClasses<br/>Ca=3, Ce=3<br/><b>I=0.5, A=0.0</b><br/><b>D=0.5</b>"]
+        
+        V4_SETUP["<b>setup/</b><br/>TodoApp<br/>Ca=0, Ce=5<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
+        
+        V4_SETUP --> V4_ROOT
+        V4_SETUP --> V4_BROWSER
+        V4_SETUP --> V4_EXPOSE
+        V4_SETUP --> V4_EMAIL
+        V4_SETUP --> V4_STORAGE
+        
+        V4_BROWSER --> V4_ROOT
+        V4_BROWSER --> V4_STORAGE
+        V4_EXPOSE --> V4_ROOT
+        V4_EXPOSE --> V4_STORAGE
+        V4_EMAIL --> V4_STORAGE
+        V4_STORAGE --> V4_ROOT
+        
+        style V4_ROOT fill:#51cf66,stroke:#2b8a3e,stroke-width:3px,color:#000
+        style V4_BROWSER fill:#ffd43b,color:#000
+        style V4_EXPOSE fill:#ffd43b,color:#000
+        style V4_EMAIL fill:#ffd43b,color:#000
+        style V4_STORAGE fill:#ffd43b,color:#000
+        style V4_SETUP fill:#a9e34b,color:#000
+        
+        V4_RESULT["<b>Average D: 0.35</b><br/>Rating: POOR ✗<br/>Technical Grouping,<br/>high semantic coupling"]
+        style V4_RESULT fill:#ffe3e3,color:#000
     end
-
+```
+    
 ### **7.2.5. Package Structure: Variant 5**
 
 An **abstraction-oriented separation** of the domain and technical aspects as packages can rather **positively** affect readability, see Variant 5
-
+```
 com.example.todo/  
 ├── app/  
 ├── exchange/  
@@ -760,87 +782,91 @@ com.example.todo/
 ├── Person.java  
 ├── Task.java  
 └── User.java
+```
 
 The inevitable technical aspects to be realized, such as initialization, integration of configuration, UI, persistence, and API interfaces, are also mapped as an abstraction in the root package to maximize readability and maintainability.
 
-* **App** \- **abstracts** the application itself. \- Entry point, init... and config... of the **entire** application.  
-* **Db** \- **abstracts** persistence in the application. \- Communication with the real database.  
-* **User** \- **abstracts** user-specific controls and layout elements.  
-* **Resource** \- **abstracts** the exchange of **resources**.  
-* **Message** \- **abstracts** the optional functionality for notifications.
+* **App** - **abstracts** the application itself. - Entry point, init... and config... of the **entire** application.  
+* **Db** - **abstracts** persistence in the application. - Communication with the real database.  
+* **User** - **abstracts** user-specific controls and layout elements.  
+* **Resource** - **abstracts** the exchange of **resources**.  
+* **Message** - **abstracts** the optional functionality for notifications.
 
-graph TB  
-    subgraph "Variant 5: Abstraction-Oriented"  
-        direction TB  
-          
-        V5\_ROOT\["\<b\>com.example.todo/\</b\>\<br/\>App, Db, Folder, Person,\<br/\>Task, User, Resource\<br/\>Ca=0, Ce=7\<br/\>\<b\>I=1.0, A=1.0\</b\>\<br/\>\<b\>D=0.0 ✓\</b\>"\]  
-          
-        V5\_APP\["\<b\>app/\</b\>\<br/\>TodoApp, WebApp\<br/\>Ca=0, Ce=7\<br/\>\<b\>I=1.0, A=0.33\</b\>\<br/\>\<b\>D=0.33\</b\>"\]  
-          
-        V5\_RESOURCE\["\<b\>resource/\</b\>\<br/\>+ 4 Subpackages\<br/\>Ca=1, Ce=1\<br/\>\<b\>I=0.5, A=0.67\</b\>\<br/\>\<b\>D=0.17 ✓\</b\>"\]  
-          
-        V5\_PERSON\["\<b\>person/\</b\>\<br/\>DbPerson, JsonPerson\<br/\>Ca=3, Ce=1\<br/\>\<b\>I=0.25, A=0.0\</b\>\<br/\>\<b\>D=0.75 ⚠\</b\>"\]  
-          
-        V5\_FOLDER\["\<b\>folder/\</b\>\<br/\>DbFolder, JsonFolder\<br/\>Ca=2, Ce=1\<br/\>\<b\>I=0.33, A=0.0\</b\>\<br/\>\<b\>D=0.67 ⚠\</b\>"\]  
-          
-        V5\_TASK\["\<b\>task/\</b\>\<br/\>DbTask, JsonTask\<br/\>Ca=2, Ce=1\<br/\>\<b\>I=0.33, A=0.0\</b\>\<br/\>\<b\>D=0.67 ⚠\</b\>"\]  
-          
-        V5\_USER\["\<b\>user/\</b\>\<br/\>+ 3 Subpackages\<br/\>Ca=1, Ce=2\<br/\>\<b\>I=0.67, A=0.67\</b\>\<br/\>\<b\>D=0.34\</b\>"\]  
-          
-        V5\_MAIN\["\<b\>main/\</b\>\<br/\>TodoApp\<br/\>Ca=0, Ce=5\<br/\>\<b\>I=1.0, A=0.0\</b\>\<br/\>\<b\>D=0.0 ✓\</b\>"\]  
-          
-        V5\_MAIN \--\> V5\_ROOT  
-        V5\_MAIN \--\> V5\_RESOURCE  
-        V5\_MAIN \--\> V5\_PERSON  
-        V5\_MAIN \--\> V5\_FOLDER  
-        V5\_MAIN \--\> V5\_TASK  
-        V5\_MAIN \--\> V5\_USER  
-          
-        V5\_RESOURCE \--\> V5\_ROOT  
-        V5\_PERSON \--\> V5\_ROOT  
-        V5\_FOLDER \--\> V5\_ROOT  
-        V5\_TASK \--\> V5\_ROOT  
-        V5\_USER \--\> V5\_ROOT  
-        V5\_USER \--\> V5\_PERSON  
-          
-        style V5\_ROOT fill:\#51cf66,stroke:\#2b8a3e,stroke-width:3px,color:\#000  
-        style V5\_APP fill:\#a9e34b,color:\#000  
-        style V5\_RESOURCE fill:\#51cf66,color:\#000  
-        style V5\_PERSON fill:\#ff922b,color:\#000  
-        style V5\_FOLDER fill:\#ff922b,color:\#000  
-        style V5\_TASK fill:\#ff922b,color:\#000  
-        style V5\_USER fill:\#a9e34b,color:\#000  
-          
-        V5\_RESULT\["\<b\>Average D: 0.42\</b\>\<br/\>Rating: GOOD ✓\<br/\>High abstraction,\<br/\>best extensibility"\]  
-        style V5\_RESULT fill:\#d3f9d8,color:\#000  
+```mermaid
+graph TB
+    subgraph "Variant 5: Abstraction-Oriented"
+        direction TB
+        
+        V5_ROOT["<b>com.example.todo/</b><br/>App, Db, Folder, Person,<br/>Task, User, Resource<br/>Ca=0, Ce=7<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
+        
+        V5_APP["<b>app/</b><br/>TodoApp, WebApp<br/>Ca=0, Ce=7<br/><b>I=1.0, A=0.33</b><br/><b>D=0.33</b>"]
+        
+        V5_RESOURCE["<b>resource/</b><br/>+ 4 Subpackages<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.67</b><br/><b>D=0.17 ✓</b>"]
+        
+        V5_PERSON["<b>person/</b><br/>DbPerson, JsonPerson<br/>Ca=3, Ce=1<br/><b>I=0.25, A=0.0</b><br/><b>D=0.75 ⚠</b>"]
+        
+        V5_FOLDER["<b>folder/</b><br/>DbFolder, JsonFolder<br/>Ca=2, Ce=1<br/><b>I=0.33, A=0.0</b><br/><b>D=0.67 ⚠</b>"]
+        
+        V5_TASK["<b>task/</b><br/>DbTask, JsonTask<br/>Ca=2, Ce=1<br/><b>I=0.33, A=0.0</b><br/><b>D=0.67 ⚠</b>"]
+        
+        V5_USER["<b>user/</b><br/>+ 3 Subpackages<br/>Ca=1, Ce=2<br/><b>I=0.67, A=0.67</b><br/><b>D=0.34</b>"]
+        
+        V5_MAIN["<b>main/</b><br/>TodoApp<br/>Ca=0, Ce=5<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
+        
+        V5_MAIN --> V5_ROOT
+        V5_MAIN --> V5_RESOURCE
+        V5_MAIN --> V5_PERSON
+        V5_MAIN --> V5_FOLDER
+        V5_MAIN --> V5_TASK
+        V5_MAIN --> V5_USER
+        
+        V5_RESOURCE --> V5_ROOT
+        V5_PERSON --> V5_ROOT
+        V5_FOLDER --> V5_ROOT
+        V5_TASK --> V5_ROOT
+        V5_USER --> V5_ROOT
+        V5_USER --> V5_PERSON
+        
+        style V5_ROOT fill:#51cf66,stroke:#2b8a3e,stroke-width:3px,color:#000
+        style V5_APP fill:#a9e34b,color:#000
+        style V5_RESOURCE fill:#51cf66,color:#000
+        style V5_PERSON fill:#ff922b,color:#000
+        style V5_FOLDER fill:#ff922b,color:#000
+        style V5_TASK fill:#ff922b,color:#000
+        style V5_USER fill:#a9e34b,color:#000
+        
+        V5_RESULT["<b>Average D: 0.42</b><br/>Rating: GOOD ✓<br/>High abstraction,<br/>best extensibility"]
+        style V5_RESULT fill:#d3f9d8,color:#000
     end
+```
 
 ### **7.2.6. Comparison and Summary**
 
 **Ranking by Average D:**
 
-* Variant 1: 0.30 (Best balance)  
-* Variant 4: 0.35 (Metrically okay, conceptually bad\!)  
-* Variant 3: 0.38 (Good domain structure)  
-* Variant 2: 0.42 (Too fragmented)  
-* Variant 5: 0.42 (High abstraction, complex)
+* **Variant 1:** 0.30 (Best balance)  
+* **Variant 4:** 0.35 (Metrically okay, conceptually bad!)  
+* **Variant 3:** 0.38 (Good domain structure)  
+* **Variant 2:** 0.42 (Too fragmented)  
+* **Variant 5:** 0.42 (High abstraction, complex)
 
 **Central Insight:**
 
-* Variant 4 has good metrics, but violates Rule 3 (domain names)\!  
+* **Variant 4** has good metrics, but violates Rule 3 (domain names)!  
 * Metrics alone are not enough.  
 * Semantic coupling is not measurable.  
-* Domain clarity \> technical metrics.
+* Domain clarity > technical metrics.
 
 **Recommendation:**
 
-* Variant 1 or 3  
+* **Variant 1** or **3**  
 * Balance between metrics and domain clarity
 
 ## **8 Full-Stack Example**
 
-The final example (full-stack application) demonstrates how the root package (com.example.todo/) serves as a stable API and all **implementation details** are **encapsulated** in the **domain-oriented** subpackages. The **goal** is to create **loosely coupled, maintainable**, and above all, **domain-clear structures** through composition and encapsulation.
+The final example (full-stack application) demonstrates how the root package (```com.example.todo/```) serves as a stable API and all **implementation details** are **encapsulated** in the **domain-oriented** subpackages. The **goal** is to create **loosely coupled, maintainable**, and above all, **domain-clear structures** through composition and encapsulation.
 
+```
 com.example.todo/  
 ├── app/  
 │ ├── ConsoleApp.java  
@@ -906,49 +932,50 @@ com.example.todo/
 ├── Person.java  
 ├── Task.java  
 └── User.java
+```
 
-As core abstractions from the business requirements, the entities **Folder, Task, Person, Message** and **User** are placed as interfaces directly in the root package, supplemented by technical abstractions such as **App, Db**, and **Served**. The subpackages refer exclusively to the abstractions in the next higher package and encapsulate the implementation details. Likewise, a strict dependency inversion (Inversion of Control) is ensured. The root package thus remains independent of the implementation details.
+As core abstractions from the business requirements, the entities **Folder, Task, Person, Message** and **User** are placed as interfaces directly in the root package, supplemented by technical abstractions such as **App, Db**, and **Served**. The subpackages refer exclusively to the abstractions in the next higher package and encapsulate the implementation details. Likewise, a strict dependency inversion (**Inversion of Control**) is ensured. The root package thus remains independent of the implementation details.
 
 ### **8.1. Initialization, Dependency Injection, and Configuration (app/)**
 
-* **Domain Justification:** The App is the highest abstraction of the application. Initialization, configuration, and building the object graph **(DI)** are implementation details of the App abstraction and therefore belong in the subpackage app/.  
-* **Package Name:** app/. This name is domain-abstract and describes the core of the application.  
-* **Content:** The package contains the concrete implementations of the App.java interface, such as TodoApp.java, ConsoleApp.java, or WebApp.java.  
+* **Domain Justification:** The ```App.java``` is the highest abstraction of the application. Initialization, configuration, and building the object graph **(DI)** are implementation details of the App abstraction and therefore belong in the subpackage ```app/```.  
+* **Package Name:** ```app/```. This name is domain-abstract and describes the core of the application.  
+* **Content:** The package contains the concrete implementations of the ```App.java``` interface, such as ```TodoApp.java```, ```ConsoleApp.java```, or ```WebApp.java```.  
 * **DI Container:** External DI containers are avoided to keep the construction of the object graph transparent and traceable. Dependency injection and configuration occur in a single place in the App.java implementations.
 
 ### **8.2. User Interface and its Subpackages (user/)**
 
-* **Domain Justification:** The user interface **(UI)** is a central business concept from the end-user perspective **("How do I interact with my tasks?")**. The abstractions User.java, Page.java, and Control.java define the interface of the UI, while the subpackage user/ encapsulates its implementation details.  
-* **Package Name:** user/. The package is dedicated to the domain concept **"User"** and implements its **UI** interaction.  
-* **Content:** The subpackage contains the implementation of WebUser.java. It also includes internal, UI-specific subpackages such as control/ (reusable UI controls) and page/ (complete page views), which completely encapsulate the technical details of the chosen UI technology (e.g., HTML/CSS/JS, frameworks).
+* **Domain Justification:** The user interface **(UI)** is a central business concept from the end-user perspective **("How do I interact with my tasks?")**. The abstractions ```User.java```, ```Page.java```, and ```Control.java``` define the interface of the UI, while the subpackage ```user/``` encapsulates its implementation details.  
+* **Package Name:** ```user/```. The package is dedicated to the domain concept **"User"** and implements its **UI** interaction.  
+* **Content:** The subpackage contains the implementation of ```WebUser.java```. It also includes internal, UI-specific subpackages such as ```control/``` (reusable UI controls) and ```page/``` (complete page views), which completely encapsulate the technical details of the chosen UI technology (e.g., HTML/CSS/JS, frameworks).
 
 ### **8.3. Database Persistence (Decorator Pattern)**
 
-* **Domain Justification:** Persistence is an internal detail for the realization of domain concepts (Folder, Task, Person). Instead of a technical db/ package, the Decorator design pattern is used to extend objects with persistence behavior. The Db.java interface in the root package abstracts database access.  
-* **Packaging:** The persistence logic is directly integrated into the domain packages (folder/, task/, person/, user/).  
-* **Example:** DbFolder.java **(Decorator):** A class that implements the Folder interface and decorates another Folder object to make it persistent. It injects the Db abstraction. The details of the database implementation (JDBC, ORM) are encapsulated within this class.
+* **Domain Justification:** Persistence is an internal detail for the realization of domain concepts (```Folder```, ```Task```, ```Person```). Instead of a technical ```db/``` package, the **Decorator design pattern** is used to extend objects with persistence behavior. The ```Db.java``` interface in the root package abstracts database access.  
+* **Packaging:** The persistence logic is directly integrated into the domain packages (```folder/```, ```task/```, ```person/```, ```user/```).  
+* **Example:** ```DbFolder.java``` **(Decorator):** A class that implements the ```Folder``` interface and decorates another ```Folder``` object to make it persistent. It injects the Db abstraction. The details of the database implementation (JDBC, ORM) are encapsulated within this class.
 
 ### **8.4. API Interface and its Subpackages (exchange/)**
 
-* **Domain Justification:** The API is the domain concept of information exchange with external systems. It is abstracted by the Resource.java interface in the root package. The subpackage resource/ realizes this interface and summarizes all technical details of the API provision (e.g., JAX-RS, SOAP).  
-* **Package Name:** exchange/. This name is domain-specific and describes the information exchange between external applications.  
-* **Content:** It contains implementations of Resource.java (e.g., TodoResource.java for JAX-RS), Message.java, and Service.java, as well as technical subpackages like envelop/ and media/ for encapsulating I/O objects and formats (e.g., HATEOAS).
+* **Domain Justification:** The API is the domain concept of information exchange with external systems. It is abstracted by the ```Resource.java``` interface in the root package. The subpackage ```resource/``` realizes this interface and summarizes all technical details of the API provision (e.g., JAX-RS, SOAP).  
+* **Package Name:** ```exchange/```. This name is domain-specific and describes the information exchange between external applications.  
+* **Content:** It contains implementations of Resource.java (e.g., TodoResource.java for JAX-RS), Message.java, and Service.java, as well as technical subpackages like ```envelop/``` and ```media/``` for encapsulating I/O objects and formats (e.g., HATEOAS).
 
-### **8.5. Utility Classes \- Avoidance of (util/)**
+### **8.5. Utility Classes - Avoidance of (util/)**
 
 * **Domain Justification:** In a strictly object-oriented world, static utility classes do not exist. Logic should always be encapsulated in an object and reused via composition or the Decorator pattern.  
-* **Avoidance of util/ packages:** Packages like util/ or helper/ are too technical and **violate Rule 3**.  
-* **Solution:** Package-private helper classes within the domain packages or independent objects (e.g., JsonPerson.java with its own JSON logic) that are included via composition. This promotes adherence to SRP and testability.
+* **Avoidance of util/ packages:** Packages like ```util/``` or ```helper/``` are too technical and **violate Rule 3**.  
+* **Solution:** Package-private helper classes within the domain packages or independent objects (e.g., ```JsonPerson.java``` with its own JSON logic) that are included via composition. This promotes adherence to SRP and testability.
 
-## **9 Conclusion: The Pro as an Architect**
+## **9 Conclusion: The "Pro..." as an Architect**
 
-The true **"Pro"** is characterized by the fact that they:
+The true ***"Pro..."*** is characterized by the fact that they:
 
 * **Always reflect the domain:** They exclusively use the language of the domain in the package structure to create a navigation aid that directly follows the business logic (Rule 3).  
 * **Know the OOPD principles and measurement procedures:** They use the component principles (REP, CCP, CRP, ADP, SDP, SAP) and **metrics (A, I, and D) for quantifying code quality** and identifying problem cases in the architecture.  
-* **Act pragmatically according to rules, measure, and adjust if necessary:** They apply the three golden rules (no dependency on sub-packages, progressive detailing, domain-specific names) as pragmatic guidelines to prevent cycles (Rule 1\) and ensure a progressive story (Rule 2).
+* **Act pragmatically according to rules, measure, and adjust if necessary:** They apply the three golden rules (no dependency on sub-packages, progressive detailing, domain-specific names) as pragmatic guidelines to prevent cycles (Rule 1) and ensure a progressive story (Rule 2).
 
-Good packaging is an architectural decision that lays the foundation for the long-term success of your project.
+> Code structure is an architectural decision that lays the foundation for the long-term success of your project.
 
 ## **10 Sources and Further Links**
 
@@ -956,14 +983,14 @@ This article is based on the established component principles of Robert C. Marti
 
 **Primary Sources:**
 
-* **Robert Bräutigam (2017):** **"Happy Packaging\!"**  
+* **Robert Bräutigam (2017):** **"Happy Packaging!"**  
   * The three golden rules.  
   * *Link:* https://javadevguy.wordpress.com/2017/12/18/happy-packaging/  
 * **Robert Bräutigam (2017):** **"Next Level Readability (German: Lesbarkeit)"**  
   * The philosophy of "Customer Story" coding.  
   * *Link:* https://www.informatik-aktuell.de/entwicklung/programmiersprachen/next-level-lesbarkeit.html  
 * **Robert Bräutigam (2018):** **"Best way to naming classes and packages in Java"**  
-  * Quote: “Model the problem, not the technology\! Find suitable abstractions straight from the business requirements and hide implementation details, like the fact that you are using MVC.”  
+  * Quote: “Model the problem, not the technology! Find suitable abstractions straight from the business requirements and hide implementation details, like the fact that you are using MVC.”  
   * *Link:* https://softwareengineering.stackexchange.com/a/372121  
 * **Robert C. Martin (Uncle Bob):** **"Component Principles"**  
   * The theoretical foundations and metrics for coupling (ADP, SDP, SAP) and cohesion (REP, CCP, CRP).  
@@ -980,302 +1007,321 @@ This article is based on the established component principles of Robert C. Marti
 
 * Layered: 6 files, 4 packages must be adapted  
 * OO: 2 files, 1 package must be adapted  
-* **→ 70% fewer changes with OO Package Design\!**
+* **→ 70% fewer changes with OO Package Design!**
 
 ## **11 Appendices**
 
 ### **11.1 OO vs Layered Architecture**
 
+```mermaid
 graph TB  
     subgraph "TRADITIONAL: Layered Architecture (Clean Architecture / DDD)"  
         direction TB  
           
-        TRAD\_TITLE\["\<b\>❌ TECHNICAL LAYERS\</b\>\<br/\>Horizontal by Technology"\]  
+        TRAD_TITLE["<b>❌ TECHNICAL LAYERS</b><br/>Horizontal by Technology"]  
           
-        PRES\["\<b\>Presentation Layer\</b\>\<br/\>Controllers, Views, DTOs\<br/\>TaskController, FolderController\<br/\>UserController"\]  
+        PRES["<b>Presentation Layer</b><br/>Controllers, Views, DTOs<br/>TaskController, FolderController<br/>UserController"]  
           
-        APP\["\<b\>Application Layer\</b\>\<br/\>Use Cases, Services\<br/\>TaskService, FolderService\<br/\>UserService"\]  
+        APP["<b>Application Layer</b><br/>Use Cases, Services<br/>TaskService, FolderService<br/>UserService"]  
           
-        DOMAIN\["\<b\>Domain Layer\</b\>\<br/\>Entities, Value Objects\<br/\>Task, Folder, User"\]  
+        DOMAIN["<b>Domain Layer</b><br/>Entities, Value Objects<br/>Task, Folder, User"]  
           
-        INFRA\["\<b\>Infrastructure Layer\</b\>\<br/\>Repositories, DB Access\<br/\>TaskRepository, FolderRepository\<br/\>UserRepository"\]  
+        INFRA["<b>Infrastructure Layer</b><br/>Repositories, DB Access<br/>TaskRepository, FolderRepository<br/>UserRepository"]  
           
-        PRES \--\>|Dependency| APP  
-        APP \--\>|Dependency| DOMAIN  
-        INFRA \--\>|Implements| DOMAIN  
+        PRES -->|Dependency| APP  
+        APP -->|Dependency| DOMAIN  
+        INFRA -->|Implements| DOMAIN  
           
-        PROBLEM\["\<b\>Problems:\</b\>\<br/\>❌ Domain only 1/4 of the App\<br/\>❌ Changes propagate through all layers\<br/\>❌ DTOs everywhere (Data Boundaries)\<br/\>❌ Technical knowledge required\<br/\>❌ Weak Cohesion\<br/\>❌ High semantic coupling"\]  
+        PROBLEM["<b>Problems:</b><br/>❌ Domain only 1/4 of the App<br/>❌ Changes propagate through all layers<br/>❌ DTOs everywhere (Data Boundaries)<br/>❌ Technical knowledge required<br/>❌ Weak Cohesion<br/>❌ High semantic coupling"]  
           
-        style TRAD\_TITLE fill:\#ff6b6b,color:\#fff  
-        style PRES fill:\#ffe3e3,color:\#000  
-        style APP fill:\#ffe3e3,color:\#000  
-        style DOMAIN fill:\#ffe3e3,color:\#000  
-        style INFRA fill:\#ffe3e3,color:\#000  
-        style PROBLEM fill:\#ff6b6b,color:\#fff  
+        style TRAD_TITLE fill:#ff6b6b,color:#fff  
+        style PRES fill:#ffe3e3,color:#000  
+        style APP fill:#ffe3e3,color:#000  
+        style DOMAIN fill:#ffe3e3,color:#000  
+        style INFRA fill:#ffe3e3,color:#000  
+        style PROBLEM fill:#ff6b6b,color:#fff  
     end
+```
 
+```mermaid
 graph TB    
   subgraph "OBJECT-ORIENTED: Hierarchical Package Structure"  
       direction TB  
         
-      OO\_TITLE\["\<b\>✅ DOMAIN HIERARCHY\</b\>\<br/\>Vertical by Business Concepts"\]  
+      OO_TITLE["<b>✅ DOMAIN HIERARCHY</b><br/>Vertical by Business Concepts"]  
         
-      ROOT\["\<b\>com.example.todo/\</b\>\<br/\>(Root Package)\<br/\>\<br/\>\<b\>Abstract Concepts:\</b\>\<br/\>Task.java (Interface)\<br/\>Folder.java (Interface)\<br/\>User.java (Interface)\<br/\>App.java (Interface)\<br/\>Db.java (Interface)\<br/\>\<br/\>\<b\>Role: Stable API\</b\>"\]  
+      ROOT["<b>com.example.todo/</b><br/>(Root Package)<br/><br/><b>Abstract Concepts:</b><br/>Task.java (Interface)<br/>Folder.java (Interface)<br/>User.java (Interface)<br/>App.java (Interface)<br/>Db.java (Interface)<br/><br/><b>Role: Stable API</b>"]  
         
-      TASK\_PKG\["\<b\>task/\</b\>\<br/\>(Subpackage)\<br/\>\<br/\>\<b\>Implementations:\</b\>\<br/\>SimpleTask.java\<br/\>DbTask.java\<br/\>JsonTask.java\<br/\>\<br/\>\<b\>All Aspects of Task:\</b\>\<br/\>✓ Business Logic\<br/\>✓ Persistence\<br/\>✓ Serialization"\]  
+      TASK_PKG["<b>task/</b><br/>(Subpackage)<br/><br/><b>Implementations:</b><br/>SimpleTask.java<br/>DbTask.java<br/>JsonTask.java<br/><br/><b>All Aspects of Task:</b><br/>✓ Business Logic<br/>✓ Persistence<br/>✓ Serialization"]  
         
-      FOLDER\_PKG\["\<b\>folder/\</b\>\<br/\>(Subpackage)\<br/\>\<br/\>\<b\>Implementations:\</b\>\<br/\>SimpleFolder.java\<br/\>DbFolder.java\<br/\>JsonFolder.java\<br/\>\<br/\>\<b\>All Aspects of Folder:\</b\>\<br/\>✓ Business Logic\<br/\>✓ Persistence\<br/\>✓ Serialization"\]  
+      FOLDER_PKG["<b>folder/</b><br/>(Subpackage)<br/><br/><b>Implementations:</b><br/>SimpleFolder.java<br/>DbFolder.java<br/>JsonFolder.java<br/><br/><b>All Aspects of Folder:</b><br/>✓ Business Logic<br/>✓ Persistence<br/>✓ Serialization"]  
         
-      USER\_PKG\["\<b\>user/\</b\>\<br/\>(Subpackage)\<br/\>\<br/\>\<b\>Implementations:\</b\>\<br/\>SimpleUser.java\<br/\>DbUser.java\<br/\>WebUser.java\<br/\>\<br/\>\<b\>All Aspects of User:\</b\>\<br/\>✓ Business Logic\<br/\>✓ Persistence\<br/\>✓ UI Components"\]  
+      USER_PKG["<b>user/</b><br/>(Subpackage)<br/><br/><b>Implementations:</b><br/>SimpleUser.java<br/>DbUser.java<br/>WebUser.java<br/><br/><b>All Aspects of User:</b><br/>✓ Business Logic<br/>✓ Persistence<br/>✓ UI Components"]  
         
-      APP\_PKG\["\<b\>app/\</b\>\<br/\>(Subpackage)\<br/\>\<br/\>\<b\>Implementations:\</b\>\<br/\>TodoApp.java\<br/\>WebApp.java\<br/\>ConsoleApp.java\<br/\>\<br/\>\<b\>Aspects:\</b\>\<br/\>✓ Initialization\<br/\>✓ Configuration\<br/\>✓ Dependency Injection"\]  
+      APP_PKG["<b>app/</b><br/>(Subpackage)<br/><br/><b>Implementations:</b><br/>TodoApp.java<br/>WebApp.java<br/>ConsoleApp.java<br/><br/><b>Aspects:</b><br/>✓ Initialization<br/>✓ Configuration<br/>✓ Dependency Injection"]  
         
-      TASK\_PKG \-.-\>|implements| ROOT  
-      FOLDER\_PKG \-.-\>|implements| ROOT  
-      USER\_PKG \-.-\>|implements| ROOT  
-      APP\_PKG \-.-\>|implements| ROOT  
+      TASK_PKG -.->|implements| ROOT  
+      FOLDER_PKG -.->|implements| ROOT  
+      USER_PKG -.->|implements| ROOT  
+      APP_PKG -.->|implements| ROOT  
         
-      APP\_PKG \--\>|uses| TASK\_PKG  
-      APP\_PKG \--\>|uses| FOLDER\_PKG  
-      APP\_PKG \--\>|uses| USER\_PKG  
+      APP_PKG -->|uses| TASK_PKG  
+      APP_PKG -->|uses| FOLDER_PKG  
+      APP_PKG -->|uses| USER_PKG  
         
-      BENEFIT\["\<b\>Advantages:\</b\>\<br/\>✅ No technical layers\<br/\>✅ Changes localized in one Package\<br/\>✅ No DTOs needed\<br/\>✅ Domain knowledge leads directly to code\<br/\>✅ High Cohesion\<br/\>✅ Low Coupling"\]  
+      BENEFIT["<b>Advantages:</b><br/>✅ No technical layers<br/>✅ Changes localized in one Package<br/>✅ No DTOs needed<br/>✅ Domain knowledge leads directly to code<br/>✅ High Cohesion<br/>✅ Low Coupling"]  
         
-      style OO\_TITLE fill:\#51cf66,color:\#000  
-      style ROOT fill:\#51cf66,color:\#000  
-      style TASK\_PKG fill:\#a9e34b,color:\#000  
-      style FOLDER\_PKG fill:\#a9e34b,color:\#000  
-      style USER\_PKG fill:\#a9e34b,color:\#000  
-      style APP\_PKG fill:\#a9e34b,color:\#000  
-      style BENEFIT fill:\#51cf66,color:\#000  
+      style OO_TITLE fill:#51cf66,color:#000  
+      style ROOT fill:#51cf66,color:#000  
+      style TASK_PKG fill:#a9e34b,color:#000  
+      style FOLDER_PKG fill:#a9e34b,color:#000  
+      style USER_PKG fill:#a9e34b,color:#000  
+      style APP_PKG fill:#a9e34b,color:#000  
+      style BENEFIT fill:#51cf66,color:#000  
   end
+```
 
+```mermaid
 graph TB    
     subgraph "Dependency Flow: Details → Abstractions"  
         direction BT  
           
-        FLOW\_TITLE\["\<b\>DEPENDENCY FLOW\</b\>\<br/\>From Specific to General"\]  
+        FLOW_TITLE["<b>DEPENDENCY FLOW</b><br/>From Specific to General"]  
           
-        CONCRETE\["\<b\>Concrete Details\</b\>\<br/\>(Subpackages)\<br/\>\<br/\>DbTask, WebUser\<br/\>JsonFolder, TodoApp\<br/\>\<br/\>UNSTABLE\<br/\>Change frequently"\]  
+        CONCRETE["<b>Concrete Details</b><br/>(Subpackages)<br/><br/>DbTask, WebUser<br/>JsonFolder, TodoApp<br/><br/>UNSTABLE<br/>Change frequently"]  
           
-        ABSTRACT\["\<b\>Abstract Concepts\</b\>\<br/\>(Root Package)\<br/\>\<br/\>Task, User, Folder\<br/\>App, Db\<br/\>\<br/\>STABLE\<br/\>Change rarely"\]  
+        ABSTRACT["<b>Abstract Concepts</b><br/>(Root Package)<br/><br/>Task, User, Folder<br/>App, Db<br/><br/>STABLE<br/>Change rarely"]  
           
-        CONCRETE \-.-\>|depends on| ABSTRACT  
+        CONCRETE -.->|depends on| ABSTRACT  
           
-        ARROW\["\<b\>⬆ Dependency Inversion\</b\>\<br/\>Details depend on Abstractions\<br/\>NOT vice versa\!"\]  
+        ARROW["<b>⬆ Dependency Inversion</b><br/>Details depend on Abstractions<br/>NOT vice versa!"]  
           
-        style FLOW\_TITLE fill:\#4dabf7,color:\#000  
-        style CONCRETE fill:\#ffd43b,color:\#000  
-        style ABSTRACT fill:\#51cf66,color:\#000  
-        style ARROW fill:\#e7f5ff,color:\#000  
+        style FLOW_TITLE fill:#4dabf7,color:#000  
+        style CONCRETE fill:#ffd43b,color:#000  
+        style ABSTRACT fill:#51cf66,color:#000  
+        style ARROW fill:#e7f5ff,color:#000  
     end
+```
 
+```mermaid
 graph TB       
     subgraph "Example: Feature Change 'Add Priority'"  
         direction TB  
           
-        CHANGE\_TITLE\["\<b\>CHANGE: Task\<br/\> gets 'Priority' field\</b\>"\]  
+        CHANGE_TITLE["<b>CHANGE: Task<br/> gets 'Priority' field</b>"]  
           
         subgraph "Layered: 5-6 Files Change"  
-            L1\["1 Task (Domain)"\]  
-            L2\["2 TaskDTO (Application)"\]  
-            L3\["3 TaskMapper (Application)"\]  
-            L4\["4 TaskService (Application)"\]  
-            L5\["5 TaskController (Presentation)"\]  
-            L6\["6 TaskEntity (Infrastructure)"\]  
+            L1["1 Task (Domain)"]  
+            L2["2 TaskDTO (Application)"]  
+            L3["3 TaskMapper (Application)"]  
+            L4["4 TaskService (Application)"]  
+            L5["5 TaskController (Presentation)"]  
+            L6["6 TaskEntity (Infrastructure)"]  
               
-            L1 \--\> L2 \--\> L3 \--\> L4 \--\> L5 \--\> L6  
+            L1 --> L2 --> L3 --> L4 --> L5 --> L6  
               
-            style L1 fill:\#ffe3e3,color:\#000  
-            style L2 fill:\#ffe3e3,color:\#000  
-            style L3 fill:\#ffe3e3,color:\#000  
-            style L4 fill:\#ffe3e3,color:\#000  
-            style L5 fill:\#ffe3e3,color:\#000  
-            style L6 fill:\#ffe3e3,color:\#000  
+            style L1 fill:#ffe3e3,color:#000  
+            style L2 fill:#ffe3e3,color:#000  
+            style L3 fill:#ffe3e3,color:#000  
+            style L4 fill:#ffe3e3,color:#000  
+            style L5 fill:#ffe3e3,color:#000  
+            style L6 fill:#ffe3e3,color:#000  
         end
 
-        RESULT\["\<b\>Result:\</b\>\<br/\>Layered: 6 files, 4 Packages"\]  
+        RESULT["<b>Result:</b><br/>Layered: 6 files, 4 Packages"]  
           
-        style CHANGE\_TITLE fill:\#4dabf7,color:\#000  
-        style RESULT fill:\#51cf66,color:\#000  
+        style CHANGE_TITLE fill:#4dabf7,color:#000  
+        style RESULT fill:#51cf66,color:#000  
     end
+```
 
+```mermaid
 graph TB       
     subgraph "Example: Feature Change 'Add Priority'"  
         direction TB  
           
-        CHANGE\_TITLE\["\<b\>CHANGE: Task gets\<br/\> 'Priority' field\</b\>"\]  
+        CHANGE_TITLE["<b>CHANGE: Task gets<br/> 'Priority' field</b>"]  
           
         subgraph "OO: 1-2 Files Change"  
-            O1\["1. Task.java (Interface)\<br/\>Add priority() method"\]  
-            O2\["2. SimpleTask.java / DbTask.java\<br/\>Implement priority"\]  
+            O1["1. Task.java (Interface)<br/>Add priority() method"]  
+            O2["2. SimpleTask.java / DbTask.java<br/>Implement priority"]  
               
-            O1 \--\> O2  
+            O1 --> O2  
               
-            style O1 fill:\#d3f9d8,color:\#000  
-            style O2 fill:\#d3f9d8,color:\#000  
+            style O1 fill:#d3f9d8,color:#000  
+            style O2 fill:#d3f9d8,color:#000  
         end  
           
-        RESULT\["\<b\>Result:\</b\>\<br/\>Layered: 6 Files, 4 Packages\<br/\>OO: 2 Files, 1 Package\<br/\>\<br/\>\<b\>70% Fewer Changes\!\</b\>"\]  
+        RESULT["<b>Result:</b><br/>Layered: 6 Files, 4 Packages<br/>OO: 2 Files, 1 Package<br/><br/><b>70% Fewer Changes!</b>"]  
           
-        style CHANGE\_TITLE fill:\#4dabf7,color:\#000  
-        style RESULT fill:\#51cf66,color:\#000  
+        style CHANGE_TITLE fill:#4dabf7,color:#000  
+        style RESULT fill:#51cf66,color:#000  
     end
+```
 
+```mermaid
 graph TB        
-    subgraph "Bräutigam's \<b\>3 Rules\</b\> for OO Packages"  
+    subgraph "Bräutigam's <b>3 Rules</b> for OO Packages"  
         direction TB  
           
-        RULE1\["\<b\>Rule 1:\</b\>\<br/\>Packages never depend\<br/\>on Subpackages\<br/\>\<br/\>Root does not know Subpackages\!\<br/\>Guarantees DAG (Acyclic)"\]  
+        RULE1["<b>Rule 1:</b><br/>Packages never depend<br/>on Subpackages<br/><br/>Root does not know Subpackages!<br/>Guarantees DAG (Acyclic)"]  
           
-        RULE2\["\<b\>Rule 2:\</b\>\<br/\>Subpackages do not\<br/\>introduce new concepts\<br/\>\<br/\>Only details of Root concepts\<br/\>Progressive Information"\]  
+        RULE2["<b>Rule 2:</b><br/>Subpackages do not<br/>introduce new concepts<br/><br/>Only details of Root concepts<br/>Progressive Information"]  
           
-        RULE3\["\<b\>Rule 3:\</b\>\<br/\>Packages reflect\<br/\>Business Concepts\<br/\>\<br/\>Not: controller/, service/\<br/\>But: task/, user/, folder/"\]  
+        RULE3["<b>Rule 3:</b><br/>Packages reflect<br/>Business Concepts<br/><br/>Not: controller/, service/<br/>But: task/, user/, folder/"]  
           
-        style RULE1 fill:\#e7f5ff,color:\#000  
-        style RULE2 fill:\#e7f5ff,color:\#000  
-        style RULE3 fill:\#e7f5ff,color:\#000  
+        style RULE1 fill:#e7f5ff,color:#000  
+        style RULE2 fill:#e7f5ff,color:#000  
+        style RULE3 fill:#e7f5ff,color:#000  
     end
+```
 
+```mermaid
 graph TB        
-    subgraph "Package Navigation:\<b\>Story Telling\</b\>"  
+    subgraph "Package Navigation:<b>Story Telling</b>"  
         direction LR  
           
-        NAV\_TITLE\["\<b\>Code tells a Customer Story\</b\>"\]  
+        NAV_TITLE["<b>Code tells a Customer Story</b>"]  
           
-        STEP1\["\<b\>1. Root Package\</b\>\<br/\>What can the App do?\<br/\>→ Task, Folder, User"\]  
+        STEP1["<b>1. Root Package</b><br/>What can the App do?<br/>→ Task, Folder, User"]  
           
-        STEP2\["\<b\>2. Subpackage task/\</b\>\<br/\>How is Task implemented?\<br/\>→ DbTask, JsonTask"\]  
+        STEP2["<b>2. Subpackage task/</b><br/>How is Task implemented?<br/>→ DbTask, JsonTask"]  
           
-        STEP3\["\<b\>3. Details in Task\</b\>\<br/\>How does DbTask work?\<br/\>→ SQL Implementation"\]  
+        STEP3["<b>3. Details in Task</b><br/>How does DbTask work?<br/>→ SQL Implementation"]  
           
-        STEP1 \--\> STEP2 \--\> STEP3  
+        STEP1 --> STEP2 --> STEP3  
           
-        NAV\_BENEFIT\["\<b\>Advantage:\</b\>\<br/\>Developer navigates\<br/\>from Abstraction to Detail\<br/\>without Architecture Knowledge\!"\]  
+        NAV_BENEFIT["<b>Advantage:</b><br/>Developer navigates<br/>from Abstraction to Detail<br/>without Architecture Knowledge!"]  
           
-        style NAV\_TITLE fill:\#4dabf7,color:\#000  
-        style STEP1 fill:\#51cf66,color:\#000  
-        style STEP2 fill:\#a9e34b,color:\#000  
-        style STEP3 fill:\#ffd43b,color:\#000  
-        style NAV\_BENEFIT fill:\#d3f9d8,color:\#000  
+        style NAV_TITLE fill:#4dabf7,color:#000  
+        style STEP1 fill:#51cf66,color:#000  
+        style STEP2 fill:#a9e34b,color:#000  
+        style STEP3 fill:#ffd43b,color:#000  
+        style NAV_BENEFIT fill:#d3f9d8,color:#000  
     end
+```
 
+```mermaid
 graph TB        
     subgraph "Comparison: Package Organization"  
         direction TB  
           
-        COMP\_TITLE\["\<b\>PACKAGE ORGANIZATION IN COMPARISON\</b\>"\]  
+        COMP_TITLE["<b>PACKAGE ORGANIZATION IN COMPARISON</b>"]  
           
-        LAYERED\_ORG\["\<b\>Layered Architecture:\</b\>\<br/\>\<br/\>Horizontal (technical):\<br/\>Presentation ⟷ Application ⟷ Domain ⟷ Infrastructure\<br/\>\<br/\>Developer thinks:\<br/\>'Where is the Service layer?'\<br/\>'Where is the Repository?'\<br/\>\<br/\>❌ Technical knowledge required"\]  
+        LAYERED_ORG["<b>Layered Architecture:</b><br/><br/>Horizontal (technical):<br/>Presentation ⟷ Application ⟷ Domain ⟷ Infrastructure<br/><br/>Developer thinks:<br/>'Where is the Service layer?'<br/>'Where is the Repository?'<br/><br/>❌ Technical knowledge required"]  
           
-        OO\_ORG\["\<b\>OO Package Design:\</b\>\<br/\>\<br/\>Vertical (domain):\<br/\>Root (Abstraction)\<br/\>↓\<br/\>task/, user/, folder/ (Details)\<br/\>\<br/\>Developer thinks:\<br/\>'I'm changing Task'\<br/\>→ Go to task/\<br/\>\<br/\>✅ Domain knowledge suffices"\]  
+        OO_ORG["<b>OO Package Design:</b><br/><br/>Vertical (domain):<br/>Root (Abstraction)<br/>↓<br/>task/, user/, folder/ (Details)<br/><br/>Developer thinks:<br/>'I'm changing Task'<br/>→ Go to task/<br/><br/>✅ Domain knowledge suffices"]  
           
-        style COMP\_TITLE fill:\#4dabf7,color:\#000  
-        style LAYERED\_ORG fill:\#ffe3e3,color:\#000  
-        style OO\_ORG fill:\#d3f9d8,color:\#000  
+        style COMP_TITLE fill:#4dabf7,color:#000  
+        style LAYERED_ORG fill:#ffe3e3,color:#000  
+        style OO_ORG fill:#d3f9d8,color:#000  
     end
+```
 
 ## **11.2 Dependencies Principles**
-
+```mermaid
 %% Acyclic Dependencies Principle (ADP)  
 graph TB  
-    subgraph "BAD: Cyclic Dependencies \- Morning After Syndrome"  
-        A1\[Package A\]  
-        B1\[Package B\]  
-        C1\[Package C\]  
-        D1\[Package D\]  
+    subgraph "BAD: Cyclic Dependencies - Morning After Syndrome"  
+        A1[Package A]  
+        B1[Package B]  
+        C1[Package C]  
+        D1[Package D]  
           
-        A1 \--\>|depends on| B1  
-        B1 \--\>|depends on| C1  
-        C1 \--\>|depends on| D1  
-        D1 \--\>|depends on| A1  
+        A1 -->|depends on| B1  
+        B1 -->|depends on| C1  
+        C1 -->|depends on| D1  
+        D1 -->|depends on| A1  
           
-        style A1 fill:\#ff6b6b  
-        style B1 fill:\#ff6b6b  
-        style C1 fill:\#ff6b6b  
-        style D1 fill:\#ff6b6b  
+        style A1 fill:#ff6b6b  
+        style B1 fill:#ff6b6b  
+        style C1 fill:#ff6b6b  
+        style D1 fill:#ff6b6b  
     end  
       
-    subgraph "GOOD: Acyclic Dependencies \- DAG Structure"  
-        A2\[Package A\]  
-        B2\[Package B\]  
-        C2\[Package C\]  
-        D2\[Package D\]  
-        E2\[Package E\]  
+    subgraph "GOOD: Acyclic Dependencies - DAG Structure"  
+        A2[Package A]  
+        B2[Package B]  
+        C2[Package C]  
+        D2[Package D]  
+        E2[Package E]  
           
-        A2 \--\>|depends on| B2  
-        A2 \--\>|depends on| C2  
-        B2 \--\>|depends on| D2  
-        C2 \--\>|depends on| D2  
-        D2 \--\>|depends on| E2  
+        A2 -->|depends on| B2  
+        A2 -->|depends on| C2  
+        B2 -->|depends on| D2  
+        C2 -->|depends on| D2  
+        D2 -->|depends on| E2  
           
-        style A2 fill:\#51cf66  
-        style B2 fill:\#51cf66  
-        style C2 fill:\#51cf66  
-        style D2 fill:\#51cf66  
-        style E2 fill:\#51cf66  
+        style A2 fill:#51cf66  
+        style B2 fill:#51cf66  
+        style C2 fill:#51cf66  
+        style D2 fill:#51cf66  
+        style E2 fill:#51cf66  
     end  
       
     subgraph "Breaking Cycles with DIP"  
-        X1\[Package X\]  
-        Y1\[Package Y\]  
-        I1\[Interface Package\]  
+        X1[Package X]  
+        Y1[Package Y]  
+        I1[Interface Package]  
           
-        X1 \--\>|depends on| I1  
-        Y1 \--\>|depends on| I1  
-        Y1 \-.-\>|implements| I1  
+        X1 -->|depends on| I1  
+        Y1 -->|depends on| I1  
+        Y1 -.->|implements| I1  
           
-        style I1 fill:\#4dabf7  
-        style X1 fill:\#51cf66  
-        style Y1 fill:\#51cf66  
+        style I1 fill:#4dabf7  
+        style X1 fill:#51cf66  
+        style Y1 fill:#51cf66  
     end
+```
 
+```mermaid
 graph LR  
     subgraph "BAD: Stable depends on Unstable"  
-        S1\[Stable Package\<br/\>I \= 0.2\<br/\>Changes rarely\]  
-        U1\[Unstable Package\<br/\>I \= 0.9\<br/\>Changes often\]  
+        S1[Stable Package<br/>I = 0.2<br/>Changes rarely]  
+        U1[Unstable Package<br/>I = 0.9<br/>Changes often]  
           
-        S1 \--\>|Wrong direction\!| U1  
+        S1 -->|Wrong direction!| U1  
           
-        style S1 fill:\#ff6b6b  
-        style U1 fill:\#ffd43b  
+        style S1 fill:#ff6b6b  
+        style U1 fill:#ffd43b  
     end  
       
     subgraph "GOOD: Stable Dependencies"  
-        U2\[Unstable Package\<br/\>I \= 0.9\<br/\>Easy to change\]  
-        M2\[Medium Stable\<br/\>I \= 0.5\]  
-        S2\[Stable Package\<br/\>I \= 0.1\<br/\>Hard to change\]  
+        U2[Unstable Package<br/>I = 0.9<br/>Easy to change]  
+        M2[Medium Stable<br/>I = 0.5]  
+        S2[Stable Package<br/>I = 0.1<br/>Hard to change]  
           
-        U2 \--\>|Correct\!| M2  
-        M2 \--\>|Correct\!| S2  
+        U2 -->|Correct!| M2  
+        M2 -->|Correct!| S2  
           
-        style U2 fill:\#ffd43b  
-        style M2 fill:\#a9e34b  
-        style S2 fill:\#51cf66  
+        style U2 fill:#ffd43b  
+        style M2 fill:#a9e34b  
+        style S2 fill:#51cf66  
     end  
       
     subgraph "Stability Metrics"  
         direction TB  
-        P1\["Package P\<br/\>Ca \= 5 (incoming)\<br/\>Ce \= 1 (outgoing)\<br/\>I \= Ce/(Ca+Ce) \= 0.17\<br/\>STABLE"\]  
-        P2\["Package Q\<br/\>Ca \= 1 (incoming)\<br/\>Ce \= 5 (outgoing)\<br/\>I \= Ce/(Ca+Ce) \= 0.83\<br/\>UNSTABLE"\]  
+        P1["Package P<br/>Ca = 5 (incoming)<br/>Ce = 1 (outgoing)<br/>I = Ce/(Ca+Ce) = 0.17<br/>STABLE"]  
+        P2["Package Q<br/>Ca = 1 (incoming)<br/>Ce = 5 (outgoing)<br/>I = Ce/(Ca+Ce) = 0.83<br/>UNSTABLE"]  
           
-        style P1 fill:\#51cf66  
-        style P2 fill:\#ffd43b  
+        style P1 fill:#51cf66  
+        style P2 fill:#ffd43b  
     end  
       
     subgraph "Real Example"  
-        UI\[UI Package\<br/\>I \= 0.8\<br/\>Changes often\]  
-        BL\[Business Logic\<br/\>I \= 0.5\<br/\>Moderate change\]  
-        DB\[Data Access\<br/\>I \= 0.3\<br/\>Stable\]  
-        CORE\[Core Interfaces\<br/\>I \= 0.1\<br/\>Very stable\]  
+        UI[UI Package<br/>I = 0.8<br/>Changes often]  
+        BL[Business Logic<br/>I = 0.5<br/>Moderate change]  
+        DB[Data Access<br/>I = 0.3<br/>Stable]  
+        CORE[Core Interfaces<br/>I = 0.1<br/>Very stable]  
           
-        UI \--\> BL  
-        UI \--\> CORE  
-        BL \--\> CORE  
-        DB \--\> CORE  
+        UI --> BL  
+        UI --> CORE  
+        BL --> CORE  
+        DB --> CORE  
           
-        style UI fill:\#ffd43b  
-        style BL fill:\#a9e34b  
-        style DB fill:\#74c0fc  
-        style CORE fill:\#51cf66  
+        style UI fill:#ffd43b  
+        style BL fill:#a9e34b  
+        style DB fill:#74c0fc  
+        style CORE fill:#51cf66  
     end  
+```
