@@ -12,7 +12,7 @@ Dies gilt auch dann, wenn sie *Entitäten* der realen Welt vertreten, die sich h
 **Forderung:** 
 - Wenn eine Eigenschaft (z. B. der Titel eines Dokuments) häufig geändert wird, sollte sie nicht Teil des **internen Zustands** des Objekts sein.
 
-### **Java-Beispiel 1: Das veränderliche (schlechte) Objekt**
+### **Beispiel 1: Das veränderliche (schlechte) Objekt**
 
 Dieses Objekt ist schlecht, da es seine interne Identität (die Speicheradresse) beibehält, obwohl sich sein Zustand ändert.
 ```java
@@ -43,7 +43,7 @@ doc.setTitle("Neuer Titel"); // State changes, identity remains
 
 Beim konventionellen unveränderlichen Design wird bei jeder Änderung ein **neues** Objekt erstellt. Der Zustand wird zur Identität.
 
-### **Java-Beispiel 2: Das unveränderliche Wertobjekt (Ineffizient bei häufigen Änderungen)**
+### **Beispiel 2: Das unveränderliche Wertobjekt (Ineffizient bei häufigen Änderungen)**
 ```java
 
 public class Document {
@@ -78,7 +78,7 @@ Die Lösung liegt darin, zu erkennen, dass der Titel nicht Teil des **Objektzust
 
 Ein gutes unveränderliches Objekt sollte nur seine **Identität** intern kapseln (z. B. die ID oder den Speicherort) und **Verhalten** bereitstellen, um die externe, veränderliche Welt zu manipulieren. Das Objekt fungiert als **Proxy**.
 
-### **Java-Beispiel 3: Das unveränderliche Proxy-Objekt (Der empfohlene Ansatz)**
+### **Beispiel 3: Das unveränderliche Proxy-Objekt (Der empfohlene Ansatz)**
 
 Das Objekt selbst ist unveränderlich (nur die ID ist final), aber seine Methoden manipulieren eine externe, veränderliche Ressource (hier simuliert durch ExternalStorage).
 
@@ -138,7 +138,7 @@ doc.title("Titel B"); // External storage is changed
 ### 3.1 Horizontale Zerlegung mit Interfaces und Decorator Pattern
 Technische Aspekte ```(Caching, Logging, UI-Benachrichtigung)``` werden horizontal als Decorator um die Schnittstellen gewickelt.
 
-**Java-Beispiel 3.1: Das unveränderliche Proxy-Objekt (Kernstruktur)***
+**Beispiel 3.1: Das unveränderliche Proxy-Objekt (Kernstruktur)***
 ```java
 import java.util.Map;
 import java.util.HashMap;
@@ -303,7 +303,6 @@ public class PresentableDocument implements Document {
     public void title(String text) {
         // First, delegate the change to the Observable layer (triggers event, writes to DB/Cache)
         this.origin.title(text);
-        
         // After the change, update the UI immediately
         this.uiComponent.displayTitleUpdate(text);
     }
