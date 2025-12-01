@@ -365,7 +365,7 @@ Use the language of the domain, not that of the framework or an architectural pa
 | ``service/``, ``usecase/``, ``consumer/``, ``producer/``, ``job/`` | ``billing/``, ``payment/``, ``audit/``, ``alert/``, ``task/``, ``notification/``|
 | ``entity/``, ``model/``, ``value/``, ``db/``, ``aggregate/``, ``repository/`` | ``bill/``, ``order/``, ``car/``, ``customer/``, ``account/``, ``store/``, ``storage/``, ``base/`` |
 | ``common/``, ``util/``, ``client/``, ``client.http/``, ``lib/``, ``logger/``, ``security/`` | ``tax/``, ``rule/``, ``unit/``, ``unit.iso/``, ``jira/``, ``jira.http/``,   ``log/``, ``text/``, ``text.regex/``,  ``some-concept-need-security.sha2/`` |
-| ``config/``, ``properties/``, ``injections/`` | root compostition: ``com.company.todolist.todo/``, ``game/`` oder abstrakt: ``com.company.todo.app/`` eher technisch: ``boot``, ``startup/``, ``setup/``, ``main/``, ``launch/``|
+| ``config/``, ``properties/``, ``injections/`` | root compostition: ``com.company.todolist.todo/``, ``game/`` or more abstrakt: ``com.company.todo.app/`` or tecnical: ``boot``, ``startup/``, ``setup/``, ``main/``, ``launch/``|
 
 
 **Advantage:**
