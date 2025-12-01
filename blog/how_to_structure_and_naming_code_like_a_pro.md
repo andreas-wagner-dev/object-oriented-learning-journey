@@ -268,7 +268,49 @@ A + I = 1
   A = 0, I = 0  
   Stable and concrete – hard to change and hard to extend.
 
-With these metrics, you can objectively evaluate the architectural quality of a package and systematically improve it.
+With these metrics, you can objectively evaluate the architectural quality of a package and systematically improve it.  
+The following diagram summarizes the interpretation from above.
+
+![A-I Plot](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/a_i_plot.png)
+
+**Explanation of each zone:**
+
+**Main Sequence (A + I = 1)**
+
+**Ideal balance:** Abstract components are stable, concrete components are flexible
+* Packages here are well-designed and maintainable
+
+**Core Interfaces (A≈1, I≈0)**
+
+* Highly abstract, highly stable
+* Frameworks, interfaces, base classes
+* Many packages depend on them, they depend on few
+
+**Implementations (A≈0, I≈1)**
+
+* Highly concrete, highly unstable
+* Business logic, specific implementations
+* Depend on many packages, few depend on them
+* Easy to change without breaking others
+
+**Zone of Pain (A≈0, I≈0)**
+
+* Concrete and stable - worst combination
+* Hard to change (stable) but should change often (concrete)
+* Database schemas, legacy code with many dependents
+* Causes rigidity and maintenance nightmares
+
+**Zone of Uselessness (A≈1, I≈1)**
+
+**Abstract and unstable**
+* Nobody uses them (unstable) yet they're abstract
+* Over-engineered abstractions with no dependents
+* Wasted effort, should be removed or simplified
+
+**Balanced (A=0.5, I=0.5)**
+
+* Mid-point on main sequence
+* **Good balance between abstraction and stability**
 
 ### **Example Calculation:**
 
@@ -308,7 +350,7 @@ com.example.todo/
 The package is concrete and maximally stable. It lies significantly below the main sequence (ideal: 1).
 
 
-## **5 The Path to the Pro: Storytelling Approach**
+## **5 The Storytelling Approach (Path to the "Pro...")**
 
 To truly structure *packages and code* like a pro, we must stop writing code that merely *works*, and start writing code that tells a **story**. The ability to efficiently convey domain-specific information to the reader can be viewed in 5 levels.
 
@@ -337,7 +379,7 @@ The transition from **Level 3** (Requirement-Relevant) to **Level 4** (Organized
 * **Example (Better):** ```pet/```, ```owner/```, ```visit/```.  
 * **Advantage:** One directly selects the **domain context** of the change and then proceeds to the details. Knowledge is **localized**.
 
-## **6 Three Pragmatic Rules**
+## **6 Three Pragmatic Packaging Rules**
 
 To ensure this domain-specific, progressive flow of information, observe the following three rules by Robert Bräutigam, which put the theoretical principles **(ADP, SDP)** into practice:
 
