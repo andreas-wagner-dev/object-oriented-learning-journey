@@ -356,11 +356,11 @@ graph TB
     %% 1. Immutable Domain Object 
     subgraph "<b>Vertual World</b>"
 
-        A["Proxy Object (with)"]
+        A["Proxy Object<br/>(with immutable Identity)"]
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
 
         %% 2. The Contract and Behavior Delegation
-        subgraph "<b>.......Contract-Area</b>"
+        subgraph "<b>_____ . ___Contract-Area</b>"
         direction LR
             B["Interface (Behavior)"]
             style B fill:#C8E6C9,stroke:#388E3C
