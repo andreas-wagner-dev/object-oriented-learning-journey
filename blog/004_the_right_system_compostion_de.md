@@ -1,5 +1,7 @@
 # Formale OOP-Regeln für App-Komposition
 
+**(Concept!!!)**
+
 ## DEFINITIONEN
 
 - **Kompositionshierarchie**: Die gesamte Anwendung ist als Baum von Kompositionen aufgebaut, rekursiv verschachtelt von außen (App) nach innen (atomare Komponenten).
