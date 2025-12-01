@@ -354,19 +354,19 @@ finalDocument.title();
 %% Diagram 3: Simplified Flow of Data Animation and Behavior Delegation
 graph TB
     %% 1. Immutable Domain Object 
-    subgraph Model World
+    subgraph "<b>Vertual World</b>"
 
-        A["Proxy Object (with immutable Identity)"]
+        A["Proxy Object (with)"]
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
 
         %% 2. The Contract and Behavior Delegation
-        subgraph        Contract-Area
+        subgraph "<b>.......Contract-Area</b>"
         direction LR
             B["Interface (Behavior)"]
             style B fill:#C8E6C9,stroke:#388E3C
         
             %% 3. Technical Object Area (Real World Interface)
-            subgraph Object-Area
+            subgraph "<b>Object-Area</b>"
              direction LR
                 C["UI Proxy (Behavior)"]
                 D["DB Proxy (Behavior)"]
@@ -383,7 +383,7 @@ graph TB
     end
 
     %% 4. The Real Mutable Data Storage
-    subgraph Real World
+    subgraph "<b>Real World</b>"
         F["Database (State)"]
         style F fill:#FFC107,stroke:#FF8F00
 
@@ -394,7 +394,7 @@ graph TB
     
     %% The Immutable Object holds the key and delegates all work to the interface.
 
-    A -- Behavior --> B
+    A -- Implements --> B
     D -- Read Identity ID --> F
 
     %% The Interface is implemented by the technical components.
