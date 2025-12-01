@@ -383,13 +383,13 @@ graph TB
     end
 
     %% 4. The Real Mutable Data Storage
-    subgraph "<b>Real World Environment</b>"
-        F["Database (State)"]
+    subgraph "<b>Real Environment</b>"
+        F["Database (State)<br/>Disk or File"]
         style F fill:#FFC107,stroke:#FF8F00
 
-        C <-.->|Reads/Writes<br/>UI Data| E["UI Component (State)"]
+        C <-.->|Reads/Writes<br/>UI Data| E["UI Component (State)<br/>Desktop or Browser"]
         C <-.->|Observes/Notify<br/>UI State| E
-        D -.->|Reads/Writes Persistence| F
+        D <-.->|Reads/Writes Persistence| F
     end
     
     %% The Immutable Object holds the key and delegates all work to the interface.
