@@ -1,5 +1,7 @@
 # How to Structure and Naming Code "like a Pro…"
 
+**(Draft!!!)**
+
 *"with 3 [Happy Packaging](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/) Rules..."*
 
 1. Packages should never depend on sub-packages.  
