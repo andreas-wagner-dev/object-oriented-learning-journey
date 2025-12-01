@@ -354,7 +354,7 @@ finalDocument.title();
 %% Diagram 3: Simplified Flow of Data Animation and Behavior Delegation
 graph TB
     %% 1. Immutable Domain Object 
-    subgraph "<b>Vertual World</b>"
+    subgraph "<b>Virtual Environment</b>"
 
         A["Proxy Object<br/>(with immutable Identity)"]
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
@@ -383,7 +383,7 @@ graph TB
     end
 
     %% 4. The Real Mutable Data Storage
-    subgraph "<b>Real World</b>"
+    subgraph "<b>Real World Environment</b>"
         F["Database (State)"]
         style F fill:#FFC107,stroke:#FF8F00
 
