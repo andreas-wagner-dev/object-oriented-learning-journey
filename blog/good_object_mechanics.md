@@ -1,14 +1,13 @@
 # The Mechanics of Good Object
 
-The central thesis of the blog posts by Yegor Bugayenko and Mihai A. 🇷🇴🇩🇪🇬🇧🇫🇷 is that good objects should always be immutable proxies that animate data, rather than mapping it.
+> The central thesis of the blog posts by Yegor Bugayenko and Mihai A. Rodegbfr is that good objects should always be immutable proxies that animate data, rather than mapping it.
 
 This holds true even when they represent real-world entities that change frequently, such as a document title (mutable).
 
 ## 1. The Problem: State vs. Identity
 
-A typical object consists of identity, state, and behavior.
-
-An object is mutable if its internal encapsulated information (the state) can be changed after creation.
+* A typical object consists of identity, state, and behavior.  
+* An object is mutable if its internal encapsulated information (the state) can be changed after creation.
 
 **Requirement:**
 
@@ -84,7 +83,7 @@ A good immutable object should only encapsulate its identity internally (e.g., t
 
 ### Example 3: The Immutable Proxy Object (The Recommended Approach)
 
-The object itself is immutable (only the ID is final), but its methods manipulate an external, mutable resource (simulated here by ExternalStorage).
+The object itself is immutable (only the ```ID``` is final), but its methods manipulate an external, mutable resource (simulated here by ```ExternalStorage```).
 
 ```java
 public class Document {  
@@ -131,7 +130,8 @@ public class ExternalStorage {
     }  
 }
 
-// Usage: The object (identity) remains constant, only the behavior changes the external world  
+// Usage: The object (identity) remains constant,
+// only the behavior changes the external world  
 Document doc = new Document(50);  
 doc.title("Title A"); // External storage is changed  
 doc.title("Title B"); // External storage is changed  
@@ -140,7 +140,7 @@ doc.title("Title B"); // External storage is changed
 
 ### 3.1 Horizontal Decomposition with Interfaces and Decorator Pattern
 
-Technical aspects (Caching, Logging, UI notification) are wrapped horizontally around the interfaces as Decorators.
+Technical aspects (```Caching```, ```Logging```, ```UI notification```) are wrapped horizontally around the interfaces as Decorators.
 
 #### Example 3.1: The Immutable Proxy Object (Core Structure)
 
@@ -184,7 +184,7 @@ public class DefaultDocument implements Document {
     // equals() and hashCode() are based ONLY on the ID (the identity)
     @Override  
     public boolean equals(Object doc) {  
-        return doc instanceof MyDocument && MyDocument.class.cast(doc).id == this.id;  
+        return doc instanceof DefaultDocument && MyDocument.class.cast(doc).id == this.id;  
     }  
 }
 
@@ -209,7 +209,7 @@ public class SimpleExternalStorage implements DocumentStorage {
 
 #### 3.1.1 Horizontal Decorator: Caching for Persistence (DB Aspect)
 
-The CachedDocumentStorage wraps the base storage (SimpleExternalStorage) and adds the caching logic.
+The ```CachedDocumentStorage``` wraps the base storage (```SimpleExternalStorage```) and adds the caching logic.
 
 ```java
 // CachedDocumentStorage.java
@@ -284,7 +284,6 @@ public class FakeUIComponent {
     public void displayTitleUpdate(String newTitle) {
         System.out.println("-> FAKE UI: Updating title display to: " + newTitle);
     }
-    
 }
 
 // The final decorator that controls presentation
@@ -344,13 +343,12 @@ System.out.println("\n--- Second Call: Reads from Cache (no DB access) and updat
 finalDocument.title(); 
 ```
 
-## Conclusion: Object == Proxy == Animator of Data
+## Conclusion
 
-A good object should be a proxy for the effective animation of data.
-
-The data itself (in memory, in a file, in a database) is dead and mutable.
-
-The object is alive and immutable, using its identity (ID) as a key to access and manipulate this external, mutable data.
+ **Object == Proxy == Animator of Data**  
+* A good object should be a proxy for the effective animation of data.
+* The data itself (in memory, in a file, in a database) is dead and mutable.
+* The object is alive and immutable, using its identity (ID) as a key to access and manipulate this external, mutable data.
 
 ```mermaid
 %% Diagram 3: Simplified Flow of Data Animation and Behavior Delegation
@@ -362,7 +360,7 @@ graph TB
         style A fill:#4CAF50,stroke:#388E3C,color:#fff
 
         %% 2. The Contract and Behavior Delegation
-        subgraph Contract-Area
+        subgraph        Contract-Area
         direction LR
             B["Interface (Behavior)"]
             style B fill:#C8E6C9,stroke:#388E3C
@@ -408,81 +406,55 @@ graph TB
    D -- Output --> C
 ```
 
-## Explanation of the individual statements
+## Explanation of the individual components
 
 ### 1. Object == Proxy
 
 **Analogy:** An object can be treated like a proxy.
-
 **Meaning:** A proxy is a placeholder or representative for another object.
-
-This statement suggests that in some contexts, one does not work directly with the actual object, but through a proxy that intercepts and modifies operations.
-
-This is a common design pattern in software development to control, validate, or log behavior.
+* This statement suggests that in some contexts, one does not work directly with the actual object, but through a proxy that intercepts and modifies operations.
+* This is a common design pattern in software development to control, validate, or log behavior.
 
 ### 2. State $\wedge$ Behavior $\in$ Object
 
-**Analogy:** State and Behavior are components ($\in$) of an object.
-
+**Analogy:** State and Behavior are components ($\in$) of an object.  
 **Meaning:** This is a fundamental definition of object-oriented programming.
-
-An object bundles data (its state) and the methods that operate on that data (its behavior).
+* An object bundles data (its state) and the methods that operate on that data (its behavior).
 
 ### 3. State $\neq$ Behavior
 
-**Analogy:** State and Behavior are not the same thing.
-
+**Analogy:** State and Behavior are not the same thing.  
 **Meaning:** The state of an object describes its properties or its current values (e.g., Car.Speed = 100).
-
-Behavior describes the actions the object can perform (e.g., Car.accelerate()).
-
-Behavior can change the state, but the two are conceptually different things.
+* Behavior describes the actions the object can perform (e.g., Car.accelerate()).
+* Behavior can change the state, but the two are conceptually different things.
 
 ### 4. State == Data
 
-**Analogy:** The state of an object is equal to its data.
-
+**Analogy:** The state of an object is equal to its data.  
 **Meaning:** The state is represented by the values stored in the object's fields or attributes.
-
-In this sense, the state is simply the collection of data that the object contains at a specific point in time.
+* In this sense, the state is simply the collection of data that the object contains at a specific point in time.
 
 ### 5. Behavior == Animation
 
-**Analogy:** Behavior is equal to animation.
-
+**Analogy:** Behavior is equal to animation.  
 **Meaning:** This is a more specific interpretation of the term "behavior" in a visual or graphical context.
-
-Particularly in the field of computer graphics and data visualization, the behavior of an object is often described by its animation – how it changes, moves, or reacts over time.
-
-Examples include "Behavioral Animation," where characters move based on rules, or animations in user interfaces.
+* Particularly in the field of computer graphics and data visualization, the behavior of an object is often described by its animation – how it changes, moves, or reacts over time.
+* Examples include "Behavioral Animation," where characters move based on rules, or animations in user interfaces.
 
 ### 6. Object $\Rightarrow$ Data Animator
 
-**Analogy:** An object implies a Data Animator.
-
+**Analogy:** An object implies a Data Animator.  
 **Meaning:** This statement summarizes the previous points and interprets them in the context of data visualization.
+* If an Object has a State (Data) and a Behavior (Animation), then an object is essentially a Data Animator.
+* The Data (State) defines what should be visualized.
+* The Animation (Behavior) ensures that the representation of the data changes or moves.
 
-If an Object has a State (Data) and a Behavior (Animation), then an object is essentially a Data Animator.
+> **A good object is an immutable animator of mutable data.**
 
-The Data (State) defines what should be visualized.
+## References
 
-The Animator (Behavior) ensures that the representation of the data changes or moves.
-
-**A good object is an immutable animator of mutable data.**
-
-## Sources:
-
-- How an Immutable Object Can Have State and Behavior?
-  https://www.yegor256.com/2014/12/09/immutable-object-state-and-behavior.html
-
-- Data Should Be Animated, Not Mapped
-  https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html
-
-- Gradients of Immutability
-  https://www.yegor256.com/2016/09/07/gradients-of-immutability.html
-
-- Objects Should Be Immutable
-  https://www.yegor256.com/2014/06/09/objects-should-be-immutable.html
-
-- Immutable Objects Are Not Dumb
-  https://www.yegor256.com/2014/12/22/immutable-objects-not-dumb.html
+- [How an Immutable Object Can Have State and Behavior?](https://www.yegor256.com/2014/12/09/immutable-object-state-and-behavior.html)
+- [Data Should Be Animated, Not Mapped](https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html)
+- [Gradients of Immutability](https://www.yegor256.com/2016/09/07/gradients-of-immutability.html)
+- [Objects Should Be Immutable](https://www.yegor256.com/2014/06/09/objects-should-be-immutable.html)
+- [Immutable Objects Are Not Dumb](https://www.yegor256.com/2014/12/22/immutable-objects-not-dumb.html)
