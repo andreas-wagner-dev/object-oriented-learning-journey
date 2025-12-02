@@ -11,7 +11,7 @@
 *"... so that your code tells a customer story and achieves the [next level of readability](https://www.informatik-aktuell.de/entwicklung/programmiersprachen/next-level-lesbarkeit.html)."*
 
 
-![A-I Plot](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/quote_pkg_and_naming_meme.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/quote_pkg_and_naming_meme.png)
 
 > Quote of Robert Bräutigam (2018) at stackexchange: "Best way to naming classes and packages in Java"
 
