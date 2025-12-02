@@ -118,7 +118,7 @@ Ideally, the **package** as a module represents an **abstract business concept**
 * Payment processing (```Bill```, ```Billing``` , ```Payment```)  
 * External API integration (```Jira```, ```Http```)
 
-and **nota technical view** , such as:
+and **not a technical view** , such as:
 * ```Entity```, ```Model```, ```Service```, ```Repository```, ```Controller```, ```JiraClient```, ```JiraModel```, ```JiraAdapter```  
 
 as well as **not technical layers** , such as:
