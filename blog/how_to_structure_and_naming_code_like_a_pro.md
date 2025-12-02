@@ -18,23 +18,23 @@ In this context, a **package** should not be understood as a folder for grouping
 
 The **demarcation** of Object-Oriented Package Design from **"Layered Architecture"** is the **crucial point**. Well-known representatives like Clean Architecture or the package structures often proposed in Domain-Driven Design (DDD) organize code according to technical layers (```domain```, ```application```, ```infrastructure```, ```presentation```). Although these approaches are intended to promote maintainability and further development through the **separation of concerns into package layers**, in practice, they often achieve the opposite and **contradict the Single Responsibility Principle (SRP)**.
 
-Robert Bräutigam describes the core problems in his blog articles:
+Robert Bräutigam describes the core problems in his blog article *[Data Boundaries are the root cause of Maintenance Problems](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/)*. Let's identify and understand the underlying problems.
 
-**Data-Oriented Abstractions through [Data Boundaries](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/):**  
+**Data-Oriented Abstractions through Data Boundaries:**  
 The constant transfer of data across layer boundaries (```User``` -> ```UserDTO``` -> ```UserViewModel```) creates unnecessary code and causes the original, domain-specific abstraction to disintegrate. Each layer must transform the data for its own purpose, leading to rigid and maintenance-intensive systems.
 
 **Technical Communication via Architecture:**  
 A layered architecture describes technical dependencies, not domain-specific ones. A new developer must first understand the entire architecture before they can dive into the business logic. 
 
 **Semantic Coupling:**  
-This most critical type of coupling is often caused by getters. If one object knows too much about the internal details (private fields) of another object, both classes are semantically coupled. Changes in the detail object then propagate invisibly throughout the entire application.
+This most critical type of coupling is often caused by getters. If one object knows too much about the internal details (*private fields*) of another object, both classes are semantically coupled. Changes in the detail object then propagate invisibly throughout the entire application.
 
 **Subjective Interpretation of the "SRP":**
-The definition according to Clean Architecture:
+The definition according to **Clean Architecture**:
 
 > "A class should only have one reason to change"
 
-is very subjective and often too broad. By separating the data from the business logic and transporting it across layer boundaries, objects are stripped of all responsibility. This leads to unnecessary package layers and procedural code built around Data Transfer Objects (DTOs).
+is very subjective and often too broad. By separating the data from the business logic and transporting it across layer boundaries, *objects are stripped of all responsibility*. This leads to *unnecessary package* layers and *procedural code* built around *Data Transfer Objects* (DTOs).
 
 **DTOs across layer boundaries**
 
