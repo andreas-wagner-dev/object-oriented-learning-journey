@@ -1,10 +1,10 @@
-# Formale OOP-Regeln für App-Komposition
+# The right System Composition "leaves nobody behind..."
 
 **(Concept!!!)**
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/sys_composition_meme.png)
 
-## DEFINITIONEN
+## DEFINITIONEN (Formale OOP-Regeln für App-Komposition)
 
 - **Kompositionshierarchie**: Die gesamte Anwendung ist als Baum von Kompositionen aufgebaut, rekursiv verschachtelt von außen (App) nach innen (atomare Komponenten).
 - **Komposition**: Jedes Objekt existiert ausschließlich als Teil einer expliziten Objekt-Komposition, die durch eine Abstraktion z .B. `App.java` initiiert wird.
