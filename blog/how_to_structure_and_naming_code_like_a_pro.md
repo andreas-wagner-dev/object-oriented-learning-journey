@@ -349,6 +349,8 @@ com.example.todo/
 **Interpretation:**  
 The package is concrete and maximally stable. It lies significantly below the main sequence (ideal: 1).
 
+![A-I Plot (task)](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/a_i_plot_task.png)
+
 
 ## **5 The Storytelling Approach (Path to the "Pro...")**
 
