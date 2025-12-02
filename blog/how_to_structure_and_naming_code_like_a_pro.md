@@ -10,6 +10,11 @@
 
 *"... so that your code tells a customer story and achieves the [next level of readability](https://www.informatik-aktuell.de/entwicklung/programmiersprachen/next-level-lesbarkeit.html)."*
 
+
+![A-I Plot](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/quote_pkg_and_naming_meme.png)
+
+> Quote of Robert Bräutigam (2018) at stackexchange: "Best way to naming classes and packages in Java"
+
 ## **1 Terminology and Demarcation**
 
 **Good code** is not just bug-free, but also maintainable, reusable, and above all, **easy to understand**. The **key** to this lies in a domain-oriented package structure that follows the principles of **Object-Oriented *Package* Design** (OOPD).
@@ -1050,18 +1055,6 @@ This article is based on the established component principles of Robert C. Marti
   * The theoretical foundations and metrics for coupling (ADP, SDP, SAP) and cohesion (REP, CCP, CRP).  
   * *Source:* Robert C. Martin, *Agile Software Development, Principles, Patterns, and Practices*. Prentice Hall, 2002
 
-**Example for Change "Add Priority"**
-
-| Architecture Approach | Number of Changed Files | Number of Changed Packages | Effort for Change | Example for Change "Add Priority" |
-| :---- | :---- | :---- | :---- | :---- |
-| **Layered Architecture** | 5–6 | 4 | High | Task (Domain), TaskDTO (Application), TaskMapper (Application), TaskService (Application), TaskController (Presentation), TaskEntity (Infrastructure) |
-| **OO Package Design** | 1–2 | 1 | Low | Task.java (Interface): Add priority() method SimpleTask.java / DbTask.java: Implement priority |
-
-**Result:**
-
-* Layered: 6 files, 4 packages must be adapted  
-* OO: 2 files, 1 package must be adapted  
-* **→ 70% fewer changes with OO Package Design!**
 
 ## **11 Appendices**
 
@@ -1088,12 +1081,12 @@ graph TB
           
         PROBLEM["<b>Problems:</b><br/>❌ Domain only 1/4 of the App<br/>❌ Changes propagate through all layers<br/>❌ DTOs everywhere (Data Boundaries)<br/>❌ Technical knowledge required<br/>❌ Weak Cohesion<br/>❌ High semantic coupling"]  
           
-        style TRAD_TITLE fill:#ff6b6b,color:#fff  
+        style TRAD_TITLE fill:#e7f5ff,color:#000  
         style PRES fill:#ffe3e3,color:#000  
         style APP fill:#ffe3e3,color:#000  
         style DOMAIN fill:#ffe3e3,color:#000  
         style INFRA fill:#ffe3e3,color:#000  
-        style PROBLEM fill:#ff6b6b,color:#fff  
+        style PROBLEM fill:#e7f5ff,color:#000  
     end
 ```
 
@@ -1125,15 +1118,29 @@ graph TB
         
       BENEFIT["<b>Advantages:</b><br/>✅ No technical layers<br/>✅ Changes localized in one Package<br/>✅ No DTOs needed<br/>✅ Domain knowledge leads directly to code<br/>✅ High Cohesion<br/>✅ Low Coupling"]  
         
-      style OO_TITLE fill:#51cf66,color:#000  
+      style OO_TITLE fill:#e7f5ff,color:#000  
       style ROOT fill:#51cf66,color:#000  
       style TASK_PKG fill:#a9e34b,color:#000  
       style FOLDER_PKG fill:#a9e34b,color:#000  
       style USER_PKG fill:#a9e34b,color:#000  
       style APP_PKG fill:#a9e34b,color:#000  
-      style BENEFIT fill:#51cf66,color:#000  
+      style BENEFIT fill:#e7f5ff,color:#000  
   end
 ```
+
+**Example for Change "Add Priority"**
+
+| Architecture Approach | Number of Changed Files | Number of Changed Packages | Effort for Change | Example for Change "Add Priority" |
+| :---- | :---- | :---- | :---- | :---- |
+| **Layered Architecture** | 5–6 | 4 | High | Task (Domain), TaskDTO (Application), TaskMapper (Application), TaskService (Application), TaskController (Presentation), TaskEntity (Infrastructure) |
+| **OO Package Design** | 1–2 | 1 | Low | Task.java (Interface): Add priority() method SimpleTask.java / DbTask.java: Implement priority |
+
+**Result:**
+
+* Layered: 6 files, 4 packages must be adapted  
+* OO: 2 files, 1 package must be adapted  
+* **→ 70% fewer changes with OO Package Design!**
+
 
 ```mermaid
 graph TB    
