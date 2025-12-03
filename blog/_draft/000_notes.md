@@ -208,6 +208,7 @@ graph TB
 ```java
 @Component
 public class SpringPaymentApp {
+
     @Inject private InvoiceService invoiceService;
     @Inject private PaymentService paymentService;
     @Inject private CustomerService customerService;
@@ -216,6 +217,7 @@ public class SpringPaymentApp {
 
 @Service
 public class InvoiceService {
+
     @Inject private InvoiceRepository invoiceRepo;
     @Inject private CustomerService customerService;  // → Customer
     
@@ -227,6 +229,7 @@ public class InvoiceService {
 
 @Service
 public class PaymentService {
+
     @Inject private PaymentRepository paymentRepo;
     @Inject private CustomerService customerService;  // → Customer
     
@@ -255,11 +258,9 @@ public class CustomerService {
 }
 ```
 
-**Problem:** Zyklische Abhängigkeit - Das System bricht
+**Problem:** Zyklische Abhängigkeit -💥 Das System bricht
 
-
-**Das Problem**
-wird durch einen erharenen Senior Entwickler "gelöst" der viele Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte.
+Das Problem wird durch einen erharenen Senior Entwickler "gelöst" der viele Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte.
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy
@@ -288,11 +289,11 @@ public class CustomerService {
    
 3. **Erzwungene Layer-Trennung** - Alle Klassen haben `-Service` oder `-Repository` Suffix nur wegen der Layer
 
-4. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen
+5. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen
 
-5. **Code Pollution** - Überall `@Service`, `@Repository`, `@Inject`, `@Lazy` Annotations
+7. **Code Pollution** - Überall `@Service`, `@Repository`, `@Inject`, `@Lazy` Annotations
 
-6. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit Mock-Frameworks 
+9. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit Mock-Frameworks oder [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder @SpyBean) 
 
 Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern und sogar erzwingen:
 DI-Container fördern Layer-Architektur durch:
@@ -321,7 +322,6 @@ Die Lösung ist überraschend einfach: Verzichte auf DI-Container und komponiere
 Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige Komposition aussehen:
 
 ```java
-App.java                  # Abstraktion für die Anwendung
 app/                      # Package für Details der App-Abstraktion
 ├── WebApp.java           # Einstiegspunkt, implementiert App
 │       └── (in einer 'main' oder 'startup' Methode:)
@@ -337,6 +337,8 @@ app/                      # Package für Details der App-Abstraktion
 │               ),
 │               new CustomerDirectory(...)
 │           )
+│           
+App.java                  # Abstraktion für die Anwendung
 ```
 
 
@@ -387,7 +389,7 @@ Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattf
 - Die Konfiguration aller Abhängigkeiten
 - Die Übergabe der fertigen Objekte an die Applikationslogik
 
-Alle anderen Klassen nutzen ausschließlich *Constructor Injection* und überlassen die Kontrolle für die Objekterstellung ihrem Consumer Klassen (bzw. den Entwicklernm).
+Alle anderen Klassen nutzen ausschließlich *Constructor Injection* und überlassen die Kontrolle für die Objekterstellung ihren Consumern-Klassen (bzw. den Entwicklern).
 
 ## 3. Richtiger Umgang bei Framework-Verwendung
 
