@@ -20,7 +20,7 @@ graph LR
     subgraph LR Spring["SpringBoot-Application"]
 
         subgraph Magic["PaymentApplication"]
-            App["SpringApplication<br>init.<br/>@Compontent"]
+            App["SpringApplication<br>run() init.<br/>@Compontent"]
             ORM["SpringData<br>init. @Entity"]
         end
 
@@ -49,7 +49,7 @@ graph LR
     InvoiceRepo --> DB
     PaymentRepo --> DB
 
-    style Magic fill:#ececff
+    style Magic fill:#ececff,stroke:#9370db
     style App fill:#e8f4f8
     style ORM fill:#e8f4f8
     style Container fill:#f0f0f0,stroke:#666,stroke-width:3px
