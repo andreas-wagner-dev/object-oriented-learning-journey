@@ -294,17 +294,8 @@ public class CustomerService {
 
 6. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit Mock-Frameworks 
 
-**Die Layer-Architektur entstand automatisch durch:**
-- Die Verwendung von `@Service` und `@Repository` Stereotypen
-- Die Notwendigkeit, Business-Logic von Data-Access zu trennen
-- Die Spring-Best-Practices, die diese Struktur empfehlen
-
-### Warum führen DI-Container zwangsläufig zu Layer-Architektur?
-
-DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern und teilweise erzwingen:
-
+Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern und sogar erzwingen:
 DI-Container fördern Layer-Architektur durch:
-
 - **Stereotype-Annotations** (`@Service`, `@Repository`, `@Controller`) - die explizit Layer definieren
 - **Scan-Mechanismen**, die nach Package-Strukturen suchen (z.B. `com.example.service.*`, `com.example.repository.*`)
 - **Best-Practice-Guides** der Frameworks, die Layer-Trennung empfehlen
@@ -313,7 +304,7 @@ DI-Container fördern Layer-Architektur durch:
 
 ### Die Illusion der Entkopplung
 
-Viele Entwickler glauben, dass DI-Container für "loose coupling" sorgen. Doch in Wirklichkeit:
+Zudem glauben viele Entwickler , dass DI-Container für "loose coupling" sorgen. Doch in Wirklichkeit:
 - sind die Abhängigkeiten nur **versteckt**, nicht entkoppelt
 - wird die **Komplexität erhöht** statt reduziert
 - entsteht eine **Kopplung an den Framework-Container**
@@ -348,23 +339,31 @@ app/                      # Package für Details der App-Abstraktion
 │           )
 ```
 
-**Visualisierung der richtigen Komposition:**
-```
-┌─────────────────────────────────────────────┐
-│           ConsoleApp                        │
-│  ┌──────────────┐  ┌────────┐  ┌─────────┐ │
-│  │ InvoiceBook  │  │Payment │  │Customer │ │
-│  │ ┌──────────┐ │  │┌──────┐│  │Directory│ │
-│  │ │Invoices  │ │  ││Payer ││  └─────────┘ │
-│  │ │Calculated│ │  ││Recip.││              │
-│  │ │Tax       │ │  ││Amount││              │
-│  │ └──────────┘ │  │└──────┘│              │
-│  └──────────────┘  └────────┘              │
-└─────────────────────────────────────────────┘
+
+```mermaid
+flowchart TD
+    subgraph WebApp [WebApp]
+        direction TB
+
+        subgraph InvoiceBook [InvoiceBook]
+            Invoices[Invoices]
+            CalculatedTax[CalculatedTax]
+        end
+
+        subgraph Payment [Payment]
+            Payer[Payer: 'Alice']
+            Recipient[Recipient: 'Bob']
+            subgraph Amount [Amount]
+                Currency[Currency: 'EUR']
+            end
+        end
+
+        CustomerDirectory[CustomerDirectory]
+    end
 ```
 
 **Legende:**
-- Das größte Rechteck ist `ConsoleApp` - die äußere Komposition
+- Das größte Rechteck ist `WebApp` - die äußere Komposition
 - Darin: Rechtecke für `InvoiceBook`, `Payment`, `CustomerDirectory`
 - Weiter verschachtelt: `Invoices`, `CalculatedTax`, `Payer`, `Recipient`, `Amount`, `Currency`
 
@@ -388,7 +387,7 @@ Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattf
 - Die Konfiguration aller Abhängigkeiten
 - Die Übergabe der fertigen Objekte an die Applikationslogik
 
-Alle anderen Klassen nutzen ausschließlich Constructor Injection und überlassen die Objekterstellung ihrem Consumer.
+Alle anderen Klassen nutzen ausschließlich *Constructor Injection* und überlassen die Kontrolle für die Objekterstellung ihrem Consumer Klassen (bzw. den Entwicklernm).
 
 ## 3. Richtiger Umgang bei Framework-Verwendung
 
