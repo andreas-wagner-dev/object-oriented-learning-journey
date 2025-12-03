@@ -55,9 +55,13 @@ graph TB
 @SpringBootApplication
 public class SpringPaymentApp {
 
-    // Die App verwaltet keine expliziten Dependencies...
+    // Die App verwaltet keine expliziten Dependencies
+
     public static void main(String[] args) {
+
+        //...triggert das Komponenten-Scanning im classpath
         SpringApplication.run(SpringPaymentApp.class, args);
+
     }
 }
 
@@ -89,7 +93,7 @@ Das Objekt der Klasse ```SpringPaymentApp``` schwebt isoliert "herum" und der DI
 
 ---
 
-#### Anforderung 2: (Customer hinzufügen)** 
+#### Anforderung 2: (Customer hinzufügen)
 Nun sollen noch zusätlich Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
 ```mermaid
@@ -166,7 +170,7 @@ public class InvoiceService {
 public class CustomerService {
 
     @Autowired 
-    rivate CustomerRepository customerRepo;
+    private CustomerRepository customerRepo;
     
     public void validate(Customer customer) {
         // Validation Logic
@@ -233,11 +237,8 @@ graph TB
 ```java
 @Component
 public class SpringPaymentApp {
-
-    @Autowired private InvoiceService invoiceService;
-    @Autowired private PaymentService paymentService;
-    @Autowired private CustomerService customerService;
     // Container versteckt den Zyklus komplett!
+    
 }
 
 @Service
@@ -255,12 +256,16 @@ public class InvoiceService {
 @Service
 public class PaymentService {
 
-    @Autowired private PaymentRepository paymentRepo;
-    @Autowired private CustomerService customerService;  // → Customer
+    @Autowired
+    private PaymentRepository paymentRepo;
+
+    @Autowired
+    private CustomerService customerService;  // → Customer
     
     public void process(Payment payment) {
-        customerService.updateBalance(payment.getCustomer());
         // Business Logic
+        customerService.updateBalance(payment.getCustomer());
+        //... more Business Logic
     }
 }
 
