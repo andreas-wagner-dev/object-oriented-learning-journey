@@ -6,15 +6,14 @@ In der modernen objektorientierten Softwareentwicklung ist Dependency Injection 
 
 ### Die Probleme mit DI-Containern
 
-Betrachten wir eine Payment-Applikation mit DI-Container. Wir bauen sie schrittweise auf und beobachten, wie die Probleme mit wachsenden Anforderungen entstehen.
+Betrachten wir eine **Spring-Boot** *Payment-Applikation* mit der üblichen Verwendung von **DI-Container**.  
+Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.
 
-#### Schritt 1: Invoice und Payment - Einfache Anforderungen
-
-**Anforderung:** Die Applikation soll Rechnungen erstellen und Zahlungen verarbeiten können.
+**Anforderung 1:** Die Applikation soll Rechnungen (Invoice) erstellen und Zahlungen (Payment) verarbeiten können.
 
 ```mermaid
 graph TB
-    subgraph Container["Spring Container - verwaltet alles"]
+    subgraph Container["Spring DI-Container"]
         App[SpringPaymentApp]
         
         subgraph L3["Layer 3: Business Logic"]
@@ -42,16 +41,20 @@ graph TB
 ```
 
 ```java
-@Component
+@SpringBootApplication
 public class SpringPaymentApp {
-    @Inject private InvoiceService invoiceService;
-    @Inject private PaymentService paymentService;
-    // App nutzt Services, keine direkten Dependencies sichtbar
+
+    // Die App verwaltet keine expliziten Dependencies...
+    public static void main(String[] args) {
+        SpringApplication.run(SpringPaymentApp.class, args);
+    }
 }
 
 @Service
 public class InvoiceService {
-    @Inject private InvoiceRepository invoiceRepo;
+
+    @Inject
+    private InvoiceRepository invoiceRepo;
     
     public Invoice create(Customer customer, List<Item> items) {
         // Business Logic
@@ -60,7 +63,9 @@ public class InvoiceService {
 
 @Service
 public class PaymentService {
-    @Inject private PaymentRepository paymentRepo;
+
+    @Inject
+    private PaymentRepository paymentRepo;
     
     public void process(Payment payment) {
         // Business Logic
@@ -68,17 +73,17 @@ public class PaymentService {
 }
 ```
 
-**Problem:** Bereits hier ist unklar, wie die Objekte wirklich zusammenhängen. Die `SpringPaymentApp` schwebt isoliert - der Container verwaltet alles im Hintergrund.
+**Problem:** An dieser Stelle bereits ist es unklar, wie die Objekte wirklich zusammenhängen. Die `SpringPaymentApp` schwebt isoliert "herum" - der Container verwaltet alles im Hintergrund.
 
 ---
 
-#### Schritt 2: Customer hinzufügen - Noch ohne Zyklen
+#### Schritt 2: Customer hinzufügen
 
-**Neue Anforderung:** Kunden sollen verwaltet werden. Beim Erstellen einer Rechnung muss der Kunde validiert werden.
+**Neue Anforderung:** Nun sollen noch zusätlich Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
 ```mermaid
 graph TB
-    subgraph Container["Spring Container - Komplexität steigt"]
+    subgraph Container["Spring DI-Container"]
         App[SpringPaymentApp]
         
         subgraph L3["Layer 3: Business Logic"]
@@ -125,8 +130,12 @@ public class SpringPaymentApp {
 
 @Service
 public class InvoiceService {
-    @Inject private InvoiceRepository invoiceRepo;
-    @Inject private CustomerService customerService;  // ⚠️ Horizontale Dependency!
+
+    @Inject
+    private InvoiceRepository invoiceRepo;
+
+    @Inject
+    private CustomerService customerService;  // ⚠️ Horizontale Dependency!
     
     public Invoice create(Customer customer, List<Item> items) {
         customerService.validate(customer);  // Braucht CustomerService
@@ -136,7 +145,9 @@ public class InvoiceService {
 
 @Service
 public class CustomerService {
-    @Inject private CustomerRepository customerRepo;
+
+    @Inject 
+    rivate CustomerRepository customerRepo;
     
     public void validate(Customer customer) {
         // Validation Logic
@@ -144,7 +155,7 @@ public class CustomerService {
 }
 ```
 
-**Problem:** Horizontale Abhängigkeiten innerhalb des Business-Logic-Layers entstehen. Die Layer-Architektur wird komplexer.
+**Problem:** Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers, verkompliziert den Layer-Architektur.
 
 ---
 
