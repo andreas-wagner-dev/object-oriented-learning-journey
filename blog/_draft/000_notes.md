@@ -7,37 +7,47 @@ In der modernen objektorientierten Softwareentwicklung ist Dependency Injection 
 ### Die Probleme mit DI-Containern
 
 Betrachten wir eine **Spring-Boot** *Payment-Applikation* mit der üblichen Verwendung von **DI-Container**.  
-Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.
+Mittels Annotations wie ```@Component```, ```@Service```, ```@Repository``` und ```@Controller``` kann Spring automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.
+
+Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.)
 
 #### Anforderung 1: 
 Die Applikation soll Rechnungen (```Invoice```) erstellen und Zahlungen (```Payment```) verarbeiten können.
 
 ```mermaid
 graph TB
-    subgraph Container["Spring DI-Container"]
-        App[SpringPaymentApp]
-        
-        subgraph L3["Layer 3: Business Logic"]
-            Invoice[InvoiceService]
-            Payment[PaymentService]
+
+    subgraph Spring["SpringApplication"]
+
+        subgraph Container["Spring DI-Container"]
+
+            App[SpringPaymentApp]
+            ORM[SpringJPA]
+            
+            subgraph L3["Layer 3: Business Logic"]
+                Invoice[InvoiceService]
+                Payment[PaymentService]
+            end
+            
+            subgraph L2["Layer 2: Data Access"]
+                InvoiceRepo[InvoiceRepository]
+                PaymentRepo[PaymentRepository]
+            end
+            
+            subgraph L1["Layer 1: Infrastructure"]
+                DB[(Database)]
+            end
         end
-        
-        subgraph L2["Layer 2: Data Access"]
-            InvoiceRepo[InvoiceRepository]
-            PaymentRepo[PaymentRepository]
-        end
-        
-        subgraph L1["Layer 1: Infrastructure"]
-            DB[(Database)]
-        end
+
     end
     
     Invoice --> InvoiceRepo
     Payment --> PaymentRepo
     InvoiceRepo --> DB
     PaymentRepo --> DB
-    
+
     style App fill:#e8f4f8
+    style ORM fill:#e8f4f8 
     style Container fill:#f0f0f0,stroke:#666,stroke-width:3px
 ```
 
@@ -54,7 +64,7 @@ public class SpringPaymentApp {
 @Service
 public class InvoiceService {
 
-    @Inject
+    @Autowired
     private InvoiceRepository invoiceRepo;
     
     public Invoice create(Customer customer, List<Item> items) {
@@ -65,7 +75,7 @@ public class InvoiceService {
 @Service
 public class PaymentService {
 
-    @Inject
+    @Autowired
     private PaymentRepository paymentRepo;
     
     public void process(Payment payment) {
@@ -84,23 +94,29 @@ Nun sollen noch zusätlich Kunden verwaltet werden und beim Erstellen einer Rech
 
 ```mermaid
 graph TB
-    subgraph Container["Spring DI-Container"]
-        App[SpringPaymentApp]
-        
-        subgraph L3["Layer 3: Business Logic"]
-            Invoice[InvoiceService]
-            Payment[PaymentService]
-            Customer[CustomerService]
-        end
-        
-        subgraph L2["Layer 2: Data Access"]
-            InvoiceRepo[InvoiceRepository]
-            PaymentRepo[PaymentRepository]
-            CustomerRepo[CustomerRepository]
-        end
-        
-        subgraph L1["Layer 1: Infrastructure"]
-            DB[Database]
+
+    subgraph Spring["SpringApplication"]
+
+        subgraph Container["Spring DI-Container"]
+    
+            App[SpringPaymentApp]
+            ORM[SpringJPA]
+    
+            subgraph L3["Layer 3: Business Logic"]
+                Invoice[InvoiceService]
+                Payment[PaymentService]
+                Customer[CustomerService]
+            end
+            
+            subgraph L2["Layer 2: Data Access"]
+                InvoiceRepo[InvoiceRepository]
+                PaymentRepo[PaymentRepository]
+                CustomerRepo[CustomerRepository]
+            end
+            
+            subgraph L1["Layer 1: Infrastructure"]
+                DB[Database]
+            end
         end
     end
     
@@ -114,9 +130,10 @@ graph TB
     InvoiceRepo --> DB
     PaymentRepo --> DB
     CustomerRepo --> DB
-    
-    style App fill:#e8f4f8
+
     style Invoice fill:#ffe6e6
+    style App fill:#e8f4f8
+    style ORM fill:#e8f4f8
     style Container fill:#f0f0f0,stroke:#666,stroke-width:3px
 ```
 
@@ -124,19 +141,19 @@ graph TB
 @Component
 public class SpringPaymentApp {
 
-    @Inject private InvoiceService invoiceService;
-    @Inject private PaymentService paymentService;
-    @Inject private CustomerService customerService;
+    @Autowired private InvoiceService invoiceService;
+    @Autowired private PaymentService paymentService;
+    @Autowired private CustomerService customerService;
     // Noch mehr versteckte Dependencies
 }
 
 @Service
 public class InvoiceService {
 
-    @Inject
+    @Autowired
     private InvoiceRepository invoiceRepo;
 
-    @Inject
+    @Autowired
     private CustomerService customerService;  // ⚠️ Horizontale Dependency!
     
     public Invoice create(Customer customer, List<Item> items) {
@@ -148,7 +165,7 @@ public class InvoiceService {
 @Service
 public class CustomerService {
 
-    @Inject 
+    @Autowired 
     rivate CustomerRepository customerRepo;
     
     public void validate(Customer customer) {
@@ -166,26 +183,32 @@ Jetzt sollen Kunden ihre offenen Rechnungen sehen können. Die Klasse `CustomerS
 
 ```mermaid
 graph TB
-    subgraph Container["🔲 Spring Container - ZYKLUS entsteht!"]
-        App[SpringPaymentApp]
-        
-        subgraph L3["Layer 3: Business Logic"]
-            Invoice[InvoiceService]
-            Payment[PaymentService]
-            Customer[CustomerService]
-        end
-        
-        subgraph L2["Layer 2: Data Access"]
-            InvoiceRepo[InvoiceRepository]
-            PaymentRepo[PaymentRepository]
-            CustomerRepo[CustomerRepository]
-        end
-        
-        subgraph L1["Layer 1: Infrastructure"]
-            DB[Database]
+
+    subgraph Spring["SpringApplication"]
+
+        subgraph Container["Spring Container - ZYKLUS entsteht!"]
+    
+            App[SpringPaymentApp]
+            ORM[SpringJPA]
+            
+            subgraph L3["Layer 3: Business Logic"]
+                Invoice[InvoiceService]
+                Payment[PaymentService]
+                Customer[CustomerService]
+            end
+            
+            subgraph L2["Layer 2: Data Access"]
+                InvoiceRepo[InvoiceRepository]
+                PaymentRepo[PaymentRepository]
+                CustomerRepo[CustomerRepository]
+            end
+            
+            subgraph L1["Layer 1: Infrastructure"]
+                DB[Database]
+            end
         end
     end
-    
+
     Invoice --> InvoiceRepo
     Invoice -.->|horizontal| Customer
     
@@ -199,10 +222,11 @@ graph TB
     PaymentRepo --> DB
     CustomerRepo --> DB
     
-    style App fill:#e8f4f8
     style Invoice fill:#ff6b6b
     style Customer fill:#ff6b6b
     style Payment fill:#ffe6e6
+    style App fill:#e8f4f8
+    style ORM fill:#e8f4f8
     style Container fill:#ffe0e0,stroke:#ff0000,stroke-width:3px
 ```
 
@@ -210,17 +234,17 @@ graph TB
 @Component
 public class SpringPaymentApp {
 
-    @Inject private InvoiceService invoiceService;
-    @Inject private PaymentService paymentService;
-    @Inject private CustomerService customerService;
+    @Autowired private InvoiceService invoiceService;
+    @Autowired private PaymentService paymentService;
+    @Autowired private CustomerService customerService;
     // Container versteckt den Zyklus komplett!
 }
 
 @Service
 public class InvoiceService {
 
-    @Inject private InvoiceRepository invoiceRepo;
-    @Inject private CustomerService customerService;  // → Customer
+    @Autowired private InvoiceRepository invoiceRepo;
+    @Autowired private CustomerService customerService;  // → Customer
     
     public Invoice create(Customer customer, List<Item> items) {
         customerService.validate(customer);
@@ -231,8 +255,8 @@ public class InvoiceService {
 @Service
 public class PaymentService {
 
-    @Inject private PaymentRepository paymentRepo;
-    @Inject private CustomerService customerService;  // → Customer
+    @Autowired private PaymentRepository paymentRepo;
+    @Autowired private CustomerService customerService;  // → Customer
     
     public void process(Payment payment) {
         customerService.updateBalance(payment.getCustomer());
@@ -243,10 +267,10 @@ public class PaymentService {
 @Service
 public class CustomerService {
 
-    @Inject
+    @Autowired
     private CustomerRepository customerRepo;
 
-    @Inject
+    @Autowired
     private InvoiceService invoiceService;  // 🔴 → Invoice (ZYKLUS!)
     
     public List<Invoice> getOpenInvoices(Customer customer) {
@@ -269,7 +293,7 @@ Das Problem wird durch einen erharenen Senior Entwickler "gelöst" der viele Jah
 @Lazy  // Spring's "Lösung" für Zyklen
 public class CustomerService {
 
-    @Inject
+    @Autowired
     private InvoiceService invoiceService;  // Wird als Proxy injiziert
     // ...
 }
@@ -284,7 +308,7 @@ public class CustomerService {
 1. **Unübersichtliche Abhängigkeiten** - `SpringPaymentApp` zeigt keine echten Dependencies. Wo ist die Objektstruktur?
    
 2. **Schwere Wartbarkeit** - Um zu verstehen was `CustomerService` braucht, muss man:
-   - Alle `@Inject` Felder durchsuchen
+   - Alle `@Autowired` Felder durchsuchen
    - Prüfen ob `@Lazy` verwendet wird
    - Verstehen wie Spring die Proxies auflöst
    
@@ -292,7 +316,7 @@ public class CustomerService {
 
 5. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen
 
-7. **Code Pollution** - Überall `@Service`, `@Repository`, `@Inject`, `@Lazy` Annotations
+7. **Code Pollution** - Überall `@Service`, `@Repository`, `@Autowired`, `@Lazy` Annotations
 
 9. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit Mock-Frameworks oder [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder @SpyBean) 
 
@@ -405,13 +429,13 @@ Wenn du einen DI-Container verwenden musst (oder willst), dann beschränke seine
 @ApplicationScoped
 public class MainApplication {
     
-    @Inject
+    @Autowired
     private DatabaseConnection db;
     
-    @Inject
+    @Autowired
     private MessageQueue queue;
     
-    @Inject
+    @Autowired
     private ExternalApiClient api;
     
     @Produces
@@ -442,7 +466,7 @@ public class MainApplication {
 
 ### Kernprinzipien
 
-1. **Container-Isolation**: Nur die MainApplication-Klasse darf `@Inject` verwenden
+1. **Container-Isolation**: Nur die MainApplication-Klasse darf `@Autowired` verwenden
 2. **Explizite Komposition**: Die gesamte Objektstruktur wird manuell komponiert
 3. **Framework-Adaption**: Der Container liefert nur primitive Dependencies (DB-Connection, Config, etc.)
 4. **Business-Logic-Freiheit**: Keine Business-Klasse kennt den DI-Container
@@ -451,11 +475,11 @@ Jegliche DI-Container sollten auf die Composition Root beschränkt sein. Der Res
 
 ### Migration bestehender Systeme
 
-Bei Legacy-Code mit verstreutem `@Inject`:
+Bei Legacy-Code mit verstreutem `@Autowired`:
 
 1. Erstelle eine zentrale MainApplication-Klasse
 2. Verschiebe schrittweise die Objekterstellung dorthin
-3. Entferne `@Inject` aus Business-Klassen
+3. Entferne `@Autowired` aus Business-Klassen
 4. Mache Constructor-Dependencies explizit
 
 ## 4. Fazit mit Beispiel-Struktur
