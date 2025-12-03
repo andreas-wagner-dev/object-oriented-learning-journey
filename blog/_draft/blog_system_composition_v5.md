@@ -6,12 +6,12 @@ In der modernen objektorientierten Softwareentwicklung ist Dependency Injection 
 
 ### Die Probleme mit DI-Containern
 
-Betrachten wir eine Payment-Applikation mit DI-Container. Die scheinbar einfache Struktur führt schnell zu komplexen Problemen:
+Betrachten wir eine Spring Payment-Applikation mit DI-Container. Die scheinbar einfache Struktur führt schnell zu komplexen Problemen:
 
 ```mermaid
 graph TB
     subgraph L4["Layer 4: Application"]
-        App[PaymentApp]
+        App[SpringPaymentApplication]
     end
     
     subgraph L3["Layer 3: Business Logic"]
@@ -72,85 +72,6 @@ DI-Container fördern Layer-Architektur durch:
 - **Best-Practice-Guides** der Frameworks, die Layer-Trennung empfehlen
 - **Proxy-Mechanismen** für Transactions (`@Transactional`) - die Layer-Grenzen voraussetzen
 - **Dependency-Rules**, die nur "nach unten" zeigen dürfen - was Layer-Hierarchien erzwingt
-
-### Das Problem bei Verwendung von DI-Containern
-
-Betrachten wir eine typische Rechnungsanwendung mit DI-Container:
-
-**Visualisierung der Layer-Problematik:**
-```
-┌────────────────────────────────────────────────────────┐
-│ L4: Application Layer                                  │
-│     [MainApplication]                                  │
-├════════════════════════════════════════════════════════┤
-│ L3: Business Logic Layer                               │
-│     [InvoiceService] ←→ [PaymentService] ←→ [Customer] │
-│            ↑                                      ↓     │
-│            └──────── 🔴 Zyklische Abhängigkeit ───┘     │
-├════════════════════════════════════════════════════════┤
-│ L2: Data Access Layer                                  │
-│     [InvoiceRepo]    [PaymentRepo]    [CustomerRepo]   │
-├════════════════════════════════════════════════════════┤
-│ L1: Infrastructure Layer                               │
-│     [Database]                                         │
-└────────────────────────────────────────────────────────┘
-
-Legende:
-→ : Erlaubte Abhängigkeit (nach unten)
-↔ : Problematische horizontale Abhängigkeit
-🔴: Zyklische Abhängigkeit
-```
-
-So sieht der Code dazu aus:
-
-```java
-// ❌ FALSCH: Mit DI-Container und Layers
-
-// Layer 4 - Application Layer
-@Component
-public class MainApplication {
-    @Inject private InvoiceService invoiceService;  // Abhängigkeit zu Layer 3
-    @Inject private PaymentService paymentService;  // Abhängigkeit zu Layer 3
-    @Inject private CustomerService customerService; // Abhängigkeit zu Layer 3
-}
-
-// Layer 3 - Business Logic Layer
-@Service
-public class InvoiceService {
-    @Inject private InvoiceRepository invoiceRepo;  // Abhängigkeit zu Layer 2
-    @Inject private TaxCalculator taxCalculator;    // Abhängigkeit zu Layer 2
-    @Inject private PaymentService paymentService;  // ⚠️ Horizontale Abhängigkeit!
-}
-
-@Service
-public class PaymentService {
-    @Inject private PaymentRepository paymentRepo;  // Abhängigkeit zu Layer 2
-    @Inject private CustomerService customerService; // ⚠️ Horizontale Abhängigkeit!
-}
-
-@Service
-public class CustomerService {
-    @Inject private CustomerRepository customerRepo; // Abhängigkeit zu Layer 2
-    @Inject private InvoiceService invoiceService;   // 🔴 ZYKLISCHE ABHÄNGIGKEIT!
-}
-
-// Layer 2 - Data Access Layer
-@Repository
-public class InvoiceRepository {
-    @Inject private Database database;              // Abhängigkeit zu Layer 1
-}
-
-@Repository
-public class PaymentRepository {
-    @Inject private Database database;              // Abhängigkeit zu Layer 1
-}
-
-// Layer 1 - Infrastructure Layer
-@Component
-public class Database {
-    // Lowest layer
-}
-```
 
 ### Die Probleme dieser Architektur
 
