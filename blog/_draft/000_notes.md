@@ -9,7 +9,8 @@ In der modernen objektorientierten Softwareentwicklung ist Dependency Injection 
 Betrachten wir eine **Spring-Boot** *Payment-Applikation* mit der üblichen Verwendung von **DI-Container**.  
 Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.
 
-**Anforderung 1:** Die Applikation soll Rechnungen (Invoice) erstellen und Zahlungen (Payment) verarbeiten können.
+#### Anforderung 1: 
+Die Applikation soll Rechnungen (```Invoice```) erstellen und Zahlungen (```Payment```) verarbeiten können.
 
 ```mermaid
 graph TB
@@ -73,13 +74,13 @@ public class PaymentService {
 }
 ```
 
-**Problem:** An dieser Stelle bereits ist es unklar, wie die Objekte wirklich zusammenhängen. Die `SpringPaymentApp` schwebt isoliert "herum" - der Container verwaltet alles im Hintergrund.
+**Problem:** An dieser Stelle bereits ist es unklar, wie die Objekte wirklich zusammenhängen.  
+Das Objekt der Klasse ```SpringPaymentApp``` schwebt isoliert "herum" und der DI-Container verwaltet alles im Hintergrund.
 
 ---
 
-#### Schritt 2: Customer hinzufügen
-
-**Neue Anforderung:** Nun sollen noch zusätlich Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
+#### Anforderung 2: (Customer hinzufügen)** 
+Nun sollen noch zusätlich Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
 ```mermaid
 graph TB
@@ -155,13 +156,12 @@ public class CustomerService {
 }
 ```
 
-**Problem:** Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers, verkompliziert den Layer-Architektur.
+**Kein weiteres Problem:** Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers, verkompliziert den ```Application``` Layer.
 
 ---
 
-#### Schritt 3: Zyklische Abhängigkeit - Das System bricht
-
-**Neue Anforderung:** Kunden sollen ihre offenen Rechnungen sehen können. `CustomerService` muss jetzt `InvoiceService` kennen.
+#### Anforderung 3:
+Jetzt sollen Kunden ihre offenen Rechnungen sehen können. Die Klasse `CustomerService` muss jetzt `InvoiceService` kennen.
 
 ```mermaid
 graph TB
@@ -238,8 +238,12 @@ public class PaymentService {
 
 @Service
 public class CustomerService {
-    @Inject private CustomerRepository customerRepo;
-    @Inject private InvoiceService invoiceService;  // 🔴 → Invoice (ZYKLUS!)
+
+    @Inject
+    private CustomerRepository customerRepo;
+
+    @Inject
+    private InvoiceService invoiceService;  // 🔴 → Invoice (ZYKLUS!)
     
     public List<Invoice> getOpenInvoices(Customer customer) {
         return invoiceService.findOpenByCustomer(customer);  // Braucht InvoiceService
@@ -251,20 +255,27 @@ public class CustomerService {
 }
 ```
 
-**Das Problem wird "gelöst" durch Spring:**
+**Problem:** Zyklische Abhängigkeit - Das System bricht
+
+
+**Das Problem**
+wird durch einen erharenen Senior Entwickler "gelöst" der viele Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte.
+
 ```java
 // Spring erstellt Proxies und initialisiert lazy
 @Service
 @Lazy  // Spring's "Lösung" für Zyklen
 public class CustomerService {
-    @Inject private InvoiceService invoiceService;  // Wird als Proxy injiziert
+
+    @Inject
+    private InvoiceService invoiceService;  // Wird als Proxy injiziert
     // ...
 }
 ```
 
 ---
 
-#### Die resultierenden Probleme - Zusammenfassung
+#### Zusammenfassung der resultierenden Probleme
 
 **Diese schrittweise Entwicklung zeigt:**
 
@@ -280,6 +291,8 @@ public class CustomerService {
 4. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen
 
 5. **Code Pollution** - Überall `@Service`, `@Repository`, `@Inject`, `@Lazy` Annotations
+
+6. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit Mock-Frameworks 
 
 **Die Layer-Architektur entstand automatisch durch:**
 - Die Verwendung von `@Service` und `@Repository` Stereotypen
@@ -298,160 +311,30 @@ DI-Container fördern Layer-Architektur durch:
 - **Proxy-Mechanismen** für Transactions (`@Transactional`) - die Layer-Grenzen voraussetzen
 - **Dependency-Rules**, die nur "nach unten" zeigen dürfen - was Layer-Hierarchien erzwingt
 
-### Das Problem bei Verwendung von DI-Containern
-
-Betrachten wir eine typische Rechnungsanwendung mit DI-Container:
-
-**Visualisierung der Layer-Problematik:**
-```
-┌────────────────────────────────────────────────────────┐
-│ L4: Application Layer                                  │
-│     [MainApplication]                                  │
-├════════════════════════════════════════════════════════┤
-│ L3: Business Logic Layer                               │
-│     [InvoiceService] ←→ [PaymentService] ←→ [Customer] │
-│            ↑                                      ↓     │
-│            └──────── 🔴 Zyklische Abhängigkeit ───┘     │
-├════════════════════════════════════════════════════════┤
-│ L2: Data Access Layer                                  │
-│     [InvoiceRepo]    [PaymentRepo]    [CustomerRepo]   │
-├════════════════════════════════════════════════════════┤
-│ L1: Infrastructure Layer                               │
-│     [Database]                                         │
-└────────────────────────────────────────────────────────┘
-
-Legende:
-→ : Erlaubte Abhängigkeit (nach unten)
-↔ : Problematische horizontale Abhängigkeit
-🔴: Zyklische Abhängigkeit
-```
-
-So sieht der Code dazu aus:
-
-```java
-// ❌ FALSCH: Mit DI-Container und Layers
-
-// Layer 4 - Application Layer
-@Component
-public class MainApplication {
-    @Inject private InvoiceService invoiceService;  // Abhängigkeit zu Layer 3
-    @Inject private PaymentService paymentService;  // Abhängigkeit zu Layer 3
-    @Inject private CustomerService customerService; // Abhängigkeit zu Layer 3
-}
-
-// Layer 3 - Business Logic Layer
-@Service
-public class InvoiceService {
-    @Inject private InvoiceRepository invoiceRepo;  // Abhängigkeit zu Layer 2
-    @Inject private TaxCalculator taxCalculator;    // Abhängigkeit zu Layer 2
-    @Inject private PaymentService paymentService;  // ⚠️ Horizontale Abhängigkeit!
-}
-
-@Service
-public class PaymentService {
-    @Inject private PaymentRepository paymentRepo;  // Abhängigkeit zu Layer 2
-    @Inject private CustomerService customerService; // ⚠️ Horizontale Abhängigkeit!
-}
-
-@Service
-public class CustomerService {
-    @Inject private CustomerRepository customerRepo; // Abhängigkeit zu Layer 2
-    @Inject private InvoiceService invoiceService;   // 🔴 ZYKLISCHE ABHÄNGIGKEIT!
-}
-
-// Layer 2 - Data Access Layer
-@Repository
-public class InvoiceRepository {
-    @Inject private Database database;              // Abhängigkeit zu Layer 1
-}
-
-@Repository
-public class PaymentRepository {
-    @Inject private Database database;              // Abhängigkeit zu Layer 1
-}
-
-// Layer 1 - Infrastructure Layer
-@Component
-public class Database {
-    // Lowest layer
-}
-```
-
-### Die Probleme dieser Architektur
-
-DI-Frameworks wie Spring IoC, Google Guice, Java EE6 CDI und Dagger machen aus einer natürlichen OOP-Technik ein Anti-Pattern. **Sie führen zwangsläufig zu einer Layer-Architektur**, die wiederum folgende Probleme verursacht:
-
-1. **Unübersichtliche Abhängigkeiten durch Layer-Denken**: Die wahre Objektstruktur versteckt sich hinter `@Inject`-Annotations und Layer-Grenzen. Wo wird `InvoiceService` eigentlich erstellt? Wer injiziert was? Die Layer-Abstraktion verschleiert die tatsächlichen Objektbeziehungen.
-
-2. **Schwere Wartbarkeit durch Layer-Indirektion**: Um zu verstehen, welche Abhängigkeiten ein Objekt hat, muss man:
-   - Die Klasse selbst durchsuchen (nach `@Inject`)
-   - Verstehen, in welchem Layer sie sich befindet
-   - Konfigurationsdateien durchforsten
-   - Den DI-Container-Configuration-Code finden
-   - Die Layer-Regeln und erlaubten Abhängigkeitsrichtungen kennen
-   - Die Laufzeit-Behavior des Containers verstehen
-
-3. **Erzwungene Layered Architecture**: DI-Container fördern aktiv eine künstliche Trennung in Service-, Repository- und Controller-Layer. Diese Layer-Abstraktion ist oft unnötig und führt zu:
-   - `-Service` Klassen, die nur als Delegator zwischen Layern fungieren
-   - `-Repository` Klassen, die einfache CRUD-Operationen wrappen, nur um Layer-Grenzen einzuhalten
-   - Artificielle Interfaces "für die Testbarkeit" und Layer-Entkopplung
-   - Einer starren Hierarchie, die natürliche Objektkomposition verhindert
-
-4. **Zyklische Abhängigkeiten innerhalb der Layer**: Die Layer-Architektur verhindert zwar vertikale Zyklen, aber **horizontale Abhängigkeiten innerhalb eines Layers** führen zu schwer zu entwirrenden Dependency-Kreisen:
-   - `InvoiceService` braucht `PaymentService` (beide in Layer 3)
-   - `PaymentService` braucht `CustomerService` (beide in Layer 3)
-   - `CustomerService` braucht `InvoiceService` (beide in Layer 3) → 🔴 **Zyklus!**
-   
-   Der DI-Container "löst" dies durch Proxies und Lazy Initialization – versteckt aber das eigentliche Design-Problem, das durch die künstliche Layer-Trennung erst entsteht.
-
-5. **Code Pollution durch Layer-Annotations**: Der eigentliche Business-Code wird mit Framework-spezifischen und Layer-definierenden Annotations überfrachtet:
-   ```java
-   @Service              // Layer-Definition: "Ich bin Business Logic"
-   @Transactional
-   @Scope("prototype")
-   public class InvoiceService {
-       @Inject @Named("primary")
-       private InvoiceRepository repo;  // Abhängigkeit zum Data-Layer
-       
-       @PostConstruct
-       public void init() { /* ... */ }
-   }
-   ```
-
-### Warum führen DI-Container zu Layern?
-
-DI-Container fördern Layer-Architektur durch:
-
-- **Stereotype-Annotations** (`@Service`, `@Repository`, `@Controller`) - die explizit Layer definieren
-- **Scan-Mechanismen**, die nach Package-Strukturen suchen (z.B. `com.example.service.*`, `com.example.repository.*`)
-- **Best-Practice-Guides** der Frameworks, die Layer-Trennung empfehlen
-- **Proxy-Mechanismen** für Transactions (`@Transactional`) - die Layer-Grenzen voraussetzen
-- **Dependency-Rules**, die nur "nach unten" zeigen dürfen - was Layer-Hierarchien erzwingt
-
 ### Die Illusion der Entkopplung
 
 Viele Entwickler glauben, dass DI-Container für "loose coupling" sorgen. Doch in Wirklichkeit:
-- Sind die Abhängigkeiten nur **versteckt**, nicht entkoppelt
-- Wird die **Komplexität erhöht** statt reduziert
-- Entsteht eine **Kopplung an den Framework-Container**
-- Wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
+- sind die Abhängigkeiten nur **versteckt**, nicht entkoppelt
+- wird die **Komplexität erhöht** statt reduziert
+- entsteht eine **Kopplung an den Framework-Container**
+- wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
-Der eigentliche Wert liegt in der Dependency Injection selbst – nicht im Container.
+Der eigentliche Wert liegt in der **Dependency Injection** selbst – nicht im *Container*.
 
 ## 2. Der richtige Weg: Pure Composition
 
 Die Lösung ist überraschend einfach: Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
 
-### Die richtige Komposition: Ein konkretes Beispiel
+### Die richtige Komposition:
 
 Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige Komposition aussehen:
 
 ```java
 App.java                  # Abstraktion für die Anwendung
 app/                      # Package für Details der App-Abstraktion
-├── ConsoleApp.java       # Einstiegspunkt, implementiert App
+├── WebApp.java           # Einstiegspunkt, implementiert App
 │       └── (in einer 'main' oder 'startup' Methode:)
-│           new ConsoleApp(
+│           new WebApp(
 │               new InvoiceBook(
 │                   new Invoices(),
 │                   new CalculatedTax()
@@ -485,51 +368,11 @@ app/                      # Package für Details der App-Abstraktion
 - Darin: Rechtecke für `InvoiceBook`, `Payment`, `CustomerDirectory`
 - Weiter verschachtelt: `Invoices`, `CalculatedTax`, `Payer`, `Recipient`, `Amount`, `Currency`
 
-Beachte: **Keine Layers, keine Annotations, keine versteckten Abhängigkeiten** – nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.
+Beachte: **Keine Layers, keine Annotations, keine versteckten Abhängigkeiten** – nur pure Objekt-Komposition durch explizite Constructor-Aufrufe. Zudem gibt es keinen Objekt der einfach herum hängt bzw. "im Stich gelassen wurde..."
 
-### Ein weiteres echtes Beispiel
+Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem [rultor.com]-Projekt, wie echte Objekt-Komposition aussieht.
 
-Yegor Bugayenko zeigt in seinem rultor.com-Projekt, wie echte Objekt-Komposition aussieht:
-
-```java
-public final class Agents {
-    public Agents(
-        final Logs logs,
-        final Sttc sttc,
-        final Talks talks
-    ) {
-        return new Agents.Iterative(
-            Arrays.asList(
-                new Iterative.Constant<Agent>(
-                    new IndexesProfile(sttc)
-                ),
-                new Iterative.Constant<Agent>(
-                    new RemovesProfile(talks)
-                ),
-                new Iterative.Sticky<Agent>(
-                    new Iterative.Func<>(
-                        talk -> new StartsRequest(
-                            new Req.Simple(
-                                talk,
-                                new Question.Wrap(
-                                    new QnSince(
-                                        new QnParametrized(
-                                            new QnConfig(talk)
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                ),
-                // ... weitere Agents
-            )
-        );
-    }
-}
-```
-
-### Die Vorteile dieser Herangehensweise
+### Vorteile der *explizieten* Herangehensweise
 
 1. **Vollständige Transparenz**: Jeder kann sofort sehen, wie das System zusammengesetzt ist
 2. **Keine versteckten Abhängigkeiten**: Alle Dependencies sind explizit im Code sichtbar
@@ -549,7 +392,8 @@ Alle anderen Klassen nutzen ausschließlich Constructor Injection und überlasse
 
 ## 3. Richtiger Umgang bei Framework-Verwendung
 
-In der Praxis arbeiten viele Teams mit Frameworks wie Spring oder Java EE CDI, die DI-Container mitbringen. Wie geht man damit um?
+In der Praxis setzen jedoch viele Unternehmen Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen.  
+*Wie sollen dann die *Teams* damit umgeht?*
 
 ### Die One-Class-Regel
 
