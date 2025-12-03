@@ -6,7 +6,7 @@ In der modernen objektorientierten Softwareentwicklung ist Dependency Injection 
 
 ### Die Probleme mit DI-Containern
 
-Betrachten wir eine **Spring-Boot** *Payment-Applikation* mit der üblichen Verwendung von **DI-Container**.  
+Betrachten wir eine **Spring-Boot** *Payment-Application* mit der üblichen Verwendung von **DI-Container**.  
 Mittels Annotations wie ```@Component```, ```@Service```, ```@Repository``` und ```@Controller``` kann Spring automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.
 
 Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.)
@@ -15,53 +15,55 @@ Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden An
 Die Applikation soll Rechnungen (```Invoice```) erstellen und Zahlungen (```Payment```) verarbeiten können.
 
 ```mermaid
-graph TB
+graph LR
 
-    subgraph Spring["SpringApplication"]
+    subgraph LR Spring["SpringBoot-Application"]
+
+        subgraph Magic["PaymentApplication"]
+            App["SpringApplication<br>init.<br/>@Compontent"]
+            ORM["SpringData<br>init. @Entity"]
+        end
 
         subgraph Container["Spring DI-Container"]
 
-            App[SpringPaymentApp]
-            ORM[SpringJPA]
-            
             subgraph L3["Layer 3: Business Logic"]
-                Invoice[InvoiceService]
-                Payment[PaymentService]
+                Invoice["Invoice<br/>+ Service<br/>+ Entity"]
+                Payment["Payment<br/>+ Service<br/>+ Entity"]
             end
-            
+
             subgraph L2["Layer 2: Data Access"]
-                InvoiceRepo[InvoiceRepository]
-                PaymentRepo[PaymentRepository]
+                InvoiceRepo[Invoice<br/>Repository]
+                PaymentRepo[Payment<br/>Repository]
             end
-            
+
             subgraph L1["Layer 1: Infrastructure"]
                 DB[(Database)]
             end
+
         end
 
     end
-    
+
     Invoice --> InvoiceRepo
     Payment --> PaymentRepo
     InvoiceRepo --> DB
     PaymentRepo --> DB
 
+    style Magic fill:#ececff
     style App fill:#e8f4f8
-    style ORM fill:#e8f4f8 
+    style ORM fill:#e8f4f8
     style Container fill:#f0f0f0,stroke:#666,stroke-width:3px
 ```
 
 ```java
+// Die App verwaltet keine expliziten Dependencies
 @SpringBootApplication
 public class SpringPaymentApp {
 
-    // Die App verwaltet keine expliziten Dependencies
-
     public static void main(String[] args) {
-
-        //...triggert das Komponenten-Scanning im classpath
+        // ...starts scanning classpath to provide 'Magic' for:
+        // @Component, @Service, @Controller, @Repository und @Entity
         SpringApplication.run(SpringPaymentApp.class, args);
-
     }
 }
 
@@ -97,31 +99,35 @@ Das Objekt der Klasse ```SpringPaymentApp``` schwebt isoliert "herum" und der DI
 Nun sollen noch zusätlich Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
 ```mermaid
-graph TB
+graph LR
 
-    subgraph Spring["SpringApplication"]
+    subgraph LR Spring["SpringBoot-Application"]
+
+        subgraph Magic["PaymentApplication"]
+            App["SpringApplication<br>(init. @Compontent)"]
+            ORM["SpringData<br>(init. @Entity)"]
+        end
 
         subgraph Container["Spring DI-Container"]
     
-            App[SpringPaymentApp]
-            ORM[SpringJPA]
-    
             subgraph L3["Layer 3: Business Logic"]
-                Invoice[InvoiceService]
-                Payment[PaymentService]
-                Customer[CustomerService]
+                Invoice["Invoice<br/>+ Service<br/>+ Entity"]
+                Payment["Payment<br/>+ Service<br/>+ Entity"]
+                Customer["Customer<br/>+ Service<br/>+ Entity"]
             end
             
             subgraph L2["Layer 2: Data Access"]
-                InvoiceRepo[InvoiceRepository]
-                PaymentRepo[PaymentRepository]
-                CustomerRepo[CustomerRepository]
+                InvoiceRepo["Invoice<br/>Repository"]
+                PaymentRepo["Payment<br/>Repository"]
+                CustomerRepo["Customer<br/>Repository"]
             end
             
             subgraph L1["Layer 1: Infrastructure"]
                 DB[Database]
             end
+
         end
+
     end
     
     Invoice --> InvoiceRepo
@@ -186,31 +192,35 @@ public class CustomerService {
 Jetzt sollen Kunden ihre offenen Rechnungen sehen können. Die Klasse `CustomerService` muss jetzt `InvoiceService` kennen.
 
 ```mermaid
-graph TB
+graph LR
 
-    subgraph Spring["SpringApplication"]
+    subgraph Spring["SpringBoot-Application"]
 
-        subgraph Container["Spring Container - ZYKLUS entsteht!"]
+        subgraph Magic["PaymentApplication"]
+            App["SpringApplication<br>(init. @Compontent)"]
+            ORM["SpringData<br>(init. @Entity)"]
+        end
+
+        subgraph Container["Spring ID-Container"]
     
-            App[SpringPaymentApp]
-            ORM[SpringJPA]
-            
             subgraph L3["Layer 3: Business Logic"]
-                Invoice[InvoiceService]
-                Payment[PaymentService]
-                Customer[CustomerService]
+                Invoice["Invoice<br/>+ Service<br/>+ Entity"]
+                Payment["Payment<br/>+ Service<br/>+ Entity"]
+                Customer["Customer<br/>+ Service<br/>+ Entity"]
             end
             
             subgraph L2["Layer 2: Data Access"]
-                InvoiceRepo[InvoiceRepository]
-                PaymentRepo[PaymentRepository]
-                CustomerRepo[CustomerRepository]
+                InvoiceRepo[Invoice<br/>Repository]
+                PaymentRepo[Payment<br/>Repository]
+                CustomerRepo[Customer<br/>Repository]
             end
             
             subgraph L1["Layer 1: Infrastructure"]
                 DB[Database]
             end
+
         end
+
     end
 
     Invoice --> InvoiceRepo
@@ -225,7 +235,7 @@ graph TB
     InvoiceRepo --> DB
     PaymentRepo --> DB
     CustomerRepo --> DB
-    
+
     style Invoice fill:#ff6b6b
     style Customer fill:#ff6b6b
     style Payment fill:#ffe6e6
