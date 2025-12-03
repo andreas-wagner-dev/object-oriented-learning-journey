@@ -1,4 +1,4 @@
-# The right System Composition "leaves Nobody behind…"
+# The right System Composition *"leaves Nobody behind…"*
 
 ## 1. Einleitung und das Problem mit DI-Containern
 
@@ -123,6 +123,7 @@ graph TB
 ```java
 @Component
 public class SpringPaymentApp {
+
     @Inject private InvoiceService invoiceService;
     @Inject private PaymentService paymentService;
     @Inject private CustomerService customerService;
@@ -464,35 +465,33 @@ Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktu
 ### Ideale Projektstruktur
 
 ```
-src/
-├── main/
-│   ├── java/
-│   │   └── com/
-│   │       └── example/
-│   │           ├── app/
-│   │           │   └── Main.java                    // Entry Point
-│   │           ├── composition/
-│   │           │   └── MainApplication.java         // Einzige Stelle mit DI-Container
-│   │           ├── domain/
-│   │           │   ├── User.java                    // Pure Business Objects
-│   │           │   ├── Order.java
-│   │           │   └── Payment.java
-│   │           ├── services/
-│   │           │   ├── UserService.java             // Constructor Injection
-│   │           │   ├── OrderService.java
-│   │           │   └── PaymentService.java
-│   │           └── infrastructure/
-│   │               ├── database/
-│   │               │   ├── PostgresConnection.java
-│   │               │   └── TransactionalDB.java
-│   │               └── messaging/
-│   │                   └── RabbitMQQueue.java
+
+com.example.payment/
+├── app/
+│   └── Main.java                    // Entry Point
+├── config/
+│   └── MainApplication.java         // Einzige Stelle mit DI-Container
+├── domain/
+│   ├── User.java                    // Pure Business Objects
+│   ├── Order.java
+│   └── Payment.java
+├── services/
+│   ├── UserService.java             // Constructor Injection
+│   ├── OrderService.java
+│   └── PaymentService.java
+└── infrastructure/
+│   ├── database/
+│   │   ├── PostgresConnection.java
+│   │   └── TransactionalDB.java
+│   └── messaging/
+│       └── RabbitMQQueue.java
 ```
 
 ### Beispiel einer Service-Klasse
 
 ```java
 public final class OrderService {
+
     private final UserService users;
     private final PaymentService payments;
     private final OrderRepository repository;
@@ -500,21 +499,16 @@ public final class OrderService {
     
     // Constructor Injection - keine Annotations!
     public OrderService(
-        final UserService users,
-        final PaymentService payments,
-        final OrderRepository repository,
-        final EventPublisher events
-    ) {
+        UserService users, PaymentService payments,
+        OrderRepository repository, EventPublisher events) {
+         // Injections
         this.users = users;
         this.payments = payments;
         this.repository = repository;
         this.events = events;
     }
     
-    public Order placeOrder(
-        final User user, 
-        final List<Item> items
-    ) {
+    public Order placeOrder(User user, List<Item> items) {
         // Business Logic
     }
 }
@@ -524,34 +518,37 @@ public final class OrderService {
 
 ```java
 public final class Main {
+
     public static void main(String... args) {
+
         // Infrastructure
-        final var database = new PostgresDB(
+        PostgresDB database = new PostgresDB(
             "jdbc:postgresql://localhost/mydb"
         );
-        final var queue = new RabbitMQ("localhost:5672");
-        final var cache = new RedisCache("localhost:6379");
+        RabbitMQ queue = new RabbitMQ("localhost:5672");
+        RedisCache cache = new RedisCache("localhost:6379");
         
         // Repositories
-        final var userRepo = new CachedUserRepository(
+        CachedUserRepository userRepo = new CachedUserRepository(
             new PostgresUserRepository(database),
             cache
         );
-        final var orderRepo = new PostgresOrderRepository(database);
+
+        PostgresOrderRepository orderRepo = new PostgresOrderRepository(database);
         
         // Services
-        final var paymentService = new PaymentService(
+        PaymentService paymentService = new PaymentService(
             new StripePaymentGateway(),
             new PaymentLogger()
         );
         
-        final var userService = new UserService(
+        UserService userService = new UserService(
             userRepo,
             new EmailValidator(),
             new PasswordHasher()
         );
         
-        final var orderService = new OrderService(
+        OrderService orderService = new OrderService(
             userService,
             paymentService,
             orderRepo,
@@ -559,7 +556,7 @@ public final class Main {
         );
         
         // Application
-        final var app = new Application(
+        Application app = new Application(
             orderService,
             userService,
             new WebServer(8080)
@@ -572,12 +569,12 @@ public final class Main {
 
 ### Die Vorteile zusammengefasst
 
-✅ **Lesbarkeit**: Jeder kann die Systemstruktur sofort verstehen  
-✅ **Wartbarkeit**: Änderungen sind lokal und überschaubar  
-✅ **Testbarkeit**: Dependencies sind explizit und austauschbar  
-✅ **Refactoring-Sicherheit**: Compiler und IDE unterstützen vollständig  
-✅ **Keine zyklischen Dependencies**: Die Komposition erzwingt einen gerichteten Graphen  
-✅ **Framework-Unabhängigkeit**: Business-Code bleibt rein  
+- **Lesbarkeit**: Jeder kann die Systemstruktur sofort verstehen  
+- **Wartbarkeit**: Änderungen sind lokal und überschaubar  
+- **Testbarkeit**: Dependencies sind explizit und austauschbar  
+- **Refactoring-Sicherheit**: Compiler und IDE unterstützen vollständig  
+- **Keine zyklischen Dependencies**: Die Komposition erzwingt einen gerichteten Graphen  
+- **Framework-Unabhängigkeit**: Business-Code bleibt rein  
 
 ## 5. Quellen
 
