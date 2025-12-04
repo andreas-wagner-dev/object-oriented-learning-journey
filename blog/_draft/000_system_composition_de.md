@@ -1,5 +1,7 @@
 # The right System Composition *"leaves Nobody behind…"*
 
+**(Draft!!!)**
+
 ## 1. Einleitung
 
 In der modernen objektorientierten Softwareentwicklung ist Dependency Injection (DI) längst ein etabliertes Konzept. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks und DI-Container das ursprüngliche Konzept in ein Anti-Pattern verwandelt.
