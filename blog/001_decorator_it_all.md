@@ -703,6 +703,6 @@ The Decorator Pattern is powerful, but like all patterns, it should be used with
 
 ### **Further Reading**
 
-* Bugayenko, Y. (2016). *Elegant Objects, Volume 1*  
-* Bugayenko, Y. (2017). *Elegant Objects, Volume 2*  
+* Bugayenko, Yegor: Elegant Objects, Volume 1 (2016)  
+* Bugayenko, Yegor: Elegant Objects, Volume 2 (2017)
 * Gang of Four: *Design Patterns: Elements of Reusable Object-Oriented Software*
