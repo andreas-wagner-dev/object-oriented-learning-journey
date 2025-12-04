@@ -1,20 +1,20 @@
 # The right System Composition *"leaves Nobody behind…"*
 
-**(Draft!!!)**
-
 ## 1. Einleitung
 
 In der modernen objektorientierten Softwareentwicklung ist Dependency Injection (DI) längst ein etabliertes Konzept. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks und DI-Container das ursprüngliche Konzept in ein Anti-Pattern verwandelt.
 
 ### 1.1 Die Probleme mit DI-Containern
 
+**Eine reale Geschichte aus der Praxis:**
+
 Betrachten wir eine **Spring-Boot** *Payment-Application* mit der üblichen Verwendung von **DI-Container**.  
 Mittels Annotations wie ```@Component```, ```@Service```, ```@Repository``` und ```@Controller``` kann Spring automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.
 
-Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.)
+Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.
 
-#### Anforderung 1: 
-Die Applikation soll Rechnungen (```Invoice```) erstellen und Zahlungen (```Payment```) verarbeiten können.
+#### Anforderung 1: (Rechnungen und Zahlungen verarbeiten)
+Die Applikation soll zunächst Rechnungen (```Invoice```) erstellen und dazu Zahlungen (```Payment```) verarbeiten können.
 
 ```mermaid
 graph LR
@@ -63,7 +63,7 @@ graph LR
 public class SpringPaymentApp {
 
     public static void main(String[] args) {
-        // ...starts scanning classpath to provide 'Magic' for:
+        // ...starts scanning classpath to provide 'Magic' on:
         // @Component, @Service, @Controller, @Repository und @Entity
         SpringApplication.run(SpringPaymentApp.class, args);
     }
@@ -92,13 +92,13 @@ public class PaymentService {
 }
 ```
 
-**Problem:** An dieser Stelle bereits ist es unklar, wie die Objekte wirklich zusammenhängen.  
-Das Objekt der Klasse ```SpringPaymentApp``` schwebt isoliert "herum" sowie die Zugriffe auf die Datenbank und der DI-Container verwaltet alles im Hintergrundm.
+**Problem:** An dieser Stelle ist es bereits unklar, wie die Objekte wirklich zusammenhängen.  
+Das Objekt der Klasse ```SpringPaymentApp``` schwebt isoliert "herum" sowie die Zugriffe auf die Datenbank, und der DI-Container verwaltet alles im Hintergrund.
 
 ---
 
 #### Anforderung 2: (Customer hinzufügen)
-Nun sollen noch zusätlich Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
+Nun sollen zusätzlich noch Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
 ```mermaid
 graph LR
@@ -178,12 +178,13 @@ public class CustomerService {
 }
 ```
 
-**Kein weiteres Problem:** Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers, verkompliziert den ```Application``` Layer.
+**Kein richtiges Problem:** Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers verkompliziert lediglich den ```Application``` Layer.
 
 ---
 
-#### Anforderung 3:
-Jetzt sollen Kunden ihre offenen Rechnungen sehen können. Die Klasse `CustomerService` muss jetzt `InvoiceService` kennen.
+#### Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können. 
+
+Ein Junior-Entwickler nimmt sich der Sache an. Für Ihn ist es klar und einfach die Klasse `CustomerService` muss jetzt `InvoiceService` kennen.
 
 ```mermaid
 graph LR
@@ -243,7 +244,11 @@ graph LR
 @Component
 public class SpringPaymentApp {
     // Container versteckt den Zyklus komplett!
-    
+    public static void main(String[] args) {
+        // ...starts scanning classpath to provide 'Magic' on:
+        // @Component, @Service, @Controller, @Repository und @Entity
+        SpringApplication.run(SpringPaymentApp.class, args);
+    }
 }
 
 @Service
@@ -293,13 +298,11 @@ public class CustomerService {
 }
 ```
 
-**Problem:** Zyklische Abhängigkeit -💥 Das System bricht
+**Problem:** Zyklische Abhängigkeit - 💥 Das System bricht - die Integrationstests laufen nicht mehr
 
 ### 1.2 Die Lösungen mit DI-Containern 
 
-**Die Lösung aus der Praxis als eine Reale Geschichte.**
-
-Ein erfahrener Mid-Level-Entwickler, der bereits einige Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
+Ein erfahrener Mid-Level-Entwickler aus dem Team, der bereits einige Jahre mit Spring arbeitete und die Dokumentation für DI-Container gelesen hatte, löste das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework. 
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy
@@ -315,27 +318,43 @@ public class CustomerService {
     // ...
 }
 ```
+Diese „Lösung“ ändert jedoch nichts daran, dass die Architektur weiterhin eine zyklische Abhängigkeit aufweist.
+Der Junior-Entwickler lernte auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet.
 
-Diese Vorgehensweise kaschiert jedoch nur die Tatsache, dass die Architektur eine zyklische Abhängigkeit enthält. Ein Junior-Entwickler lernt auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet. 
+Im Rahmen eines Code-Reviews bemerkte ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die zyklische Abhängigkeit durch eine neue Klasse wie ```CustomerInvoiceService``` aufzulösen, welche die Funktionalität von ```InvoiceService``` und ```CustomerRepository``` kombiniert. 
 
-Im Rahmen eines Code-Reviews wurde ein Senior-Entwickler die Schwachstelle bemerken und den Pull-Request ablehnen. Der Senior wird dabei wahrscheinlich die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf haben und stattdessen vorschlagen, die zyklische Abhängigkeit durch eine neue Klasse wie ```CustomerInvoiceService``` aufzulösen, die die Funktionalität von ```InvoiceService``` und ```CustomerRepository``` kombiniert. 
 
 ```java
+@Service
+public class CustomerService {
+
+    // KEINE Abhängigkeit zu Invoices...
+
+    @Autowired
+    private CustomerRepository customerRepo;
+    // ...
+}
+```
+
+```java
+// kombiniert customer und Invoices
 @Service
 public class CustomerInvoiceService {
 
     @Autowired
     private InvoiceService invoiceService;
 
-    @Autowired
-    private CustomerService customerService;
+    @Autowired 
+    private CustomerRepository customerRepo;
     // ...
 }
 ```
 
-Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Prinzip** (SRP). Weil die ursprüngliche Klasse ```CustomerService``` zwei Verantwortlichkeiten, Verwalten von Kunden sowie Rechnungen, enthielt, war er über die Richtigkeit seiner Lösung gemäß SRP (nach Robert C. Martin) *"There should never be more than one reason for a class to change"* überzeugt. Und hügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einer zu zerbrechlichem Design führen. Das Team nahm es stillschweigend an, denn er wüsste es ja besser und hat ja auch die Bücher von Robert C. Martin gelesen. Der Mid-Level-Entwickler lernte nun das er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
+Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse ```CustomerService``` zwei Verantwortlichkeiten enthielt – Verwalten von Kunden sowie Rechnungen –, war er über die Richtigkeit seiner Lösung gemäß dem SRP (nach Robert C. Martin) *"There should never be more than one reason for a class to change"* überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. Das Team nahm es stillschweigend an, denn er wusste es ja besser und hatte ja auch die Bücher von Robert C. Martin gelesen. 
 
-Heutzutage ist (der Author) bzw, der Senior Entwickler sehr skeptische gegenüber der Interpretation von SRP von Robert C. Martin, aber das ist eine andere Geschichte....
+Der Mid-Level-Entwickler lernte nun, dass er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
+
+Heutzutage ist der Senior-Entwickler (der Autor) sehr skeptisch gegenüber dieser eher subjektiven Interpretation von SRP von Robert C. Martin, aber das ist eine andere sehr lange Geschichte....
 
 ---
 
@@ -345,19 +364,19 @@ Heutzutage ist (der Author) bzw, der Senior Entwickler sehr skeptische gegenübe
 
 1. **Unübersichtliche Abhängigkeiten** - `SpringPaymentApp` zeigt keine echten Dependencies. Wo ist die Objektstruktur?
    
-2. **Schwere Wartbarkeit** - Um zu verstehen was `CustomerService` braucht, muss man:
+2. **Schwere Wartbarkeit** - Um zu verstehen, was `CustomerService` braucht, muss man:
    - Alle `@Autowired` Felder durchsuchen
-   - Prüfen ob `@Lazy` verwendet wird
-   - Verstehen wie Spring die Proxies auflöst
-   - Wissen über Modul Prinzipien (von Robert C. Martin)
+   - Prüfen, ob `@Lazy` verwendet wird
+   - Verstehen, wie Spring die Proxies auflöst
+   - Wissen über Modul-Prinzipien (von Robert C. Martin) haben
      
 3. **Erzwungene Layer-Trennung** - Alle Klassen haben `-Entity`, `-Service` oder `-Repository` Suffix nur wegen der Layer
 
-5. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen
+4. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen
 
-7. **Code Pollution** - Überall `@Service`, `@Repository`, `@Autowired`, `@Lazy` Annotations
+5. **Code Pollution** - Überall `@Service`, `@Repository`, `@Autowired`, `@Lazy` Annotations
 
-9. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder `@SpyBean`)
+6. **Testbarkeit**: Tests können nicht einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder `@SpyBean`)
 
 ### Die DI-Container fördern Schichten
 
@@ -377,11 +396,11 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 - wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
 
-## 2. Der richtige, objekt orientierte Weg: Pure Composition
+## 2. Der richtige, objektorientierte Weg: Pure Composition
 
 **Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
 
-Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objekt orientierte Komposition aussehen:
+Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objektorientierte Komposition aussehen:
 
 ```java
 
@@ -448,12 +467,12 @@ flowchart TD
 - Weiter verschachtelt: `Invoices`, `Tax`, `Payer`, `Recipient`, `Amount`, `Currency`
 
 **Beachte:** 
-- Keine Layers, keine Annotations, keine versteckten Abhängigkeiten nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.
-- Zudem gibt es keinen Objekt der einfach herum hängt bzw. "im Stich gelassen wurde..."
+- Keine Layers, keine Annotations, keine versteckten Abhängigkeiten - nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.
+- Zudem gibt es kein Objekt, das einfach herumhängt bzw. "im Stich gelassen wurde..."
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem [rultor.com]-Projekt, wie echte Objekt-Komposition aussieht.
 
-### Vorteile der *explizieten* objekt orientieren Herangehensweise
+### Vorteile der *expliziten* objektorientierten Herangehensweise
 
 1. **Vollständige Transparenz**: Jeder kann sofort sehen, wie das System zusammengesetzt ist
 2. **Keine versteckten Abhängigkeiten**: Alle Dependencies sind explizit im Code sichtbar
@@ -469,7 +488,7 @@ Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattf
 - Die Konfiguration aller Abhängigkeiten
 - Die Übergabe der fertigen Objekte an die Applikationslogik
 
-Alle anderen Klassen nutzen ausschließlich *Constructor Injection* und überlassen die Kontrolle für die Objekterstellung ihren Consumer (bzw. den Entwicklern).
+Alle anderen Klassen nutzen ausschließlich *Constructor Injection* und überlassen die Kontrolle für die Objekterstellung ihrem Consumer (bzw. den Entwicklern).
 
 ## 3. Richtiger Umgang bei Framework-Verwendung
 
@@ -641,7 +660,7 @@ public final class CustomerDirectory {
 4. **Business-Logic-Freiheit**: Keine Business-Klasse (`InvoiceBook`, `PaymentProcessor`, `CustomerDirectory`) kennt Spring
 5. **Keine Service-Layer**: Keine künstlichen `-Service` oder `-Repository` Klassen mit `@Service`/`@Repository`
 
-### Vergleich: Vorher vs. Nacher
+### Vergleich: Vorher vs. Nachher
 
 #### Vorher - Mit DI-Container überall:
 ```java
@@ -653,7 +672,7 @@ public class InvoiceService {
 }
 ```
 
-#### Nacher - Pure Composition:
+#### Nachher - Pure Composition:
 ```java
 public final class InvoiceBook {
 
@@ -686,12 +705,12 @@ com.example.payment/
 │   ├── InvoiceBook.java        
 │   ├── InvoiceRepository.java
 │   └── Tax.java
-├── pay/
-│   ├── Payment.java
-│   ├── PaymentProcessor.java
-│   ├── PaymentRepository.java
-│   ├── PaymentValidator.java
-│   └── Payments.java
+└── pay/
+    ├── Payment.java
+    ├── PaymentProcessor.java
+    ├── PaymentRepository.java
+    ├── PaymentValidator.java
+    └── Payments.java
 ```
 
 ### Beispiel: Vollständige Komposition im Main
@@ -760,39 +779,44 @@ Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktu
 
 ---
 
-# 4. Fazit
+## 4. Fazit
 
 Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist. DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen. Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
 
-# 5. Quellen
+## 5. Quellen
 
 **Primärquellen**
 
-* Bugayenko, Y. (2014). "Dependency Injection Containers are Code Polluters"
-https://www.yegor256.com/2014/10/03/di-containers-are-evil.html
+* Bugayenko, Y. (2014). "Dependency Injection Containers are Code Polluters"  
+https://www.yegor256.com/2014/10/03/di-containers-are-evil.html  
 Grundlegende Kritik an DI-Containern und Demonstration echter Objekt-Komposition
 
-* Bugayenko, Y. (2015). "Don't Create Objects That End With -ER"
-https://www.yegor256.com/2015/03/09/objects-end-with-er.html
+* Bugayenko, Y. (2015). "Don't Create Objects That End With -ER"  
+https://www.yegor256.com/2015/03/09/objects-end-with-er.html  
 Über deklaratives vs. imperatives Design in OOP
 
-* Bugayenko, Y. (2016). "Who Is an Object?"
-https://www.yegor256.com/2016/07/14/who-is-object.html
+* Bugayenko, Y. (2016). "Who Is an Object?"  
+https://www.yegor256.com/2016/07/14/who-is-object.html  
 Konzeptuelle Definition von Objekten als Repräsentanten von Daten
 
-* Bugayenko, Y. "Elegant Objects" (Vol. 1 & 2)
+* Bugayenko, Y. "Elegant Objects" (Vol. 1 & 2)  
 Umfassende Darstellung moderner OOP-Prinzipien
 
-## Projektbeispiele
+**Projektbeispiele**
 
-Rultor - Agents.java
-https://github.com/yegor256/rultor
+* Bugayenko Yegor,  Rultor - Agents.java
 Real-world Beispiel für Pure DI ohne Container
+https://github.com/yegor256/rultor  
 
-##  Verwandte Konzepte
+Robert Braeutigam, jaywire
+Magic-less Dependency Injection with JayWire  
+JayWire is available on GitHub: https://github.com/vanillasource/jaywire
+Additional topics at GitHub Wiki: https://github.com/vanillasource/jaywire/wiki
 
-SOLID Principles (insbesondere Dependency Inversion Principle)
-Composition over Inheritance
-Constructor Injection Pattern
-Service Locator Anti-Pattern
-Factory Pattern
+**Verwandte Konzepte**
+
+* SOLID Principles (insbesondere Dependency Inversion Principle)
+* Composition over Inheritance
+* Constructor Injection Pattern
+* Service Locator Anti-Pattern
+* Factory Pattern
