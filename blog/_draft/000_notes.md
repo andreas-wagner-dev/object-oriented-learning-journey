@@ -293,7 +293,7 @@ public class CustomerService {
 
 **Problem:** Zyklische Abhängigkeit -💥 Das System bricht
 
-Ein erfahrenen Senior Entwickler, der viele Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
+Ein erfahrener Mid-Level-Entwickler, der bereits einige Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy
@@ -308,7 +308,9 @@ public class CustomerService {
 ```
 
 Diese "Lösung" ändert jedoch nichts an der Tatsache, dass die Architektur nun eine Zyklische Abhängigkeit enthält.  
-Die Junior-Entwickler lernen jetzt wie man mit Zyklische Abhängigkeitein umgehen kann, aber nicht wie man sie löst order vermeiden kann.
+Die Junior-Entwickler lernen jetzt wie man mit zyklischen Abhängigkeiten umgehen kann, aber nicht wie man sie löst order vermeiden kann. Eventuell bei einem Code Review, wird ein Senior-Entwickler das Problem feststellen und den Pull-Request zurückweisen. Der Senior wird sich dabei (vermutlich) an die Modul Prinzipien (von Robert C. Martin) erinnern und vorschlagen, dass man z. B. mit einer neuen zusätlichen Klasse ```InvoiceCustomerService```, welche die Klassen ```InvoiceService``` und ```CustomerRepository``` zusammenführt, die zyklische Abhängigkeit auflöst. 
+
+(Jeder von denen hat nun gämeß seines Levels gearbeitet aber immer nocht kein Geld für das Unternehmen verdient.)        
 
 ---
 
@@ -322,7 +324,8 @@ Die Junior-Entwickler lernen jetzt wie man mit Zyklische Abhängigkeitein umgehe
    - Alle `@Autowired` Felder durchsuchen
    - Prüfen ob `@Lazy` verwendet wird
    - Verstehen wie Spring die Proxies auflöst
-   
+   - Wissen über Modul Prinzipien (von Robert C. Martin)
+     
 3. **Erzwungene Layer-Trennung** - Alle Klassen haben `-Entity`, `-Service` oder `-Repository` Suffix nur wegen der Layer
 
 5. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen
