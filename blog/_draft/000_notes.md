@@ -307,8 +307,8 @@ public class CustomerService {
 }
 ```
 
-Diese "Lösung" ändert jedoch nichts an der Tatsache, dass die Architektur nun ein Zyklische Abhängigkeit enthält.  
-Die Junior Entwickler lernen jetzt wie man mit Zyklische Abhängigkeitein umgehen kann, jedoch nicht wie man sie löst.
+Diese "Lösung" ändert jedoch nichts an der Tatsache, dass die Architektur nun eine Zyklische Abhängigkeit enthält.  
+Die Junior-Entwickler lernen jetzt wie man mit Zyklische Abhängigkeitein umgehen kann, aber nicht wie man sie löst order vermeiden kann.
 
 ---
 
@@ -329,7 +329,7 @@ Die Junior Entwickler lernen jetzt wie man mit Zyklische Abhängigkeitein umgehe
 
 7. **Code Pollution** - Überall `@Service`, `@Repository`, `@Autowired`, `@Lazy` Annotations
 
-9. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder @SpyBean)
+9. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder `@SpyBean`)
 
 ### Die DI-Container fördern Layer-Architektur
 
@@ -348,7 +348,7 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 - entsteht eine **Kopplung an den Framework-Container**
 - wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
-Der eigentliche Wert liegt in der **Dependency Injection** selbst – nicht im *Container*.
+
 
 ## 2. Der richtige, objekt orientierte Weg: Pure Composition
 
@@ -364,7 +364,7 @@ app/                      # Package für Details der App-Abstraktion
 │           new WebApp(
 │               new InvoiceBook(
 │                   new Invoices(),
-│                   new CalculatedTax()
+│                   new Tax()
 │               ),
 │               new Payment(
 │                   new Payer("Alice"),
@@ -384,7 +384,7 @@ flowchart TD
 
         subgraph InvoiceBook [InvoiceBook]
             Invoices[Invoices]
-            CalculatedTax[CalculatedTax]
+            Tax[Tax]
         end
 
         subgraph Payment [Payment]
@@ -402,7 +402,7 @@ flowchart TD
 **Legende:**
 - Das größte Rechteck ist `WebApp` - die äußere Komposition
 - Darin: Rechtecke für `InvoiceBook`, `Payment`, `CustomerDirectory`
-- Weiter verschachtelt: `Invoices`, `CalculatedTax`, `Payer`, `Recipient`, `Amount`, `Currency`
+- Weiter verschachtelt: `Invoices`, `Tax`, `Payer`, `Recipient`, `Amount`, `Currency`
 
 **Beachte:** 
 - Keine Layers, keine Annotations, keine versteckten Abhängigkeiten nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.
@@ -458,7 +458,7 @@ public class SpringPaymentApp {
                 new Invoices(
                     new InvoiceRepository(dataSource)
                 ),
-                new CalculatedTax()
+                new Tax()
             ),
             new PaymentProcessor(
                 new Payments(
@@ -493,7 +493,7 @@ flowchart RL
         subgraph InvoiceBook [InvoiceBook]
             direction TB
             Invoices[Invoices]
-            CalculatedTax[CalculatedTax]
+            Tax[Tax]
             InvoiceRepo[InvoiceRepository]
         end
 
@@ -535,9 +535,9 @@ flowchart RL
 // Keine Annotations! Pure OOP
 public final class InvoiceBook {
     private final Invoices invoices;
-    private final CalculatedTax tax;
+    private final Tax tax;
     
-    public InvoiceBook(Invoices invoices, CalculatedTax tax) {
+    public InvoiceBook(Invoices invoices, Tax tax) {
         this.invoices = invoices;
         this.tax = tax;
     }
@@ -615,9 +615,9 @@ public class InvoiceService {
 public final class InvoiceBook {
 
     private final Invoices invoices;
-    private final CalculatedTax tax;
+    private final Tax tax;
     
-    public InvoiceBook(Invoices invoices, CalculatedTax tax) {
+    public InvoiceBook(Invoices invoices, Tax tax) {
         this.invoices = invoices;
         this.tax = tax;
     }
@@ -647,7 +647,7 @@ com.example.payment/
 │   ├── PaymentRepository.java      // Constructor Injection
 │   └── CustomerRepository.java     // Constructor Injection
 └── infrastructure/
-    ├── CalculatedTax.java
+    ├── Tax.java
     ├── PaymentValidator.java
     └── CustomerValidator.java
 ```
@@ -679,7 +679,7 @@ public class SpringPaymentApplication {
         Payments payments = new Payments(paymentRepo);
         Customers customers = new Customers(customerRepo);
         
-        CalculatedTax tax = new CalculatedTax();
+        Tax tax = new Tax();
         PaymentValidator paymentValidator = new PaymentValidator();
         CustomerValidator customerValidator = new CustomerValidator();
         
