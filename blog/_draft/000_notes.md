@@ -293,7 +293,8 @@ public class CustomerService {
 
 **Problem:** Zyklische Abhängigkeit -💥 Das System bricht
 
-Ein erfahrener Mid-Level-Entwickler, der bereits einige Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
+Ein erfahrener Mid-Level-Entwickler, der schon mehrere Jahre mit Spring arbeitet und die Dokumentation der Dependency-Injection-Container kennt, würde das Problem wohl über eine ```@Lazy```-Annotation von Spring beheben.
+
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy
@@ -307,8 +308,32 @@ public class CustomerService {
 }
 ```
 
+Diese Vorgehensweise kaschiert jedoch nur die Tatsache, dass die Architektur eine zyklische Abhängigkeit enthält. Ein Junior-Entwickler lernt auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet. 
+
+Im Rahmen eines Code-Reviews könnte ein Senior-Entwickler die Schwachstelle bemerken und den Pull-Request ablehnen. Der Senior wird dabei wahrscheinlich die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf haben und stattdessen vorschlagen, die zyklische Abhängigkeit durch eine neue Klasse wie InvoiceCustomerService aufzulösen, die die Funktionalität von InvoiceService und CustomerRepository kombiniert.
+
+
+
+Ein erfahrener Mid-Level-Entwickler, der bereits einige Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
 Diese "Lösung" ändert jedoch nichts an der Tatsache, dass die Architektur nun eine Zyklische Abhängigkeit enthält.  
-Die Junior-Entwickler lernen jetzt wie man mit zyklischen Abhängigkeiten umgehen kann, aber nicht wie man sie löst order vermeiden kann. Eventuell bei einem Code Review, wird ein Senior-Entwickler das Problem feststellen und den Pull-Request zurückweisen. Der Senior wird sich dabei (vermutlich) an die Modul Prinzipien (von Robert C. Martin) erinnern und vorschlagen, dass man z. B. mit einer neuen zusätlichen Klasse ```InvoiceCustomerService```, welche die Klassen ```InvoiceService``` und ```CustomerRepository``` zusammenführt, die zyklische Abhängigkeit auflöst. 
+Ein Junior-Entwickler lernen jetzt wie man mit zyklischen Abhängigkeiten umgehen kann, aber nicht wie man es löst order vermeiden kann. Bei einem Code Review, wird eventuell ein Senior-Entwickler das Problem aufmerksam und den Pull-Request zurückweisen. Der Senior wird sich dabei (vermutlich) an die Modul Prinzipien (von Robert C. Martin) erinnern und vorschlagen, dass man z. B. mit einer neuen zusätlichen Klasse ```CustomerInvoiceService```, die die Klassen ```InvoiceService``` und ```CustomerRepository``` zusammenführt, die zyklische Abhängigkeit auflöst. 
+
+Die Klassen besitzen zwei Verantwortlichkeiten:  Verwalten von Kunden sowie Rechnungen.
+
+Single Responsibility Prinzip
+Das SRP "There should never be more than one reason for a class
+to change" (Ursprünglich nur auf Klassen bezogen, seit 2014 auf
+Software-Module im Allgemeinen) stammt von Robert C. Martin.
+Es bedeutet:
+• Jedes Software-Modul sollte nur eine einzige Verantwortlichkeit
+realisieren
+• Verantwortlichkeit = Grund für eine Änderung
+• Dem Prinzip Separation of Concerns sehr ähnlich
+• Mehrere Verantwortlichkeiten innerhalb eines Software-Moduls
+führen zu zerbrechlichem Design, da bei Änderung einer
+Verantwortlichkeit eine andere Verantwortlichkeit beschädigt
+werden kann.
+
 
 (Jeder von denen hat nun gämeß seines Levels gearbeitet aber immer nocht kein Geld für das Unternehmen verdient.)        
 
