@@ -771,7 +771,7 @@ Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktu
 
 * **Lesbarkeit**: Jeder kann die Systemstruktur sofort verstehen - kein Suchen nach `@Autowired`  
 * **Wartbarkeit**: Änderungen sind lokal und überschaubar - keine versteckten Dependencies  
-* **Testbarkeit**: Test-Doubles können einfach injiziert werden, ohne `@MockBean`  
+* **Testbarkeit**: [Test-Doubles](https://martinfowler.com/bliki/TestDouble.html) können einfach injiziert werden, ohne `@MockBean`  
 * **Refactoring-Sicherheit**: Compiler und IDE unterstützen vollständig - keine Runtime-Überraschungen  
 * **Keine zyklischen Dependencies**: Die explizite Komposition erzwingt einen gerichteten Graphen  
 * **Framework-Unabhängigkeit**: Business-Code bleibt rein - nur eine Klasse kennt Spring  
@@ -787,29 +787,42 @@ Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt 
 
 **Primärquellen**
 
-* Bugayenko, Y. (2014). "Dependency Injection Containers are Code Polluters"  
+* Bugayenko Yegor: (2014). "Dependency Injection Containers are Code Polluters"  
 https://www.yegor256.com/2014/10/03/di-containers-are-evil.html  
 Grundlegende Kritik an DI-Containern und Demonstration echter Objekt-Komposition
 
-* Bugayenko, Y. (2015). "Don't Create Objects That End With -ER"  
-https://www.yegor256.com/2015/03/09/objects-end-with-er.html  
-Über deklaratives vs. imperatives Design in OOP
-
-* Bugayenko, Y. (2016). "Who Is an Object?"  
+* Bugayenko Yegor: (2016). "Who Is an Object?"  
 https://www.yegor256.com/2016/07/14/who-is-object.html  
 Konzeptuelle Definition von Objekten als Repräsentanten von Daten
 
-* Bugayenko, Y. "Elegant Objects" (Vol. 1 & 2)  
+* Bugayenko Yegor: (2015). "Don't Create Objects That End With -ER"  
+https://www.yegor256.com/2015/03/09/objects-end-with-er.html  
+Über deklaratives vs. imperatives Design in OOP
+
+* Robert C. Martin (Uncle Bob): "Component Principles"  
+The theoretical foundations and metrics for coupling (ADP, SDP, SAP) and cohesion (REP, CCP, CRP).  
+Source: Robert C. Martin, Agile Software Development, Principles, Patterns, and Practices. Prentice Hall, 2002  
+
+**Säkunderquellen**
+
+* Wikipedia & Martin Fowler: TestDouble  
+https://en.wikipedia.org/wiki/Test_double  
+https://martinfowler.com/bliki/TestDouble.html  
+Konzeptuelle Definition von TestDouble
+
+**Further Reading**
+
 Umfassende Darstellung moderner OOP-Prinzipien
+* Bugayenko Yegor: Elegant Objects, Volume 1 (2016) 
+* Bugayenko Yegor: Elegant Objects, Volume 2 (2017)  
 
 **Projektbeispiele**
 
-* Bugayenko Yegor,  Rultor - Agents.java
+* Bugayenko Yegor: Rultor - Agents.java
 Real-world Beispiel für Pure DI ohne Container
 https://github.com/yegor256/rultor  
 
-Robert Braeutigam, jaywire
-Magic-less Dependency Injection with JayWire  
+Robert Braeutigam: Magic-less Dependency Injection with JayWire  
 JayWire is available on GitHub: https://github.com/vanillasource/jaywire
 Additional topics at GitHub Wiki: https://github.com/vanillasource/jaywire/wiki
 
@@ -818,5 +831,5 @@ Additional topics at GitHub Wiki: https://github.com/vanillasource/jaywire/wiki
 * SOLID Principles (insbesondere Dependency Inversion Principle)
 * Composition over Inheritance
 * Constructor Injection Pattern
-* Service Locator Anti-Pattern
+* Service Locator **Anti-Pattern**
 * Factory Pattern
