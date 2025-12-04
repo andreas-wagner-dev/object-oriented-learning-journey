@@ -19,9 +19,9 @@ graph LR
 
     subgraph LR Spring["SpringBoot-Application"]
 
-        subgraph Magic["PaymentApplication"]
-            App["SpringApplication<br>run() init.<br/>@Compontent"]
-            ORM["SpringData<br>init. @Entity"]
+        subgraph Magic["SpringPaymentApp.main()"]
+            App["SpringApplication<br>run() scan<br/>@Compontent"]
+            ORM["SpringData<br>scan @Entity"]
         end
 
         subgraph Container["Spring DI-Container"]
@@ -49,10 +49,10 @@ graph LR
     InvoiceRepo --> DB
     PaymentRepo --> DB
 
-    style Magic fill:#ececff,stroke:#9370db
     style App fill:#e8f4f8
     style ORM fill:#e8f4f8
     style Container fill:#f0f0f0,stroke:#666,stroke-width:3px
+    style Magic fill:#ececff,stroke:#9370db
 ```
 
 ```java
@@ -91,7 +91,7 @@ public class PaymentService {
 ```
 
 **Problem:** An dieser Stelle bereits ist es unklar, wie die Objekte wirklich zusammenhängen.  
-Das Objekt der Klasse ```SpringPaymentApp``` schwebt isoliert "herum" und der DI-Container verwaltet alles im Hintergrund.
+Das Objekt der Klasse ```SpringPaymentApp``` schwebt isoliert "herum" sowie die Zugriffe auf die Datenbank und der DI-Container verwaltet alles im Hintergrundm.
 
 ---
 
@@ -103,9 +103,9 @@ graph LR
 
     subgraph LR Spring["SpringBoot-Application"]
 
-        subgraph Magic["PaymentApplication"]
-            App["SpringApplication<br>(init. @Compontent)"]
-            ORM["SpringData<br>(init. @Entity)"]
+        subgraph Magic["SpringPaymentApp.main()"]
+            App["SpringApplication<br>run() scan<br/>@Compontent"]
+            ORM["SpringData<br>scan @Entity"]
         end
 
         subgraph Container["Spring DI-Container"]
@@ -145,18 +145,10 @@ graph LR
     style App fill:#e8f4f8
     style ORM fill:#e8f4f8
     style Container fill:#f0f0f0,stroke:#666,stroke-width:3px
+    style Magic fill:#ececff,stroke:#9370db
 ```
 
 ```java
-@Component
-public class SpringPaymentApp {
-
-    @Autowired private InvoiceService invoiceService;
-    @Autowired private PaymentService paymentService;
-    @Autowired private CustomerService customerService;
-    // Noch mehr versteckte Dependencies
-}
-
 @Service
 public class InvoiceService {
 
@@ -196,9 +188,9 @@ graph LR
 
     subgraph Spring["SpringBoot-Application"]
 
-        subgraph Magic["PaymentApplication"]
-            App["SpringApplication<br>(init. @Compontent)"]
-            ORM["SpringData<br>(init. @Entity)"]
+        subgraph Magic["SpringPaymentApp.main()"]
+            App["SpringApplication<br>run() scan<br/>@Compontent"]
+            ORM["SpringData<br>scan @Entity"]
         end
 
         subgraph Container["Spring ID-Container"]
@@ -242,6 +234,7 @@ graph LR
     style App fill:#e8f4f8
     style ORM fill:#e8f4f8
     style Container fill:#ffe0e0,stroke:#ff0000,stroke-width:3px
+    style Magic fill:#ececff,stroke:#9370db
 ```
 
 ```java
@@ -300,7 +293,7 @@ public class CustomerService {
 
 **Problem:** Zyklische Abhängigkeit -💥 Das System bricht
 
-Das Problem wird durch einen erharenen Senior Entwickler "gelöst" der viele Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte.
+Ein erfahrenen Senior Entwickler, der viele Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy
@@ -313,6 +306,9 @@ public class CustomerService {
     // ...
 }
 ```
+
+Diese "Lösung" ändert jedoch nichts an der Tatsache, dass die Architektur nun ein Zyklische Abhängigkeit enthält.  
+Die Junior Entwickler lernen jetzt wie man mit Zyklische Abhängigkeitein umgehen kann, jedoch nicht wie man sie löst.
 
 ---
 
@@ -327,25 +323,26 @@ public class CustomerService {
    - Prüfen ob `@Lazy` verwendet wird
    - Verstehen wie Spring die Proxies auflöst
    
-3. **Erzwungene Layer-Trennung** - Alle Klassen haben `-Service` oder `-Repository` Suffix nur wegen der Layer
+3. **Erzwungene Layer-Trennung** - Alle Klassen haben `-Entity`, `-Service` oder `-Repository` Suffix nur wegen der Layer
 
 5. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen
 
 7. **Code Pollution** - Überall `@Service`, `@Repository`, `@Autowired`, `@Lazy` Annotations
 
-9. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit Mock-Frameworks oder [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder @SpyBean) 
+9. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder @SpyBean)
+
+### Die DI-Container fördern Layer-Architektur
 
 Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern und sogar erzwingen:
-DI-Container fördern Layer-Architektur durch:
 - **Stereotype-Annotations** (`@Service`, `@Repository`, `@Controller`) - die explizit Layer definieren
-- **Scan-Mechanismen**, die nach Package-Strukturen suchen (z.B. `com.example.service.*`, `com.example.repository.*`)
+- **Scan-Mechanismen**, die nach Package-Strukturen suchen (z.B. `com.example.service.*`, `com.example.entity.*`, `com.example.repository.*`)
 - **Best-Practice-Guides** der Frameworks, die Layer-Trennung empfehlen
 - **Proxy-Mechanismen** für Transactions (`@Transactional`) - die Layer-Grenzen voraussetzen
-- **Dependency-Rules**, die nur "nach unten" zeigen dürfen - was Layer-Hierarchien erzwingt
+- **Dependency-Rules**, die nur "nach unten" zeigen dürfen - was Layer-Hierarchien erzwingt.
 
 ### Die Illusion der Entkopplung
 
-Zudem glauben viele Entwickler , dass DI-Container für "loose coupling" sorgen. Doch in Wirklichkeit:
+Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorgen. Doch in Wirklichkeit:
 - sind die Abhängigkeiten nur **versteckt**, nicht entkoppelt
 - wird die **Komplexität erhöht** statt reduziert
 - entsteht eine **Kopplung an den Framework-Container**
@@ -353,15 +350,14 @@ Zudem glauben viele Entwickler , dass DI-Container für "loose coupling" sorgen.
 
 Der eigentliche Wert liegt in der **Dependency Injection** selbst – nicht im *Container*.
 
-## 2. Der richtige Weg: Pure Composition
+## 2. Der richtige, objekt orientierte Weg: Pure Composition
 
-Die Lösung ist überraschend einfach: Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
+**Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
 
-### Die richtige Komposition:
-
-Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige Komposition aussehen:
+Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objekt orientierte Komposition aussehen:
 
 ```java
+App.java                  # Abstraktion für die Anwendung
 app/                      # Package für Details der App-Abstraktion
 ├── WebApp.java           # Einstiegspunkt, implementiert App
 │       └── (in einer 'main' oder 'startup' Methode:)
@@ -378,7 +374,6 @@ app/                      # Package für Details der App-Abstraktion
 │               new CustomerDirectory(...)
 │           )
 │           
-App.java                  # Abstraktion für die Anwendung
 ```
 
 
@@ -409,11 +404,13 @@ flowchart TD
 - Darin: Rechtecke für `InvoiceBook`, `Payment`, `CustomerDirectory`
 - Weiter verschachtelt: `Invoices`, `CalculatedTax`, `Payer`, `Recipient`, `Amount`, `Currency`
 
-Beachte: **Keine Layers, keine Annotations, keine versteckten Abhängigkeiten** – nur pure Objekt-Komposition durch explizite Constructor-Aufrufe. Zudem gibt es keinen Objekt der einfach herum hängt bzw. "im Stich gelassen wurde..."
+**Beachte:** 
+- Keine Layers, keine Annotations, keine versteckten Abhängigkeiten nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.
+- Zudem gibt es keinen Objekt der einfach herum hängt bzw. "im Stich gelassen wurde..."
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem [rultor.com]-Projekt, wie echte Objekt-Komposition aussieht.
 
-### Vorteile der *explizieten* Herangehensweise
+### Vorteile der *explizieten* objekt orientieren Herangehensweise
 
 1. **Vollständige Transparenz**: Jeder kann sofort sehen, wie das System zusammengesetzt ist
 2. **Keine versteckten Abhängigkeiten**: Alle Dependencies sind explizit im Code sichtbar
@@ -429,239 +426,329 @@ Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattf
 - Die Konfiguration aller Abhängigkeiten
 - Die Übergabe der fertigen Objekte an die Applikationslogik
 
-Alle anderen Klassen nutzen ausschließlich *Constructor Injection* und überlassen die Kontrolle für die Objekterstellung ihren Consumern-Klassen (bzw. den Entwicklern).
+Alle anderen Klassen nutzen ausschließlich *Constructor Injection* und überlassen die Kontrolle für die Objekterstellung ihren Consumer (bzw. den Entwicklern).
 
 ## 3. Richtiger Umgang bei Framework-Verwendung
 
 In der Praxis setzen jedoch viele Unternehmen Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen.  
-*Wie sollen dann die *Teams* damit umgeht?*
+*Wie sollen dann die Teams damit umgehen?*
 
-### Die One-Class-Regel
+### Die richtige Komposition mit Spring: Die Payment-Applikation
 
-Wenn du einen DI-Container verwenden musst (oder willst), dann beschränke seine Nutzung auf **genau eine Stelle** in deinem Code:
+Kehren wir zur Payment-Applikation zurück. So sollte die richtige Komposition mit Spring aussehen:
 
 ```java
-@ApplicationScoped
-public class MainApplication {
+@SpringBootApplication
+public class SpringPaymentApp {
     
-    @Autowired
-    private DatabaseConnection db;
+    public static void main(String[] args) {
+        SpringApplication.run(SpringPaymentApp.class, args);
+    }
     
-    @Autowired
-    private MessageQueue queue;
-    
-    @Autowired
-    private ExternalApiClient api;
-    
-    @Produces
-    @ApplicationScoped
-    public Application createApplication() {
-        return new Application(
-            new DataService(
-                new TransactionalDB(db),
-                new CachedDB(
-                    new TransactionalDB(db)
-                )
+    // Einzige Stelle mit @Autowired - nur für Infrastructure
+    @Bean
+    @Primary
+    public PaymentApplication createApplication(
+        @Autowired DataSource dataSource,
+        @Autowired MessageQueue queue
+    ) {
+        // Explizite Komposition - keine versteckten Dependencies!
+        return new PaymentApplication(
+            new InvoiceBook(
+                new Invoices(
+                    new InvoiceRepository(dataSource)
+                ),
+                new CalculatedTax()
             ),
-            new MessageProcessor(
+            new PaymentProcessor(
+                new Payments(
+                    new PaymentRepository(dataSource)
+                ),
                 queue,
-                new ErrorHandler(
-                    new LoggingErrorHandler(),
-                    new NotificationErrorHandler(api)
-                )
+                new PaymentValidator()
             ),
-            new ReportGenerator(
-                new PdfRenderer(),
-                new CsvRenderer()
+            new CustomerDirectory(
+                new Customers(
+                    new CustomerRepository(dataSource)
+                ),
+                new CustomerValidator()
             )
         );
     }
 }
 ```
 
-### Kernprinzipien
+**Visualisierung der richtigen Spring-Komposition:**
 
-1. **Container-Isolation**: Nur die MainApplication-Klasse darf `@Autowired` verwenden
-2. **Explizite Komposition**: Die gesamte Objektstruktur wird manuell komponiert
-3. **Framework-Adaption**: Der Container liefert nur primitive Dependencies (DB-Connection, Config, etc.)
-4. **Business-Logic-Freiheit**: Keine Business-Klasse kennt den DI-Container
+```mermaid
+flowchart RL
 
-Jegliche DI-Container sollten auf die Composition Root beschränkt sein. Der Rest der Applikation verwendet pure Constructor Injection.
+    subgraph Spring["Spring Container - nur für Infrastructure"]
+        DataSource[(DataSource)]
+        Queue[MessageQueue]
+    end
+    
+    subgraph App["PaymentApplication - Pure Composition"]
+        direction TB
+        subgraph InvoiceBook [InvoiceBook]
+            direction TB
+            Invoices[Invoices]
+            CalculatedTax[CalculatedTax]
+            InvoiceRepo[InvoiceRepository]
+        end
 
-### Migration bestehender Systeme
+        subgraph Payment [PaymentProcessor]
+            direction TB
+            Payments[Payments]
+            PaymentValidator[PaymentValidator]
+            PaymentRepo[PaymentRepository]
+        end
 
-Bei Legacy-Code mit verstreutem `@Autowired`:
+        subgraph Customer [CustomerDirectory]
+            direction TB
+            Customers[Customers]
+            CustomerValidator[CustomerValidator]
+            CustomerRepo[CustomerRepository]
+        end
+    end
+    
+    DataSource -.->|injected once| InvoiceRepo
+    DataSource -.->|injected once| PaymentRepo
+    DataSource -.->|injected once| CustomerRepo
+    Queue -.->|injected once| Payment
 
-1. Erstelle eine zentrale MainApplication-Klasse
-2. Verschiebe schrittweise die Objekterstellung dorthin
-3. Entferne `@Autowired` aus Business-Klassen
-4. Mache Constructor-Dependencies explizit
-
-## 4. Fazit mit Beispiel-Struktur
-
-Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
-
-### Ideale Projektstruktur
-
+    style Spring fill:#ffe0e0,stroke:#ff6b6b
+    style App fill:#e8ffe8,stroke:#4ecdc4
+    style DataSource fill:#ffd700
+    style Queue fill:#ffd700
 ```
 
+**Legende:**
+- **Spring Container** (rot) - Verwaltet nur Infrastructure (DataSource, MessageQueue)
+- **PaymentApplication** (grün) - Pure Objekt-Komposition ohne Framework-Abhängigkeiten
+- Gestrichelte Linien - Einmalige Injection von Infrastructure beim App-Start
+- Keine `@Service`, `@Repository`, `@Autowired` in Business-Klassen!
+
+### Die Business-Klassen bleiben framework-frei
+
+```java
+// Keine Annotations! Pure OOP
+public final class InvoiceBook {
+    private final Invoices invoices;
+    private final CalculatedTax tax;
+    
+    public InvoiceBook(Invoices invoices, CalculatedTax tax) {
+        this.invoices = invoices;
+        this.tax = tax;
+    }
+    
+    public Invoice create(Customer customer, List<Item> items) {
+        // Business Logic
+        return new Invoice(customer, items, tax.calculate(items));
+    }
+}
+
+// Keine Annotations! Pure OOP
+public final class PaymentProcessor {
+
+    private final Payments payments;
+    private final MessageQueue queue;
+    private final PaymentValidator validator;
+    
+    public PaymentProcessor(
+        Payments payments, 
+        MessageQueue queue, 
+        PaymentValidator validator
+    ) {
+        this.payments = payments;
+        this.queue = queue;
+        this.validator = validator;
+    }
+    
+    public void process(Payment payment) {
+        validator.validate(payment);
+        payments.store(payment);
+        queue.publish(new PaymentEvent(payment));
+    }
+}
+
+// Keine Annotations! Pure OOP
+public final class CustomerDirectory {
+
+    private final Customers customers;
+    private final CustomerValidator validator;
+    
+    public CustomerDirectory(Customers customers, CustomerValidator validator) {
+        this.customers = customers;
+        this.validator = validator;
+    }
+    
+    public void register(Customer customer) {
+        validator.validate(customer);
+        customers.add(customer);
+    }
+}
+```
+
+### Kernprinzipien der richtigen Spring-Integration
+
+1. **Container-Isolation**: Nur die `SpringPaymentApp`-Klasse darf `@Autowired` verwenden - ausschließlich für Infrastructure
+2. **Explizite Komposition**: Die gesamte Business-Objektstruktur wird manuell in der `@Bean`-Methode komponiert
+3. **Framework-Adaption**: Spring liefert nur primitive Infrastructure (DataSource, MessageQueue, Config, etc.)
+4. **Business-Logic-Freiheit**: Keine Business-Klasse (`InvoiceBook`, `PaymentProcessor`, `CustomerDirectory`) kennt Spring
+5. **Keine Service-Layer**: Keine künstlichen `-Service` oder `-Repository` Klassen mit `@Service`/`@Repository`
+
+### Vergleich: Vorher vs. Nacher
+
+#### Vorher - Mit DI-Container überall:
+```java
+@Service
+public class InvoiceService {
+    @Autowired private InvoiceRepository repo;
+    @Autowired private CustomerService customerService;
+    // Spring überall, versteckte Dependencies
+}
+```
+
+#### Nacher - Pure Composition:
+```java
+public final class InvoiceBook {
+
+    private final Invoices invoices;
+    private final CalculatedTax tax;
+    
+    public InvoiceBook(Invoices invoices, CalculatedTax tax) {
+        this.invoices = invoices;
+        this.tax = tax;
+    }
+    // Keine Framework-Kopplung, explizite Dependencies
+}
+```
+
+### Die vorgeschlagene Projektstruktur
+
+```
 com.example.payment/
 ├── app/
-│   └── Main.java                    // Entry Point
-├── config/
-│   └── MainApplication.java         // Einzige Stelle mit DI-Container
+│   ├── SpringPaymentApplication.java    // Einzige Stelle mit Spring-Annotations
+│   └── PaymentApplication.java          // Main Application Object
 ├── domain/
-│   ├── User.java                    // Pure Business Objects
-│   ├── Order.java
-│   └── Payment.java
-├── services/
-│   ├── UserService.java             // Constructor Injection
-│   ├── OrderService.java
-│   └── PaymentService.java
+│   ├── InvoiceBook.java            // Pure Business Objects
+│   ├── PaymentProcessor.java       // Pure Business Objects
+│   ├── CustomerDirectory.java      // Pure Business Objects
+│   ├── Customer.java
+│   ├── Customers.java              // Data abstraction
+│   ├── Invoice.java
+│   ├── Invoices.java               // Data abstraction
+│   ├── Payment.java
+│   └── Payments.java               // Data abstraction
+├── data/
+│   ├── InvoiceRepository.java      // Constructor Injection
+│   ├── PaymentRepository.java      // Constructor Injection
+│   └── CustomerRepository.java     // Constructor Injection
 └── infrastructure/
-│   ├── database/
-│   │   ├── PostgresConnection.java
-│   │   └── TransactionalDB.java
-│   └── messaging/
-│       └── RabbitMQQueue.java
+    ├── CalculatedTax.java
+    ├── PaymentValidator.java
+    └── CustomerValidator.java
 ```
 
-### Beispiel einer Service-Klasse
+### Beispiel: Vollständige Komposition im Main
 
 ```java
-public final class OrderService {
-
-    private final UserService users;
-    private final PaymentService payments;
-    private final OrderRepository repository;
-    private final EventPublisher events;
-    
-    // Constructor Injection - keine Annotations!
-    public OrderService(
-        UserService users, PaymentService payments,
-        OrderRepository repository, EventPublisher events) {
-         // Injections
-        this.users = users;
-        this.payments = payments;
-        this.repository = repository;
-        this.events = events;
-    }
-    
-    public Order placeOrder(User user, List<Item> items) {
-        // Business Logic
-    }
-}
-```
-
-### Komposition im Main
-
-```java
-public final class Main {
+@SpringBootApplication
+public class SpringPaymentApplication {
 
     public static void main(String... args) {
+        SpringApplication.run(SpringPaymentApp.class, args);
+    }
 
-        // Infrastructure
-        PostgresDB database = new PostgresDB(
-            "jdbc:postgresql://localhost/mydb"
-        );
-        RabbitMQ queue = new RabbitMQ("localhost:5672");
-        RedisCache cache = new RedisCache("localhost:6379");
+    @Bean
+    @Primary
+    public PaymentApplication createApplication(
+        @Autowired DataSource dataSource,
+        @Autowired @Qualifier("rabbitmq") MessageQueue queue
+    ) {
+        // Infrastructure - von Spring verwaltet
+        // Business Logic - explizit komponiert
         
-        // Repositories
-        CachedUserRepository userRepo = new CachedUserRepository(
-            new PostgresUserRepository(database),
-            cache
-        );
-
-        PostgresOrderRepository orderRepo = new PostgresOrderRepository(database);
+        InvoiceRepository invoiceRepo = new InvoiceRepository(dataSource);
+        PaymentRepository paymentRepo = new PaymentRepository(dataSource);
+        CustomerRepository customerRepo = new CustomerRepository(dataSource);
         
-        // Services
-        PaymentService paymentService = new PaymentService(
-            new StripePaymentGateway(),
-            new PaymentLogger()
-        );
+        Invoices invoices = new Invoices(invoiceRepo);
+        Payments payments = new Payments(paymentRepo);
+        Customers customers = new Customers(customerRepo);
         
-        UserService userService = new UserService(
-            userRepo,
-            new EmailValidator(),
-            new PasswordHasher()
-        );
+        CalculatedTax tax = new CalculatedTax();
+        PaymentValidator paymentValidator = new PaymentValidator();
+        CustomerValidator customerValidator = new CustomerValidator();
         
-        OrderService orderService = new OrderService(
-            userService,
-            paymentService,
-            orderRepo,
-            new EventPublisher(queue)
+        InvoiceBook invoiceBook = new InvoiceBook(invoices, tax);
+        PaymentProcessor paymentProcessor = new PaymentProcessor(
+            payments, 
+            queue, 
+            paymentValidator
+        );
+        CustomerDirectory customerDirectory = new CustomerDirectory(
+            customers, 
+            customerValidator
         );
         
-        // Application
-        Application app = new Application(
-            orderService,
-            userService,
-            new WebServer(8080)
+        return new PaymentApplication(
+            invoiceBook,
+            paymentProcessor,
+            customerDirectory
         );
-        
-        app.start();
     }
 }
 ```
+
 
 ### Die Vorteile zusammengefasst
 
-- **Lesbarkeit**: Jeder kann die Systemstruktur sofort verstehen  
-- **Wartbarkeit**: Änderungen sind lokal und überschaubar  
-- **Testbarkeit**: Dependencies sind explizit und austauschbar  
-- **Refactoring-Sicherheit**: Compiler und IDE unterstützen vollständig  
-- **Keine zyklischen Dependencies**: Die Komposition erzwingt einen gerichteten Graphen  
-- **Framework-Unabhängigkeit**: Business-Code bleibt rein  
+Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
 
-## 5. Quellen
-
-### Primärquellen
-
-1. Bugayenko, Y. (2014). **"Dependency Injection Containers are Code Polluters"**  
-   https://www.yegor256.com/2014/10/03/di-containers-are-evil.html  
-   _Grundlegende Kritik an DI-Containern und Demonstration echter Objekt-Komposition_
-
-2. Bugayenko, Y. (2015). **"Don't Create Objects That End With -ER"**  
-   https://www.yegor256.com/2015/03/09/objects-end-with-er.html  
-   _Über deklaratives vs. imperatives Design in OOP_
-
-3. Bugayenko, Y. (2016). **"Who Is an Object?"**  
-   https://www.yegor256.com/2016/07/14/who-is-object.html  
-   _Konzeptuelle Definition von Objekten als Repräsentanten von Daten_
-
-4. Bugayenko, Y. **"Elegant Objects" (Vol. 1 & 2)**  
-   _Umfassende Darstellung moderner OOP-Prinzipien_
-
-### Weiterführende Literatur
-
-5. van Deursen, S. & Seemann, M. **"Dependency Injection Principles, Patterns, and Practices"**  
-   https://freecontent.manning.com/dependency-injection-in-net-2nd-edition-understanding-the-composition-root/  
-   _Detaillierte Erklärung des Composition Root Patterns_
-
-6. **"Design Patterns Explained – Dependency Injection"** (Stackify)  
-   https://stackify.com/dependency-injection/  
-   _Einführung in DI-Patterns und deren Anwendung_
-
-7. **"Java Dependency Injection - DI Design Pattern"** (DigitalOcean)  
-   https://www.digitalocean.com/community/tutorials/java-dependency-injection-design-pattern-example-tutorial  
-   _Praktische Beispiele für DI in Java_
-
-### Projektbeispiele
-
-8. **Rultor - Agents.java**  
-   https://github.com/yegor256/rultor  
-   _Real-world Beispiel für Pure DI ohne Container_
-
-### Verwandte Konzepte
-
-- **SOLID Principles** (insbesondere Dependency Inversion Principle)
-- **Composition over Inheritance**
-- **Constructor Injection Pattern**
-- **Service Locator Anti-Pattern**
-- **Factory Pattern**
+* **Lesbarkeit**: Jeder kann die Systemstruktur sofort verstehen - kein Suchen nach `@Autowired`  
+* **Wartbarkeit**: Änderungen sind lokal und überschaubar - keine versteckten Dependencies  
+* **Testbarkeit**: Test-Doubles können einfach injiziert werden, ohne `@MockBean`  
+* **Refactoring-Sicherheit**: Compiler und IDE unterstützen vollständig - keine Runtime-Überraschungen  
+* **Keine zyklischen Dependencies**: Die explizite Komposition erzwingt einen gerichteten Graphen  
+* **Framework-Unabhängigkeit**: Business-Code bleibt rein - nur eine Klasse kennt Spring  
+* **Keine Layer-Zwänge**: Natürliche Objektkomposition statt künstlicher Service/Repository-Layer
 
 ---
 
 **Fazit**: Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist. DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen. Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
+
+# 4. Quellen
+
+**Primärquellen**
+
+* Bugayenko, Y. (2014). "Dependency Injection Containers are Code Polluters"
+https://www.yegor256.com/2014/10/03/di-containers-are-evil.html
+Grundlegende Kritik an DI-Containern und Demonstration echter Objekt-Komposition
+
+* Bugayenko, Y. (2015). "Don't Create Objects That End With -ER"
+https://www.yegor256.com/2015/03/09/objects-end-with-er.html
+Über deklaratives vs. imperatives Design in OOP
+
+* Bugayenko, Y. (2016). "Who Is an Object?"
+https://www.yegor256.com/2016/07/14/who-is-object.html
+Konzeptuelle Definition von Objekten als Repräsentanten von Daten
+
+* Bugayenko, Y. "Elegant Objects" (Vol. 1 & 2)
+Umfassende Darstellung moderner OOP-Prinzipien
+
+## Projektbeispiele
+
+Rultor - Agents.java
+https://github.com/yegor256/rultor
+Real-world Beispiel für Pure DI ohne Container
+
+##  Verwandte Konzepte
+
+SOLID Principles (insbesondere Dependency Inversion Principle)
+Composition over Inheritance
+Constructor Injection Pattern
+Service Locator Anti-Pattern
+Factory Pattern
