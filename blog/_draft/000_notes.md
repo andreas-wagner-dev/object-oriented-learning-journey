@@ -276,10 +276,10 @@ public class PaymentService {
 public class CustomerService {
 
     @Autowired
-    private CustomerRepository customerRepo;
+    private InvoiceService invoiceService;  // 🔴 → Invoice (ZYKLUS!)
 
     @Autowired
-    private InvoiceService invoiceService;  // 🔴 → Invoice (ZYKLUS!)
+    private CustomerRepository customerRepo;
     
     public List<Invoice> getOpenInvoices(Customer customer) {
         return invoiceService.findOpenByCustomer(customer);  // Braucht InvoiceService
@@ -293,8 +293,9 @@ public class CustomerService {
 
 **Problem:** Zyklische Abhängigkeit -💥 Das System bricht
 
-Ein erfahrener Mid-Level-Entwickler, der schon mehrere Jahre mit Spring arbeitet und die Dokumentation der Dependency-Injection-Container kennt, würde das Problem wohl über eine ```@Lazy```-Annotation von Spring beheben.
+**Eine reale Lösung (Geschichte) aus der Praxis.**
 
+Ein erfahrener Mid-Level-Entwickler, der bereits einige Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy
@@ -304,38 +305,33 @@ public class CustomerService {
 
     @Autowired
     private InvoiceService invoiceService;  // Wird als Proxy injiziert
+
+    @Autowired
+    private CustomerRepository customerRepo;
     // ...
 }
 ```
 
 Diese Vorgehensweise kaschiert jedoch nur die Tatsache, dass die Architektur eine zyklische Abhängigkeit enthält. Ein Junior-Entwickler lernt auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet. 
 
-Im Rahmen eines Code-Reviews könnte ein Senior-Entwickler die Schwachstelle bemerken und den Pull-Request ablehnen. Der Senior wird dabei wahrscheinlich die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf haben und stattdessen vorschlagen, die zyklische Abhängigkeit durch eine neue Klasse wie InvoiceCustomerService aufzulösen, die die Funktionalität von InvoiceService und CustomerRepository kombiniert.
+Im Rahmen eines Code-Reviews wurde ein Senior-Entwickler die Schwachstelle bemerken und den Pull-Request ablehnen. Der Senior wird dabei wahrscheinlich die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf haben und stattdessen vorschlagen, die zyklische Abhängigkeit durch eine neue Klasse wie ```CustomerInvoiceService``` aufzulösen, die die Funktionalität von ```InvoiceService``` und ```CustomerRepository``` kombiniert. 
 
+```java
+@Service
+public class CustomerInvoiceService {
 
+    @Autowired
+    private InvoiceService invoiceService;
 
-Ein erfahrener Mid-Level-Entwickler, der bereits einige Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
-Diese "Lösung" ändert jedoch nichts an der Tatsache, dass die Architektur nun eine Zyklische Abhängigkeit enthält.  
-Ein Junior-Entwickler lernen jetzt wie man mit zyklischen Abhängigkeiten umgehen kann, aber nicht wie man es löst order vermeiden kann. Bei einem Code Review, wird eventuell ein Senior-Entwickler das Problem aufmerksam und den Pull-Request zurückweisen. Der Senior wird sich dabei (vermutlich) an die Modul Prinzipien (von Robert C. Martin) erinnern und vorschlagen, dass man z. B. mit einer neuen zusätlichen Klasse ```CustomerInvoiceService```, die die Klassen ```InvoiceService``` und ```CustomerRepository``` zusammenführt, die zyklische Abhängigkeit auflöst. 
+    @Autowired
+    private CustomerService customerService;
+    // ...
+}
+```
 
-Die Klassen besitzen zwei Verantwortlichkeiten:  Verwalten von Kunden sowie Rechnungen.
+Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Prinzip** (SRP). Weil die ursprüngliche Klasse ```CustomerService``` zwei Verantwortlichkeiten, Verwalten von Kunden sowie Rechnungen, enthielt, war er über die Richtigkeit seiner Lösung gemäß SRP (nach Robert C. Martin) *"There should never be more than one reason for a class to change"* überzeugt. Und hügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einer zu zerbrechlichem Design führen. Das Team nahm es stillschweigend an, denn er wüsste es ja besser und hat ja auch die Bücher von Robert C. Martin gelesen. Der Mid-Level-Entwickler lernte nun das er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
 
-Single Responsibility Prinzip
-Das SRP "There should never be more than one reason for a class
-to change" (Ursprünglich nur auf Klassen bezogen, seit 2014 auf
-Software-Module im Allgemeinen) stammt von Robert C. Martin.
-Es bedeutet:
-• Jedes Software-Modul sollte nur eine einzige Verantwortlichkeit
-realisieren
-• Verantwortlichkeit = Grund für eine Änderung
-• Dem Prinzip Separation of Concerns sehr ähnlich
-• Mehrere Verantwortlichkeiten innerhalb eines Software-Moduls
-führen zu zerbrechlichem Design, da bei Änderung einer
-Verantwortlichkeit eine andere Verantwortlichkeit beschädigt
-werden kann.
-
-
-(Jeder von denen hat nun gämeß seines Levels gearbeitet aber immer nocht kein Geld für das Unternehmen verdient.)        
+Heutzutage ist der Senior Entwickler (der Author) skeptische gegenüber der Interpretation von SRP von Robert C. Martin, aber das ist eine andere Geschichte....
 
 ---
 
@@ -359,12 +355,12 @@ werden kann.
 
 9. **Testbarkeit**: Tests können nicht durch einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (`@MockBean` oder `@SpyBean`)
 
-### Die DI-Container fördern Layer-Architektur
+### Die DI-Container fördern Schichten
 
 Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern und sogar erzwingen:
 - **Stereotype-Annotations** (`@Service`, `@Repository`, `@Controller`) - die explizit Layer definieren
 - **Scan-Mechanismen**, die nach Package-Strukturen suchen (z.B. `com.example.service.*`, `com.example.entity.*`, `com.example.repository.*`)
-- **Best-Practice-Guides** der Frameworks, die Layer-Trennung empfehlen
+- **Best-Practice-Guides** der Frameworks (z. B. Spring [Pet Clinic](https://github.com/spring-petclinic/spring-framework-petclinic/tree/main/src/main/java/org/springframework/samples/petclinic)), die Layer-Trennung empfehlen
 - **Proxy-Mechanismen** für Transactions (`@Transactional`) - die Layer-Grenzen voraussetzen
 - **Dependency-Rules**, die nur "nach unten" zeigen dürfen - was Layer-Hierarchien erzwingt.
 
@@ -377,7 +373,6 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 - wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
 
-
 ## 2. Der richtige, objekt orientierte Weg: Pure Composition
 
 **Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
@@ -385,7 +380,6 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objekt orientierte Komposition aussehen:
 
 ```java
-App.java                  # Abstraktion für die Anwendung
 app/                      # Package für Details der App-Abstraktion
 ├── WebApp.java           # Einstiegspunkt, implementiert App
 │       └── (in einer 'main' oder 'startup' Methode:)
@@ -400,8 +394,21 @@ app/                      # Package für Details der App-Abstraktion
 │                   new Amount(100, new Currency("EUR"))
 │               ),
 │               new CustomerDirectory(...)
-│           )
-│           
+│           );
+customer/
+│  ├── Customer.java        
+│  └── CustomerDirectory.java
+invoice/
+│  ├── Invoice.java 
+│  ├── InvoiceBook.java     
+│  ├── Invoices.java                 
+│  └── Tax.java
+payment/
+│  ├── Amount.java
+│  ├── Currency.java    
+│  ├── Payment.java     
+│  ├── Payer.java               
+│  └── Recipient.java
 ```
 
 
@@ -458,8 +465,7 @@ Alle anderen Klassen nutzen ausschließlich *Constructor Injection* und überlas
 
 ## 3. Richtiger Umgang bei Framework-Verwendung
 
-In der Praxis setzen jedoch viele Unternehmen Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen.  
-*Wie sollen dann die Teams damit umgehen?*
+In der Praxis setzen viele Unternehmen auf Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen. Hier stellt sich die Frage: *Wie soll man damit umgehen?*
 
 ### Die richtige Komposition mit Spring: Die Payment-Applikation
 
