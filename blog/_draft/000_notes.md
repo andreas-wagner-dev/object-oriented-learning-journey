@@ -1,10 +1,10 @@
 # The right System Composition *"leaves Nobody behind…"*
 
-## 1. Einleitung und das Problem mit DI-Containern
+## 1. Einleitung
 
 In der modernen objektorientierten Softwareentwicklung ist Dependency Injection (DI) längst ein etabliertes Konzept. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks und DI-Container das ursprüngliche Konzept in ein Anti-Pattern verwandelt.
 
-### Die Probleme mit DI-Containern
+### 1.1 Die Probleme mit DI-Containern
 
 Betrachten wir eine **Spring-Boot** *Payment-Application* mit der üblichen Verwendung von **DI-Container**.  
 Mittels Annotations wie ```@Component```, ```@Service```, ```@Repository``` und ```@Controller``` kann Spring automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.
@@ -293,7 +293,9 @@ public class CustomerService {
 
 **Problem:** Zyklische Abhängigkeit -💥 Das System bricht
 
-**Eine reale Lösung (Geschichte) aus der Praxis.**
+### 1.2 Die Lösungen mit DI-Containern 
+
+**Die Lösung aus der Praxis als eine Reale Geschichte.**
 
 Ein erfahrener Mid-Level-Entwickler, der bereits einige Jahre mit Spring abreitet und die Dokumentation für DI-Container gelesen hatte, wird wahrscheinlich das Problem mittels einer ```@Lazy``` Annotation aus dem Spring-Framework lösen. 
 
@@ -331,7 +333,7 @@ public class CustomerInvoiceService {
 
 Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Prinzip** (SRP). Weil die ursprüngliche Klasse ```CustomerService``` zwei Verantwortlichkeiten, Verwalten von Kunden sowie Rechnungen, enthielt, war er über die Richtigkeit seiner Lösung gemäß SRP (nach Robert C. Martin) *"There should never be more than one reason for a class to change"* überzeugt. Und hügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einer zu zerbrechlichem Design führen. Das Team nahm es stillschweigend an, denn er wüsste es ja besser und hat ja auch die Bücher von Robert C. Martin gelesen. Der Mid-Level-Entwickler lernte nun das er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
 
-Heutzutage ist der Senior Entwickler (der Author) skeptische gegenüber der Interpretation von SRP von Robert C. Martin, aber das ist eine andere Geschichte....
+Heutzutage ist (der Author) bzw, der Senior Entwickler sehr skeptische gegenüber der Interpretation von SRP von Robert C. Martin, aber das ist eine andere Geschichte....
 
 ---
 
@@ -380,9 +382,12 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objekt orientierte Komposition aussehen:
 
 ```java
-app/                      # Package für Details der App-Abstraktion
-├── WebApp.java           # Einstiegspunkt, implementiert App
-│       └── (in einer 'main' oder 'startup' Methode:)
+
+Payment
+
+├──app/                        # Package für Details der App-Abstraktion
+│   └── WebApp.java           # Einstiegspunkt, implementiert App
+│           └── (in einer 'main' oder 'startup' Methode:)
 │           new WebApp(
 │               new InvoiceBook(
 │                   new Invoices(),
@@ -395,20 +400,21 @@ app/                      # Package für Details der App-Abstraktion
 │               ),
 │               new CustomerDirectory(...)
 │           );
-customer/
-│  ├── Customer.java        
-│  └── CustomerDirectory.java
-invoice/
-│  ├── Invoice.java 
-│  ├── InvoiceBook.java     
-│  ├── Invoices.java                 
-│  └── Tax.java
-payment/
-│  ├── Amount.java
-│  ├── Currency.java    
-│  ├── Payment.java     
-│  ├── Payer.java               
-│  └── Recipient.java
+├── amount/
+│   ├── Amount.java
+│   ├── Currency.java    
+│   ├── Payment.java     
+│   ├── Payer.java               
+│   └── Recipient.java
+├── customer/
+│   ├── Customer.java        
+│   └── CustomerDirectory.java
+└── invoice/
+    ├── Invoice.java 
+    ├── InvoiceBook.java     
+    ├── Invoices.java                 
+    └── Tax.java
+
 ```
 
 
@@ -568,6 +574,7 @@ flowchart RL
 ```java
 // Keine Annotations! Pure OOP
 public final class InvoiceBook {
+
     private final Invoices invoices;
     private final Tax tax;
     
@@ -666,24 +673,23 @@ com.example.payment/
 ├── app/
 │   ├── SpringPaymentApplication.java    // Einzige Stelle mit Spring-Annotations
 │   └── PaymentApplication.java          // Main Application Object
-├── domain/
-│   ├── InvoiceBook.java            // Pure Business Objects
-│   ├── PaymentProcessor.java       // Pure Business Objects
-│   ├── CustomerDirectory.java      // Pure Business Objects
+├── customer/
 │   ├── Customer.java
-│   ├── Customers.java              // Data abstraction
+│   ├── CustomerRepository.java
+│   ├── CustomerValidator.java
+│   └── Customers.java
+├── invoice/
 │   ├── Invoice.java
-│   ├── Invoices.java               // Data abstraction
+│   ├── Invoices.java       
+│   ├── InvoiceBook.java        
+│   ├── InvoiceRepository.java
+│   └── Tax.java
+├── pay/
 │   ├── Payment.java
-│   └── Payments.java               // Data abstraction
-├── data/
-│   ├── InvoiceRepository.java      // Constructor Injection
-│   ├── PaymentRepository.java      // Constructor Injection
-│   └── CustomerRepository.java     // Constructor Injection
-└── infrastructure/
-    ├── Tax.java
-    ├── PaymentValidator.java
-    └── CustomerValidator.java
+│   ├── PaymentProcessor.java
+│   ├── PaymentRepository.java
+│   ├── PaymentValidator.java
+│   └── Payments.java
 ```
 
 ### Beispiel: Vollständige Komposition im Main
@@ -697,7 +703,7 @@ public class SpringPaymentApplication {
     }
 
     @Bean
-    @Primary
+    // @Primary // (optional)
     public PaymentApplication createApplication(
         @Autowired DataSource dataSource,
         @Autowired @Qualifier("rabbitmq") MessageQueue queue
@@ -752,9 +758,11 @@ Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktu
 
 ---
 
-**Fazit**: Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist. DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen. Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
+# 4. Fazit
 
-# 4. Quellen
+Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist. DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen. Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
+
+# 5. Quellen
 
 **Primärquellen**
 
