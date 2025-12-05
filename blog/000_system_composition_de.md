@@ -403,35 +403,6 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 
 Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objektorientierte Komposition aussehen:
 
-```
-org.example.payment/  
-├──app/                         // Paket für Infrastuktur der Applikation
-│   ├── Log                 	// <-- Logger   
-│   ├── MongoDb                 // <-- DataSource   
-│   ├── MqttQueue               // <-- MessageQueue   
-│   ├── PaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
-│   └── WebPaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
-├── amount/  
-│   ├── Amount.java  
-│   ├── Currency.java    
-│   ├── Payer.java                 
-│   └── Recipient.java  
-├── customer/  
-│   ├── Customer.java          
-│   └── CustomerDirectory.java  
-├── invoice/  
-│   ├── Invoice.java   
-│   ├── InvoiceBook.java       
-│   ├── Invoices.java                   
-│   ├── Item.java                   
-│   └── Tax.java  
-├── pay/  
-│   ├── DefaultPayment.java    // <-- Konkrete Zahlung (Daten und Basisfunktion)               
-│   ├── NotifiedPayment.java   // <-- Horizontaler Decorator: Ergänzt Event-Benachrichtigung       
-│   └── ProcessedPayment.java  // <-- Horizontaler Decorator: Ergänzt eigentliche Verarbeitung/Speicherung  
-└── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
-```
-
 **Beispiel für eine Jakarta EE Stack Anwendung**
 
 ```java
@@ -526,6 +497,38 @@ flowchart TD
 * und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.  
 * **Beachte:** - Keine Layers, keine Annotations, keine versteckten Abhängigkeiten - nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.  
 * Zudem gibt es kein Objekt, das einfach herumhängt bzw. "im Stich gelassen wurde..."
+
+**Die dazugehörige Projektstruktur könnte sieht so aus:**
+
+```
+org.example.payment/  
+├──app/                         // Paket für Infrastuktur der Applikation
+│   ├── Log                 	// <-- Logger   
+│   ├── MongoDb                 // <-- DataSource   
+│   ├── MqttQueue               // <-- MessageQueue   
+│   ├── PaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
+│   └── WebPaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
+├── amount/  
+│   ├── Amount.java  
+│   ├── Currency.java    
+│   ├── Payer.java                 
+│   └── Recipient.java  
+├── customer/  
+│   ├── Customer.java          
+│   └── CustomerDirectory.java  
+├── invoice/  
+│   ├── Invoice.java   
+│   ├── InvoiceBook.java       
+│   ├── Invoices.java                   
+│   ├── Item.java                   
+│   └── Tax.java  
+├── pay/  
+│   ├── DefaultPayment.java    // <-- Konkrete Zahlung (Daten und Basisfunktion)               
+│   ├── NotifiedPayment.java   // <-- Horizontaler Decorator: Ergänzt Event-Benachrichtigung       
+│   └── ProcessedPayment.java  // <-- Horizontaler Decorator: Ergänzt eigentliche Verarbeitung/Speicherung  
+└── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
+```
+
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Projekt, wie echte Objekt-Komposition aussieht.
 
