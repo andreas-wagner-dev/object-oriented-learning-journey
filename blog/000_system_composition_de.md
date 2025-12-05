@@ -503,11 +503,18 @@ flowchart TD
 * Das größte Rechteck ist `PaymentApplication`- die äußere Komposition und die **Composition Root**.  
 * `Payment`-Objekt-Komposition (Decorator-Muster) visualisiert die Kette der `new`-Aufrufe.  
 * Base ist die konkrete Komponente (`DefaultPayment`) mit den Kerndaten (`Payer`, `Recipient`, `Amount`).  
-* und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.  
-* **Beachte:** - Keine Layers, keine Annotations, keine versteckten Abhängigkeiten - nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.  
-* Zudem gibt es kein Objekt, das einfach herumhängt bzw. "im Stich gelassen wurde..."
+* und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.
 
-**Die dazugehörige Projektstruktur könnte sieht so aus:**
+**Beachte:**
+* Keine Layers,
+* keine Annotations,
+* keine versteckten Abhängigkeiten
+* nur explizite Constructor-Aufrufe
+* pure Objekt-Komposition
+
+Zudem gibt es kein Objekt, das einfach herumhängt bzw. "im Stich gelassen wurde..."
+
+**Die dazugehörige Projektstruktur könnte so aus:**
 
 ```
 org.example.payment/  
