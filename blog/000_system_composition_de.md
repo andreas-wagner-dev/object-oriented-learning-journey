@@ -183,7 +183,7 @@ public class CustomerService {
 
 #### **Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können.**
 
-Ein Junior-Entwickler nimmt sich der Sache an. Für Ihn ist es klar und einfach die Klasse CustomerService muss jetzt InvoiceService kennen.
+Ein Junior-Entwickler nimmt sich der Sache an. Für Ihn war es logisch die Klasse CustomerService muss jetzt InvoiceService kennen.
 
 ```mermaid
 graph LR
