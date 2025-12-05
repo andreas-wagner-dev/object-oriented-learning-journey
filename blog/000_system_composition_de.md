@@ -1,20 +1,21 @@
-# **The right System Composition *"leaves Nobody behind…"***
+# The right System Composition *"leaves Nobody behind…"*
 
-## **- Eine reale Geschichte aus der Praxis -**
+***- Eine reale Geschichte aus der Praxis -***
 
-## **1. Einleitung**
+## 1. Einleitung
 
-In der modernen objektorientierten Softwareentwicklung ist Dependency Injection (DI) längst ein etabliertes Konzept. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks und DI-Container das ursprüngliche Konzept in ein Anti-Pattern verwandelt.
+In der modernen objektorientierten Softwareentwicklung ist **Dependency Injection** (DI) längst ein etabliertes Konzept. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks und **DI-Container** das ursprüngliche Konzept in ein **Anti-Pattern** verwandelt.
 
-### **1.1 Die Probleme mit DI-Containern**
+### 1.1 Probleme mit DI-Containern
 
 Betrachten wir eine Spring-Boot Payment-Application mit der üblichen Verwendung von DI-Container.  
-Mittels Annotations wie @Component, @Service, @Repository und @Controller kann Spring automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.  
+Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller` kann Spring automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.  
+
 Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.
 
-#### **Anforderung 1: (Rechnungen und Zahlungen verarbeiten)**
+#### Anforderung 1: (Rechnungen und Zahlungen verarbeiten)
 
-Die Applikation soll zunächst Rechnungen (Invoice) erstellen und dazu Zahlungen (Payment) verarbeiten können.
+Die Applikation soll zunächst Rechnungen (`Invoice`) erstellen und dazu Zahlungen (`Payment`) verarbeiten können.
 
 ```mermaid
 graph LR
@@ -94,9 +95,10 @@ public class PaymentService {
 ```
 
 **Problem:** An dieser Stelle ist es bereits unklar, wie die Objekte wirklich zusammenhängen.    
-Das Objekt der Klasse SpringPaymentApp schwebt isoliert "herum" sowie die Zugriffe auf die Datenbank, und der DI-Container verwaltet alles im Hintergrund.
 
-#### **Anforderung 2: (Customer hinzufügen)**
+Das Objekt der Klasse `SpringPaymentApp` sowie die Komponente `SpringData` für Zugriffe auf die Datenbank schwebt isoliert "herum" und der DI-Container verwaltet alles im Hintergrund.
+
+#### Anforderung 2: (Customer hinzufügen)
 
 Nun sollen zusätzlich noch Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
@@ -181,9 +183,9 @@ public class CustomerService {
 
 **(Kein) Problem:** Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers verkompliziert lediglich die Beziehungen in diesem Modul.
 
-#### **Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können.**
+#### Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können.
 
-Ein Junior-Entwickler nimmt sich der Sache an. Für Ihn war es logisch die Klasse CustomerService muss jetzt InvoiceService kennen.
+Ein Junior-Entwickler nimmt sich der Sache an. Für Ihn war es logisch die Klasse `CustomerService` muss jetzt `InvoiceService` kennen.
 
 ```mermaid
 graph LR
@@ -300,9 +302,9 @@ public class CustomerService {
 
 **Problem:** Zyklische Abhängigkeit - 💥 Das System bricht - und die Integrationstests laufen nicht mehr
 
-### **1.2 Die Lösungen mit DI-Containern**
+### 1.2 Die Lösungen mit DI-Containern
 
-Ein erfahrener Mid-Level-Entwickler aus dem Team, der bereits einige Jahre mit Spring arbeitete und die Dokumentation für DI-Container gelesen hatte, löste das Problem mittels einer @Lazy Annotation aus dem Spring-Framework.
+Ein erfahrener Mid-Level-Entwickler aus dem Team, der bereits einige Jahre mit Spring arbeitete und die Dokumentation für DI-Container gelesen hatte, löste das Problem mittels einer `@Lazy` Annotation aus dem Spring-Framework.
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy  
@@ -320,8 +322,9 @@ public class CustomerService {
 ```
 
 Diese „Lösung“ ändert jedoch nichts daran, dass die Architektur weiterhin eine zyklische Abhängigkeit aufweist.  
-Der Junior-Entwickler lernte auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet.  
-Im Rahmen eines Code-Reviews bemerkte ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die zyklische Abhängigkeit durch eine neue Klasse wie CustomerInvoiceService aufzulösen, welche die Funktionalität von InvoiceService und CustomerRepository kombiniert. Dies stellte jedoch eine **schlechte Komposition** dar, da sie Business- und Repository-Logik vermischte.
+Der Junior-Entwickler lernte auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet.
+
+Im Rahmen eines Code-Reviews bemerkte ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die zyklische Abhängigkeit durch eine neue Klasse wie `CustomerInvoiceService` aufzulösen, welche die Funktionalität von `InvoiceService` und `CustomerRepository` kombiniert.
 
 ```java
 @Service  
@@ -347,38 +350,46 @@ public class CustomerInvoiceService {
 }
 ```
 
-Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse CustomerService zwei Verantwortlichkeiten enthielt – Verwalten von Kunden sowie Rechnungen –, war er über die Richtigkeit seiner Lösung gemäß dem SRP (nach Robert C. Martin) *"There should never be more than one reason for a class to change"* überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. Das Team nahm es stillschweigend an, denn er wusste es ja besser und hatte ja auch die Bücher von Robert C. Martin gelesen.
+Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen* –, war er über die Richtigkeit seiner Lösung gemäß dem SRP (nach Robert C. Martin) 
+
+> *"There should never be more than one reason for a class to change"*
+
+überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen.
+
+Das Team nahm es stillschweigend an, denn er wusste es ja besser und hatte ja auch die Bücher von Robert C. Martin gelesen.
 
 Der Mid-Level-Entwickler lernte nun, dass er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
 
+Dies stellte jedoch eine **schlechte Komposition** dar, da sie Business- und Repository-Logik vermischte.
+
 Heutzutage ist der Senior-Entwickler (der Autor) sehr skeptisch gegenüber dieser eher subjektiven Interpretation von SRP von Robert C. Martin, aber das ist eine andere sehr lange Geschichte....
 
-#### **Zusammenfassung der resultierenden Probleme**
+#### Zusammenfassung der resultierenden Probleme
 
 **Diese schrittweise Entwicklung zeigt:**
 
 1. **Unübersichtliche Abhängigkeiten** - SpringPaymentApp zeigt keine echten Dependencies. Wo ist die Objektstruktur?  
-2. **Schwere Wartbarkeit** - Um zu verstehen, was CustomerService braucht, muss man:  
-   * Alle @Autowired Felder durchsuchen  
-   * Prüfen, ob @Lazy verwendet wird  
+2. **Schwere Wartbarkeit** - Um zu verstehen, was `CustomerService` braucht, muss man:  
+   * Alle `@Autowired` Felder durchsuchen  
+   * Prüfen, ob `@Lazy` verwendet wird  
    * Verstehen, wie Spring die Proxies auflöst  
    * Wissen über Modul-Prinzipien (von Robert C. Martin) haben  
 3. **Erzwungene Layer-Trennung** - Alle Klassen haben -Entity, -Service oder -Repository Suffix nur wegen der Layer  
-4. **Zyklische Abhängigkeiten** - InvoiceService ⇄ CustomerService - Spring versteckt das Problem mit Proxies statt es zu lösen  
-5. **Code Pollution** - Überall @Service, @Repository, @Autowired, @Lazy Annotations  
-6. **Testbarkeit**: Tests können nicht einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) wie (@MockBean oder @SpyBean)
+4. **Zyklische Abhängigkeiten** - `InvoiceService` ⇄ `CustomerService` - Spring versteckt das Problem mit Proxies statt es zu lösen  
+5. **Code Pollution** - Überall `@Service`, `@Repository`, `@Autowired`, `@Lazy` Annotations  
+6. **Testbarkeit**: Tests können nicht einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) (wie `@MockBean` oder `@SpyBean`)
 
-### **Die DI-Container fördern Schichten**
+### Die DI-Container fördern Schichten
 
 Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern und sogar erzwingen:
 
 * **Stereotype-Annotations** (@Service, @Repository, @Controller) - die explizit Layer definieren  
-* **Scan-Mechanismen** (z.B. com.example.service.*, com.example.entity.*, com.example.repository.*), die nach Package-Strukturen suchen  
+* **Scan-Mechanismen** (z.B. `com.example.service.*`, `com.example.entity.*`, `com.example.repository.*`), die nach Package-Strukturen suchen  
 * **Best-Practice-Guides** der Frameworks (z. B. Spring [Pet Clinic](https://github.com/spring-petclinic/spring-framework-petclinic/tree/main/src/main/java/org/springframework/samples/petclinic)), die Layer-Trennung empfehlen  
-* **Proxy-Mechanismen** für Transactions (@Transactional) - die Layer-Grenzen voraussetzen  
+* **Proxy-Mechanismen** für Transactions (`@Transactional`) - die Layer-Grenzen voraussetzen  
 * **Dependency-Rules**, die nur "nach unten" zeigen dürfen - was Layer-Hierarchien erzwingt.
 
-### **Die Illusion der Entkopplung**
+### Die Illusion der Entkopplung
 
 Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorgen. Doch in Wirklichkeit:
 
@@ -387,7 +398,7 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 * entsteht eine **Kopplung an den Framework-Container**  
 * wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
-## **2. Der richtige, objektorientierte Weg: Pure Composition**
+## 2. Der richtige, objektorientierte Weg: Pure Composition
 
 **Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem new-Operator.
 
@@ -442,7 +453,7 @@ org.example.payment/
 ```mermaid
 flowchart TD
 
-    subgraph PaymentComposition[Payment Komposition]
+    subgraph PaymentComposition["Payment Komposition"]
         direction TB
 
         Deco["DefaultPayment<br/>Payer, Recipient, Amount"]
@@ -466,16 +477,16 @@ flowchart TD
 
 **Legende:**
 
-* Das größte Rechteck ist PaymentApplication- die äußere Komposition und die Composition Root.  
-* Payment-Objekt-Komposition (Decorator-Muster) visualisiert die Kette der new-Aufrufe.  
-* Base ist die konkrete Komponente (DefaultPayment) mit den Kerndaten (Payer, Recipient, Amount).  
-* und NotifiedPayment sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (MongoDb, MqttQueue) injiziert bekommen.  
+* Das größte Rechteck ist `PaymentApplication`- die äußere Komposition und die **Composition Root**.  
+* `Payment`-Objekt-Komposition (Decorator-Muster) visualisiert die Kette der `new`-Aufrufe.  
+* Base ist die konkrete Komponente (`DefaultPayment`) mit den Kerndaten (`Payer`, `Recipient`, `Amount`).  
+* und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.  
 * **Beachte:** - Keine Layers, keine Annotations, keine versteckten Abhängigkeiten - nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.  
 * Zudem gibt es kein Objekt, das einfach herumhängt bzw. "im Stich gelassen wurde..."
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Projekt, wie echte Objekt-Komposition aussieht.
 
-### **Vorteile der *expliziten* objektorientierten Herangehensweise**
+### Vorteile der *expliziten* objektorientierten Herangehensweise
 
 1. **Vollständige Transparenz**: Jeder kann sofort sehen, wie das System zusammengesetzt ist  
 2. **Keine versteckten Abhängigkeiten**: Alle Dependencies sind explizit im Code sichtbar  
@@ -483,7 +494,7 @@ Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Proje
 4. **Testbarkeit**: Test-Doubles können einfach injiziert werden, ohne Mock-Frameworks  
 5. **Keine Framework-Kopplung**: Der Code ist unabhängig von DI-Containern
 
-### **Das Composition-Prinzip**
+### Das Composition-Prinzip
 
 Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattfinden. Diese **"Composition Root"** (Kompositions-Wurzel) ist verantwortlich für:
 
@@ -493,20 +504,22 @@ Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattf
 
 Alle anderen Klassen nutzen ausschließlich **Constructor Injection** (Konstruktor-Injektion) und überlassen die Kontrolle für die Objekterstellung ihrem Consumer (bzw. den Entwicklern).
 
-## **3. Richtiger Umgang bei Framework-Verwendung**
+## 3. Umgang bei Framework-Verwendung
 
-In der Praxis setzen viele Unternehmen auf Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen. Hier stellt sich die Frage: *Wie soll man damit umgehen?*
+In der Praxis setzen viele Unternehmen auf Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen.  
 
-### **Die richtige Komposition mit Spring: Die Payment-Applikation**
+Hier stellt sich die **Frage:** *Wie soll man damit umgehen?*
+
+### Die Komposition mit Spring: Die Payment-Applikation
 
 Kehren wir zur Payment-Applikation zurück. So sollte die richtige Komposition mit Spring aussehen:
 
 ```java
 @SpringBootApplication  
-public class SpringPaymentApplication {  
+public class SpringPaymentApp {  
       
     public static void main(String[] args) {  
-        SpringApplication.run(SpringPaymentApplication.class, args);  
+        SpringApplication.run(SpringPaymentApp.class, args);  
     }  
       
     // Einzige Stelle mit @Autowired - nur für Infrastructure  
@@ -590,12 +603,12 @@ flowchart RL
 
 **Legende:**
 
-* **Spring Container** (rot) - Verwaltet nur Infrastructure (DataSource, MessageQueue)  
+* **Spring Container** (rot) - Verwaltet nur Infrastructure (`DataSource`, `MessageQueue`)  
 * **PaymentApplication** (grün) - Pure Objekt-Komposition ohne Framework-Abhängigkeiten  
 * Gestrichelte Linien - Einmalige Injection von Infrastructure beim App-Start  
-* Keine @Service, @Repository, @Autowired in Business-Klassen!
+* Keine `@Service`, `@Repository`, `@Autowired` in Business-Klassen!
 
-### **Die Business-Klassen bleiben framework-frei**
+### Die Business-Klassen bleiben framework-frei
 
 ```java
 // Keine Annotations! Pure OOP  
@@ -657,17 +670,17 @@ public final class CustomerDirectory {
 }
 ```
 
-### **Kernprinzipien der richtigen Spring-Integration**
+### Kernprinzipien der richtigen Spring-Integration
 
-1. **Container-Isolation**: Nur die SpringPaymentApplication-Klasse darf @Autowired verwenden - ausschließlich für Infrastructure  
+1. **Container-Isolation**: Nur die `SpringPaymentApp`-Klasse darf `@Autowired` verwenden - ausschließlich für Infrastructure  
 2. **Explizite Komposition**: Die gesamte Business-Objektstruktur wird manuell in der @Bean-Methode komponiert  
-3. **Framework-Adaption**: Spring liefert nur primitive Infrastructure (DataSource, MessageQueue, Config, etc.)  
-4. **Business-Logic-Freiheit**: Keine Business-Klasse (InvoiceBook, PaymentProcessor, CustomerDirectory) kennt Spring  
-5. **Keine Service-Layer**: Keine künstlichen -Service oder -Repository Klassen mit @Service/@Repository
+3. **Framework-Adaption**: Spring liefert nur primitive Infrastructure (`DataSource`, `MessageQueue`, `Config`, etc.)  
+4. **Business-Logic-Freiheit**: Keine Business-Klasse (`InvoiceBook`, `aymentProcessor`, `CustomerDirectory`) kennt Spring  
+5. **Keine Service-Layer**: Keine künstlichen -Service oder -Repository Klassen mit `@Service/@Repository`
 
-### **Vergleich: Vorher vs. Nachher**
+### Vergleich: Vorher vs. Nachher
 
-#### **Vorher - Mit DI-Container überall:**
+#### Vorher - Mit DI-Container überall:
 
 ```java
 @Service  
@@ -692,16 +705,16 @@ public final class InvoiceBook {
 }
 ```
 
-Weil keine Layer Struktur mehr erzwungen werden kann die Projektstruktur auf Business Konzepte (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten.
+Weil **keine Layer** Struktur mehr erzwungen werden kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten.
 
-### **Die vorgeschlagene Projektstruktur**
+### Die vorgeschlagene Projektstruktur
 
 Ausrichtung von Package-Strukturen an Business-Konzepten statt technischen Layern.
 
 ```
 com.example.payment/  
 ├── app/  
-│   ├── SpringPaymentApplication.java    // Einzige Stelle mit Spring-Annotations  
+│   ├── SpringPaymentApp.java            // Einzige Stelle mit Spring-Annotations  
 │   └── PaymentApplication.java          // Main Application Object  
 ├── customer/  
 │   ├── Customer.java  
@@ -725,7 +738,7 @@ com.example.payment/
     └── Payments.java
 ```
 
-### **Beispiel: Vollständige Komposition im Main**
+### Beispiel: Vollständige Komposition im Main
 
 ```java
 import org.springframework.boot.SpringApplication;  
@@ -743,10 +756,10 @@ import javax.sql.DataSource; // Beispiel für Infrastruktur-Interface
 // Wir beschränken das Scannen explizit auf das "com.example.payment.*" Package,   
 @SpringBootApplication  
 @ComponentScan(basePackages = "com.example.payment.*")  
-public class SpringPaymentApplication {
+public class SpringPaymentApp {
 
     public static void main(String... args) {  
-        SpringApplication.run(SpringPaymentApplication.class, args);  
+        SpringApplication.run(SpringPaymentApp.class, args);  
     }
 
     @Bean  
@@ -802,11 +815,11 @@ Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktu
 * **Framework-Unabhängigkeit**: Business-Code bleibt rein - nur eine Klasse kennt Spring  
 * **Keine Layer-Zwänge**: Natürliche Objektkomposition statt künstlicher Service/Repository-Layer
 
-## **4. Fazit**
+## 4. Fazit
 
 Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist. DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen. Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
 
-## **5. Quellen**
+## 5. Quellen
 
 **Primärquellen**
 
