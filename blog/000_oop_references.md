@@ -13,6 +13,7 @@
 - https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html
 - https://www.yegor256.com/2020/03/03/prefixed-naming.html
 - https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html
+
 **Contract-Constuction:**
 
 *Problems*
