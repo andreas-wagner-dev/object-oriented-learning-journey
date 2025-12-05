@@ -902,11 +902,96 @@ public class SpringPaymentApp {
 }
 ```
 
+### Explizite Tests
+
+Mit diesem expliziten Ansatz können **Unit-Tests** sehr *einfach* mithilfe sogenannter [Test-Doubles](https://martinfowler.com/bliki/TestDouble.html) erstellt werden.
+Da alle beteiligten Klassen reine Objekte (POJOs/POCOs) sind und Konstruktor-Injection verwenden, können die Tests deutlich schneller ausgeführt werden. Es entfällt die Notwendigkeit, den gesamten `ApplicationContext` zu starten (kein `@SpringBootTest` erforderlich). Man benötigt weder `@MockBean` noch muss man auf Reflection-Overhead zurückgreifen, was die Testausführung beschleunigt und die **Test-Suite** *robuster* macht.
+
+**Beispiel: `InvoiceBook` testen mit JUnit 5 + Mockito**.
+
+```java
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import java.util.List;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class InvoiceBookTest {
+
+    @Test
+    void createInvoice_berechnetSteuernKorrekteUndSpeichertRechnung() {
+        // Arrange – Test-Doubles
+        Invoices mockInvoices = mock(Invoices.class);
+        Tax taxStub = items -> items.stream()
+                                    .mapToDouble(Item::getNettoPrice)
+                                    .sum() * 0.19; // 19 % MwSt Stub
+
+        InvoiceBook invoiceBook = new InvoiceBook(mockInvoices, taxStub);
+
+        Customer customer = new Customer("Max Mustermann");
+        List<Item> items = List.of(
+            new Item("Laptop", 1000.0),
+            new Item("Maus", 50.0)
+        );
+
+        // Act
+        Invoice invoice = invoiceBook.create(customer, items);
+
+        // Assert
+        assertEquals(1050.0, invoice.getNettoTotal());
+        assertEquals(199.5, invoice.getTaxAmount());
+        assertEquals(1249.5, invoice.getGrossTotal());
+
+		// save to persist
+        verify(mockInvoices).save(invoice); 
+    }
+}
+```
+
+### Zum Vergleich mit `@SpringBootTest`:
+
+Im folgenden ein Vergleich wie derselbe Test in einem klassischen Spring-Projekt aussieht. 
+
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+class InvoiceServiceSpringTest {
+
+    @Autowired
+    InvoiceService invoiceService; // Der echte Service mit @Service
+
+    @MockBean
+    InvoiceRepository invoiceRepository;
+
+    @MockBean
+    CustomerService customerService;
+
+    @MockBean
+    TaxCalculator taxCalculator; // falls der irgendwie gemanagt wird
+
+    @Test
+    void createInvoice_berechnetSteuernKorrekte() {
+        when(customerService.validate(any())).thenReturn(true);
+        when(taxCalculator.calculate(any())).thenReturn(199.5);
+
+        // Act + Assert ...
+    }
+}
+```
+
+### Die Nachteile sind sofort sichtbar:
+
+Die folgen den Punkte zeigen die typischen Probleme, wenn bei Tests unnötigerweise der gesamte Spring `ApplicationContext` geladen wird, anstatt isolierte *Unit-Tests* durchzuführen:
+* **Lange Ausführungszeiten:** Das Laden des vollständigen ApplicationContext führt zu erheblichen Ladezeiten. Die Testausführung dauert dadurch Sekunden statt der angestrebten Millisekunden.
+* **Fragilität durch @MockBean:** Die Nutzung von @MockBean zum Ersetzen spezifischer Komponenten innerhalb des Contexts macht die Test-Suite fragil (brüchig). Dies kann bei der parallelen oder sequenziellen Ausführung mehrerer Tests zu inkonsistentem und unerwartetem Verhalten führen (Test-Isolation wird verletzt).
+* **Keine reine "Unit"-Prüfung:** Der Test prüft implizit die Konfiguration des Dependency-Injection-(DI)-Containers (inklusive internen Mechanismen wie Proxies, @Lazy-Initialisierung und Aspect-Oriented Programming (AOP)) und nicht ausschließlich die isolierte Geschäftseinheit (die "Unit").
+* **Unerwartete Testausfälle:** Änderungen an der DI-Konfiguration, beispielsweise das Hinzufügen oder Entfernen von @Primary- oder @Qualifier-Annotationen, führen unerwartet zu Fehlern in eigentlich unabhängigen Tests.
+
 ### **Die Vorteile zusammengefasst**
 
 * **Lesbarkeit**: Jeder kann die Systemstruktur sofort verstehen - kein Suchen nach @Autowired  
 * **Wartbarkeit**: Änderungen sind lokal und überschaubar - keine versteckten Dependencies  
-* **Testbarkeit**: [Test-Doubles](https://martinfowler.com/bliki/TestDouble.html) können einfach injiziert werden, ohne @MockBean  
+* **Testbarkeit**: [Test-Doubles](https://martinfowler.com/bliki/TestDouble.html) können einfach injiziert werden, ohne `@MockBean` 
 * **Refactoring-Sicherheit**: Compiler und IDE unterstützen vollständig - keine Runtime-Überraschungen  
 * **Keine zyklischen Dependencies**: Die explizite Komposition erzwingt einen gerichteten Graphen  
 * **Framework-Unabhängigkeit**: Business-Code bleibt rein - nur eine Klasse kennt Spring  
@@ -917,7 +1002,7 @@ public class SpringPaymentApp {
 * Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist.
 * DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen.
 * Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
-* **Die solide System-Komposition** "injects less and leaves nobody behind..." – daduch macht sie die Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
+* **Die solide System-Komposition** "injects less and leaves nobody behind..." – dadruch macht sie die Code-Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
 
 ## 5. Quellen
 
