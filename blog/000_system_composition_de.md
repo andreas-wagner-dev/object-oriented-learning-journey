@@ -408,26 +408,8 @@ org.example.payment/
 ├──app/                         // Paket für Initialisierung und Infrastuktur der Applikation  
 │   ├── MongoDb                 // <-- DataSource   
 │   ├── MqttQueue               // <-- MessageQueue   
-│   └── PaymentApplication.java // <-- Root-Komposition  
-│           └── (in einer 'main' oder 'startup' Methode:)  
-│           new PaymentApplication(  
-│               new InvoiceBook(  
-│                   new Invoices(),  
-│                   new Tax()  
-│               ),  
-│               new NotifiedPayment(  
-│                   new ProcessedPayment(   
-│                        new DefaultPayment (  
-│                            new Payer("Alice"),  
-│                            new Recipient("Bob"),  
-│                            new Amount(100, new Currency("EUR"))  
-│                         ),  
-│                         new MongoDb()     
-│                   ),  
-│                   new MqttQueue()  
-│               ),  
-│               new CustomerDirectory(...)  
-│           );  
+│   ├── PaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
+│   └── WevPaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
 ├── amount/  
 │   ├── Amount.java  
 │   ├── Currency.java    
@@ -447,6 +429,65 @@ org.example.payment/
 │   ├── NotifiedPayment.java   // <-- Horizontaler Decorator: Ergänzt Event-Benachrichtigung       
 │   └── ProcessedPayment.java  // <-- Horizontaler Decorator: Ergänzt eigentliche Verarbeitung/Speicherung  
 └── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
+```
+
+**Beispiel für eine Jakarta EE Stack Anwendung**
+
+```java
+/**
+ * Lunch the Web-Application, load once.
+ */
+@WebListener
+public class WebPaymentApplication implements ServletContextListener {
+
+	@Override
+	public void contextInitialized(ServletContextEvent sce) {
+
+            // ...read parameters form web.xml or properties from classpath...
+            // ...initialize resources like: DataSource, MessageQueue etc....
+            // ... more configuration
+
+            // build the Root-Composition 
+            PaymentApplication app = new PaymentApplication(  
+                                new InvoiceBook(
+                                    new Invoices(),
+                                    new Tax()
+                                ),
+                                new NotifiedPayment(
+                                    new ProcessedPayment(
+                                        new DefaultPayment(
+                                            new Payer("Alice"),
+                                            new Recipient("Bob"),
+                                            new Amount(100, new Currency("EUR"))
+                                         ),
+                                         new MongoDb()
+                                    ),
+                                    new MqttQueue()
+                                ),
+                                new CustomerDirectory(new MongoDb())
+            );
+
+            // Storing the instance in the servlet context at key:
+			sce.getServletContext().setAttribute(
+					PaymentApplication.class.getSimpleName(),
+					app
+			);
+
+             // Storing the instance in the servlet context at key:
+			sce.getServletContext().setAttribute(
+					Log.class.getSimpleName(),
+					new Log(System.getProperty("server.log.dir", Log.DFAULT_LOG_DIR))
+			);
+
+            // ...
+    }
+
+	@Override
+	public void contextDestroyed(ServletContextEvent sce) {
+        // ...cleanup resources
+	}
+
+}
 ```
 
 ```mermaid
