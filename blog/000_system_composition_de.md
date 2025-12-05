@@ -743,9 +743,11 @@ public class InvoiceService {
     @Autowired private CustomerService customerService;  
     // Spring überall, versteckte Dependencies  
 }
+```
 
-#### **Nachher - Pure Composition:**
+#### Nachher - Pure Composition:
 
+```java
 public final class InvoiceBook {
 
     private final Invoices invoices;  
@@ -759,7 +761,7 @@ public final class InvoiceBook {
 }
 ```
 
-Weil **keine Layer** Struktur mehr erzwungen werden kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten.
+Weil **keine Layer** Struktur mehr erzwungen werden, kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten.
 
 ### Die vorgeschlagene Projektstruktur
 
