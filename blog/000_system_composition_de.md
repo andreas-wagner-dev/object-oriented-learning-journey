@@ -403,7 +403,7 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 
 **Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem new-Operator.
 
-Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objektorientierte Komposition aussehen:
+Kehren wir zurück zu unserer Rechnungsanwendung. So könnte eine solide, objektorientierte Komposition aussehen:
 
 ```java
 // build the Root-Composition 
@@ -426,6 +426,13 @@ new PaymentApplication(
 	new CustomerDirectory(new MongoDb())
 );
 ```
+
+**Beachte:** bei der objektorientierten Komposition gibt es:
+* keine Layers, keine Annotations, keine versteckten Abhängigkeiten 
+* keine Objekte, die einfach herum-hängen bzw. "im Stich gelassen wurden..."  
+* nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.
+
+**Visualisierung der soliden, objektorientierten Komposition:**
 
 ```mermaid
 flowchart TD
@@ -458,11 +465,6 @@ flowchart TD
 * `Payment`-Objekt-Komposition (Decorator-Muster) visualisiert die Kette der `new`-Aufrufe.  
 * Base ist die konkrete Komponente (`DefaultPayment`) mit den Kerndaten (`Payer`, `Recipient`, `Amount`).  
 * und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.
-
-**Beachte,** es gibt nun:
-* keine Layers, keine Annotations, keine versteckten Abhängigkeiten 
-* keine Objekt, die einfach herumhängt bzw. "im Stich gelassen wurden..."  
-* nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Projekt, wie echte Objekt-Komposition aussieht.
 
@@ -588,7 +590,7 @@ org.example.payment/
 └── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
 ```
 
-### Die Komposition mit Spring: Die Payment-Applikation
+### Die soliden Komposition mit Spring: Die Payment-Applikation
 
 Kehren wir zu unserer Spring Payment-Applikation zurück. So könnte die Komposition mit Spring aussehen:
 
@@ -633,7 +635,7 @@ public class SpringPaymentApp {
 }
 ```
 
-**Visualisierung der richtigen Spring-Komposition:**
+**Visualisierung der soliden Komposition mit Spring:**
 
 ```mermaid
 flowchart RL
