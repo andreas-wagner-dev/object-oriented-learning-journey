@@ -1,4 +1,4 @@
-# The right System Composition *"leaves Nobody behind…"*
+# A solid System Composition *"leaves Nobody behind…"*
 
 **(Draft!!!)**
 
