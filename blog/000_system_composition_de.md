@@ -382,8 +382,7 @@ Heutzutage ist der Senior-Entwickler (der Autor) sehr skeptisch gegenüber diese
 
 ### Die DI-Container fördern Schichten
 
-Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern und sogar erzwingen:
-
+Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern oder sogar erzwingen:  
 * **Stereotype-Annotations** (@Service, @Repository, @Controller) - die explizit Layer definieren  
 * **Scan-Mechanismen** (z.B. `com.example.service.*`, `com.example.entity.*`, `com.example.repository.*`), die nach Package-Strukturen suchen  
 * **Best-Practice-Guides** der Frameworks (z. B. Spring [Pet Clinic](https://github.com/spring-petclinic/spring-framework-petclinic/tree/main/src/main/java/org/springframework/samples/petclinic)), die Layer-Trennung empfehlen  
@@ -392,8 +391,8 @@ Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern 
 
 ### Die Illusion der Entkopplung
 
-Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorgen. Doch in Wirklichkeit:
-
+Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorgen.  
+Doch in Wirklichkeit:
 * sind die Abhängigkeiten nur **versteckt**, nicht entkoppelt  
 * wird die **Komplexität erhöht** statt reduziert  
 * entsteht eine **Kopplung an den Framework-Container**  
@@ -401,7 +400,8 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 
 ## 2. Pure Komposition: Der objektorientierte Weg
 
-**Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem new-Operator.
+**Die Lösung ist überraschend einfach:** 
+* Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem new-Operator.
 
 Kehren wir zurück zu unserer Rechnungsanwendung. So könnte eine solide, objektorientierte Komposition aussehen:
 
