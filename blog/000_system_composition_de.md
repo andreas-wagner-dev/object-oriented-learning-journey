@@ -405,7 +405,7 @@ Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objekt
 
 ```
 org.example.payment/  
-├──app/                         // Paket für Initialisierung und Infrastuktur der Applikation
+├──app/                         // Paket für Infrastuktur der Applikation
 │   ├── Log                 	// <-- Logger   
 │   ├── MongoDb                 // <-- DataSource   
 │   ├── MqttQueue               // <-- MessageQueue   
@@ -468,19 +468,21 @@ public class WebPaymentApplication implements ServletContextListener {
                                 new CustomerDirectory(new MongoDb())
             );
 
-            // storing the instance in the servlet context at key:
+            // storing instances in the servlet context at specific keys for lookups
+
+            // store main application instance:
 			sce.getServletContext().setAttribute(
 					PaymentApplication.class.getSimpleName(),
 					app
 			);
 
-             // storing the instance in the servlet context at key:
+             // store logger instance:
 			sce.getServletContext().setAttribute(
 					Log.class.getSimpleName(),
 					new Log(System.getProperty("server.log.dir", Log.DFAULT_LOG_DIR))
 			);
 
-            // ...
+            // ... store more...
     }
 
 	@Override
