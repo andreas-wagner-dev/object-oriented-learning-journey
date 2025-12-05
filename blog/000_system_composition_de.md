@@ -445,7 +445,7 @@ flowchart TD
 
         Deco["DefaultPayment<br/>Payer, Recipient, Amount"]
 
-        D1["ProcessedPayment<br/>ecorator 1: Speicherung"]
+        D1["ProcessedPayment<br/>Decorator 1: Speicherung"]
         D2["NotifiedPayment<br/>Decorator 2: Benachrichtigung"]
 
         Mongo[(MongoDb)]
