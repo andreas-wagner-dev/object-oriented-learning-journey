@@ -754,18 +754,18 @@ public final class PaymentProcessor {
 // Keine Annotations! Pure OOP  
 public final class CustomerDirectory {
 
-    private final Customers customers;  
-    private final CustomerValidator validator;  
-      
-    public CustomerDirectory(Customers customers, CustomerValidator validator) {  
-        this.customers = customers;  
-        this.validator = validator;  
+    private final Customers customers;
+    private final CustomerValidator validator;
+
+    public CustomerDirectory(Customers customers, CustomerValidator validator) {
+        this.customers = customers;
+        this.validator = validator;
     }  
       
     public void register(Customer customer) {  
         validator.validate(customer);  
         customers.add(customer);  
-    }  
+    }
 }
 ```
 
@@ -989,6 +989,8 @@ Die folgen den Punkte zeigen die typischen Probleme, wenn bei Tests unnötigerwe
 
 ### **Die Vorteile zusammengefasst**
 
+Die solide System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist.
+  
 * **Lesbarkeit**: Jeder kann die Systemstruktur sofort verstehen - kein Suchen nach @Autowired  
 * **Wartbarkeit**: Änderungen sind lokal und überschaubar - keine versteckten Dependencies  
 * **Testbarkeit**: [Test-Doubles](https://martinfowler.com/bliki/TestDouble.html) können einfach injiziert werden, ohne `@MockBean` 
@@ -999,43 +1001,34 @@ Die folgen den Punkte zeigen die typischen Probleme, wenn bei Tests unnötigerwe
 
 ## 4. Fazit
 
-* Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist.
+* **Die solide System-Komposition "injects less and leaves nobody behind..."** -> macht die Code-Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
 * DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen.
-* Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
-* **Die solide System-Komposition** "injects less and leaves nobody behind..." – dadruch macht sie die Code-Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
+* Ein expliziet komponiertes System ist ein verständliches System  und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
 
 ## 5. Quellen
 
 **Primärquellen**
 
-* Bugayenko Yegor: (2014). "Dependency Injection Containers are Code Polluters"  
-  https://www.yegor256.com/2014/10/03/di-containers-are-evil.html  
-  Grundlegende Kritik an DI-Containern und Demonstration echter Objekt-Komposition  
-* Bugayenko Yegor: (2016).  "Java Annotations Are a Big Mistake"  
-  https://www.yegor256.com/2016/04/12/java-annotations-are-evil.html  
-  Grundlegende Kritik an Annotations und Demonstration zur Vermeidung mit Decorator Pattern  
-* Robert Bräutigam: (2016).  Evil Annotations  
-  https://javadevguy.wordpress.com/2016/01/13/evil-annotations/  
-  Kategorisierung von Annotations (***harmless and evil***)  
-* Robert Bräutigam: (2017). "Happy Packages"  
-  https://www.google.com/search?q=https://javadevguy.wordpress.com/2017/12/18/happy-package/  
-  Über die Ausrichtung von Package-Strukturen an Business-Konzepten statt technischen Layern.  
-* Bugayenko Yegor: (2016). "Who Is an Object?"  
-  https://www.yegor256.com/2016/07/14/who-is-object.html  
-  Konzeptuelle Definition von Objekten als Repräsentanten von Daten  
-* Bugayenko Yegor: (2015). "Don't Create Objects That End With -ER"  
-  https://www.yegor256.com/2015/03/09/objects-end-with-er.html  
-  Über deklaratives vs. imperatives Design in OOP  
+* Bugayenko Yegor: (2014). ["Dependency Injection Containers are Code Polluters"](https://www.yegor256.com/2014/10/03/di-containers-are-evil.html)  
+  Grundlegende Kritik an DI-Containern und Demonstration echter Objekt-Komposition
+* Bugayenko Yegor: (2016).  ["Java Annotations Are a Big Mistake"](https://www.yegor256.com/2016/04/12/java-annotations-are-evil.html)   
+  Grundlegende Kritik an Annotations und Demonstration zur Vermeidung mit Decorator Pattern
+* Robert Bräutigam: (2016). [Evil Annotations](https://javadevguy.wordpress.com/2016/01/13/evil-annotations/)  
+  Kategorisierung von Annotations (***harmless vs. evil***)
+* Robert Bräutigam: (2017). ["Happy Packages"](https://www.google.com/search?q=https://javadevguy.wordpress.com/2017/12/18/happy-package/)  
+  Über die Ausrichtung von Package-Strukturen an Business-Konzepten statt technischen Layern.
+* Bugayenko Yegor: (2016). ["Who Is an Object?"](https://www.yegor256.com/2016/07/14/who-is-object.html  )  
+  Konzeptuelle Definition von Objekten als Repräsentanten von Daten
+* Bugayenko Yegor: (2015). ["Don't Create Objects That End With -ER"](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)  
+  Über deklaratives vs. imperatives Design in OOP
 * Robert C. Martin (Uncle Bob): "Component Principles"  
-  The theoretical foundations and metrics for coupling (ADP, SDP, SAP) and cohesion (REP, CCP, CRP).  
+  The theoretical *foundations* and **metrics* for **coupling** (ADP, SDP, SAP) and **cohesion** (REP, CCP, CRP).  
   Source: Robert C. Martin, Agile Software Development, Principles, Patterns, and Practices. Prentice Hall, 2002
 
 **Sekundärquellen**
 
-* Wikipedia & Martin Fowler: TestDouble  
-  https://en.wikipedia.org/wiki/Test_double  
-  https://martinfowler.com/bliki/TestDouble.html  
-  Konzeptuelle Definition von TestDouble
+* [Wikipedia](https://en.wikipedia.org/wiki/Test_double) and [Martin Fowler](https://martinfowler.com/bliki/TestDouble.html):  
+  Konzeptuelle Definition von **TestDouble**
 
 **Further Reading**
 
@@ -1046,12 +1039,11 @@ Umfassende Darstellung moderner OOP-Prinzipien
 
 **Projektbeispiele**
 
-* Bugayenko Yegor: Rultor - Agents.java  
-  Real-world Beispiel für Pure DI ohne Container  
-  https://github.com/yegor256/rultor  
-* Robert Braeutigam: Magic-less Dependency Injection with JayWire  
-  JayWire is available on GitHub: https://github.com/vanillasource/jaywire  
-  Additional topics at GitHub Wiki: https://github.com/vanillasource/jaywire/wiki
+* Bugayenko Yegor: [Rultor - Agents.java](https://github.com/yegor256/rultor)  
+  Real-world Beispiel für Pure DI ohne Container
+* Robert Braeutigam (2016): ["Magic-less Dependency Injection with JayWire"](https://javadevguy.wordpress.com/2016/06/27/magic-less-dependency-injection-with-jaywire/)  
+  Source code of *JayWire** on [GitHub](https://github.com/vanillasource/jaywire)  
+  Additional topics at [GitHub Wiki](https://github.com/vanillasource/jaywire/wiki)
 
 **Verwandte Konzepte**
 
