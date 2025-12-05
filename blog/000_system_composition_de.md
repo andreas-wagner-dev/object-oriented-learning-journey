@@ -468,6 +468,38 @@ flowchart TD
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Projekt, wie echte Objekt-Komposition aussieht.
 
+Weil **keine Layer** in der Struktur mehr erzwungen werden, kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten. Die dazugehörige Projektstruktur könnte nun so aussehen:  
+
+```
+org.example.payment/  
+├──app/                         // Paket für Infrastuktur der Applikation
+│   ├── Log                 	// <-- Logger   
+│   ├── MongoDb                 // <-- DataSource   
+│   ├── MqttQueue               // <-- MessageQueue   
+│   ├── PaymentApplication.java // <-- Root-Komposition
+│   └── ConsolePaymentApplication.java // <-- hier ist die 'main' Methode
+├── amount/  
+│   ├── Amount.java  
+│   ├── Currency.java    
+│   ├── Payer.java                 
+│   └── Recipient.java  
+├── customer/  
+│   ├── Customer.java          
+│   └── CustomerDirectory.java  
+├── invoice/  
+│   ├── Invoice.java   
+│   ├── InvoiceBook.java       
+│   ├── Invoices.java                   
+│   ├── Item.java                   
+│   └── Tax.java  
+├── pay/  
+│   ├── DefaultPayment.java    // <-- Konkrete Zahlung (Daten und Basisfunktion)               
+│   ├── NotifiedPayment.java   // <-- Horizontaler Decorator: Ergänzt Event-Benachrichtigung       
+│   └── ProcessedPayment.java  // <-- Horizontaler Decorator: Ergänzt eigentliche Verarbeitung/Speicherung  
+└── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
+```
+
+
 ### Vorteile der *expliziten* objektorientierten Herangehensweise
 
 1. **Vollständige Transparenz**: Jeder kann sofort sehen, wie das System zusammengesetzt ist  
@@ -557,9 +589,7 @@ public class PaymentResource {
 
 	// ... methods: GET, POST, DELET... 
 }
-```
-
-Weil **keine Layer** in der Struktur mehr erzwungen werden, kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten. Die dazugehörige Projektstruktur könnte nun so aussehen:  
+``
 
 ```
 org.example.payment/  
@@ -569,25 +599,8 @@ org.example.payment/
 │   ├── MqttQueue               // <-- MessageQueue   
 │   ├── PaymentApplication.java // <-- Root-Komposition
 │   └── WebPaymentApplication.java // <-- (in einer 'main', 'startup' oder init. Methode...) 
-├── amount/  
-│   ├── Amount.java  
-│   ├── Currency.java    
-│   ├── Payer.java                 
-│   └── Recipient.java  
-├── customer/  
-│   ├── Customer.java          
-│   └── CustomerDirectory.java  
-├── invoice/  
-│   ├── Invoice.java   
-│   ├── InvoiceBook.java       
-│   ├── Invoices.java                   
-│   ├── Item.java                   
-│   └── Tax.java  
-├── pay/  
-│   ├── DefaultPayment.java    // <-- Konkrete Zahlung (Daten und Basisfunktion)               
-│   ├── NotifiedPayment.java   // <-- Horizontaler Decorator: Ergänzt Event-Benachrichtigung       
-│   └── ProcessedPayment.java  // <-- Horizontaler Decorator: Ergänzt eigentliche Verarbeitung/Speicherung  
-└── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
+|
+... wie oben...
 ```
 
 ### Die soliden Komposition mit Spring: Die Payment-Applikation
