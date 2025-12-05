@@ -298,7 +298,7 @@ public class CustomerService {
 }
 ```
 
-**Problem:** Zyklische Abhängigkeit - 💥 Das System bricht - die Integrationstests laufen nicht mehr
+**Problem:** Zyklische Abhängigkeit - 💥 Das System bricht - und die Integrationstests laufen nicht mehr
 
 ### **1.2 Die Lösungen mit DI-Containern**
 
