@@ -353,7 +353,7 @@ public class CustomerInvoiceService {
 ```
 
 Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen*.  
-Er war über die Richtigkeit der Lösung basieren auf seiner *subjektiven* Interpretation vom SRP (nach Robert C. Martin): 
+Er war über die Richtigkeit der Lösung basierend auf seiner *subjektiven* Interpretation vom SRP (nach Robert C. Martin): 
 
 > *"There should never be more than one reason for a class to change"*
 
