@@ -399,7 +399,7 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 * entsteht eine **Kopplung an den Framework-Container**  
 * wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
-## 2. Der objektorientierte Weg: Pure Composition
+## 2. Pure Komposition: Der objektorientierte Weg
 
 **Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem new-Operator.
 
@@ -474,7 +474,7 @@ Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Proje
 4. **Testbarkeit**: Test-Doubles können einfach injiziert werden, ohne Mock-Frameworks  
 5. **Keine Framework-Kopplung**: Der Code ist unabhängig von DI-Containern
 
-### Das Composition-Prinzip
+### Das Komposition-Prinzip
 
 Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattfinden. Diese **"Composition Root"** (Kompositions-Wurzel) ist verantwortlich für:
 
