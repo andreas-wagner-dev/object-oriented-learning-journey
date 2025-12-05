@@ -984,8 +984,9 @@ class InvoiceServiceSpringTest {
 Die folgen den Punkte zeigen die typischen Probleme, wenn bei Tests unnötigerweise der gesamte Spring `ApplicationContext` geladen wird, anstatt isolierte *Unit-Tests* durchzuführen:
 * **Lange Ausführungszeiten:** Das Laden des vollständigen ApplicationContext führt zu erheblichen Ladezeiten. Die Testausführung dauert dadurch Sekunden statt der angestrebten Millisekunden.
 * **Fragilität durch @MockBean:** Die Nutzung von @MockBean zum Ersetzen spezifischer Komponenten innerhalb des Contexts macht die Test-Suite fragil (brüchig). Dies kann bei der parallelen oder sequenziellen Ausführung mehrerer Tests zu inkonsistentem und unerwartetem Verhalten führen (Test-Isolation wird verletzt).
-* **Keine reine "Unit"-Prüfung:** Der Test prüft implizit die Konfiguration des Dependency-Injection-(DI)-Containers (inklusive internen Mechanismen wie Proxies, @Lazy-Initialisierung und Aspect-Oriented Programming (AOP)) und nicht ausschließlich die isolierte Geschäftseinheit (die "Unit").
-* **Unerwartete Testausfälle:** Änderungen an der DI-Konfiguration, beispielsweise das Hinzufügen oder Entfernen von @Primary- oder @Qualifier-Annotationen, führen unerwartet zu Fehlern in eigentlich unabhängigen Tests.
+* **Keine reine "Unit"-Prüfung:** Der Test prüft implizit die Konfiguration des Dependency-Injection-(DI)-Containers (inklusive internen Mechanismen wie Proxies, `@Lazy`-Initialisierung und *Aspect-Oriented Programming* (AOP)) und nicht ausschließlich die isolierte Geschäftseinheit (die "Unit").
+* **Unerwartete Testausfälle:** Änderungen an der DI-Konfiguration, beispielsweise das Hinzufügen oder Entfernen von `@Primary`- oder `@Qualifier`-Annotationen, führen unerwartet zu Fehlern in eigentlich unabhängigen Tests.
+
 
 ### **Die Vorteile zusammengefasst**
 
@@ -999,11 +1000,13 @@ Die solide System-Komposition macht Dependencies explizit sichtbar und lässt ni
 * **Framework-Unabhängigkeit**: Business-Code bleibt rein - nur eine Klasse kennt Spring  
 * **Keine Layer-Zwänge**: Natürliche Objektkomposition statt künstlicher Service/Repository-Layer
 
+Die Effizienzsteigerung durch explizite Komposition ist signifikant. Projekte mit einer großen Anzahl von Spring-Tests (>200 Tests, 2–3 Minuten Laufzeit) können durch diesen Wechsel typischerweise auf unter 20-10 Sekunden beschleunigt werden, was einen klaren Vorteil in der Entwicklungsgeschwindigkeit darstellt.
+
 ## 4. Fazit
 
 * **Die solide System-Komposition "injects less and leaves nobody behind..."** -> macht die Code-Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
 * DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen.
-* Ein expliziet komponiertes System ist ein verständliches System  und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
+* Ein explizit komponiertes System ist ein verständliches System und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
 
 ## 5. Quellen
 
