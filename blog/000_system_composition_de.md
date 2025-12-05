@@ -427,52 +427,6 @@ new PaymentApplication(
 );
 ```
 
-**Beispiel für eine Jakarta EE Stack Anwendung**
-
-```java
-/**
- * Lunch the PaymentApplication - load once on web server start-up.
- */
-@WebListener
-public class WebPaymentApplication implements ServletContextListener {
-
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-
-            // ... read parameters form web.xml or properties from classpath...
-            // ... initialize resources like: DataSource, MessageQueue etc....
-            // ... more configuration
-
-            // build the Root-Composition 
-            PaymentApplication app = new PaymentApplication(  
-                   // ... sub composition like above              
-            );
-
-            // storing instances in the servlet context at specific keys for lookups
-
-            // store main application instance:
-			sce.getServletContext().setAttribute(
-					PaymentApplication.class.getSimpleName(),
-					app
-			);
-
-             // store logger instance:
-			sce.getServletContext().setAttribute(
-					Log.class.getSimpleName(),
-					new Log(System.getProperty("server.log.dir", Log.DFAULT_LOG_DIR))
-			);
-
-            // ... store more...
-    }
-
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-        // ...cleanup resources
-	}
-
-}
-```
-
 ```mermaid
 flowchart TD
 
@@ -505,14 +459,11 @@ flowchart TD
 * Base ist die konkrete Komponente (`DefaultPayment`) mit den Kerndaten (`Payer`, `Recipient`, `Amount`).  
 * und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.
 
-**Beachte:**
-* Keine Layers,
-* keine Annotations,
-* keine versteckten Abhängigkeiten
-* nur explizite Constructor-Aufrufe
-* pure Objekt-Komposition
+**Beachte:** es gibt nun
+keine Layers, keine Annotations, keine versteckten Abhängigkeiten - nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.  
+Zudem gibt es kein Objekt, das einfach herumhängt bzw. "im Stich gelassen wurde..."  
+Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem [rultor.com]-Projekt, wie echte Objekt-Komposition aussieht.
 
-Zudem gibt es kein Objekt, das einfach herumhängt bzw. "im Stich gelassen wurde..."
 
 **Die dazugehörige Projektstruktur könnte so aus:**
 
@@ -522,8 +473,8 @@ org.example.payment/
 │   ├── Log                 	// <-- Logger   
 │   ├── MongoDb                 // <-- DataSource   
 │   ├── MqttQueue               // <-- MessageQueue   
-│   ├── PaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
-│   └── WebPaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
+│   ├── PaymentApplication.java // <-- Root-Komposition
+│   └── WebPaymentApplication.java // <-- (in einer 'main', 'startup' oder init. Methode...) 
 ├── amount/  
 │   ├── Amount.java  
 │   ├── Currency.java    
@@ -570,6 +521,76 @@ Alle anderen Klassen nutzen ausschließlich **Constructor Injection** (Konstrukt
 In der Praxis setzen viele Unternehmen auf Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen.  
 
 Hier stellt sich die **Frage:** *Wie soll man damit umgehen?*
+
+**Hier ein Beispiel für eine Jakarta EE Stack Anwendung**
+
+```java
+/**
+ * Lunch the PaymentApplication - load once on web server start-up.
+ */
+@WebListener
+public class WebPaymentApplication implements ServletContextListener {
+
+	@Override
+	public void contextInitialized(ServletContextEvent sce) {
+
+            // ... read parameters form web.xml or properties from classpath...
+            // ... initialize resources like: DataSource, MessageQueue etc....
+            // ... more configuration
+
+            // build the Root-Composition 
+            PaymentApplication app = new PaymentApplication(  
+                   // ... sub composition like above              
+            );
+
+            // storing instances in the servlet context at specific keys for lookups
+
+            // store main application instance:
+			sce.getServletContext().setAttribute(
+					PaymentApplication.class.getSimpleName(),
+					app
+			);
+
+             // store logger instance:
+			sce.getServletContext().setAttribute(
+					Log.class.getSimpleName(),
+					new Log(System.getProperty("server.log.dir", Log.DFAULT_LOG_DIR))
+			);
+
+            // ... store more...
+    }
+
+	@Override
+	public void contextDestroyed(ServletContextEvent sce) {
+        // ...cleanup resources
+	}
+
+}
+
+// lookup somewhere
+
+/**
+ * REST resource to serve.
+ */
+@Path("/payment")
+public class PaymentResource {
+
+    @Inject
+    private ServletContext server;
+	
+    private PaymentApplication app;
+
+    @PostConstruct
+    public void init() {
+		app = (PaymentApplication) server.getAttribute(PaymentApplication.class.getSimpleName());
+    }
+
+	// ... methods: GET, POST, DELET... 
+}
+```
+
+
+
 
 ### Die Komposition mit Spring: Die Payment-Applikation
 
