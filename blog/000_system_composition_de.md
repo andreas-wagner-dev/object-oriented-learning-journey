@@ -2,6 +2,8 @@
 
 **(Draft!!!)**
 
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/sys_composition_meme.png)
+
 ***- Eine reale Geschichte aus der Praxis -***
 
 ## 1. Einleitung
