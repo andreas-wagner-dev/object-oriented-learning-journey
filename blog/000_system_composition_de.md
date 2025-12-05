@@ -917,7 +917,7 @@ public class SpringPaymentApp {
 * Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist.
 * DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen.
 * Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
-* **Die solide System-Komposition** "leaves nobody behind" – sie macht die Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
+* **Die solide System-Komposition** "injects less and leaves nobody behind..." – daduch macht sie die Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
 
 ## 5. Quellen
 
@@ -965,7 +965,8 @@ Umfassende Darstellung moderner OOP-Prinzipien
   Real-world Beispiel für Pure DI ohne Container  
   https://github.com/yegor256/rultor  
 * Robert Braeutigam: Magic-less Dependency Injection with JayWire  
-  JayWire is available on GitHub: https://github.com/vanillasource/jaywire Additional topics at GitHub Wiki: https://github.com/vanillasource/jaywire/wiki
+  JayWire is available on GitHub: https://github.com/vanillasource/jaywire  
+  Additional topics at GitHub Wiki: https://github.com/vanillasource/jaywire/wiki
 
 **Verwandte Konzepte**
 
