@@ -436,7 +436,7 @@ org.example.payment/
 
 ```java
 /**
- * Lunch the Web-Application, load once.
+ * Lunch the PaymentApplication - load once on web server start-up.
  */
 @WebListener
 public class WebPaymentApplication implements ServletContextListener {
