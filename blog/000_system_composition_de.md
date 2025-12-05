@@ -277,7 +277,7 @@ public class PaymentService {
     public void process(Payment payment) {  
         // Business Logic  
         customerService.updateBalance(payment.getCustomer());  
-        //... more Business Logic  
+        // ... more Business Logic  
     }  
 }
 
@@ -405,11 +405,12 @@ Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objekt
 
 ```
 org.example.payment/  
-├──app/                         // Paket für Initialisierung und Infrastuktur der Applikation  
+├──app/                         // Paket für Initialisierung und Infrastuktur der Applikation
+│   ├── Log                 	// <-- Logger   
 │   ├── MongoDb                 // <-- DataSource   
 │   ├── MqttQueue               // <-- MessageQueue   
 │   ├── PaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
-│   └── WevPaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
+│   └── WebPaymentApplication.java // <-- Root-Komposition (in einer 'main' oder 'startup' Methode...) 
 ├── amount/  
 │   ├── Amount.java  
 │   ├── Currency.java    
@@ -443,8 +444,8 @@ public class WebPaymentApplication implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 
-            // ...read parameters form web.xml or properties from classpath...
-            // ...initialize resources like: DataSource, MessageQueue etc....
+            // ... read parameters form web.xml or properties from classpath...
+            // ... initialize resources like: DataSource, MessageQueue etc....
             // ... more configuration
 
             // build the Root-Composition 
@@ -467,13 +468,13 @@ public class WebPaymentApplication implements ServletContextListener {
                                 new CustomerDirectory(new MongoDb())
             );
 
-            // Storing the instance in the servlet context at key:
+            // storing the instance in the servlet context at key:
 			sce.getServletContext().setAttribute(
 					PaymentApplication.class.getSimpleName(),
 					app
 			);
 
-             // Storing the instance in the servlet context at key:
+             // storing the instance in the servlet context at key:
 			sce.getServletContext().setAttribute(
 					Log.class.getSimpleName(),
 					new Log(System.getProperty("server.log.dir", Log.DFAULT_LOG_DIR))
