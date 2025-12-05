@@ -4,7 +4,7 @@
 
 ## 1. Einleitung
 
-In der modernen objektorientierten Softwareentwicklung ist **Dependency Injection** (DI) längst ein etabliertes Konzept. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks und **DI-Container** das ursprüngliche Konzept in ein **Anti-Pattern** verwandelt.
+In der modernen objektorientierten Softwareentwicklung ist **Dependency Injection** (DI) längst ein **etabliertes Konzept**. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks und **DI-Container** das ursprüngliche Konzept in ein **Anti-Pattern** verwandelt.
 
 ### 1.1 Probleme mit DI-Containern
 
@@ -321,10 +321,10 @@ public class CustomerService {
 }
 ```
 
-Diese „Lösung“ ändert jedoch nichts daran, dass die Architektur weiterhin eine zyklische Abhängigkeit aufweist.  
+Diese „Lösung“ ändert jedoch nichts daran, dass die Architektur weiterhin eine *zyklische Abhängigkeit* aufweist.  
 Der Junior-Entwickler lernte auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet.
 
-Im Rahmen eines Code-Reviews bemerkte ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die zyklische Abhängigkeit durch eine neue Klasse wie `CustomerInvoiceService` aufzulösen, welche die Funktionalität von `InvoiceService` und `CustomerRepository` kombiniert.
+Im Rahmen eines Code-Reviews bemerkte ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die *zyklische Abhängigkeit* durch eine neue Klasse wie z. B. `CustomerInvoiceService` aufzulösen, welche die Funktionalität von `InvoiceService` und `CustomerRepository` kombiniert.
 
 ```java
 @Service  
@@ -350,17 +350,16 @@ public class CustomerInvoiceService {
 }
 ```
 
-Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen* –, war er über die Richtigkeit seiner Lösung gemäß dem SRP (nach Robert C. Martin) 
+Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen*.  
+Er war über die Richtigkeit der Lösung basieren auf seiner *subjektiven* Interpretation vom SRP (nach Robert C. Martin): 
 
 > *"There should never be more than one reason for a class to change"*
 
-überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen.
+überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. *(Dies stellte jedoch auch eine **schlechte Komposition** dar, da sie Business- und Repository-Logik vermischte.)*
 
-Das Team nahm es stillschweigend an, denn er wusste es ja besser und hatte ja auch die Bücher von Robert C. Martin gelesen.
+Das Team nahm es stillschweigend an, denn derSenior wusste es ja besser und er hatte ja auch die Bücher von Robert C. Martin gelesen.
 
 Der Mid-Level-Entwickler lernte nun, dass er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
-
-Dies stellte jedoch eine **schlechte Komposition** dar, da sie Business- und Repository-Logik vermischte.
 
 Heutzutage ist der Senior-Entwickler (der Autor) sehr skeptisch gegenüber dieser eher subjektiven Interpretation von SRP von Robert C. Martin, aber das ist eine andere sehr lange Geschichte....
 
