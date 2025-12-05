@@ -459,42 +459,9 @@ flowchart TD
 * Base ist die konkrete Komponente (`DefaultPayment`) mit den Kerndaten (`Payer`, `Recipient`, `Amount`).  
 * und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.
 
-**Beachte:** es gibt nun
-keine Layers, keine Annotations, keine versteckten Abhängigkeiten - nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.  
-Zudem gibt es kein Objekt, das einfach herumhängt bzw. "im Stich gelassen wurde..."  
-Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem [rultor.com]-Projekt, wie echte Objekt-Komposition aussieht.
-
-
-**Die dazugehörige Projektstruktur könnte so aus:**
-
-```
-org.example.payment/  
-├──app/                         // Paket für Infrastuktur der Applikation
-│   ├── Log                 	// <-- Logger   
-│   ├── MongoDb                 // <-- DataSource   
-│   ├── MqttQueue               // <-- MessageQueue   
-│   ├── PaymentApplication.java // <-- Root-Komposition
-│   └── WebPaymentApplication.java // <-- (in einer 'main', 'startup' oder init. Methode...) 
-├── amount/  
-│   ├── Amount.java  
-│   ├── Currency.java    
-│   ├── Payer.java                 
-│   └── Recipient.java  
-├── customer/  
-│   ├── Customer.java          
-│   └── CustomerDirectory.java  
-├── invoice/  
-│   ├── Invoice.java   
-│   ├── InvoiceBook.java       
-│   ├── Invoices.java                   
-│   ├── Item.java                   
-│   └── Tax.java  
-├── pay/  
-│   ├── DefaultPayment.java    // <-- Konkrete Zahlung (Daten und Basisfunktion)               
-│   ├── NotifiedPayment.java   // <-- Horizontaler Decorator: Ergänzt Event-Benachrichtigung       
-│   └── ProcessedPayment.java  // <-- Horizontaler Decorator: Ergänzt eigentliche Verarbeitung/Speicherung  
-└── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
-```
+**Beachte** es gibt nun: 
+* keine Layers, keine Annotations, keine versteckten Abhängigkeiten - nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.  
+* keine Objekt, die einfach herumhängt bzw. "im Stich gelassen wurden..."  
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Projekt, wie echte Objekt-Komposition aussieht.
 
@@ -589,12 +556,40 @@ public class PaymentResource {
 }
 ```
 
+Weil **keine Layer** in der Struktur mehr erzwungen werden, kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten. Die dazugehörige Projektstruktur könnte nun so aussehen:  
 
-
+```
+org.example.payment/  
+├──app/                         // Paket für Infrastuktur der Applikation
+│   ├── Log                 	// <-- Logger   
+│   ├── MongoDb                 // <-- DataSource   
+│   ├── MqttQueue               // <-- MessageQueue   
+│   ├── PaymentApplication.java // <-- Root-Komposition
+│   └── WebPaymentApplication.java // <-- (in einer 'main', 'startup' oder init. Methode...) 
+├── amount/  
+│   ├── Amount.java  
+│   ├── Currency.java    
+│   ├── Payer.java                 
+│   └── Recipient.java  
+├── customer/  
+│   ├── Customer.java          
+│   └── CustomerDirectory.java  
+├── invoice/  
+│   ├── Invoice.java   
+│   ├── InvoiceBook.java       
+│   ├── Invoices.java                   
+│   ├── Item.java                   
+│   └── Tax.java  
+├── pay/  
+│   ├── DefaultPayment.java    // <-- Konkrete Zahlung (Daten und Basisfunktion)               
+│   ├── NotifiedPayment.java   // <-- Horizontaler Decorator: Ergänzt Event-Benachrichtigung       
+│   └── ProcessedPayment.java  // <-- Horizontaler Decorator: Ergänzt eigentliche Verarbeitung/Speicherung  
+└── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
+```
 
 ### Die Komposition mit Spring: Die Payment-Applikation
 
-Kehren wir zur Payment-Applikation zurück. So sollte die richtige Komposition mit Spring aussehen:
+Kehren wir zu unserer Spring Payment-Applikation zurück. So könnte die Komposition mit Spring aussehen:
 
 ```java
 @SpringBootApplication  
@@ -788,8 +783,6 @@ public final class InvoiceBook {
     // Keine Framework-Kopplung, explizite Dependencies  
 }
 ```
-
-Weil **keine Layer** Struktur mehr erzwungen werden, kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten.
 
 ### Die vorgeschlagene Projektstruktur
 
