@@ -359,7 +359,7 @@ Er war über die Richtigkeit der Lösung basieren auf seiner *subjektiven* Inter
 
 überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. *(Dies stellte jedoch auch eine **schlechte Komposition** dar, da sie Business- und Repository-Logik vermischte.)*
 
-Das Team nahm es stillschweigend an, denn derSenior wusste es ja besser und er hatte ja auch die Bücher von Robert C. Martin gelesen.
+Das Team nahm es stillschweigend an, denn der Senior wusste es ja besser und er hatte ja auch die Bücher von Robert C. Martin gelesen.
 
 Der Mid-Level-Entwickler lernte nun, dass er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
 
