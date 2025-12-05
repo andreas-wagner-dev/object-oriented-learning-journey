@@ -397,11 +397,33 @@ Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorg
 * entsteht eine **Kopplung an den Framework-Container**  
 * wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
-## 2. Der richtige, objektorientierte Weg: Pure Composition
+## 2. Der objektorientierte Weg: Pure Composition
 
 **Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem new-Operator.
 
 Kehren wir zurück zu unserer Rechnungsanwendung. So sollte die richtige, objektorientierte Komposition aussehen:
+
+```java
+// build the Root-Composition 
+new PaymentApplication(  
+	new InvoiceBook(
+		new Invoices(),
+		new Tax()
+	),
+	new NotifiedPayment(
+		new ProcessedPayment(
+			new DefaultPayment(
+				new Payer("Alice"),
+				new Recipient("Bob"),
+				new Amount(100, new Currency("EUR"))
+			 ),
+			 new MongoDb()
+		),
+		new MqttQueue()
+	),
+	new CustomerDirectory(new MongoDb())
+);
+```
 
 **Beispiel für eine Jakarta EE Stack Anwendung**
 
@@ -421,22 +443,7 @@ public class WebPaymentApplication implements ServletContextListener {
 
             // build the Root-Composition 
             PaymentApplication app = new PaymentApplication(  
-                                new InvoiceBook(
-                                    new Invoices(),
-                                    new Tax()
-                                ),
-                                new NotifiedPayment(
-                                    new ProcessedPayment(
-                                        new DefaultPayment(
-                                            new Payer("Alice"),
-                                            new Recipient("Bob"),
-                                            new Amount(100, new Currency("EUR"))
-                                         ),
-                                         new MongoDb()
-                                    ),
-                                    new MqttQueue()
-                                ),
-                                new CustomerDirectory(new MongoDb())
+                   // ... sub composition like above              
             );
 
             // storing instances in the servlet context at specific keys for lookups
@@ -528,7 +535,6 @@ org.example.payment/
 │   └── ProcessedPayment.java  // <-- Horizontaler Decorator: Ergänzt eigentliche Verarbeitung/Speicherung  
 └── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
 ```
-
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Projekt, wie echte Objekt-Komposition aussieht.
 
@@ -863,7 +869,9 @@ Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktu
 
 ## 4. Fazit
 
-Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist. DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen. Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
+* Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist.
+* DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen.
+* Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
 
 ## 5. Quellen
 
