@@ -590,7 +590,9 @@ public class PaymentResource {
 
 	// ... methods: GET, POST, DELET... 
 }
-``
+```
+
+**Projektstruktur der Jakarta EE Stack Anwendung**
 
 ```
 org.example.payment/  
@@ -602,6 +604,7 @@ org.example.payment/
 │   └── WebPaymentApplication.java // <-- (in einer 'main', 'startup' oder init. Methode...) 
 |
 ... wie oben...
+
 ```
 
 ### Die soliden Komposition mit Spring: Die Payment-Applikation
