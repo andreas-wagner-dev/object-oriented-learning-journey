@@ -459,9 +459,10 @@ flowchart TD
 * Base ist die konkrete Komponente (`DefaultPayment`) mit den Kerndaten (`Payer`, `Recipient`, `Amount`).  
 * und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.
 
-**Beachte** es gibt nun: 
-* keine Layers, keine Annotations, keine versteckten Abhängigkeiten - nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.  
+**Beachte,** es gibt nun:
+* keine Layers, keine Annotations, keine versteckten Abhängigkeiten 
 * keine Objekt, die einfach herumhängt bzw. "im Stich gelassen wurden..."  
+* nur pure Objekt-Komposition durch explizite Constructor-Aufrufe.
 
 Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Projekt, wie echte Objekt-Komposition aussieht.
 
