@@ -167,41 +167,47 @@ While package structure defines the architecture, class and method naming determ
 
 **Objects are Nouns:**  
 A class name should represent the entity (**thing, person, concept**) it models not the action it performs.  
-Name an object after **what it *is*** (e.g., ```Invoice```, ```User```, ```Order```), **not what it *does***.
+Name an object after **what it *is*** (e.g., `Invoice`, `User`, `Order`), **not what it *does***.
 
-* **Bad! Names:** ```Processor```, ```Generator```, ```Calculator```
-* **Good! Names:** ```Report```, ```RandomNumber```, ```BmiMetric```
+* **Bad! Names:** `Processor`, `Generator`, `Calculator`
+* **Good! Names:** `Report`, `RandomNumber`, `BmiMetric`
 
 **One Concept, One Name:**  
 A domain-driven object should have a single, clear noun. If the name becomes long, it usually means the object mixes responsibilities that should be split.
-* **Compound names** like ```CustomerDataProcessor``` or ```FileContentWriter``` are a code smell.
-* **Examples of corrections:** ```UserAccountManager``` → ```User``` or ```Account```, ```DatabaseConnectionHolder``` → ```Connection```.
+* **Compound names** like `CustomerDataProcessor` or `FileContentWriter` are a code smell.
+* **Examples of corrections:** `UserAccountManager` → `User` or `Account`, `DatabaseConnectionHolder` → `Connection`.
 
 **Avoid Functional Endings:** 
-* **Name Endings:** ```FileWriter → File```, ```DataValidator → Rule``` , ```JiraClient → Jira``` or just ```Http``` instead of ```HttpClient```.
+* **Name Endings:** `FileWriter → File`, `DataValidator → Rule` , `JiraClient → Jira` or just `Http` instead of `HttpClient`.
 
 **Avoid “Utility” Suffixes:**:
-* **Suffixes like** ```-Manager```, ```-Controller```, ```-Helper```, ```-Util```, ```-Service```, or ```-Client``` often indicate a violation of the **Single Responsibility Principle** (SRP). They suggest that the object coordinates multiple unrelated tasks instead of owning a clear, domain-focused responsibility.
-* Also **Suffixes** such as ```-er```, ```-or```, ```-able``` often signal procedural decomposition or “naked data.”
+* **Suffixes like** `-Manager`, `-Controller``, `-Helper`, `-Util`, `-Service`, or `-Client` often indicate a violation of the **Single Responsibility Principle** (SRP). They suggest that the object coordinates multiple unrelated tasks instead of owning a clear, domain-focused responsibility.
+* Also **Suffixes** such as `-e`, `-or`, `-able` often signal procedural decomposition or *“naked data”*.
 
 **Prefixed Maming**  
-According to best practices (see [Amihai Emil](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html) and [Yegor Bugayenko](https://www.yegor256.com/2020/03/03/prefixed-naming.html)), classes should start with a prefix that reflects their role or context, especially when multiple implementations exist. **For example:**
-* ```AwsInvoice``` vs. ```AzureInvoice``` (prefix indicates environment)
-* ```HttpRequest``` vs. FtpRequest``` (prefix indicates protocol)  
+According to best practices (see [Amihai Emil](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html) and [Yegor Bugayenko](https://www.yegor256.com/2020/03/03/prefixed-naming.html)), classes should start with a *prefix* that reflects their role or context, especially when multiple implementations exist.
 
-This approach improves clarity without resorting to suffixes like Manager or Service.
+**Samples for good prefixes of names:**
+* `ValidInvoice` vs. `ValidetedInvoice` (indicates vertical Bussines Concept)
+* `CalcedBill` vs. `CalculatedBill` (indicates horizonzal Bussines Concept)
+* `SyncdUser` vs. `SynchronizedUser` (indicates vertical technical Aspect)
+* `DbPerson` vs. `StoredPerson` (indicates horizonzal technical Aspect)
+* `AwsInvoice` vs. `AzureInvoice` (indicates environment)
+* `HttpRequest` vs. `FtpRequest` (indicates protocol)
+
+This approach improves clarity without resorting to ***suffixes*** like -`Manager` or -`Service`.
 
 ### **3.2 Methods Naming**
 
 #### **3.2.1 Single Action Rule (Exclusivity)**  
 Each method performs one clear, complete action related to the object itself. 
-* **Avoid:** Methods that combine multiple responsibilities, e.g., ```createAndPersistUser(User u)```.
-* **Compliant:** ```user.persist()```.
+* **Avoid:** Methods that combine multiple responsibilities, e.g., `createAndPersistUser(User u)`.
+* **Compliant:** `user.persist()`.
 
 #### **3.2.2 Command Naming (Mutators)**  
 Methods that change state or produce a modified object should be named as commands (imperative). 
-* **Avoid:** Using verbs like update, set, modify. Example: ```updateThePrice(NewPrice p)```.
-* **Compliant:** ```price(NewPrice p)```, ```increase(Amount a)```, ```complete()```.
+* **Avoid:** Using verbs like `update`, `set`, `modify`. **Example:** `updateThePrice(NewPrice p)`.
+* **Compliant:** `price(NewPrice p)`, `increase(Amount a)`, `complete()`.
 
 #### **3.2.3 Query Naming (Accessors)**  
 Methods without side effects should be named as queries, clearly expressing their nature.
@@ -209,9 +215,9 @@ Methods without side effects should be named as queries, clearly expressing thei
 *  **Compliant:** ```firstName()```, ```isCompleted()```, ```hasPermissions()```, ```toXml()```.
 
 #### **3.2.4 Method Chaining (Access to Objects)**  
-Methods returning domain objects (```value objects```, ```entities```, ```collections```) should be named after the returned object. This supports encapsulation and Fluent APIs according to the [Law-of-Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/).
-* **Avoid:** Calls like ```user.getGroup().getRights()``` (violates 4.2.3).
-* **Compliant**: ```user.group().rights()```. In the chain, where no internal variables are exposed and each call returns a **new object**.
+Methods returning domain objects (`value objects`, `entities`, `collections`) should be named after the returned object. This supports encapsulation and Fluent APIs according to the [Law-of-Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/).
+* **Avoid:** Calls like `user.getGroup().getRights()` (violates 4.2.3).
+* **Compliant**: `user.group().rights()`. In the chain, where no internal variables are exposed and each call returns a **new object**.
 
 ## **4 Measurable Code Quality**
 
