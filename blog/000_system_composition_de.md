@@ -401,7 +401,7 @@ Doch in Wirklichkeit:
 ## 2. Pure Komposition: Der objektorientierte Weg
 
 **Die Lösung ist überraschend einfach:** 
-* Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem new-Operator.
+* Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
 
 Kehren wir zurück zu unserer Rechnungsanwendung. So könnte eine solide, objektorientierte Komposition aussehen:
 
