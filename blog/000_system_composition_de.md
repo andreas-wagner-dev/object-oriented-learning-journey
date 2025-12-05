@@ -527,11 +527,11 @@ In der Praxis setzen viele Unternehmen auf Frameworks wie Spring oder Java EE CD
 
 Hier stellt sich die **Frage:** *Wie soll man damit umgehen?*
 
-**Hier ein Beispiel für eine Jakarta EE Stack Anwendung**
+**Hier ein Beispiel für eine Jakarta EE Stack Anwendung ohne (CDI)**
 
 ```java
 /**
- * Lunch the PaymentApplication - load once on web server start-up.
+ * Lunch the Payment application - load once on server startup.
  */
 @WebListener
 public class WebPaymentApplication implements ServletContextListener {
