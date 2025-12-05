@@ -1,4 +1,4 @@
-# A solid System Composition *"injects once and leaves Nobody behind…"*
+# A solid System Composition *"injects less and leaves Nobody behind…"*
 
 **(Draft!!!)**
 
