@@ -357,7 +357,8 @@ Er war über die Richtigkeit der Lösung basierend auf seiner *subjektiven* Inte
 
 > *"There should never be more than one reason for a class to change"*
 
-überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. *(Dies stellte jedoch auch eine **schlechte Komposition** dar, da sie Business- und Repository-Logik vermischte.)*
+überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen.  
+*(Dies stellte jedoch auch eine **schlechte Komposition** dar, da sie Business- und Repository-Logik immer noch vermischte.)*
 
 Das Team nahm es stillschweigend an, denn der Senior wusste es ja besser und er hatte ja auch die Bücher von Robert C. Martin gelesen.
 
