@@ -902,8 +902,6 @@ public class SpringPaymentApp {
 
 ### **Die Vorteile zusammengefasst**
 
-Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
-
 * **Lesbarkeit**: Jeder kann die Systemstruktur sofort verstehen - kein Suchen nach @Autowired  
 * **Wartbarkeit**: Änderungen sind lokal und überschaubar - keine versteckten Dependencies  
 * **Testbarkeit**: [Test-Doubles](https://martinfowler.com/bliki/TestDouble.html) können einfach injiziert werden, ohne @MockBean  
@@ -917,6 +915,7 @@ Die richtige System-Komposition "leaves nobody behind" – sie macht die Struktu
 * Die richtige System-Komposition macht Dependencies explizit sichtbar und lässt niemanden im Unklaren darüber, wie das System strukturiert ist.
 * DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen.
 * Ein gut komponiertes System ist ein verständliches System – und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
+* **Die solide System-Komposition** "leaves nobody behind" – sie macht die Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
 
 ## 5. Quellen
 
