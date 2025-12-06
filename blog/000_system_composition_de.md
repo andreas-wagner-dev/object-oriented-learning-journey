@@ -314,7 +314,10 @@ public class CustomerService {
 }
 ```
 
-**Problem:** Zyklische Abhängigkeit - 💥 Das System bricht - und die Integrationstests laufen nicht mehr - Der DI-Container versteckt den Designfehler.
+**Problem:** Der DI-Container versteckt den Designfehler der zyklischen Abhängigkeit.
+- Das System bricht 💥
+- Die Integrationstests laufen nicht mehr.
+- Die Such nach einer Lösung des Fehlers beginnt...
 
 ### 1.2 Die Lösungen mit DI-Containern
 
