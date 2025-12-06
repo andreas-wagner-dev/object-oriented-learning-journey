@@ -1002,9 +1002,141 @@ Die solide System-Komposition macht Dependencies explizit sichtbar und lässt ni
 
 Die Effizienzsteigerung durch explizite Komposition ist signifikant. Projekte mit einer großen Anzahl von Spring-Tests (>200 Tests, 2–3 Minuten Laufzeit) können durch diesen Wechsel typischerweise auf unter 20-10 Sekunden beschleunigt werden, was einen klaren Vorteil in der Entwicklungsgeschwindigkeit darstellt.
 
-## 4. Umgang mit großen Systemen: Modulare Composition 
+## 4. Umgang mit großen Systemen: Modulare Composition
+
+Die explizite Komposition (Pure DI) bietet immense Vorteile in Bezug auf Transparenz und Wartbarkeit, aber bei großen Systemen mit Hunderten von Business-Objekten wird die zentrale `Composition Root` (z.B. die `@Bean`-Methode in Spring) sehr schnell unübersichtlich und unhandlich.
+
+Hier kommt das Prinzip der **Modularen Komposition** ins Spiel. Anstatt alle Objekte in einer einzigen Klasse zu instanziieren, delegiert die zentrale `Composition Root` die Verantwortung an kleinere, spezialisierte Kompositions-Klassen, die jeweils nur die Objekte eines bestimmten Business-Moduls kennen.
+
+**Das Prinzip der Modularen Komposition**
+
+1. **Zentrale Composition Root (Hauptanwendung):** Instanziiert nur die Haupt-Module der Anwendung (z.B. `PaymentModule`, `InvoiceModule`, `CustomerModule`).
+
+2. **Modul-Kompositions-Klassen:** Jedes Modul erhält eine eigene Klasse (z.B. InvoiceModuleAssembler), deren einzige Verantwortung es ist, die Objekte innerhalb dieses Moduls (z.B. `InvoiceBook`, `Invoices`, `Tax`) zu komponieren und die benötigten Infrastructure-Dependencies von außen entgegenzunehmen.
+
+3. **Interfaces für Modul-Grenzen:** Module sollten nur über klar definierte Interfaces kommunizieren, um die Abhängigkeiten zwischen den Modulen gering zu halten (Loose Coupling).
+
+**Beispiel: Modulare Komposition für die Payment-Applikation**
+
+Wir definieren zunächst die Assembler-Klassen (auch `Factories` oder `Composers` genannt).
+
+### 4.1 Modul-Assembler-Klassen
+
+Diese Klassen kapseln die Logik zur Komposition eines einzelnen Business-Moduls. Sie nehmen nur die Infrastruktur (DataSource) und ggf. Abhängigkeiten zu anderen Modulen entgegen.
+
+**Invoice-Modul-Assembler:**
+
+```java
+// Kapselt die gesamte Komposition des Rechnungs-Moduls
+public final class InvoiceModuleAssembler {
+
+    public static InvoiceBook assemble(
+        DataSource dataSource,
+        CustomerDirectory customerDirectory // Abhängigkeit zu einem anderen Modul
+    ) {
+        // Business Logic - Explizite Komposition
+        InvoiceRepository invoiceRepo = new InvoiceRepository(dataSource);
+        Invoices invoices = new Invoices(invoiceRepo);
+        Tax tax = new Tax();
+        
+        return new InvoiceBook(invoices, tax, customerDirectory); // Jetzt mit Customer
+    }
+}
+```
+**Payment-Modul-Assembler:**
+
+```java
+// Kapselt die Komposition des Zahlungs-Moduls
+public final class PaymentModuleAssembler {
+
+    public static PaymentProcessor assemble(
+        DataSource dataSource,
+        MessageQueue queue,
+        CustomerDirectory customerDirectory // Abhängigkeit zu einem anderen Modul
+    ) {
+        // Business Logic - Explizite Komposition
+        PaymentRepository paymentRepo = new PaymentRepository(dataSource);
+        Payments payments = new Payments(paymentRepo);
+        PaymentValidator paymentValidator = new PaymentValidator(customerDirectory);
+        
+        return new PaymentProcessor(
+            payments,
+            queue,
+            paymentValidator
+        );
+    }
+}
+```
 
 
+### 4.2 Die neue zentrale Composition Root
+
+Die Hauptanwendung wird nun deutlich schlanker, da sie nur noch die Assembler aufruft. Der `SpringPaymentApp` delegiert die Komplexität an die Module.
+
+```java
+@SpringBootApplication  
+@ComponentScan(basePackages = "com.example.payment.*")  
+public class SpringPaymentApp {
+
+    public static void main(String... args) {  
+        SpringApplication.run(SpringPaymentApp.class, args);  
+    }
+
+    @Bean  
+    @Primary  
+    public PaymentApplication createApplication(  
+        @Autowired DataSource dataSource,  
+        @Autowired @Qualifier("rabbitmq") MessageQueue queue  
+    ) {  
+        // 1. Unabhängige Module komponieren
+        // CustomerDirectory benötigt nur Infrastructure
+        CustomerDirectory customerDirectory = new CustomerDirectory(  
+            new Customers(new CustomerRepository(dataSource)),  
+            new CustomerValidator()  
+        );
+
+        // 2. Module komponieren, die das CustomerDirectory benötigen
+        InvoiceBook invoiceBook = InvoiceModuleAssembler.assemble(
+            dataSource, 
+            customerDirectory // Injection der Customer-Abhängigkeit
+        );
+        
+        PaymentProcessor paymentProcessor = PaymentModuleAssembler.assemble(  
+            dataSource,   
+            queue,   
+            customerDirectory // Injection der Customer-Abhängigkeit
+        );
+          
+        // 3. Zusammenfassung zur finalen Applikation
+        return new PaymentApplication(  
+            invoiceBook,  
+            paymentProcessor,  
+            customerDirectory  
+        );  
+    }  
+}
+```
+
+**Vorteile der Modularen Komposition**
+
+* **Skalierbarkeit:** Die zentrale Komposition bleibt schlank, da sie nur die Modul-Assembler referenziert. Neue Module werden einfach auf der obersten Ebene hinzugefügt.
+* **Verbesserte Lesbarkeit:** Jeder Assembler ist eine lokale Composition Root für sein spezifisches Business-Modul. Entwickler müssen nur den Assembler des jeweiligen Moduls verstehen.
+* **Stärkere Kapselung:** Business-Objekte wie InvoiceBook kennen jetzt nur ihre direkten, notwendigen Abhängigkeiten (z.B. Invoices und Tax), und nicht mehr die gesamte Infrastruktur-Kette (z.B. DataSource). Die Modul-Assembler übernehmen die Verknüpfung der Infrastructure-Elemente.
+* **Erzwungene Architektur-Grenzen:** Die Modul-Assembler erzwingen statisch, welche Abhängigkeiten in das Modul gelangen dürfen. Es ist unmöglich, aus Versehen eine Datenbank-Abhängigkeit in eine Business-Klasse zu injizieren, die sie nicht braucht.
+
+Dies ist der Schlüssel, um die Vorteile der **Pure Composition** auch in sehr großen, monolithischen oder verteilten Systemen beizubehalten, ohne dass die **Composition Root** zu einem unübersichtlichen Monolithen wird.
+
+Ein **Real-World-Beispiel** als empirischer Beweis ist [Self-XDSD](https://github.com/self-xdsd). Es handelt sich um ein großes, produktives Business-System, welches genau diesen Ansatz verfolgt und seit 2019 in Production betrieben wird. Der Source Code enthält über 50.000 Zeilen Java-Code, 15+ Module, echte Zahlungen (inkl. Crypto), Web-Dashboard und unterstützt mehrere Plattformen (GitHub, GitLab, Bitbucket).
+
+Um es herunterzuladen und im Test-Modus zu starten, können folgende Git- und Maven-Befehle verwendet werden, um sich selbst von der sauberen und schnellen Funktionsweise zu überzeugen:
+
+```
+git clone https://github.com/self-xdsd
+```
+
+```
+./mvnw test
+```
 
 ## 5. Fazit
 
@@ -1047,10 +1179,11 @@ Umfassende Darstellung moderner OOP-Prinzipien
 **Projektbeispiele**
 
 * Bugayenko Yegor: [Rultor - Agents.java](https://github.com/yegor256/rultor)  
-  Real-world Beispiel für Pure DI ohne Container
-* Robert Braeutigam (2016): ["Magic-less Dependency Injection with JayWire"](https://javadevguy.wordpress.com/2016/06/27/magic-less-dependency-injection-with-jaywire/)  
-  Source code of *JayWire** on [GitHub](https://github.com/vanillasource/jaywire)  
-  Additional topics at [GitHub Wiki](https://github.com/vanillasource/jaywire/wiki)
+  **Real-world Beispiel** für Pure DI ohne Container
+* Robert Braeutigam (2016): [Magic-less Dependency Injection with JayWire](https://javadevguy.wordpress.com/2016/06/27/magic-less-dependency-injection-with-jaywire/)  
+  **Source Code of *JayWire*** on [GitHub](https://github.com/vanillasource/jaywire) - Additional topics at [GitHub Wiki](https://github.com/vanillasource/jaywire/wiki)
+* Mihai A. 🇷🇴🇩🇪🇬🇧🇫🇷: [Self-XDSD](https://github.com/self-xdsd).  
+  **Real-World-Beispiel** (Open-Source-Projekt) mit einer Modulare Kompo
 
 **Verwandte Konzepte**
 
