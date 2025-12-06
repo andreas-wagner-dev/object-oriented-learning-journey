@@ -12,9 +12,19 @@ In der modernen objektorientierten Softwareentwicklung ist **Dependency Injectio
 
 ### 1.1 Probleme mit DI-Containern
 
-Betrachten wir eine Spring-Boot Payment-Application mit der üblichen Verwendung von DI-Container.  
-Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller` kann Spring automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.  
+Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller` kann Spring automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.
 
+**Die Kontrolle über die Objekterzeugung wird den Entwicklern genommen.** Die DI-Container übernehmen dadurch die komplette Verantwortung für die Lebensdauer und die Konstruktion aller als Komponenten markierten Objekte.
+
+**Folgen:**
+
+* **Der Fokus verschiebt sich:** Der Entwickler kümmert sich nicht mehr um die saubere Komposition seiner Objekte, sondern um die korrekte Platzierung von Annotations (wie `@Component`, `@Service`, `@Autowired)`. Die Konfiguration des Containers wird wichtiger als das Design der Objekthierarchie.
+
+* **Kein Composition Root im Code:** Das gesamte System wird im Hintergrund des Frameworks magisch verdrahtet. Es gibt keine einzige, sichtbare Stelle im Code, die den kompletten Objektgraphen aufbaut. Der Entwickler verliert das Verständnis dafür, wann und wie seine Business-Objekte tatsächlich initialisiert werden.
+
+* **Verlust der OOP-Prinzipien:** In der reinen objektorientierten Programmierung (OOP) ist der `new`-Operator der Schlüssel zur Kontrolle. Durch das Verstecken der Objekterzeugung durch den Container wird die zentrale Rolle des Konstruktors in der Objekthierarchie geschwächt.
+
+Betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
 Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.
 
 #### Anforderung 1: (Rechnungen und Zahlungen verarbeiten)
