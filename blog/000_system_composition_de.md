@@ -22,7 +22,7 @@ Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller
 
 * **Der Fokus verschiebt sich:** Der Entwickler kümmert sich nicht mehr um die saubere Komposition seiner Objekte, sondern um die korrekte Platzierung von Annotations (wie `@Component`, `@Service`, `@Autowired)`. Die Konfiguration des Containers wird wichtiger als das Design der Objekthierarchie.
 
-* **Kein Composition Root im Code:** Das gesamte System wird im Hintergrund des Frameworks magisch verdrahtet. Es gibt keine einzige, sichtbare Stelle im Code, die den kompletten Objektgraphen aufbaut. Der Entwickler verliert das Verständnis dafür, wann und wie seine Business-Objekte tatsächlich initialisiert werden.
+* **Unsichbare Komposition on Objeken im Code:** Das gesamte System wird im Hintergrund des Frameworks magisch verdrahtet. Es gibt keine einzige, sichtbare Stelle im Code, die den kompletten Objektgraphen aufbaut. Der Entwickler verliert das Verständnis dafür, wann und wie seine Business-Objekte tatsächlich initialisiert werden.
 
 * **Verlust der OOP-Prinzipien:** In der reinen objektorientierten Programmierung (OOP) ist der `new`-Operator der Schlüssel zur Kontrolle. Durch das Verstecken der Objekterzeugung durch den Container wird die zentrale Rolle des Konstruktors in der Objekthierarchie geschwächt.
 
