@@ -8,7 +8,7 @@
 
 ## 1. Einleitung
 
-In der modernen objektorientierten Softwareentwicklung ist **Dependency Injection** (DI) längst ein **etabliertes Konzept**. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks und **DI-Container** das ursprüngliche Konzept in ein **Anti-Pattern** verwandelt. 
+In der modernen objektorientierten Softwareentwicklung ist **Dependency Injection** (DI) längst ein **etabliertes Konzept**. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks mittels sogennanter **DI-Container** das ursprüngliche Konzept in ein **Anti-Pattern** verwandelt.
 
 Der Begriff "Container" beschreibt metaphorisch einen intelligenten, zentralen Behälter, der die Kontrolle über die Objekt-Erstellung und deren Abhängigkeiten invertiert und verwaltet, anstatt dies dem Anwendungscode selbst zu überlassen.
 
