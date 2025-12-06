@@ -450,8 +450,8 @@ flowchart TD
 
         Deco["DefaultPayment<br/>Payer, Recipient, Amount"]
 
-        D1["ProcessedPayment<br/>Decorator 1: Speicherung"]
-        D2["NotifiedPayment<br/>Decorator 2: Benachrichtigung"]
+        D1["ProcessedPayment<br/>Decorator 1:<br/>Speicherung"]
+        D2["NotifiedPayment<br/>Decorator 2:<br/>Benachrichtigung"]
 
         Mongo[(MongoDb)]
         Mqtt[(MqttQueue)]
