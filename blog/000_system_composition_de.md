@@ -936,7 +936,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InvoiceBookTest {
 
     @Test
-    void createInvoice_berechnetSteuernKorrekteUndSpeichertRechnung() {
+    void createInvoice_calculateTaxCorrectly_saveInvoice() {
         // Arrange – Test-Doubles
         Invoices mockInvoices = mock(Invoices.class);
         Tax taxStub = items -> items.stream()
@@ -987,7 +987,7 @@ class InvoiceServiceSpringTest {
     TaxCalculator taxCalculator; // falls der irgendwie gemanagt wird
 
     @Test
-    void createInvoice_berechnetSteuernKorrekte() {
+    void createInvoice_calculateTaxCorrectly_saveInvoice() {
         when(customerService.validate(any())).thenReturn(true);
         when(taxCalculator.calculate(any())).thenReturn(199.5);
 
