@@ -304,7 +304,7 @@ public class CustomerService {
 }
 ```
 
-**Problem:** Zyklische Abhängigkeit - 💥 Das System bricht - und die Integrationstests laufen nicht mehr
+**Problem:** Zyklische Abhängigkeit - 💥 Das System bricht - und die Integrationstests laufen nicht mehr - Der DI-Container versteckt den Designfehler.
 
 ### 1.2 Die Lösungen mit DI-Containern
 
@@ -326,7 +326,8 @@ public class CustomerService {
 ```
 
 Diese „Lösung“ ändert jedoch nichts daran, dass die Architektur weiterhin eine *zyklische Abhängigkeit* aufweist.  
-Der Junior-Entwickler lernte auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet.
+
+Der Junior-Entwickler lernte auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet. Eine korrekte Behebung erfordert jedoch das Verständnis tieferliegender Architekturprinzipien.
 
 Im Rahmen eines Code-Reviews bemerkte ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die *zyklische Abhängigkeit* durch eine neue Klasse wie z. B. `CustomerInvoiceService` aufzulösen, welche die Funktionalität von `InvoiceService` und `CustomerRepository` kombiniert.
 
@@ -354,19 +355,23 @@ public class CustomerInvoiceService {
 }
 ```
 
-Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen*.  
+Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen*.
+
 Er war über die Richtigkeit der Lösung basierend auf seiner *subjektiven* Interpretation vom SRP (nach Robert C. Martin): 
 
 > *"There should never be more than one reason for a class to change"*
 
 überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen.  
-*(Dies stellte jedoch auch eine **schlechte Komposition** dar, da sie Business- und Repository-Logik immer noch vermischte.)*
+
+Allerdings löste dies nicht das Problem der schlechten Komposition, da die neue Service-Klasse weiterhin Business- und Repository-Logik vermischte – ein Problem, das durch die erzwungene Layer-Architektur des DI-Containers gefördert wird.
 
 Das Team nahm es stillschweigend an, denn der Senior wusste es ja besser und er hatte ja auch die Bücher von Robert C. Martin gelesen.
 
 Der Mid-Level-Entwickler lernte nun, dass er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
 
-Heutzutage ist der Senior-Entwickler (der Autor) sehr skeptisch gegenüber dieser eher subjektiven Interpretation von SRP von Robert C. Martin, aber das ist eine andere sehr lange Geschichte....
+Der Senior (Autor) steht dieser Interpretation des Single Responsibility Principle (SRP) mittlerweile kritisch gegenüber. Sie führt oft zu künstlich aufgeblähten Service-Klassen, anstatt eine kohärente und sinnvolle Komposition zu fördern.
+
+Dies verdeutlicht, dass Architekturprinzipien nicht dogmatisch, sondern stets im Kontext der gesamtheitlichen Systemgestaltung angewendet werden sollten. Wie sich diese Erkenntnis über die Jahre entwickelt hat und welche Fallstricke dabei vermieden wurden, ist allerdings eine andere, längere Geschichte, die in einem separaten Artikel ausführlich behandelt wird.
 
 #### Zusammenfassung der resultierenden Probleme
 
@@ -394,17 +399,17 @@ Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern 
 
 ### Die Illusion der Entkopplung
 
-Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorgen.  
+Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorgen.
+
 Doch in Wirklichkeit:
-* sind die Abhängigkeiten nur **versteckt**, nicht entkoppelt  
-* wird die **Komplexität erhöht** statt reduziert  
-* entsteht eine **Kopplung an den Framework-Container**  
+* sind die Abhängigkeiten nur **versteckt**, nicht entkoppelt
+* wird die **Komplexität erhöht** statt reduziert
+* entsteht eine **Kopplung an den Framework-Container**
 * wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
 ## 2. Pure Komposition: Der objektorientierte Weg
 
-**Die Lösung ist überraschend einfach:** 
-* Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
+**Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
 
 Kehren wir zurück zu unserer Rechnungsanwendung. So könnte eine solide, objektorientierte Komposition aussehen:
 
@@ -502,7 +507,6 @@ org.example.payment/
 └── Payment.java               // <-- Das "Component"-Interface des Decorator-Musters
 ```
 
-
 ### Vorteile der *expliziten* objektorientierten Herangehensweise
 
 1. **Vollständige Transparenz**: Jeder kann sofort sehen, wie das System zusammengesetzt ist  
@@ -514,20 +518,19 @@ org.example.payment/
 ### Das Komposition-Prinzip
 
 Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattfinden. Diese **"Composition Root"** (Kompositions-Wurzel) ist verantwortlich für:
-
-* Das Erstellen des kompletten Object-Graphs  
-* Die Konfiguration aller Abhängigkeiten  
+* Das Erstellen des kompletten Object-Graphs
+* Die Konfiguration aller Abhängigkeiten
 * Die Übergabe der fertigen Objekte an die Applikationslogik
 
 Alle anderen Klassen nutzen ausschließlich **Constructor Injection** (Konstruktor-Injektion) und überlassen die Kontrolle für die Objekterstellung ihrem Consumer (bzw. den Entwicklern).
 
-## 3. Umgang bei Framework-Verwendung
+## 3. Framework-Anpassung: Trennung von Business und Infrastructure
 
 In der Praxis setzen viele Unternehmen auf Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen.  
 
 Hier stellt sich die **Frage:** *Wie soll man damit umgehen?*
 
-**Hier ein Beispiel für eine Jakarta EE Stack Anwendung ohne (CDI)**
+### 3.1 Integration in Jakarta EE Stack mit und ohne CDI
 
 ```java
 /**
@@ -608,8 +611,7 @@ org.example.payment/
 ... wie oben...
 
 ```
-
-### Die soliden Komposition mit Spring: Die Payment-Applikation
+### 3.2 Integration in Spring
 
 Kehren wir zu unserer Spring Payment-Applikation zurück. So könnte die Komposition mit Spring aussehen:
 
@@ -707,7 +709,7 @@ flowchart RL
 * Gestrichelte Linien - Einmalige Injection von Infrastructure beim App-Start  
 * Keine `@Service`, `@Repository`, `@Autowired` in Business-Klassen!
 
-### Die Business-Klassen bleiben framework-frei
+**Die Business-Klassen bleiben framework-frei**
 
 ```java
 // Keine Annotations! Pure OOP  
@@ -769,7 +771,7 @@ public final class CustomerDirectory {
 }
 ```
 
-### Kernprinzipien der richtigen Spring-Integration
+**Kernprinzipien der richtigen Spring-Integration**
 
 1. **Container-Isolation**: Nur die `SpringPaymentApp`-Klasse darf `@Autowired` verwenden - ausschließlich für Infrastructure  
 2. **Explizite Komposition**: Die gesamte Business-Objektstruktur wird manuell in der @Bean-Methode komponiert  
@@ -1000,9 +1002,9 @@ Die solide System-Komposition macht Dependencies explizit sichtbar und lässt ni
 * **Framework-Unabhängigkeit**: Business-Code bleibt rein - nur eine Klasse kennt Spring  
 * **Keine Layer-Zwänge**: Natürliche Objektkomposition statt künstlicher Service/Repository-Layer
 
-Die Effizienzsteigerung durch explizite Komposition ist signifikant. Projekte mit einer großen Anzahl von Spring-Tests (>200 Tests, 2–3 Minuten Laufzeit) können durch diesen Wechsel typischerweise auf unter 20-10 Sekunden beschleunigt werden, was einen klaren Vorteil in der Entwicklungsgeschwindigkeit darstellt.
+Die Effizienzsteigerung durch explizite Komposition ist signifikant. Projekte mit einer großen Anzahl von Spring-Tests (>200 Tests, 2–3 Minuten Laufzeit) können durch diesen Wechsel typischerweise auf unter 20 Sekunden beschleunigt werden, was einen klaren Vorteil in der Entwicklungsgeschwindigkeit darstellt.
 
-## 4. Umgang mit großen Systemen: Modulare Composition
+## 4. Modulare Composition: Umgang mit großen Systemen
 
 Die explizite Komposition (Pure DI) bietet immense Vorteile in Bezug auf Transparenz und Wartbarkeit, aber bei großen Systemen mit Hunderten von Business-Objekten wird die zentrale `Composition Root` (z.B. die `@Bean`-Methode in Spring) sehr schnell unübersichtlich und unhandlich.
 
@@ -1028,7 +1030,7 @@ Diese Klassen kapseln die Logik zur Komposition eines einzelnen Business-Moduls.
 
 ```java
 // Kapselt die gesamte Komposition des Rechnungs-Moduls
-public final class InvoiceModuleAssembler {
+public final class InvoiceModule {
 
     public static InvoiceBook assemble(
         DataSource dataSource,
@@ -1047,7 +1049,7 @@ public final class InvoiceModuleAssembler {
 
 ```java
 // Kapselt die Komposition des Zahlungs-Moduls
-public final class PaymentModuleAssembler {
+public final class PaymentModule {
 
     public static PaymentProcessor assemble(
         DataSource dataSource,
@@ -1096,12 +1098,12 @@ public class SpringPaymentApp {
         );
 
         // 2. Module komponieren, die das CustomerDirectory benötigen
-        InvoiceBook invoiceBook = InvoiceModuleAssembler.assemble(
+        InvoiceBook invoiceBook = InvoiceModule.assemble(
             dataSource, 
             customerDirectory // Injection der Customer-Abhängigkeit
         );
         
-        PaymentProcessor paymentProcessor = PaymentModuleAssembler.assemble(  
+        PaymentProcessor paymentProcessor = PaymentModule.assemble(  
             dataSource,   
             queue,   
             customerDirectory // Injection der Customer-Abhängigkeit
