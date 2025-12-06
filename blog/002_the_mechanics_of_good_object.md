@@ -6,6 +6,8 @@ This holds true even when they represent real-world entities that change frequen
 
 ## 1. The Problem: State vs. Identity
 
+The fundamental problem in conventional object-oriented programming is the mixing of identity and state. The identity of an object is its uniqueness (e.g., its memory address or its unique ID). The state is the values of its internal fields. When we make an object mutable, we allow the internal state to change while the object's identity remains constant. This leads to confusion and potentially inconsistent behavior, as the "essence" of the object changes without a new object being created.
+
 * A typical object consists of identity, state, and behavior.  
 * An object is mutable if its internal encapsulated information (the state) can be changed after creation.
 
