@@ -1002,13 +1002,17 @@ Die solide System-Komposition macht Dependencies explizit sichtbar und lässt ni
 
 Die Effizienzsteigerung durch explizite Komposition ist signifikant. Projekte mit einer großen Anzahl von Spring-Tests (>200 Tests, 2–3 Minuten Laufzeit) können durch diesen Wechsel typischerweise auf unter 20-10 Sekunden beschleunigt werden, was einen klaren Vorteil in der Entwicklungsgeschwindigkeit darstellt.
 
-## 4. Fazit
+## 4. Umgang mit großen Systemen: Modulare Composition 
+
+
+
+## 5. Fazit
 
 * **Die solide System-Komposition "injects less and leaves nobody behind..."** -> macht die Code-Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
 * DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen.
 * Ein explizit komponiertes System ist ein verständliches System und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
 
-## 5. Quellen
+## 6. Quellen
 
 **Primärquellen**
 
