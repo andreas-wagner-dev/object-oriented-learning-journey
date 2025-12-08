@@ -1,4 +1,6 @@
-# A solid System Composition *"injects less and leaves Nobody in blind…"*
+# A solid System Composition *"injects less and leaves Nobody in blind..."*
+
+DE: **Eine solide System Komposition *"injeziert wenig und lässt Keinen blind..."***
 
 **(Draft!!!)**
 
@@ -27,11 +29,13 @@ Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller
 * **Verlust der OOP-Prinzipien:** In der reinen objektorientierten Programmierung (OOP) ist der `new`-Operator der Schlüssel zur Kontrolle. Durch das Verstecken der Objekterzeugung durch den Container wird die zentrale Rolle des Konstruktors in der Objekthierarchie geschwächt.
 
 Betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
-Wir bauen sie schrittweise auf und beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.
+Ein Team aus drei Entwickler (Junior, Mid und Senior) baut es schrittweise auf und wir beobachten, welche Probleme mit den wachsenden Anforderungen entstehen können.
 
 #### Anforderung 1: (Rechnungen und Zahlungen verarbeiten)
 
 Die Applikation soll zunächst Rechnungen (`Invoice`) erstellen und dazu Zahlungen (`Payment`) verarbeiten können.
+
+Der Senior schägt vor auf das alte Bewährte (Spring) zu setzen, der Mid-Level-Entwickler übernimmt aus einem bereits bestehenden Projekt die Struktur und der Junior beginnt mit der Implementierung.
 
 ```mermaid
 graph LR
@@ -118,6 +122,8 @@ Das Objekt der Klasse `SpringPaymentApp` sowie die Komponente `SpringData` für 
 
 Nun sollen zusätzlich noch Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
+Der Junior treibt die Implementierung weiter vorran...
+
 ```mermaid
 graph LR
 
@@ -201,7 +207,7 @@ public class CustomerService {
 
 #### Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können.
 
-Ein Junior-Entwickler nimmt sich der Sache an. Für Ihn war es logisch die Klasse `CustomerService` muss jetzt `InvoiceService` kennen.
+Der Junior nimmt sich auch dieser Sache an. Für Ihn war es logisch die Klasse `CustomerService` muss jetzt `InvoiceService` kennen.
 
 ```mermaid
 graph LR
@@ -260,7 +266,8 @@ graph LR
 
 ```java
 @SpringBootApplication  
-public class SpringPaymentApp {  
+public class SpringPaymentApp {
+  
     // Container versteckt den Zyklus komplett!  
     public static void main(String[] args) {  
         // ...starts scanning classpath to provide 'Magic' on:  
@@ -272,12 +279,16 @@ public class SpringPaymentApp {
 @Service  
 public class InvoiceService {
 
-    @Autowired private InvoiceRepository invoiceRepo;  
-    @Autowired private CustomerService customerService;  // → Customer  
+    @Autowired
+	private InvoiceRepository invoiceRepo;
+  
+    @Autowired
+	private CustomerService customerService;  // → Customer  
       
-    public Invoice create(Customer customer, List<Item> items) {  
+    public Invoice create(Customer customer, List<Item> items) {
+		// Business Logic  
         customerService.validate(customer);  
-        // Business Logic  
+        // ... more Business Logic
     }  
 }
 
@@ -323,7 +334,7 @@ public class CustomerService {
 
 ### 1.2 Die Lösungen mit DI-Containern
 
-Ein erfahrener Mid-Level-Entwickler aus dem Team, der bereits einige Jahre mit Spring arbeitete und die Dokumentation für DI-Container gelesen hatte, löste das Problem mittels einer `@Lazy` Annotation aus dem Spring-Framework.
+Der erfahrener Mid-Level-Entwickler aus dem Team, der bereits einige Jahre mit Spring arbeitete und die Dokumentation für DI-Container gelesen hatte, löste das Problem mittels einer `@Lazy` Annotation aus dem Spring-Framework.
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy  
