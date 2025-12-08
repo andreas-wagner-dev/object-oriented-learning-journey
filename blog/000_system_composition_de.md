@@ -922,7 +922,7 @@ public class SpringPaymentApp {
 ### Explizite Tests
 
 Mit diesem expliziten Ansatz können **Unit-Tests** sehr *einfach* mithilfe sogenannter [Test-Doubles](https://martinfowler.com/bliki/TestDouble.html) erstellt werden.
-Da alle beteiligten Klassen reine Objekte (POJOs/POCOs) sind und Konstruktor-Injection verwenden, können die Tests deutlich schneller ausgeführt werden. Es entfällt die Notwendigkeit, den gesamten `ApplicationContext` zu starten (kein `@SpringBootTest` erforderlich). Man benötigt weder `@MockBean` noch muss man auf Reflection-Overhead zurückgreifen, was die Testausführung beschleunigt und die **Test-Suite** *robuster* macht.
+Da alle beteiligten Klassen reine Objekte sind und Konstruktor-Injection verwenden, können die Tests deutlich schneller ausgeführt werden. Es entfällt die Notwendigkeit, den gesamten `ApplicationContext` zu starten (kein `@SpringBootTest` erforderlich). Man benötigt weder `@MockBean` noch muss man auf Reflection-Overhead zurückgreifen, was die Testausführung beschleunigt und die **Test-Suite** *robuster* macht.
 
 **Beispiel: `InvoiceBook` testen mit JUnit 5 + Mockito**.
 
