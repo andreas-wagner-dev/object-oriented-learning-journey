@@ -541,7 +541,7 @@ Alle anderen Klassen nutzen ausschließlich **Constructor Injection** (Konstrukt
 
 ## 3. Framework-Anpassung: Trennung von Business und Infrastructure
 
-In der Praxis setzen viele Unternehmen auf Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen.  
+In der Praxis setzen viele Unternehmen Frameworks wie Spring oder Java EE CDI ein, die DI-Container mitbringen.  
 
 Hier stellt sich die **Frage:** *Wie soll man damit umgehen?*
 
@@ -608,7 +608,7 @@ public class PaymentResource {
 		app = (PaymentApplication) server.getAttribute(PaymentApplication.class.getSimpleName());
     }
 
-	// ... methods: GET, POST, DELET... 
+	// ...REST Http methods: GET, POST, DELET... 
 }
 ```
 
@@ -786,7 +786,7 @@ public final class CustomerDirectory {
 }
 ```
 
-**Kernprinzipien der richtigen Spring-Integration**
+**Kernprinzipien der Integration (mit Spring)**
 
 1. **Container-Isolation**: Nur die `SpringPaymentApp`-Klasse darf `@Autowired` verwenden - ausschließlich für Infrastructure  
 2. **Explizite Komposition**: Die gesamte Business-Objektstruktur wird manuell in der @Bean-Methode komponiert  
@@ -800,9 +800,13 @@ public final class CustomerDirectory {
 
 ```java
 @Service  
-public class InvoiceService {  
-    @Autowired private InvoiceRepository repo;  
-    @Autowired private CustomerService customerService;  
+public class InvoiceService {
+
+    @Autowired
+	private InvoiceRepository repo;
+  
+    @Autowired
+	private CustomerService customerService;  
     // Spring überall, versteckte Dependencies  
 }
 ```
@@ -823,9 +827,9 @@ public final class InvoiceBook {
 }
 ```
 
-### Die vorgeschlagene Projektstruktur
+**Projektstruktur der Spring Anwendung**
 
-Ausrichtung von Package-Strukturen an Business-Konzepten statt technischen Layern.
+Die Ausrichtung der Package-Strukturer an Business-Konzepten statt technischen Layern.
 
 ```
 com.example.payment/  
