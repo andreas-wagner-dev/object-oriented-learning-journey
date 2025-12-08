@@ -1143,7 +1143,7 @@ public class SpringPaymentApp {
 
 Dies ist der Schlüssel, um die Vorteile der **Pure Composition** auch in sehr großen, monolithischen oder verteilten Systemen beizubehalten, ohne dass die **Composition Root** zu einem unübersichtlichen Monolithen wird.
 
-Ein **Real-World-Beispiel** als empirischer Beweis ist [Self-XDSD](https://github.com/self-xdsd). Es handelt sich um ein großes, produktives Business-System, welches genau diesen Ansatz verfolgt und seit 2019 in Production betrieben wird. Der Source Code enthält über 50.000 Zeilen Java-Code, 4 Module, echte Zahlungen (inkl. Crypto), Web-Dashboard und unterstützt mehrere Plattformen (GitHub, GitLab, Bitbucket). Auch Self-XDSD nutzt Spring Boot als Infrastruktur, wie es an dieser Start-Klasse: [SelfWebApplication.java](https://github.com/self-xdsd/self-web/blob/master/src/main/java/com/selfxdsd/selfweb/SelfWebApplication.java) erstichtlich ist.
+Ein **Real-World-Beispiel** als empirischer Beweis ist [Self-XDSD](https://github.com/self-xdsd). Es handelt sich um ein großes, produktives Business-System, welches genau diesen Ansatz verfolgt und seit 2019 in Production betrieben wird. Der Source Code enthält über 50.000 Zeilen Java-Code, 5 Module, Projectmanagement, Todos, echte Zahlungen (inkl. Crypto), Web-Dashboard und unterstützt mehrere Plattformen (GitHub, GitLab, Bitbucket). Auch Self-XDSD nutzt Spring Boot als Infrastruktur, wie es an dieser Start-Klasse: [SelfWebApplication.java](https://github.com/self-xdsd/self-web/blob/master/src/main/java/com/selfxdsd/selfweb/SelfWebApplication.java) erstichtlich ist.
 
 Um es herunterzuladen und im Test-Modus zu starten, können folgende Git- und Maven-Befehle verwendet werden, um sich selbst von der sauberen und schnellen Funktionsweise zu überzeugen:
 
