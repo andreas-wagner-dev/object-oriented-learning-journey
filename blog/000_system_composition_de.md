@@ -207,7 +207,7 @@ public class CustomerService {
 
 #### Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können.
 
-Der Junior nimmt sich auch dieser Sache an. Für Ihn war es logisch die Klasse `CustomerService` muss jetzt `InvoiceService` kennen.
+> Der Junior übernahm diese Aufgabe ebenfalls. Für ihn war es logisch, dass die Klasse `CustomerService` nun `InvoiceService` kennen musste.
 
 ```mermaid
 graph LR
