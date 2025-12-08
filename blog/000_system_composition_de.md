@@ -489,7 +489,7 @@ flowchart TD
 * Base ist die konkrete Komponente (`DefaultPayment`) mit den Kerndaten (`Payer`, `Recipient`, `Amount`).  
 * und `NotifiedPayment` sind die konkreten Dekoratoren, die sich gegenseitig umschließen und zusätzliche Infrastructure-Komponenten (`MongoDb`, `MqttQueue`) injiziert bekommen.
 
-Ein weiteres echtes Beispiel zeigt - Yegor Bugayenko in seinem rultor.com -Projekt, wie echte Objekt-Komposition aussieht.
+Ein weiteres echtes Beispiel zeigt - [Yegor Bugayenko](https://www.yegor256.com/) in seinem [rultor.com](https://www.rultor.com/)-Projekt, wie eine echte Objekt-Komposition in der Klasse [Agents.java)](https://github.com/yegor256/rultor/blob/1.34/src/main/java/com/rultor/agents/Agents.java) aussieht.
 
 Weil **keine Layer** in der Struktur mehr erzwungen werden, kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten. Die dazugehörige Projektstruktur könnte nun so aussehen:  
 
