@@ -29,13 +29,14 @@ Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller
 * **Verlust der OOP-Prinzipien:** In der reinen objektorientierten Programmierung (OOP) ist der `new`-Operator der Schlüssel zur Kontrolle. Durch das Verstecken der Objekterzeugung durch den Container wird die zentrale Rolle des Konstruktors in der Objekthierarchie geschwächt.
 
 Betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
-Ein Team aus drei Entwickler (Junior, Mid und Senior) baut es schrittweise auf und wir beobachten, welche Probleme mit den wachsenden Anforderungen entstehen können.
+
+Ein Team aus drei Personen (Junior-, Mid- und Senior-Entwickler) baut es schrittweise auf und wir beobachten, welche Probleme mit den wachsenden Anforderungen entstehen können.
 
 #### Anforderung 1: (Rechnungen und Zahlungen verarbeiten)
 
 Die Applikation soll zunächst Rechnungen (`Invoice`) erstellen und dazu Zahlungen (`Payment`) verarbeiten können.
 
-> Der Senior schägt vor auf das alte Bewährte (Spring) zu setzen, der Mid-Level-Entwickler übernimmt aus einem bereits bestehenden Projekt die Struktur und der Junior beginnt mit der Implementierung.
+> Der Senior schlug vor auf das alte Bewährte (Spring) zu setzen, der Mid-Level-Entwickler übernahm aus einem bereits bestehenden Projekt die Struktur und der Junior begann mit der Implementierung.
 
 ```mermaid
 graph LR
@@ -327,14 +328,13 @@ public class CustomerService {
 }
 ```
 
-**Problem:** Der DI-Container versteckt den Designfehler der zyklischen Abhängigkeit.
-- Das System bricht 💥
-- Die Integrationstests laufen nicht mehr.
-- Die Such nach einer Lösung des Fehlers beginnt...
+**Problem:** - Das System bricht 💥 - Der DI-Container versteckt den Designfehler der zyklischen Abhängigkeit.
+
+> Die Integrationstests schlugen fehl und Such nach einer Lösung des Fehlers begann...
 
 ### 1.2 Die Lösungen mit DI-Containern
 
-> Der erfahrener Mid-Level-Entwickler aus dem Team, der bereits einige Jahre mit Spring arbeitete und die Dokumentation für DI-Container gelesen hatte, löste das Problem mittels einer `@Lazy` Annotation aus dem Spring-Framework.
+> Der erfahrener Mid-Level-Entwickler aus dem Team, der bereits einige Jahre mit Spring arbeitete und die Dokumentation für DI-Container gelesen hatte, löste das Problem sehr schnell mittels einer `@Lazy` Annotation aus dem Spring-Framework.
 
 ```java
 // Spring erstellt Proxies und initialisiert lazy  
@@ -353,7 +353,9 @@ public class CustomerService {
 
 > Der Junior-Entwickler lernte auf diese Weise zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet.
 
-> Im Rahmen eines Code-Reviews bemerkte ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die *zyklische Abhängigkeit* durch eine neue Klasse wie z. B. `CustomerInvoiceService` aufzulösen, welche die Funktionalität von `InvoiceService` und `CustomerRepository` kombiniert.
+Diese „Lösung“ änderte jedoch nichts daran, dass die Architektur weiterhin eine *zyklische Abhängigkeit* aufweist, denn korrekte Behebung erforderte jedoch das Verständnis tieferliegender Architekturprinzipien.
+
+> Im Rahmen eines Code-Reviews bemerkte jedoch ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die *zyklische Abhängigkeit* durch eine neue Klasse wie z. B. `CustomerInvoiceService` aufzulösen, welche die Funktionalität von `InvoiceService` und `CustomerRepository` kombiniert.
 
 ```java
 @Service  
@@ -381,19 +383,16 @@ public class CustomerInvoiceService {
 
 > Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen*.
 
-> Er war über die Richtigkeit der Lösung basierend auf seiner *subjektiven* Interpretation vom SRP (nach Robert C. Martin): 
-*"There should never be more than one reason for a class to change"* überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen.  
-
-Allerdings löste dies nicht das Problem der schlechten Komposition, da die neue Service-Klasse weiterhin Business- und Repository-Logik vermischte – ein Problem, das durch die erzwungene Layer-Architektur des DI-Containers gefördert wird.
+> Er war über die Richtigkeit der Lösung basierend auf Interpretation vom SRP (nach Robert C. Martin): 
+*"There should never be more than one reason for a class to change"* überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. 
 
 > Das Team nahm es stillschweigend an, denn der Senior wusste es ja besser und er hatte ja auch die Bücher von Robert C. Martin gelesen.
 
 > Der Mid-Level-Entwickler lernte nun, dass er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
 
-> Der Senior (Autor) steht dieser Interpretation des Single Responsibility Principle (SRP) mittlerweile kritisch gegenüber. Sie führt oft zu künstlich aufgeblähten Service-Klassen, anstatt eine kohärente und sinnvolle Komposition zu fördern.
+Allerdings löste dies nicht das Problem der schlechten Komposition, da die neue Service-Klasse weiterhin Business- und Repository-Logik vermischte – ein Problem, das durch die erzwungene Layer-Architektur des DI-Containers gefördert wurde.
 
-
-Diese „Lösung“ änderte jedoch nichts daran, dass die Architektur weiterhin eine *zyklische Abhängigkeit* aufweist, denn korrekte Behebung erforderte jedoch das Verständnis tieferliegender Architekturprinzipien.
+Der Senior (Autor) steht dieser Interpretation des Single Responsibility Principle (SRP) mittlerweile kritisch gegenüber. Sie führt oft zu künstlich aufgeblähten Service-Klassen, anstatt eine kohärente und sinnvolle Komposition zu fördern.
 
 Dies verdeutlicht, dass Architekturprinzipien nicht dogmatisch, sondern stets im Kontext der gesamtheitlichen Systemgestaltung angewendet werden sollten. Wie sich diese Erkenntnis über die Jahre entwickelt hat und welche Fallstricke dabei vermieden wurden, ist allerdings eine andere, längere Geschichte, die in einem separaten Artikel ausführlich behandelt wird.
 
