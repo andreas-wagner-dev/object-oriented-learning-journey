@@ -123,7 +123,7 @@ Das Objekt der Klasse `SpringPaymentApp` sowie die Komponente `SpringData` für 
 
 Nun sollen zusätzlich noch Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
-> Der Junior treibt die Implementierung weiter vorran...
+> Der Junior trieb die Implementierung weiter voran.
 
 ```mermaid
 graph LR
@@ -330,7 +330,7 @@ public class CustomerService {
 
 **Problem:** - Das System bricht 💥 - Der DI-Container versteckt den Designfehler der zyklischen Abhängigkeit.
 
-> Die Integrationstests schlugen fehl und Such nach einer Lösung des Fehlers begann...
+> Die Integrationstests schlugen fehl und die Suche nach einer Lösung des Fehlers begann...
 
 ### 1.2 Die Lösungen mit DI-Containern
 
