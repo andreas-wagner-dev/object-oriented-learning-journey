@@ -390,11 +390,11 @@ public class CustomerInvoiceService {
 
 > Der Mid-Level-Entwickler lernte nun, dass er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
 
-Allerdings löste dies nicht das Problem der schlechten Komposition, da die neue Service-Klasse weiterhin Business- und Repository-Logik vermischte – ein Problem, das durch die erzwungene Layer-Architektur des DI-Containers gefördert wurde.
+Allerdings löste dies nicht das Problem der schlechten Komposition, da die neue Service-Klasse weiterhin Business- und Repository-Logik vermischte – ein Problem, das durch die erzwungene Layer-Architektur des DI-Containers gefördert wurde. 
 
-Der Senior (Autor) steht dieser Interpretation des Single Responsibility Principle (SRP) mittlerweile kritisch gegenüber. Sie führt oft zu künstlich aufgeblähten Service-Klassen, anstatt eine kohärente und sinnvolle Komposition zu fördern.
+Dies verdeutlicht, dass Architekturprinzipien nicht dogmatisch, sondern stets im Kontext der gesamtheitlichen Systemgestaltung angewendet werden sollten.
 
-Dies verdeutlicht, dass Architekturprinzipien nicht dogmatisch, sondern stets im Kontext der gesamtheitlichen Systemgestaltung angewendet werden sollten. Wie sich diese Erkenntnis über die Jahre entwickelt hat und welche Fallstricke dabei vermieden wurden, ist allerdings eine andere, längere Geschichte, die in einem separaten Artikel ausführlich behandelt wird.
+Der Senior (Autor) steht dieser Interpretation des Single Responsibility Principle (SRP) mittlerweile kritisch gegenüber. Sie führt oft zu künstlich aufgeblähten Service-Klassen, anstatt eine kohärente und sinnvolle Komposition zu fördern. Wie sich diese Erkenntnis über die Jahre entwickelt hat und welche Fallstricke dabei vermieden wurden, ist allerdings eine andere, längere Geschichte, die in einem separaten Artikel ausführlich behandelt wird.
 
 #### Zusammenfassung der resultierenden Probleme
 
