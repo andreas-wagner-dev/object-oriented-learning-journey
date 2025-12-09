@@ -115,6 +115,24 @@ public class PaymentService {
 }
 ```
 
+```
+com.example.payment/
+├── bussines/  
+│   ├── Invoce.java
+│   ├── InvoiceService.java  
+│   └── PaymentService.java  
+│   └── Customers.java  
+├── repository/  
+│   ├── Invoice.java  
+│   ├── Invoices.java         
+│   ├── InvoiceBook.java
+│   ├── CustomerRepository.java            
+│   ├── InvoiceRepository.java
+│   └── PaymentRepository.java     
+└──  SpringPaymentApp.java // Main Application Object mit SpringBoot -Annotation
+```
+
+
 **Problem:** An dieser Stelle ist es bereits unklar, wie die Objekte wirklich zusammenhängen.    
 
 Das Objekt der Klasse `SpringPaymentApp` sowie die Komponente `SpringData` für Zugriffe auf die Datenbank schwebt isoliert "herum" und der DI-Container verwaltet alles im Hintergrund.
