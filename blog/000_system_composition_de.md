@@ -38,6 +38,7 @@ Die Applikation soll zunächst Rechnungen (`Invoice`) erstellen und dazu Zahlung
 
 > Der Senior schlug vor auf das alte Bewährte (Spring) zu setzen, der Mid-Level-Entwickler übernahm aus einem bereits bestehenden Projekt die Struktur und der Junior begann mit der Implementierung.
 
+
 ```mermaid
 graph LR
 
@@ -51,13 +52,13 @@ graph LR
         subgraph Container["Spring DI-Container"]
 
             subgraph L3["Layer 3: Business Logic"]
-                Invoice["Invoice<br/>+ Service<br/>+ Entity"]
-                Payment["Payment<br/>+ Service<br/>+ Entity"]
+                Invoice["Invoice<br/>+ Service<br/>+ Validator"]
+                Payment["Payment<br/>+ Service<br/>+ Converter"]
             end
 
             subgraph L2["Layer 2: Data Access"]
-                InvoiceRepo[Invoice<br/>Repository]
-                PaymentRepo[Payment<br/>Repository]
+                InvoiceRepo["Invoice<br/>+ Entity<br/>+ Repository"]
+                PaymentRepo["Payment<br/>+ Entity<br/>+ Repository"]
             end
 
             subgraph L1["Layer 1: Infrastructure"]
@@ -79,6 +80,8 @@ graph LR
     style Magic fill:#ececff,stroke:#9370db
 
 ```
+
+**Implementierung**
 
 ```java
 // Die App verwaltet keine expliziten Dependencies  
@@ -115,21 +118,19 @@ public class PaymentService {
 }
 ```
 
+**Projektstruktur**
+
 ```
 com.example.payment/
-├── bussines/  
-│   ├── Invoce.java
-│   ├── InvoiceService.java  
-│   └── PaymentService.java  
-│   └── Customers.java  
-├── repository/  
-│   ├── Invoice.java  
-│   ├── Invoices.java         
-│   ├── InvoiceBook.java
-│   ├── CustomerRepository.java            
-│   ├── InvoiceRepository.java
-│   └── PaymentRepository.java     
-└──  SpringPaymentApp.java // Main Application Object mit SpringBoot -Annotation
+├── bussines/  						// Bussines Logik-Layer
+│   ├── InvoiceService.java  		// mit `@Service`-Annotation
+│   └── PaymentService.java  		// mit `@Service`-Annotation
+├── data/  							// Daten-Layer
+│   ├── Invoice.java  				// mit JPA `@Entity`-Annotation
+│   ├── Payment.java         		// mit JPA `@Entity`-Annotation
+│   ├── InvoiceRepository.java		// `@Repository`-Annotation
+│   └── PaymentRepository.java     	// `@Repository`-Annotation
+└──  SpringPaymentApp.java 			// Hauptklassen mit `@SpringBoot`-Annotation und `main()` Methode
 ```
 
 
@@ -156,15 +157,15 @@ graph LR
         subgraph Container["Spring DI-Container"]
       
             subgraph L3["Layer 3: Business Logic"]
-                Invoice["Invoice<br/>+ Service<br/>+ Entity"]
-                Payment["Payment<br/>+ Service<br/>+ Entity"]
-                Customer["Customer<br/>+ Service<br/>+ Entity"]
+                Customer["Customer<br/>+ Service"]
+                Invoice["Invoice<br/>+ Service<br/>+ Validator"]
+                Payment["Payment<br/>+ Service<br/>+ Converter"]
             end
 
             subgraph L2["Layer 2: Data Access"]
-                InvoiceRepo["Invoice<br/>Repository"]
-                PaymentRepo["Payment<br/>Repository"]
-                CustomerRepo["Customer<br/>Repository"]
+                CustomerRepo["Customer<br/>+ Entity<br/>+ Repository"]
+                InvoiceRepo["Invoice<br/>+ Entity<br/>+ Repository"]
+                PaymentRepo["Payment<br/>+ Entity<br/>+ Repository"]
             end
 
             subgraph L1["Layer 1: Infrastructure"]
