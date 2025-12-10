@@ -1,6 +1,6 @@
 # Object-Oriented UX and Object-Oriented UI
 
-**Author:** Max Stepanov 
+**Author:** Max Stepanov   
 **Source:** https://www.linkedin.com/pulse/object-oriented-ux-ui-max-stepanov-ftdkf/
 
 Digitale Produkte und Benutzeroberflächen sind immer komplexer geworden und bringen sowohl Hoffnungen als auch Herausforderungen mit sich. 
