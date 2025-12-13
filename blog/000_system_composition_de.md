@@ -411,14 +411,11 @@ public class CustomerInvoiceService {
 
 Allerdings löste dies nicht das Problem der schlechten Komposition, da die neue Service-Klasse weiterhin Business- und Repository-Logik vermischte – ein Problem, das durch die erzwungene Layer-Architektur des DI-Containers gefördert wurde. 
 
-Dies verdeutlicht, dass Architekturprinzipien nicht dogmatisch, sondern stets im Kontext der gesamtheitlichen Systemgestaltung angewendet werden sollten.
-
 Der Senior (Autor) steht dieser Interpretation des Single Responsibility Principle (SRP) mittlerweile kritisch gegenüber. Sie führt oft zu künstlich aufgeblähten Service-Klassen, anstatt eine kohärente und sinnvolle Komposition zu fördern. Wie sich diese Erkenntnis über die Jahre entwickelt hat und welche Fallstricke dabei vermieden wurden, ist allerdings eine andere, längere Geschichte, die in einem separaten Artikel ausführlich behandelt wird.
 
-#### Zusammenfassung der resultierenden Probleme
+### 1.3 Die resultierenden Probleme
 
 **Diese schrittweise Entwicklung zeigt:**
-
 1. **Unübersichtliche Abhängigkeiten** - SpringPaymentApp zeigt keine echten Dependencies. Wo ist die Objektstruktur?  
 2. **Schwere Wartbarkeit** - Um zu verstehen, was `CustomerService` braucht, muss man:  
    * Alle `@Autowired` Felder durchsuchen  
@@ -430,20 +427,14 @@ Der Senior (Autor) steht dieser Interpretation des Single Responsibility Princip
 5. **Code Pollution** - Überall `@Service`, `@Repository`, `@Autowired`, `@Lazy` Annotations  
 6. **Testbarkeit**: Tests können nicht einfach injiziert werden, nur mit [Spring-Mocks](https://filip-prochazka.com/blog/mockbean-is-an-anti-pattern) (wie `@MockBean` oder `@SpyBean`)
 
-### Die DI-Container fördern Schichten
-
-Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern oder sogar erzwingen:  
+**Die DI-Container fördern Schichten:** Die DI-Frameworks sind so konzipiert, dass sie Layer-Architektur aktiv fördern:  
 * **Stereotype-Annotations** (@Service, @Repository, @Controller) - die explizit Layer definieren  
 * **Scan-Mechanismen** (z.B. `com.example.service.*`, `com.example.entity.*`, `com.example.repository.*`), die nach Package-Strukturen suchen  
 * **Best-Practice-Guides** der Frameworks (z. B. Spring [Pet Clinic](https://github.com/spring-petclinic/spring-framework-petclinic/tree/main/src/main/java/org/springframework/samples/petclinic)), die Layer-Trennung empfehlen  
 * **Proxy-Mechanismen** für Transactions (`@Transactional`) - die Layer-Grenzen voraussetzen  
 * **Dependency-Rules**, die nur "nach unten" zeigen dürfen - was Layer-Hierarchien erzwingt.
 
-### Die Illusion der Entkopplung
-
-Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorgen.
-
-Doch in Wirklichkeit:
+**Die Illusion der Entkopplung:** Außerdem glauben viele Entwickler, dass DI-Container für "loose coupling" sorgen. Doch in Wirklichkeit:
 * sind die Abhängigkeiten nur **versteckt**, nicht entkoppelt
 * wird die **Komplexität erhöht** statt reduziert
 * entsteht eine **Kopplung an den Framework-Container**
@@ -452,8 +443,7 @@ Doch in Wirklichkeit:
 ## 2. Pure Komposition: Der objektorientierte Weg
 
 **Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
-
-Kehren wir zurück zu unserer Rechnungsanwendung. So könnte eine solide, objektorientierte Komposition aussehen:
+So könnte eine solide, objektorientierte Komposition bei der gleichen Rechnungsanwendung aussehen:
 
 ```java
 // build the Root-Composition 
@@ -518,7 +508,7 @@ flowchart TD
 
 Ein weiteres echtes Beispiel zeigt - [Yegor Bugayenko](https://www.yegor256.com/) in seinem [rultor.com](https://www.rultor.com/)-Projekt, wie eine pure Objekt-Komposition in der Klasse [Agents.java](https://github.com/yegor256/rultor/blob/1.34/src/main/java/com/rultor/agents/Agents.java) aussehen kann.
 
-Weil **keine Layer** in der Struktur mehr erzwungen werden, kann die Projektstruktur auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten. Die dazugehörige Projektstruktur könnte nun so aussehen:  
+Weil **keine Layer** in der Struktur mehr erzwungen werden, kann die Projektstruktur komplett auf **Business Konzepte** (oder nach Features) ausgerichtet werden und nicht nach technischen Aspekten. Die dazugehörige Projektstruktur könnte nun so aussehen:  
 
 ```
 org.example.payment/  
