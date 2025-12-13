@@ -403,7 +403,7 @@ public class CustomerInvoiceService {
 > Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen*.
 
 > Er war über die Richtigkeit der Lösung basierend auf Interpretation vom SRP (nach Robert C. Martin): 
-*"Each software module should have one and only one responsibility* überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. 
+*"Each software module should have one and only one responsibility"* überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. 
 
 > Das Team nahm es stillschweigend an, denn der Senior wusste es ja besser und er hatte ja auch die Bücher von Robert C. Martin gelesen.
 
