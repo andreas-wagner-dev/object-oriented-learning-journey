@@ -15,7 +15,7 @@ Dieser Beitrag dient als Impuls für eine konsequente objektorientierte Perspekt
 
 ## **1. Das Schweigen der Objekte**
 
-(Eine schweigende Party)
+> Eine schweigende Party
 
 Stellen Sie sich vor, sie betreten eine Party. Sie gehen auf jemanden zu, um sich zu unterhalten. Aber anstatt dass diese Person antwortet, eilt ein Assistent (ein 'Service') herbei, zieht der Person einen Ausweis aus der Tasche, liest den Namen vor, überprüft den Puls und sagt dann: Diese Person ist ansprechbar. Die Person selbst steht regungslos da – eine stumme Hülle, definiert nur durch die Daten, die sie mit sich herumträgt.
 
@@ -46,7 +46,7 @@ Ein Objekt sollte demnach wie ein reales Subjekt sprechen und seine Daten **anim
 
 ## **2. Object-Oriented User-Experience (UX) und -Interface (UI)**
 
-(Vom mentalen Modell zur visuellen Darstellung)
+> Vom mentalen Modell zur visuellen Darstellung
 
 ### **Object-Oriented UX**
 
@@ -81,7 +81,7 @@ Die Übernahme dieses ganzheitlichen Ansatzes richtet das Design konsequent an d
 
 ## **3. User Interface of Objects**
 
-(Vom Design zum Code mit Kapselung der Darstellung)
+> Vom Design zum Code mit Kapselung der Darstellung
 
 Während klassische OOUI-Begriffe von IBM oder Dave Collins stammen, ist Robert Bräutigam derjenige, der den spezifischen Begriff "UI of Objects" im Kontext moderner Architektur und DDD als Lösung für das "Anemic Domain Model" verwendet.
 
@@ -94,9 +94,9 @@ Während klassische OOUI-Begriffe von IBM oder Dave Collins stammen, ist Robert 
 
 ### **Die Mechanik von "UI of Objects"**
 
-Weil Nutzer in Objekten denken, muss der Code dies spiegeln. Wenn aber Getter und Setter verbannt werden, wie greift man auf Daten zu?
+Weil Nutzer an Objekte denken, muss der Code dies spiegeln. Wenn aber Getter verbannt werden, wie greift man auf Daten zu?
 
-Die Antwort ist: Gar nicht.
+> Die Antwort ist: Gar nicht.
 
 Man lässt das Objekt die Arbeit machen und behält die Kontrolle. Das Objekt fungiert als unveränderlicher Animator von veränderlichen Daten. Dabei wird fundamental zwischen **State, Identität und Verhalten** eines Objekts unterschieden:
 
@@ -106,7 +106,7 @@ Man lässt das Objekt die Arbeit machen und behält die Kontrolle. Das Objekt fu
 
 Ein gutes Objekt mappt die Daten nicht einfach in den Speicher (wie es traditionelle Entities oft tun). Stattdessen agiert es als **Immutable-Proxy**. Es repräsentiert die Identität einer Entität in der Domäne, ohne deren ständig wechselnden Zustand als internes Feld zu speichern.
 
-Man stelle sich ein Objekt Person vor.
+Man stelle sich ein Objekt `Person` vor.
 
 * **Traditionell:** Das Objekt lädt beim Start title und address in den Speicher. Wenn sich die externe Datenbasis (DB) ändert, ist das Objekt veraltet (stale) und die Kapselung ist nur scheinbar vorhanden.  
 * **Als Proxy:** Das UI Objekt hält nur eine einzige Information: Seine Identität (z.B. die ID 50). Es ist ein Proxy für die echte Datenquelle.
