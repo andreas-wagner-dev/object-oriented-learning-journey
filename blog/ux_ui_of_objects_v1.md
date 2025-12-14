@@ -9,7 +9,7 @@
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ui_of_objects_meme.png)  
 (Common argument against user interface logic in the domain objects)
 
-Dieser Beitrag dient als Impuls für eine konsequente objektorientierte Perspektive auf Design und Implementierung von Anwendersoftware. Er betrachtet die Abweichungen in der aktuellen Softwareentwicklung von der ursprünglichen Idee der objektorientierten Programmierung und stellt die modernen Konzepte OOUX, UI of Objects und Data Animation als Lösungsansätze vor:
+Gute Software spricht die Sprache der Objekte ebenso wie die der Benutzer. Dieser Beitrag beleuchtet die Diskrepanz zwischen heutiger Entwicklungspraxis und der ursprünglichen Vision der Objektorientierung und zeigt, wie man durch OOUX und "UI of Objects" eine intuitive Verbindung vom Design der User Interfaces bis in den Code hinein schaffen kann.
 
 > "OOP means only messaging, local retention, protection and hiding of state-process, with extreme late-binding of all things." - Alan Kay
 
