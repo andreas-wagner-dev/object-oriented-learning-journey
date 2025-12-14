@@ -38,6 +38,7 @@ Die Applikation soll zunächst Rechnungen (`Invoice`) erstellen und dazu Zahlung
 
 > Der Senior schlug vor auf das alte Bewährte (Spring) zu setzen, der Mid-Level-Entwickler übernahm aus einem bereits bestehenden Projekt die Struktur und der Junior begann mit der Implementierung.
 
+**Design** (vom Senior-Entwickler)
 
 ```mermaid
 graph LR
@@ -81,7 +82,22 @@ graph LR
 
 ```
 
-**Implementierung**
+**Projektstruktur** (vom Mid-Entwickler)
+
+```
+com.example.payment/
+├── bussines/  						// Bussines Logik-Layer
+│   ├── InvoiceService.java  		// mit `@Service`-Annotation
+│   └── PaymentService.java  		// mit `@Service`-Annotation
+├── data/  							// Daten-Layer
+│   ├── Invoice.java  				// mit JPA `@Entity`-Annotation
+│   ├── Payment.java         		// mit JPA `@Entity`-Annotation
+│   ├── InvoiceRepository.java		// `@Repository`-Annotation
+│   └── PaymentRepository.java     	// `@Repository`-Annotation
+└──  SpringPaymentApp.java 			// Hauptklassen mit `@SpringBoot`-Annotation und `main()` Methode
+```
+
+**Implementierung** (vom Junior-Entwickler)
 
 ```java
 // Die App verwaltet keine expliziten Dependencies  
@@ -118,20 +134,6 @@ public class PaymentService {
 }
 ```
 
-**Projektstruktur**
-
-```
-com.example.payment/
-├── bussines/  						// Bussines Logik-Layer
-│   ├── InvoiceService.java  		// mit `@Service`-Annotation
-│   └── PaymentService.java  		// mit `@Service`-Annotation
-├── data/  							// Daten-Layer
-│   ├── Invoice.java  				// mit JPA `@Entity`-Annotation
-│   ├── Payment.java         		// mit JPA `@Entity`-Annotation
-│   ├── InvoiceRepository.java		// `@Repository`-Annotation
-│   └── PaymentRepository.java     	// `@Repository`-Annotation
-└──  SpringPaymentApp.java 			// Hauptklassen mit `@SpringBoot`-Annotation und `main()` Methode
-```
 
 
 **Problem:** An dieser Stelle ist es bereits unklar, wie die Objekte wirklich zusammenhängen.    
