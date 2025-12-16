@@ -18,11 +18,11 @@ Gute Software spricht die Sprache der Objekte ebenso wie die der Benutzer. Diese
 
 Eine schweigende Party
 
-Stellen Sie sich vor, sie betreten eine Party. Sie gehen auf jemanden zu, um sich zu unterhalten. Aber anstatt dass diese Person antwortet, eilt ein Assistent (ein 'Service') herbei, zieht der Person einen Ausweis aus der Tasche, liest den Namen vor, überprüft den Puls und sagt dann: Diese Person ist ansprechbar. Die Person selbst steht regungslos da – eine stumme Hülle, definiert nur durch die Daten, die sie mit sich herumträgt.
+Stellen Sie sich vor, Sie betreten eine Party. Sie gehen auf jemanden zu, um sich zu unterhalten. Aber anstatt dass diese Person antwortet, eilt ein Assistent (ein 'Service') herbei, zieht der Person einen Ausweis aus der Tasche, liest den Namen vor, überprüft den Puls und sagt dann: Diese Person ist ansprechbar. Die Person selbst steht regungslos da – eine stumme Hülle, definiert nur durch die Daten, die sie mit sich herumträgt.
 
 Klingt absurd? In der modernen Softwareentwicklung ist das der Standard.
 
-Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte, nichts weiter als aufgewertete Aktenschränke (Datencontainer) sind. Sie besitzen Schubladen (Getter und Setter), haben aber keine Fähigkeiten, aktive Nachrichten an ihre Benutzer zu übermitteln. Stattdessen werden sie auf Rollwägen überall hin gefahren (oft als Data Transfer Objects (DTOs) missbraucht) und deren Inhalte von gesonderten ZustellernBoten (meist von Service-Controller-Klassen) ans Tageslicht gezerrt und dann manipuliert.
+Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte, nichts weiter als aufgewertete Aktenschränke (Datencontainer) sind. Sie besitzen Schubladen (Getter und Setter), haben aber keine Fähigkeiten, aktive Nachrichten an ihre Nutzer zu übermitteln. Stattdessen werden sie auf Rollwägen überall hin gefahren (oft als Data Transfer Objects (DTOs) missbraucht) und deren Inhalte von gesonderten Zustellern (meist von Service- oder Controller-Klassen) ans Tageslicht gezerrt und dann manipuliert.
 
 ### **1.1 Das Problem mit stummen Objekten**
 
@@ -120,7 +120,7 @@ Man stelle sich ein Objekt Person vor.
 * **Traditionell:** Das Objekt lädt beim Start title und address in den Speicher. Wenn sich die externe Datenbasis (DB) ändert, ist das Objekt veraltet (stale) und die Kapselung ist nur scheinbar vorhanden.  
 * **Imutable Proxy:** Das UI Objekt hält nur eine einzige Information: Seine Identität (z.B. die ID 50). Es ist ein Proxy für die echte Datenquelle.
 
-Wenn person.title() aufgerufen wird, gibt es nicht einen gespeicherten String zurück, sondern es geht in diesem Moment zur Datenquelle und holt ihn (oder animiert ihn). Das Objekt sagt: **Ich bin nicht der Titel. Ich bin der Repräsentant von Dokument \#50 und ich weiß, wo der Titel steht und wie ich ihn formatiere und präsentiere.**
+Wenn `person.title()` aufgerufen wird, gibt es nicht einen gespeicherten String zurück, sondern es geht in diesem Moment zur Datenquelle und holt ihn (oder animiert ihn). Das Objekt sagt: **Ich bin nicht der Titel. Ich bin der Repräsentant von Dokument #50 und ich weiß, wo der Titel steht und wie ich ihn formatiere und präsentiere.**
 
 Anstatt prozedural:
 ```java
@@ -146,7 +146,7 @@ InputText inputTitle = person.displayTitle();
 InputPanel panelPerson = person.displayInput();
 ```
 
-**Modulare Komposition:** Ein Person-Objekt delegiert die Verantwortung für seine Darstellung an seine verschachtelten Objekte (Address), wodurch das 'Tell, Don't Ask'-Prinzip konsequent angewendet wird.
+**Modulare Komposition:** Ein `Person`-Objekt delegiert die Verantwortung für seine Darstellung an seine verschachtelten Objekte (`Address`), wodurch das 'Tell, Don't Ask'-Prinzip konsequent angewendet wird.
 ```java
 public final class Person {
 
@@ -386,7 +386,7 @@ DataSource ds = null; // Placeholder
 return new RsPerson(DsPerson.of(ds, personIdFind), personIdFind).toJsonResponse();
 ```
 
-Dieser Ansatz ist konsequent objektorientiert: **Das Domänenobjekt spricht direkt zum Client**, während die API-Schicht lediglich die Transport- und Protokollverantwortung trägt.  Es kontrolliert vollständig, wie es dargestellt wird – ob auf einem UI-Control oder in einem JSON-Stream. Dadurch wird die Kohäsion maximiert und der "Service"-Layer eliminiert. 
+Dieser Ansatz ist konsequent objektorientiert: **Das Domänenobjekt spricht direkt zum Client**, während die API-Schicht lediglich die Transport- und Protokollverantwortung trägt. Es kontrolliert vollständig, wie es dargestellt wird – ob auf einem UI-Control oder in einem JSON-Stream. Dadurch wird die Kohäsion maximiert und der "Service"-Layer eliminiert. 
 
 ## **4. Praktische Anwendung**
 
@@ -428,8 +428,8 @@ In OOUX werden Aktionen direkt an die Objekte geknüpft. Der Benutzer fragt sich
 
 Der Benutzer navigiert durch den Login-Prozess mit folgendem mentalen Schema:
 
-1. **Identifikation:** Ich sage dem System, welches Konto mir gehört (E-MailUsername).  
-2. **Authentifizierung:** Ich beweise mit einem Schlüssel (PasswortToken), dass ich der Besitzer bin.  
+1. **Identifikation:** Ich sage dem System, welches Konto mir gehört (E-Mail/Username).  
+2. **Authentifizierung:** Ich beweise mit einem Schlüssel (Passwort/Token), dass ich der Besitzer bin.  
 3. **Autorisierung:** Das System startet eine Sitzung und gewährt mir Zugriff auf meine Inhalte.
 
 ### **4.2 Anwendung im UI-Design**
@@ -444,7 +444,7 @@ Durch diesen OOUX-Ansatz vermeiden Sie ein rein prozessgesteuertes Design und sc
 
 ### **4.3 UI of Objects (mit Swing)**
 
-Um die Theorie in die Praxis umzusetzen, betrachten wir ein Java Swing-Beispiel. Anstatt ein JFrame zu bauen, das Daten aus einem User-Objekt zieht (user.getName()), drehen wir den Spieß um. Wir geben dem Objekt eine "Leinwand" (Interface als eine digitale Arbeitsfläche), auf die es sich selbst malt. Das Objekt AccountSession ist der Chef. Es bestimmt, wie der Login aussieht und was passiert, wenn geklickt wird. Die Swing-Klassen sind nur dumme Werkzeuge.
+Um die Theorie in die Praxis umzusetzen, betrachten wir ein Java Swing-Beispiel. Anstatt ein JFrame zu bauen, das Daten aus einem User-Objekt zieht (`user.getName()`), drehen wir den Spieß um. Wir geben dem Objekt eine "Leinwand" (Interface als eine digitale Arbeitsfläche), auf die es sich selbst malt. Das Objekt `AccountSession` ist der Chef. Es bestimmt, wie der Login aussieht und was passiert, wenn geklickt wird. Die Swing-Klassen sind nur dumme Werkzeuge.
 
 ```java
 import java.sql.*;  
