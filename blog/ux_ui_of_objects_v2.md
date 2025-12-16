@@ -6,13 +6,15 @@
 
 **Thema:** OOP, OOUX, UI of Objects, Data Animation
 
-*(Common argument against user interface logic in the domain objects)*
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ui_of_objects_meme.png)  
+
+*(The most common argument against user interface logic in the domain objects)*
 
 Gute Software spricht die Sprache der Objekte ebenso wie die der Benutzer. Dieser Beitrag beleuchtet die Diskrepanz zwischen heutiger Entwicklungspraxis und der ursprünglichen Idee der Objektorientierung und zeigt, wie man durch OOUX und "UI of Objects" eine intuitive Verbindung vom Design der User Interfaces bis in den Code hinein schaffen kann.
 
-"OOP means only messaging, local retention, protection and hiding of state-process, with extreme late-binding of all things." \- Alan Kay
+"OOP means only messaging, local retention, protection and hiding of state-process, with extreme late-binding of all things." - Alan Kay
 
-## **1\. Das Schweigen der Objekte**
+## **1. Das Schweigen der Objekte**
 
 Eine schweigende Party
 
@@ -26,24 +28,24 @@ Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte
 
 Der Status quo in vielen Anwendungen wird von Architekturen bestimmt, die (oft in Anlehnung an das Model-View-Controller (MVC) Muster) eine strikte Layer-Trennung fordern. Diese Praxis wird primär durch die Dominanz der Mainstream-Literatur (wie bestimmte Interpretationen von Clean Architecture und Domain-Driven Design) und Best-Practice-Guides populärer Frameworks (z. B. Spring, Java EE oder Hibernate) gefördert. Diese strikte Trennung führt zur Fehlinterpretation des Model-Teils in MVC und resultiert im **Anemic Domain Model** (blutleeres Domänenmodell). Das Objekt hält zwar den Zustand, besitzt aber kein oder kaum eigenes Verhalten. Die gesamte Business-Logik wird dabei in Service-Klassen aggregiert, was diese zu schwer wartbaren "God Objects” macht.
 
-Die Verwendung von Mutator-Methoden (auch sogenannte Setter) verletzt die Kapselung und führt zur **semantischen Kopplung**. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI Controller die folgende Sequenz user.getAddress().getCity().getZipCode() aufruft, weiß er plötzlich alles über die geschachtelte Struktur des Users. Dies ist auch eine direkte Verletzung des **Law of Demeter** (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
+Die Verwendung von Mutator-Methoden (auch sogenannte Setter) verletzt die Kapselung und führt zur **semantischen Kopplung**. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, weiß er plötzlich alles über die geschachtelte Struktur des Users. Dies ist auch eine direkte Verletzung des **Law of Demeter** (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
 
 Das Kernproblem wurzelt bereits im traditionellen UI-Design, da es sich primär auf Aktionen und Abläufe – also auf das, was der Nutzer tun möchte (Verben) – konzentriert. Beispielsweise legt eine Musik-App den Fokus auf Funktionen wie 'Musik abspielen' statt die Objekte 'Lied' oder 'Album' als zentrale Einheiten in den Vordergrund zu stellen.
 
 ### **1.2 Die Lösung sind sprechende Objekte**
 
-Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, verlagert der moderne Ansatz des **Object-Oriented UX (OOUX)** den Fokus auf die reale Objekte, mit denen Benutzer interagieren. Nutzer denken an reale Dinge (Ich archiviere diese E-Mail) statt an Datenbankzeilen (Ich setze das Status-Flag der Entity ID 123 auf 'ARCHIVED'). Diese Denkweise impliziert den Termin "User Interface of Objects”, welcher in der modernen Softwarearchitektur-Debatte maßgeblich von Robert Bräutigam geprägt und propagiert wird.
+Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, verlagert der moderne Ansatz des **Object-Oriented UX (OOUX)** den Fokus auf die realen Objekte, mit denen Benutzer interagieren. Nutzer denken an reale Dinge (Ich archiviere diese E-Mail) statt an Datenbankzeilen (Ich setze den Status-Flag der Entity ID 123 auf 'ARCHIVED'). Diese Denkweise impliziert den Termin "User Interface of Objects”, welcher in der modernen Softwarearchitektur-Debatte maßgeblich von Robert Bräutigam geprägt und propagiert wird.
 
 **Die UI-Debatte: Gehört die Präsentation in die Domäne?**
 
 Der Vorschlag, dass Domänenobjekte sich selbst präsentieren sollen, ist kontrovers, aber wesentlich für echte Kohäsion.
 
 * **Contra:** Kritiker weisen oft auf einen Abstraktionsbruch sowie eine technische Kopplung der Domäne an spezifische UI-Bibliotheken (z.B. React oder JavaFX) hin. Dies würde das Domänenobjekt weniger wiederverwendbar machen.  
-* **Pro:** Befürworter (wie Robert Bräutigam) argumentieren mit hoher Kohäsion (**High Cohesion**). Das Wissen darüber, wie ein Kunde in Listenform dargestellt wird (Name fett, ID kursiv), gehört zum Kunde-Objekt selbst, da es dessen Verantwortung ist. Die UI soll als Teil der Anforderungen (Ubiquitous Language) vom *Business* betrachtet werden. Die kritische Unterscheidung liegt in der Abstraktion: Das Objekt spricht mit abstrakten Interfaces (InfoPanel, TextInput), nicht mit konkreten *HTML-Tags* oder *CSS-Klassen*.
+* **Pro:** Befürworter (wie Robert Bräutigam) argumentieren mit hoher Kohäsion (**High Cohesion**). Das Wissen darüber, wie ein Kunde in Listenform dargestellt wird (Name fett, ID kursiv), gehört zum Kunde-Objekt selbst, da es dessen Verantwortung ist. Die UI sollte als Teil der Anforderungen (Ubiquitous Language) vom *Business* betrachtet werden. Die kritische Unterscheidung liegt in der Abstraktion: Das Objekt spricht mit abstrakten Interfaces (`InfoPanel`, `TextInput`), nicht mit konkreten *HTML-Tags* oder *CSS-Klassen*.
 
 Ein Objekt sollte demnach wie ein reales Subjekt sprechen und seine Daten **animieren**, anstatt sie zu mappen. Es sollte nicht gefragt werden: 'Gib mir deinen Titel, damit ich ihn sehen oder übertragen kann'. Stattdessen sollte man ihm sagen: **Hier ist eine Bühne (z. B. ein View oder Interface), bitte präsentiere dich.** Dies ist die Anwendung des objektorientierten Designprinzips "**Tell, Don't Ask**” in seiner reinsten Form.
 
-## **2\. Object-Oriented User-Experience (UX) und \-Interface (UI)**
+## **2. Object-Oriented User-Experience (UX) und -Interface (UI)**
 
 Vom mentalen Modell zur visuellen Darstellung
 
@@ -57,9 +59,9 @@ Im Gegensatz zum traditionellen, aufgabenorientierten UX-Design, das sich auf di
 
 **Prinzipien der OOUX-Implementierung:**
 
-* **Objekte:** Die Bausteine des Systems (z. B. Produkt, Benutzer).  
+* **Objekte:** Die Bausteine des Systems (z. B. `Produkt`, `Benutzer`).  
 * **Struktur:** Die Definition der Eigenschaften jedes Objekts.  
-* **Beziehungen:** Die Abbildung, wie Objekte interagieren (z. B. eine Eins-zu-Viele-Beziehung zwischen einem Benutzer und seinen Bestellungen). Die klare Definition dieser Beziehungen ist essenziell für die Erstellung kohärenter Navigationspfade.  
+* **Beziehungen:** Die Abbildung, wie Objekte interagieren (z. B. eine Eins-zu-Viele-Beziehung zwischen einem Nutzer und seinen Bestellungen). Die klare Definition dieser Beziehungen ist essenziell für die Erstellung kohärenter Navigationspfade.  
 * **Aktionen:** Die Interaktionen, die Benutzer mit Objekten durchführen können.  
 * **Kontext:** Verständnis dafür, dass Objekte sich je nach Kontext (Listenansicht vs. Detailansicht) unterschiedlich verhalten, aber dennoch dieselbe Kernidentität beibehalten müssen.  
 * **Modulares Denken:** Gestaltung von Objekten als wiederverwendbare Komponenten. Dieser modulare Ansatz fördert die Konsistenz des Designsystems.
@@ -78,7 +80,7 @@ Der Erfolg von OOUX hängt stark davon ab, wie diese konzeptuellen Objekte visue
 
 Die Übernahme dieses ganzheitlichen Ansatzes richtet das Design konsequent an den mentalen Modellen der Benutzer aus, fördert Konsistenz und Wiederverwendbarkeit im gesamten Designsystem und verbessert die Skalierbarkeit. Wenn Systeme wachsen, ermöglicht der modulare Ansatz von OOUX, dass neue Funktionen oder Objekte hinzugefügt werden können, ohne die bestehende Domänenstruktur zu stören, was die langfristige Wartbarkeit verbessert.
 
-## **3\. User Interface of Objects**
+## **3. User Interface of Objects**
 
 Vom Design zum Code mit Kapselung der Darstellung
 
@@ -86,9 +88,9 @@ Während klassische OOUI-Begriffe von IBM oder Dave Collins stammen, ist Robert 
 
 ### **Kernprinzipien von UI of Objects**
 
-* **Objekt im Zentrum:** Die UI organisiert sich um Domänenobjekte (Kunde, Produkt), nicht um generische Aktionen oder Tabellen.  
-* **Starke Kohäsion:** Die UI-Struktur (was dargestellt wird und welche Felder zur Interaktion notwendig sind) wird als natürliche Eigenschaft des Objekts betrachtet. Das Objekt weiß, wie es sich in verschiedenen Kontexten darstellen soll (displaySummary(), displayFullDetails()).  
-* **Verhalten statt Daten:** Die UI-Komponente fordert das Objekt auf, etwas zu tun, anstatt Daten abzufragen. (z.B. person.displayEditForm(uiContext)).  
+* **Objekt im Zentrum:** Die UI organisiert sich um Domänenobjekte (`Kunde`, `Produkt`), nicht um generische Aktionen oder Tabellen.  
+* **Starke Kohäsion:** Die UI-Struktur (was dargestellt wird und welche Felder zur Interaktion notwendig sind) wird als natürliche Eigenschaft des Objekts betrachtet. Das Objekt weiß, wie es sich in verschiedenen Kontexten darstellen soll (`displaySummary()`, `displayFullDetails()`).  
+* **Verhalten statt Daten:** Die UI-Komponente fordert das Objekt auf, etwas zu tun, anstatt Daten abzufragen. (z.B. `person.displayEditForm(uiContext)`).  
 * **Komposition:** Komplexe Oberflächen entstehen durch die Komposition kleinerer, sich selbst darstellender Objekte.
 
 **Die MVC-Rollen bei UI of Objects**
@@ -121,45 +123,50 @@ Man stelle sich ein Objekt Person vor.
 Wenn person.title() aufgerufen wird, gibt es nicht einen gespeicherten String zurück, sondern es geht in diesem Moment zur Datenquelle und holt ihn (oder animiert ihn). Das Objekt sagt: **Ich bin nicht der Titel. Ich bin der Repräsentant von Dokument \#50 und ich weiß, wo der Titel steht und wie ich ihn formatiere und präsentiere.**
 
 Anstatt prozedural:
-
+```java
 // View zieht Daten aus dem Objekt (Pull)    
-String title \= person.getTitle(); // \-\> verletzt Tell, Don't Ask
+String title = person.getTitle(); // -> verletzt Tell, Don't Ask
 
 // ...daten mapping.    
 render(title);
+```
 
 Macht man objektorientiert:
 
+```java
 // Objekt animiert seine Daten auf der View (Push and Tell)    
 person.displayTitle(inputTitlePanel);
 
 // alternative Rückgabe von UI-Controls (nur Tell)
 
 // Objekt erstellt einen Teil der View selbst   
-InputText inputTitle \= person.displayTitle();
+InputText inputTitle = person.displayTitle();
 
 // ...oder die komplette, editierbare View von sich selbst  
-InputPanel panelPerson \= person.displayInput();
+InputPanel panelPerson = person.displayInput();
+```
 
 **Modulare Komposition:** Ein Person-Objekt delegiert die Verantwortung für seine Darstellung an seine verschachtelten Objekte (Address), wodurch das 'Tell, Don't Ask'-Prinzip konsequent angewendet wird.
-
+```java
 public final class Person {
 
     private final String name;      
     private final Address address; // ← nested Object      
           
-    public InputComponent\<Person\> displayInput() {      
+    public InputComponent<Person> displayInput() {      
         return new InputGroup()      
             .add(new TextInput(Name, name))      
             .add(address.displayInput())  // ← Composition: UI of Address\!      
             .map(Person::new);      
     }      
 }
+```
 
-Die Person weiß, wie man sich zur Eingabe darstellt, indem sie sich aus kleineren, selbst-darstellenden Objekten (Address) zusammensetzt. Das Objekt behält die volle Kontrolle darüber, wie und wann seine Daten exponiert werden, und schützt seine internen Regeln. Dadurch kann das Prinzip der **Data Animation** konsequent umgesetzt, indem das Objekt die View aktiv instruiert (Push-Prinzip) und Darstellung, Validierung sowie Formatierung selbst durchführt.
+Die Person weiß, wie man sich zur Eingabe darstellt, indem sie sich aus kleineren, selbst-darstellenden Objekten (Address) zusammensetzt. Das Objekt behält die volle Kontrolle darüber, wie und wann seine Daten exponiert werden, und schützt seine internen Regeln. Dadurch kann das Prinzip der **Data Animation** konsequent umgesetzt werden, indem das Objekt die View aktiv instruiert (Push-Prinzip) und Darstellung, Validierung sowie Formatierung selbst durchführt.
 
 **Abstrakte UI:** Um die Kopplung der Domäne an spezifische UI-Bibliotheken zu lösen, kann eine zusätliche Abstraktion der UI Objekte verwendet werden. Ein Ansatz hierzu wird vom Alen Bob als sogennanter **“Bidirectional Builder”** vorgeschlagen, das eine Kombination aus dem Builder- und Visitor-Pattern darstellt.
 
+```java
 public final class Person {
 
 	private final String name;  
@@ -167,8 +174,8 @@ public final class Person {
 
 	// constructor to build Object from View  
 	public Person(Person.View view) {  
-	        name \= view.name();  
-		address \= new Address(view.address());  
+		name = view.name();  
+		address = new Address(view.address());  
 	}
 
 	// visitor method  
@@ -184,7 +191,7 @@ public final class Person {
 		void addName(String name);  
 		void addAddress(String address);  
 	  
-                // export or rebuild the object from the view  
+       // export or rebuild the object from the view  
 		String name();  
 		String address();  
 	}  
@@ -197,60 +204,65 @@ public final class HtmlPersonView implements Person.View {
 	private final String address; 
 
 	@Override  
-	public void addName(String name) { this.name \= name;}
+	public void addName(String name) { this.name = name;}
 
 	@Override  
-	public void addAddress(String address) { this.address \= address;}
+	public void addAddress(String address) { this.address = address;}
 
 	@Override   
-        public String name() { return name;}
+    public String name() { return name;}
 
 	@Override   
-        public String address() { return address;}
+    public String address() { return address;}
 
-	/\*\*  
-	 \* Prints content as the HTML table.  
-         \* \* @return HTML table string  
-	 \*/  
-        @Override  
+	/**  
+	* Prints content as the HTML table.  
+	*
+	* @return HTML table string  
+	*/  
+    @Override  
 	public String toString() {  
-                StringBuffer out \= new StringBuffer();  
-	        out.append("\<table class=\\"person-input-table\\" border=\\"0\\"\>");  
-                // wrap Name with HTML  
-		out.append("\<tr\>\<td\>");  
+        StringBuffer out = new StringBuffer();  
+	    out.append("<table class=\"person-input-table\" border=\"0\"\>");  
+        // wrap Name with HTML  
+		out.append("<tr\><td\>");  
 		out.append("Name:");  
-		out.append("\</td\>\<td\>");  
-		out.append("\<input type=\\"text\\" name=\\"name\\" value=\\"");  
+		out.append("</td\><td\>");  
+		out.append("<input type=\"text\" name=\"name\" value=\"");  
 		out.append(name);  
-		out.append("\\"\>");  
-		out.append("\</td\>\</tr\>");  
+		out.append("\"\>");  
+		out.append("\</td\></tr\>");  
                 // wrap Address with HTML  
-		out.append("\<tr\>\<td\>");  
+		out.append("\<tr\><td\>");  
 		out.append("Address:");  
 		out.append("\</td\>\<td\>");  
-		out.append("\<input type=\\"text\\" name=\\"address\\" value=\\"");  
+		out.append("\<input type=\"text\" name=\"address\" value=\"");  
 		out.append(address);  
-		out.append("\\"\>");  
-		out.append("\</td\>\</tr\>\\n");  
-		out.append("\</table\>");  
+		out.append("\"\>");  
+		out.append("</td\>\</tr\>\n");  
+		out.append("</table\>");  
 		return out.toString();  
 	}  
 }
+```
 
+```java
 // Usage:
 
-Person jonathan \= //...
+Person jonathan = //...
 
-PersonView htmlPersonView \= new HtmlPersonView();  
+PersonView htmlPersonView = new HtmlPersonView();  
 jonathan.display(htmlPersonView);
 
-String html \= htmlPersonView.toString();
+String html = htmlPersonView.toString();
+```
 
-**API Serialisierung:** Das **Tell, Don't Ask**\-Prinzip kann analog nicht nur auf die Logik, sondern auch auf die **Serialisierung** angewendet werden. Anstatt dass die API-Schicht (z. B. JAX-RS oder Spring Controller) Daten aus dem Domänenobjekt extrahiert und diese dann über einen externen Mapper (wie Jackson) serialisiert, kann das Objekt angewiesen, sich **selbst in den Response-Stream zu schreiben oder die Antwort zu generieren**. 
+**API Serialisierung:** Das **Tell, Don't Ask**-Prinzip kann analog nicht nur auf die Logik, sondern auch auf die **Serialisierung** angewendet werden. Anstatt dass die API-Schicht (z. B. JAX-RS oder Spring Controller) Daten aus dem Domänenobjekt extrahiert und diese dann über einen externen Mapper (wie Jackson) serialisiert, kann das Objekt angewiesen, sich **selbst in den Response-Stream zu schreiben oder die Antwort zu generieren**. 
 
-/\*\*  
- \* Domain interface for Person.  
- \*/  
+```java
+/**  
+ * Domain interface for Person.  
+ */  
 interface Person {
 
        String id();
@@ -260,53 +272,53 @@ interface Person {
        Address address();  
 }
 
-/\*\*  
- \* Vertical decorator of Unknown object instead of to check null.  
- \*/  
+/**  
+ * Vertical decorator of Unknown object instead of to check null.  
+ */  
 class UnknownPerson implements Person {
 
 	private final String id;  
-       // other fields name and address...
+    // other fields name and address...
 
 	public UnknownPerson() {  
-		this.id \= UUID.randomUUID().toString();  
-		this.name \= "Unknown";  
-                this.address \= new Address("Unknown");  
+		this.id \ UUID.randomUUID().toString();  
+		this.name = "Unknown";  
+        this.address = new Address("Unknown");  
 	}
 
-        // implementation of id(), name() and address()...  
+    // implementation of id(), name() and address()...  
 }
 
-/\*\*  
- \* Horizontal decorator (instead of DB layer) of Person using a JDBC DataSource.  
- \*/  
+/**  
+ * Horizontal decorator (instead of DB layer) of Person using a JDBC DataSource.  
+ */  
 class DsPerson implements Person {
 
 	private final DataSource ds;  
-        // other fields id, name and address...
+     // other fields id, name and address...
 
-        // constructs new person from request...  
+    // constructs new person from request...  
 	public DsPerson(DataSource ds, String name, Address address) {  
-		this.ds \= ds;  
-                this.id \= UUID.randomUUID().toString();  
-                this.name \= name;  
-                this.address \= address;  
+		this.ds = ds;  
+                this.id = UUID.randomUUID().toString();  
+                this.name = name;  
+                this.address = address;  
 	}
 
         // constructs person from database  
 	public DsPerson(DataSource ds, ResultSet rs) {  
-		this.ds \= ds;  
-                this.id \= rs.getString("id");  
-                this.name \= rs.getString("name");  
-                this.address \= new Address(rs.getString("address"));  
+		this.ds = ds;  
+		this.id = rs.getString("id");  
+		this.name = rs.getString("name");  
+		this.address = new Address(rs.getString("address"));  
 	}
 
         // factory/looup method for persons from database  
 	public static Person of(DataSource ds, String id) throws SQLException  {  
-		try (PreparedStatement stmt \= ds.getConnection()  
-				.prepareStatement("SELECT id, name, address FROM person WHERE id \= ?;")) {  
+		try (PreparedStatement stmt = ds.getConnection()  
+				.prepareStatement("SELECT id, name, address FROM person WHERE id = ?;")) {  
 			stmt.setString(1, id);  
-			try (ResultSet rs \= stmt.executeQuery()) {  
+			try (ResultSet rs = stmt.executeQuery()) {  
 				while (rs.next()) {  
 				       return new DsPerson(ds, rs);  
 				}  
@@ -315,47 +327,47 @@ class DsPerson implements Person {
 		return new UnknownPerson();  
 	}
 
-        // implementation of id(), name() and address()...  
+    // implementation of id(), name() and address()...  
 }
 
-/\*\*  
- \* Horizontal decorator (instead of API layer) for the Person object.  
- \*/  
+/**  
+ * Horizontal decorator (instead of API layer) for the Person object.  
+ */  
 final class RsPerson implements Person {
 
 	private final Person person;  
 	private final String personIdToFind;
 
 	public RsPerson(Person person, String personIdToFind) {  
-		this.person \= person;  
-	        this.personIdToFind \= personIdToFind;  
+		this.person = person;  
+	        this.personIdToFind = personIdToFind;  
 	}
 
-	/\*\*  
-	 \* Builds a structured Response.  
-	 \*/  
+	/**  
+	 * Builds a structured Response.  
+	 */  
 	public Response toJsonResponse() {  
 		try {   
-                      // can not be null, but unknown...    
-                      if (person.id().equals(personIdToFind)) {  
+                // can not be null, but unknown...    
+                if (person.id().equals(personIdToFind)) {  
 		        return Response.status(Status.OK)  
-					.entity("{\\"name\\": \\"" \+ person.name()   
-                                         \+ "\\", \\"address\\": \\"" \+ person.address.toString() \+ "\\"}")  
-                                         .build();  
-                      } else {  
-                 	return Response.status(Status.NOT\_FOUND)  
-					.entity("{\\"message\\": \\"Person not found.\\"}")  
+					.entity("{\"name\": \"" + person.name()   
+							+ "\", \"address\": \"" + person.address.toString() + "\"}")  
+                     .build();  
+                } else {  
+                 	return Response.status(Status.NOT_FOUND)  
+					.entity("{\"message\": \"Person not found.\"}")  
 					.build();  
-                      }  
+               }  
 		} catch (SQLException e) {  
 			return Response.status(Status.BAD\_REQUEST)  
-					.entity("{\\"Error\\": \\"" \+ e.getMessage()   
-                                         \+ "\\", \\"message\\": \\"Data Error.\\"}")  
+					.entity("{\"Error\": \"" + e.getMessage()   
+							+ "\", \"message\\": \"Data Error.\"}")  
 					.build();  
 		} catch (Exception e) {  
-			return Response.status(Status.INTERNAL\_SERVER\_ERROR)  
-					.entity("{\\"Error\\": \\"" \+ e.getMessage()   
-                                         \+ "\\", \\"message\\": \\"Internal Server Error.\\"}")  
+			return Response.status(Status.INTERNAL_SERVER_ERROR)  
+					.entity("{\"Error\": \"" + e.getMessage()   
+							+ "\", \"message\": \"Internal Server Error.\"}")  
 					.build();  
 		}  
 	}
@@ -365,17 +377,18 @@ final class RsPerson implements Person {
 
 // Usage: some HTTP GET method with Url "api/person/{id}"
 
-String personIdFind \= // requested from client...
+String personIdFind = // requested from client...
 
 // DataSource ds is assumed to be available in scope  
-DataSource ds \= null; // Placeholder
+DataSource ds = null; // Placeholder
 
 // translated result as (JAX-RS) Response  
 return new RsPerson(DsPerson.of(ds, personIdFind), personIdFind).toJsonResponse();
+```
 
 Dieser Ansatz ist konsequent objektorientiert: **Das Domänenobjekt spricht direkt zum Client**, während die API-Schicht lediglich die Transport- und Protokollverantwortung trägt.  Es kontrolliert vollständig, wie es dargestellt wird – ob auf einem UI-Control oder in einem JSON-Stream. Dadurch wird die Kohäsion maximiert und der "Service"-Layer eliminiert. 
 
-## **4\. Praktische Anwendung**
+## **4. Praktische Anwendung**
 
 Am Beispiel eines typischen Login-Prozesses wird im Folgedem demonstriert, wie die Prinzipien von OOUX und UI of Objects in der Praxis angewendet werden.
 
@@ -424,8 +437,8 @@ Der Benutzer navigiert durch den Login-Prozess mit folgendem mentalen Schema:
 Wenn wie das Modell auf 4.1.4 umsetzen möchten, sollte die UI diese logischen Einheiten widerspiegeln:
 
 * **Gruppierung:** Platzieren Sie Felder für die Identifikation (E-Mail) und Authentifizierung (Passwort) in einem klar abgegrenzten Bereich (Panel), der das Login-Objekt repräsentiert.  
-* **Feedback:** Wenn das Passwort falsch ist, ist das Objekt Konto blockiert. Die Fehlermeldung sollte sich auf das Objekt beziehen (Konto nicht gefunden oder Passwort für dieses Konto inkorrekt).  
-* **Zustandsanzeige:** Nutzen Sie ein Label (z.B. im Header der Main Form), das das Objekt Identität (z.B. Eingeloggt als Max Mustermann) anzeigt, um die aktive Sitzung zu visualisieren.
+* **Feedback:** Wenn das Passwort falsch ist, ist das Objekt Konto blockiert. Die Fehlermeldung sollte sich auf das Objekt beziehen (Konto nicht gefunden oder das Passwort für dieses Konto inkorrekt).  
+* **Zustandsanzeige:** Nutzen Sie ein Label (z.B. im Header der Main Form), dass das Objekt Identität (z.B. Eingeloggt als Max Mustermann) anzeigt, um die aktive Sitzung zu visualisieren.
 
 Durch diesen OOUX-Ansatz vermeiden Sie ein rein prozessgesteuertes Design und schaffen eine Benutzeroberfläche, die intuitiv mit dem Verständnis des Nutzers von Besitz und Zugang übereinstimmt.
 
@@ -433,20 +446,560 @@ Durch diesen OOUX-Ansatz vermeiden Sie ein rein prozessgesteuertes Design und sc
 
 Um die Theorie in die Praxis umzusetzen, betrachten wir ein Java Swing-Beispiel. Anstatt ein JFrame zu bauen, das Daten aus einem User-Objekt zieht (user.getName()), drehen wir den Spieß um. Wir geben dem Objekt eine "Leinwand" (Interface als eine digitale Arbeitsfläche), auf die es sich selbst malt. Das Objekt AccountSession ist der Chef. Es bestimmt, wie der Login aussieht und was passiert, wenn geklickt wird. Die Swing-Klassen sind nur dumme Werkzeuge.
 
-// ... (Java Swing Code wie oben)  
-Person 
+```java
+import java.sql.*;  
+import javax.sql.DataSource;  
+import javax.swing.*;
+
+import java.awt.*;  
+import java.awt.event.ActionListener;  
+import java.sql.Connection;  
+import java.sql.PreparedStatement;  
+import java.sql.ResultSet;  
+import java.sql.SQLException;  
+import java.util.Objects;
+
+// 1. The Abstraction (The "Canvas" as the digital workspace)  
+// The object communicates with this interface, not directly with Swing or HTML.  
+interface AccountCanvas { 
+
+	/** Adds an input email and binds it to a buffer. */  
+	AccountCanvas addEmail(String label, TextBuffer buffer);  
+	
+	/** Adds an input password and binds it to a buffer. */  
+	AccountCanvas addPassword(String label, TextBuffer buffer);  
+	
+	/** Adds a button and binds an action to it. */  
+	AccountCanvas addButton(String label, ActionListener action);  
+	
+	/** Shows the entire UI. */  
+	void show();  
+}
+
+// 2. A simple buffer for data transfer (instead of Getters/Setters)  
+final class TextBuffer {
+
+	private String content = "";
+
+	/** Updates the buffer content (e.g., via UI input). */  
+	public void update(String text) {  
+		// Ensure that the content is not null  
+		this.content = Objects.requireNonNull(text, "text must not be null");  
+	}
+
+	/** Returns the current content. */  
+	public String content() {  
+		return content;  
+	}  
+}
+
+// 3. Domain object hierarchy (according to OOUX/OOP principles)
+
+// 3.1 Domain object Password Interface  
+interface Password {  
+	boolean matches(String cleartextPassword);  
+}
+
+// 3.2 Implementation of Password for a found hash (Performs actual checking)  
+final class HashedPassword implements Password {
+
+	private final String storedHash;
+
+	public HashedPassword(String storedHash) {  
+		this.storedHash = storedHash;  
+	}
+
+	@Override  
+	public boolean matches(String cleartextPassword) {  
+		// Simulation of a hash check  
+		return storedHash.equals(hashSimulated(cleartextPassword));  
+	}
+
+	// Simulated hashing function for demonstration  
+	private String hashSimulated(String password) {  
+		if (password.equals("passwort")) {  
+			return "Hashed_Pass_123";  
+		}  
+		return "Simulated_Invalid_Hash";  
+	}  
+}
+
+// 3.3 Implementation of Password when no Account is found (Always fails)   
+final class InvalidPassword implements Password {
+
+	@Override  
+	public boolean matches(String cleartextPassword) {  
+		return false;  
+	}  
+}
+
+// 3.4 Domain object Account Interface  
+interface Account {  
+	String authenticate(String email, String password) throws SecurityException;  
+}
+
+// 3.5 DbAccount implementation  
+class DsAccount implements Account {
+
+	private final DataSource dataSource;
+
+	public DsAccount(DataSource dataSource) {  
+		this.dataSource = dataSource;  
+	}
+
+	@Override  
+	public String authenticate(String email, String userPassword) throws SecurityException {  
+		// 1. Domain logic: Database query  
+		String SQL = "SELECT password FROM accounts WHERE email = ?";  
+		try (Connection conn = dataSource.getConnection();   
+				PreparedStatement stmt = conn.prepareStatement(SQL)) {  
+			stmt.setString(1, email);  
+			Password password;  
+			try (ResultSet rs = stmt.executeQuery()) {  
+				if (rs.next()) {  
+					String storedPasswordHash = rs.getString("password");  
+					// Decorating: A hash was found  
+					password = new HashedPassword(storedPasswordHash);  
+				} else {  
+					// Decorating: No Account found for this email  
+					password = new InvalidPassword();  
+				}  
+			}  
+			// 2. Matching: The Password object is instructed to check the cleartext  
+			// password.  
+			if (password.matches(userPassword)) {  
+				// Logic: Generate Session Token  
+				return "JWT_TOKEN_" + email.toUpperCase();  
+			} else {  
+				// Failed authentication  
+				throw new SecurityException("Invalid credentials.");  
+			}  
+		} catch (SQLException e) {  
+			throw new SecurityException("Connection error.", e);  
+		}  
+	}  
+}
+
+// 4\. Domain UI-Object:   
+// Represents the active state of the login process (Session)  
+final class AccountSession {
+
+	// Data input buffer  
+	private final TextBuffer email = new TextBuffer();  
+	private final TextBuffer password = new TextBuffer();
+
+	// Account domain Object interface  
+	private final Account account;
+
+	public AccountSession(Account account) {  
+		this.account = account;  
+	}
+
+	public void displayOn(AccountCanvas canvas) {  
+		// Tell principle: The AccountSession instructs the canvas how to render itself  
+		canvas.addEmail("Email Address", email)  
+				.addPassword("Password", password)  
+				.addButton("Sign In", e -> this.authenticate());  
+		// display  
+		canvas.show();  
+	}
+
+	private void authenticate() {  
+		String emailContent = email.content();  
+		String passwordContent = password.content();  
+		System.out.println("Attempting login for: " + emailContent);  
+		// verify inputs  
+		if (emailContent.isEmpty() || passwordContent.isEmpty()) {  
+			// Display Error dialog  
+			JOptionPane.showMessageDialog(null, "Please enter email and password.", "Error", JOptionPane.ERROR_MESSAGE);  
+		} else {  
+			try {  
+				// Tell principle: Instruct the Account domain object to authenticate  
+				String token = account.authenticate(emailContent, passwordContent);  
+				// Display results using UI message dialog  
+				JOptionPane.showMessageDialog(null, "Login successful. Token: " + token, "Success",  
+						JOptionPane.INFORMATION_MESSAGE);  
+			} catch (SecurityException e) {  
+				// Display Error dialog  
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);  
+			}  
+		}  
+	}  
+}
+
+// 5. Concrete Swing Implementation of the Canvas (The View layer)  
+final class SwingAccountCanvas implements AccountCanvas {
+
+	private final JFrame frame = new JFrame("OOUX Account");  
+	private final JPanel panel = new JPanel(new GridLayout(0, 1, 10, 10));
+
+	public SwingAccountCanvas() {  
+		// Layout and Styling  
+		panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  
+		frame.add(panel, BorderLayout.CENTER);  
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+		frame.setSize(400, 250);  
+		frame.setLocationRelativeTo(null); // central to window  
+	}
+
+	@Override  
+	public AccountCanvas addEmail(String label, TextBuffer buffer) {  
+		JTextField field \= new JTextField();  
+		// Add listener to receive message as action events  
+		ActionListener updateAction = e -> buffer.update(field.getText());  
+		field.addActionListener(updateAction);  
+		field.addFocusListener(new java.awt.event.FocusAdapter() {  
+			public void focusLost(java.awt.event.FocusEvent evt) {  
+				buffer.update(field.getText());  
+			}  
+		});  
+		// Add to panel  
+		panel.add(new JLabel(label));  
+		panel.add(field);  
+		return this;  
+	}
+
+	@Override  
+	public AccountCanvas addPassword(String label, TextBuffer buffer) {  
+		JTextField field = new JPasswordField();  
+		// Add listener to receive message as action events  
+		ActionListener updateAction = e -> buffer.update(field.getText());  
+		field.addActionListener(updateAction);  
+		field.addFocusListener(new java.awt.event.FocusAdapter() {  
+			public void focusLost(java.awt.event.FocusEvent evt) {  
+				buffer.update(field.getText());  
+			}  
+		});  
+		// Add to panel  
+		panel.add(new JLabel(label));  
+		panel.add(field);  
+		return this;  
+	}
+
+	@Override  
+	public AccountCanvas addButton(String label, ActionListener action) {  
+		JButton btn = new JButton(label);  
+		// Bind Button action  
+		btn.addActionListener(action);  
+		// Minimal styling - Medium Sea Green for better esthetics  
+		btn.setBackground(new Color(60, 179, 113));  
+		btn.setForeground(Color.WHITE);  
+		btn.setFocusPainted(false);  
+		btn.setFont(btn.getFont().deriveFont(Font.BOLD, 14f));  
+		// Add to panel  
+		panel.add(btn);  
+		return this;  
+	}
+
+	@Override  
+	public void show() {  
+		// Ensure UI updates are on the Event Dispatch Thread  
+		SwingUtilities.invokeLater(() -> frame.setVisible(true));  
+	}
+
+}
+
+// 6. Application Start  
+public class SwingApplication {
+
+	public static void main(String[] args) {  
+		// Initialize Data Source  
+		DataSource dataSource = initH2DataSource();  
+		// Create the Account Session object, injecting the Account domain logic  
+		AccountSession accountSession = new AccountSession(new DsAccount(dataSource));  
+		// Tell the AccountSession object to display itself on the Swing Canvas  
+		accountSession.displayOn(new SwingAccountCanvas());  
+	}
+
+	// Utility method to set up an in-memory H2 database  
+	static DataSource initH2DataSource() {  
+		// 1. Initialize and configure the H2 DataSource  
+		org.h2.jdbcx.JdbcDataSource ds = new org.h2.jdbcx.JdbcDataSource();  
+		// Use an in-memory database.  
+		// DB_CLOSE_DELAY=-1 keeps the data alive as long as the JVM is running.  
+		ds.setURL("jdbc:h2:mem:account_db;DB_CLOSE_DELAY=-1");  
+		ds.setUser("sa");  
+		ds.setPassword("");  
+		// 2. Establish a connection from the DataSource  
+		try (Connection conn = ds.getConnection()) {  
+			// 3. Define the DDL for the Account schema  
+			String createTableSql = "CREATE TABLE IF NOT EXISTS accounts ("   
+			        + "id BIGINT AUTO_INCREMENT PRIMARY KEY,"  
+					+ "username VARCHAR(50) NOT NULL UNIQUE,"   
+			        + "email VARCHAR(100) NOT NULL UNIQUE,"  
+					+ "password VARCHAR(255) NOT NULL,"   
+			        + "active BOOLEAN DEFAULT TRUE,"  
+					+ "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP" + ")";  
+			try (Statement stmt = conn.createStatement()) {  
+				stmt.execute(createTableSql);  
+				System.out.println("DDL executed: Table 'accounts' created successfully.");  
+			}  
+			// 4. Insert a sample record (DML)  
+			String insertSql = "INSERT INTO accounts (username, email, password) VALUES (?, ?, ?)";  
+			// Simulate a simple hash for 'password' (matches the HashedPassword simulation)  
+			String sampleHash = "Hashed_Pass_123";  
+			try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {  
+				pstmt.setString(1, "john_doe");  
+				pstmt.setString(2, "john.doe@example.com");  
+				pstmt.setString(3, sampleHash);  
+				pstmt.executeUpdate();  
+				System.out.println("Sample account inserted.");  
+			}  
+		} catch (Exception e) {  
+			throw new RuntimeException(e);  
+		}  
+		return ds;  
+	}
+
+}
+```
 
 **Zusammenfassung der Kernprinzipien im Code**
 
-* **Kein GetAnemic Model:** Die AccountSession exponiert keine Getter. Das Domänenobjekt wird nicht 'ausgefragt', sein interner Zustand (E-Mail und Passwort) bleibt gekapselt.  
-* **Inversion of Control (Push-Prinzip):** Das Domänenobjekt (Model) instruiert die View (canvas.addField()) aktiv über seine Darstellung (Push-Prinzip). Die UI agiert als passiver Empfänger dieser Befehle.  
-* **Starke Verhaltenskohäsion:** Die gesamte Interaktionslogik (z.B. der ActionListener für den 'Einloggen'-Knopf) ist *innerhalb* der AccountSession gekapselt (this.authenticate()). Das Objekt trägt die alleinige Verantwortung für sein Verhalten.
+* **Volle Kapselung und Verzicht auf Getter:** Die AccountSession fragt nicht nach Daten (keine Getter), sondern delegiert die Verantwortung an andere Objekte (Tell, Don't Ask). Dadurch bleibt der interne Zustand (E-Mail und Passwort) gekapselt.  
+* **Inversion of Control (Push-Prinzip):** Das Domänenobjekt (Model) instruiert die View (canvas.addEmail(), canvas.addPassword()) aktiv über seine Darstellung (Push-Prinzip). Dadurch wird die logische Trennung zwischen 'Was' (Objekt) und 'Wie' (View) gewährleistet.  
+* **Starke Verhaltenskohäsion (Single Responsibility Principle \- SRP):** Die gesamte Interaktionslogik (z. B. der ActionListener für den 'Login'-Knopf) ist *innerhalb* der AccountSession gekapselt (this.authenticate()). Das Objekt trägt die alleinige Verantwortung für sein Verhalten.
 
-### **4.4 API of Objects (für REST API mit Selbst-Serialisierung)**
+### **4.4 Selbst-Serialisierung (für REST API mit JAX-RS)**
+```java
+import jakarta.ws.rs.ApplicationPath;  
+import jakarta.ws.rs.core.Application;
 
+/**  
+* JAX-RS application configuration class.   
+* Define the base path for all resources as "/api".  
+*/  
+@ApplicationPath("/api")  
+public class ApplicationResource extends Application {  
+	// used for configuration  
+}
+
+import jakarta.ws.rs.*;  
+import jakarta.ws.rs.POST;  
+import jakarta.ws.rs.Path;  
+import jakarta.ws.rs.Produces;  
+import jakarta.ws.rs.core.MediaType;  
+import jakarta.ws.rs.core.Response;  
+import jakarta.ws.rs.core.Response.Status;
+
+import jakarta.inject.Inject;  
+import jakarta.annotation.PostConstruct;  
+import jakarta.servlet.ServletContext;
+
+import javax.sql.DataSource;
+
+import java.sql.Connection;  
+import java.sql.PreparedStatement;  
+import java.sql.ResultSet;  
+import java.sql.SQLException;
+
+/** Data Transfer Object (DTO) for login credentials. */  
+final class Credentials {
+
+	private String email;  
+	private String password;
+
+	public String getEmail() {  
+		return email;  
+	}
+
+	public String getPassword() {  
+		return password;  
+	}
+
+	/** Checks if both email and password fields are present and non-empty. */  
+	public boolean isValid() {  
+		return email != null && !email.trim().isEmpty() && password != null && !password.trim().isEmpty();  
+	}  
+}
+
+/**  
+* Domain interface for Account operations.  
+*/  
+interface Account {  
+	/** Authenticates a user and returns a session token upon success. */  
+	String authenticate(String email, String password) throws SecurityException, SQLException;  
+}
+
+/**  
+* Domain interface for Password logic (Tell, Don't Ask).  
+*/  
+interface Password {  
+	/** Instructs the password object to check if the cleartext matches. */  
+	boolean matches(String cleartextPassword);  
+}
+
+/**  
+* Implementation for a known hashed password.  
+*/  
+final class HashedPassword implements Password {
+
+	private final String storedHash;
+
+	public HashedPassword(String storedHash) {  
+		this.storedHash \= storedHash;  
+	}
+
+	@Override  
+	public boolean matches(String cleartextPassword) {  
+		// Simulation of a hash check  
+		return storedHash.equals(hashSimulated(cleartextPassword));  
+	}
+
+	// Simulated hashing function for demonstration purposes  
+	private String hashSimulated(String password) {  
+		if (password.equals("passwort")) {  
+			return "hashed_passwort_12345";  
+		}  
+		return "invalid_hash";  
+	}  
+}
+
+/**  
+* Implementation for a non-existent password (always fails authentication).  
+*/  
+final class InvalidPassword implements Password {
+
+	@Override  
+	public boolean matches(String cleartextPassword) {  
+		return false;  
+	}  
+}
+
+/**  
+* Domain implementation of Account using a JDBC DataSource.  
+*/  
+class DsAccount implements Account {
+
+	private final DataSource dataSource;
+
+	public DsAccount(DataSource dataSource) {  
+		this.dataSource = dataSource;  
+	}
+
+	@Override  
+	public String authenticate(String email, String passwordText) throws SecurityException, SQLException {  
+		// 1. Domain logic: Database query  
+		String SQL = "SELECT password_hash FROM accounts WHERE email = ?";  
+		try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(SQL)) {  
+			stmt.setString(1, email);  
+			Password password;  
+			try (ResultSet rs = stmt.executeQuery()) {  
+				if (rs.next()) {  
+					String storedPasswordHash = rs.getString("password\_hash");  
+					// Hash found  
+					password = new HashedPassword(storedPasswordHash);  
+				} else {  
+					// No account found for this email  
+					password = new InvalidPassword();  
+				}  
+			}  
+			// 2. The Password object is instructed to check itself.  
+			if (password.matches(passwordText)) {  
+				// Logic: Generate Session Token  
+				return "JWT_TOKEN_" + email.toUpperCase();  
+			} else {  
+				// Failed authentication  
+				throw new SecurityException("Invalid credentials.");  
+			}  
+		} catch (SQLException e) {  
+			// Database connection/query error  
+			throw new SecurityException("Connection error.", e);  
+		}  
+	}  
+}
+
+/**  
+ * API layer decorator for the Account domain object.  
+ * It translates the domain result (token or exception) into a JAX-RS Response.  
+ */  
+final class ApiAccount implements Account {
+
+	private final Account account;
+
+	public ApiAccount(Account account) {  
+		this.account \= account;  
+	}
+
+	@Override  
+	public String authenticate(String email, String password) throws SecurityException, SQLException {  
+		// 1. Delegate domain logic and receive token  
+		return account.authenticate(email, password);  
+	}
+
+	/**  
+	 * Main method to authenticate and build a structured Response.  
+	 */  
+	public Response authenticate(Credentials credentials) {  
+		try {  
+			if (\!credentials.isValid()) {  
+				throw new SecurityException("Email or password missing.");  
+			}  
+			String sessionToken = authenticate(credentials.getEmail(), credentials.getPassword());  
+			// Success: 200 OK  
+			return Response.status(Status.OK)  
+					.entity("{\"token\": \"" + sessionToken + "\", \"message\": \"Login successful.\"}").build();  
+		} catch (SecurityException e) {  
+			// Domain Error: Invalid credentials (401 Unauthorized)  
+			return Response.status(Status.UNAUTHORIZED)  
+					.entity("{\"Error\": \"" + e.getMessage() + "\", \"message\": \"Login unauthorized.\"}")  
+					.build();  
+		} catch (SQLException e) {  
+			// Database Error (e.g., connection lost) (400 Bad Request / Data issue)  
+			return Response.status(Status.BAD\_REQUEST)  
+					.entity("{\"Error\": \"" + e.getMessage() + "\", \"message\": \"Login failed.\"}")  
+					.build();  
+		} catch (Exception e) {  
+			// Generic Error: 500 Internal Server Error  
+			return Response.status(Status.INTERNAL\_SERVER\_ERROR)  
+					.entity("{\"Error\": \"" + e.getMessage() + "\", \"message\": \"Internal Server Error.\"}")  
+					.build();  
+		}  
+	}  
+}
+```
+
+
+```java
+/**  
+ * The JAX-RS Resource (API Layer) - Facade for the Account Resource.   
+ * The URL /account reflects the interaction with the Account domain object (Login).  
+ * URL path becomes /api/account  
+ */  
+@Path("account")  
+public class AccountResource {
+
+	@Inject  
+	private ServletContext server;
+
+	private DataSource dataSource;
+
+	@PostConstruct  
+	public void init() {  
+		// Get the DataSource provided by the ServletContext (e.g., from CDI or JNDI)  
+		dataSource = (DataSource) server.getAttribute(DataSource.class.getSimpleName());  
+	}
+
+	/**  
+	 * POST /api/account/login  
+	 * Performs the login and creates a session.  
+	 * @param credentials The credentials from the client.  
+	 * @return Response object, mainly for status and header control.  
+	 */  
+	@POST  
+	@Path("/login")  
+	@Produces(MediaType.APPLICATION_JSON)  
+	@Consumes(MediaType.APPLICATION_JSON)  
+	public Response login(Credentials credentials) {  
+		// TELL PRINCIPLE: We use the ApiAccount Decorator, which handles the domain logic  
+		// and the conversion to the JAX-RS Response.  
+		return new ApiAccount(new DsAccount(this.dataSource)).authenticate(credentials);  
+	}  
+}
+```
 ### **4.5 Anwendung mit UI of Objects (mit React)**
 
-## **5\. Fazit**
+## **5. Fazit**
 
 **Object-Oriented UX** stellt eine bedeutende Verschiebung in der Art und Weise dar, wie das Design von Benutzeroberflächen angegangen wird. Durch die Konzentration auf Objekte anstelle von Aufgaben stimmt OOUX stärker mit den mentalen Modellen der Benutzer überein, fördert die Konsistenz und verbessert die Skalierbarkeit.
 
@@ -456,11 +1009,11 @@ Person
 
 **Die Objekte schweigen nicht mehr: Sie sprechen zum User.**
 
-## **6\. Quellen**
+## **6. Quellen**
 
-* Alen Key: [Definition of Object-Oriented-Programming (2003)](https://www.google.com/search?q=https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/www.quora.comWhat-does-Alan-Kay-mean-when-he-said-OOP-to-me-means-only-messaging-local-retention-and-protection-and-hiding-of-state-process-and-extreme-late-binding-of-all-things-It-can-be-done-in-Smalltalk-and-in-LISP)  
+* Alen Key: [Definition of Object-Oriented-Programming (2003)](www.quora.comWhat-does-Alan-Kay-mean-when-he-said-OOP-to-me-means-only-messaging-local-retention-and-protection-and-hiding-of-state-process-and-extreme-late-binding-of-all-things-It-can-be-done-in-Smalltalk-and-in-LISP)  
 * Max Stepanov: Object-Oriented UX and Object-Oriented UI (2024)  
 * Alen bob: [More on getters and setters (2004)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)  
-* Robert Bräutigam: [Single Responsibility Principle (2018)](https://www.google.com/search?q=https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/speakerdeck.comrobertbraeutigamsingle-responsibility-principle)  
-* Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://www.google.com/search?q=https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)  
+* Robert Bräutigam: [Single Responsibility Principle (2018)](https://speakerdeck.comrobertbraeutigamsingle-responsibility-principle)  
+* Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)  
 * Andreas Wagner: The Mechanics of Good Object (2025)
