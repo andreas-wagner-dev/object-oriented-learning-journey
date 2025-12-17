@@ -28,7 +28,7 @@ Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte
 
 Der Status quo in vielen Anwendungen wird von Architekturen bestimmt, die (oft in Anlehnung an das Model-View-Controller (MVC) Muster) eine strikte Layer-Trennung fordern. Diese Praxis wird primär durch die Dominanz der Mainstream-Literatur (wie bestimmte Interpretationen von Clean Architecture und Domain-Driven Design) und Best-Practice-Guides populärer Frameworks (z. B. Spring, Java EE oder Hibernate) gefördert. Diese strikte Trennung führt zur Fehlinterpretation des Model-Teils in MVC und resultiert im **Anemic Domain Model** (blutleeres Domänenmodell). Das Objekt hält zwar den Zustand, besitzt aber kein oder kaum eigenes Verhalten. Die gesamte Business-Logik wird dabei in Service-Klassen aggregiert, was diese zu schwer wartbaren "God Objects” macht.
 
-Die Verwendung von Mutator-Methoden (auch sogenannte Setter) verletzt die Kapselung und führt zur **semantischen Kopplung**. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, weiß er plötzlich alles über die geschachtelte Struktur des Users. Dies ist auch eine direkte Verletzung des **Law of Demeter** (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
+Die Verwendung von Mutator-Methoden (auch sogenannte Getter und Setter) verletzt die Kapselung und führt zur **semantischen Kopplung**. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, weiß er plötzlich alles über die geschachtelte Struktur des Users. Dies ist auch eine direkte Verletzung des **Law of Demeter** (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
 
 Das Kernproblem wurzelt bereits im traditionellen UI-Design, da es sich primär auf Aktionen und Abläufe – also auf das, was der Nutzer tun möchte (Verben) – konzentriert. Beispielsweise legt eine Musik-App den Fokus auf Funktionen wie 'Musik abspielen' statt die Objekte 'Lied' oder 'Album' als zentrale Einheiten in den Vordergrund zu stellen.
 
@@ -118,7 +118,7 @@ Ein gutes Objekt mappt die Daten nicht einfach in den Speicher (wie es tradition
 Man stelle sich ein Objekt Person vor.
 
 * **Traditionell:** Das Objekt lädt beim Start title und address in den Speicher. Wenn sich die externe Datenbasis (DB) ändert, ist das Objekt veraltet (stale) und die Kapselung ist nur scheinbar vorhanden.  
-* **Imutable Proxy:** Das UI Objekt hält nur eine einzige Information: Seine Identität (z.B. die ID 50). Es ist ein Proxy für die echte Datenquelle.
+* **Immutable Proxy:** Das UI Objekt hält nur eine einzige Information: Seine Identität (z. B. die ID 50). Es ist ein Proxy für die echte Datenquelle.
 
 Wenn `person.title()` aufgerufen wird, gibt es nicht einen gespeicherten String zurück, sondern es geht in diesem Moment zur Datenquelle und holt ihn (oder animiert ihn). Das Objekt sagt: **Ich bin nicht der Titel. Ich bin der Repräsentant von Dokument #50 und ich weiß, wo der Titel steht und wie ich ihn formatiere und präsentiere.**
 
@@ -137,7 +137,7 @@ Macht man objektorientiert:
 // Objekt animiert seine Daten auf der View (Push and Tell)    
 person.displayTitle(inputTitlePanel);
 
-// alternative Rückgabe von UI-Controls (nur Tell)
+// alternativ mit Rückgabe von UI-Controls (nur Tell)
 
 // Objekt erstellt einen Teil der View selbst   
 InputText inputTitle = person.displayTitle();
@@ -147,6 +147,7 @@ InputPanel panelPerson = person.displayInput();
 ```
 
 **Modulare Komposition:** Ein `Person`-Objekt delegiert die Verantwortung für seine Darstellung an seine verschachtelten Objekte (`Address`), wodurch das 'Tell, Don't Ask'-Prinzip konsequent angewendet wird.
+
 ```java
 public final class Person {
 
@@ -156,13 +157,13 @@ public final class Person {
     public InputComponent<Person> displayInput() {      
         return new InputGroup()      
             .add(new TextInput(Name, name))      
-            .add(address.displayInput())  // ← Composition: UI of Address\!      
+            .add(address.displayInput())  // ← Composition: UI of Address!      
             .map(Person::new);      
     }      
 }
 ```
 
-Die Person weiß, wie man sich zur Eingabe darstellt, indem sie sich aus kleineren, selbst-darstellenden Objekten (Address) zusammensetzt. Das Objekt behält die volle Kontrolle darüber, wie und wann seine Daten exponiert werden, und schützt seine internen Regeln. Dadurch kann das Prinzip der **Data Animation** konsequent umgesetzt werden, indem das Objekt die View aktiv instruiert (Push-Prinzip) und Darstellung, Validierung sowie Formatierung selbst durchführt.
+Die `Person` weiß, wie man sich zur Eingabe darstellt, indem sie sich aus kleineren, selbst-darstellenden Objekten (`Address`) zusammensetzt. Das Objekt behält die volle Kontrolle darüber, wie und wann seine Daten exponiert werden, und schützt seine internen Regeln. Dadurch kann das Prinzip der **Data Animation** konsequent umgesetzt werden, indem das Objekt die View aktiv instruiert (Push-Prinzip) und Darstellung, Validierung sowie Formatierung selbst durchführt.
 
 **Abstrakte UI:** Um die Kopplung der Domäne an spezifische UI-Bibliotheken zu lösen, kann eine zusätliche Abstraktion der UI Objekte verwendet werden. Ein Ansatz hierzu wird vom Alen Bob als sogennanter **“Bidirectional Builder”** vorgeschlagen, das eine Kombination aus dem Builder- und Visitor-Pattern darstellt.
 
@@ -191,7 +192,7 @@ public final class Person {
 		void addName(String name);  
 		void addAddress(String address);  
 	  
-       // export or rebuild the object from the view  
+        // export or rebuild the object from the view  
 		String name();  
 		String address();  
 	}  
@@ -225,22 +226,22 @@ public final class HtmlPersonView implements Person.View {
         StringBuffer out = new StringBuffer();  
 	    out.append("<table class=\"person-input-table\" border=\"0\"\>");  
         // wrap Name with HTML  
-		out.append("<tr\><td\>");  
+		out.append("<tr><td>");  
 		out.append("Name:");  
-		out.append("</td\><td\>");  
+		out.append("</td><td>");  
 		out.append("<input type=\"text\" name=\"name\" value=\"");  
 		out.append(name);  
 		out.append("\"\>");  
-		out.append("\</td\></tr\>");  
-                // wrap Address with HTML  
-		out.append("\<tr\><td\>");  
+		out.append("</td></tr>");  
+        // wrap Address with HTML  
+		out.append("<tr><td>");  
 		out.append("Address:");  
-		out.append("\</td\>\<td\>");  
-		out.append("\<input type=\"text\" name=\"address\" value=\"");  
+		out.append("</td><td>");  
+		out.append("<input type=\"text\" name=\"address\" value=\"");  
 		out.append(address);  
 		out.append("\"\>");  
-		out.append("</td\>\</tr\>\n");  
-		out.append("</table\>");  
+		out.append("</td></tr>");  
+		out.append("</table>");  
 		return out.toString();  
 	}  
 }
@@ -281,7 +282,7 @@ class UnknownPerson implements Person {
     // other fields name and address...
 
 	public UnknownPerson() {  
-		this.id \ UUID.randomUUID().toString();  
+		this.id = UUID.randomUUID().toString();  
 		this.name = "Unknown";  
         this.address = new Address("Unknown");  
 	}
@@ -295,17 +296,17 @@ class UnknownPerson implements Person {
 class DsPerson implements Person {
 
 	private final DataSource ds;  
-     // other fields id, name and address...
+    // other fields id, name and address...
 
     // constructs new person from request...  
 	public DsPerson(DataSource ds, String name, Address address) {  
-		this.ds = ds;  
-                this.id = UUID.randomUUID().toString();  
-                this.name = name;  
-                this.address = address;  
+		this.ds = ds;
+		this.id = UUID.randomUUID().toString();  
+ 		this.name = name;  
+		this.address = address;  
 	}
 
-        // constructs person from database  
+    // constructs person from database  
 	public DsPerson(DataSource ds, ResultSet rs) {  
 		this.ds = ds;  
 		this.id = rs.getString("id");  
@@ -313,7 +314,7 @@ class DsPerson implements Person {
 		this.address = new Address(rs.getString("address"));  
 	}
 
-        // factory/looup method for persons from database  
+    // factory/looup method for persons from database  
 	public static Person of(DataSource ds, String id) throws SQLException  {  
 		try (PreparedStatement stmt = ds.getConnection()  
 				.prepareStatement("SELECT id, name, address FROM person WHERE id = ?;")) {  
@@ -353,16 +354,16 @@ final class RsPerson implements Person {
 		        return Response.status(Status.OK)  
 					.entity("{\"name\": \"" + person.name()   
 							+ "\", \"address\": \"" + person.address.toString() + "\"}")  
-                     .build();  
+					.build();  
                 } else {  
                  	return Response.status(Status.NOT_FOUND)  
 					.entity("{\"message\": \"Person not found.\"}")  
 					.build();  
                }  
 		} catch (SQLException e) {  
-			return Response.status(Status.BAD\_REQUEST)  
+			return Response.status(Status.BAD_REQUEST)  
 					.entity("{\"Error\": \"" + e.getMessage()   
-							+ "\", \"message\\": \"Data Error.\"}")  
+							+ "\", \"message\": \"Data Error.\"}")  
 					.build();  
 		} catch (Exception e) {  
 			return Response.status(Status.INTERNAL_SERVER_ERROR)  
@@ -565,8 +566,8 @@ class DsAccount implements Account {
 					password = new InvalidPassword();  
 				}  
 			}  
-			// 2. Matching: The Password object is instructed to check the cleartext  
-			// password.  
+			// 2. Matching: The Password object is instructed
+            // to check the cleartext password.  
 			if (password.matches(userPassword)) {  
 				// Logic: Generate Session Token  
 				return "JWT_TOKEN_" + email.toUpperCase();  
@@ -644,7 +645,7 @@ final class SwingAccountCanvas implements AccountCanvas {
 
 	@Override  
 	public AccountCanvas addEmail(String label, TextBuffer buffer) {  
-		JTextField field \= new JTextField();  
+		JTextField field = new JTextField();  
 		// Add listener to receive message as action events  
 		ActionListener updateAction = e -> buffer.update(field.getText());  
 		field.addActionListener(updateAction);  
@@ -758,7 +759,7 @@ public class SwingApplication {
 
 * **Volle Kapselung und Verzicht auf Getter:** Die AccountSession fragt nicht nach Daten (keine Getter), sondern delegiert die Verantwortung an andere Objekte (Tell, Don't Ask). Dadurch bleibt der interne Zustand (E-Mail und Passwort) gekapselt.  
 * **Inversion of Control (Push-Prinzip):** Das Domänenobjekt (Model) instruiert die View (canvas.addEmail(), canvas.addPassword()) aktiv über seine Darstellung (Push-Prinzip). Dadurch wird die logische Trennung zwischen 'Was' (Objekt) und 'Wie' (View) gewährleistet.  
-* **Starke Verhaltenskohäsion (Single Responsibility Principle \- SRP):** Die gesamte Interaktionslogik (z. B. der ActionListener für den 'Login'-Knopf) ist *innerhalb* der AccountSession gekapselt (this.authenticate()). Das Objekt trägt die alleinige Verantwortung für sein Verhalten.
+* **Starke Verhaltenskohäsion (Single Responsibility Principle - SRP):** Die gesamte Interaktionslogik (z. B. der ActionListener für den 'Login'-Knopf) ist *innerhalb* der AccountSession gekapselt (this.authenticate()). Das Objekt trägt die alleinige Verantwortung für sein Verhalten.
 
 ### **4.4 Selbst-Serialisierung (für REST API mit JAX-RS)**
 ```java
@@ -837,7 +838,7 @@ final class HashedPassword implements Password {
 	private final String storedHash;
 
 	public HashedPassword(String storedHash) {  
-		this.storedHash \= storedHash;  
+		this.storedHash = storedHash;  
 	}
 
 	@Override  
@@ -886,7 +887,7 @@ class DsAccount implements Account {
 			Password password;  
 			try (ResultSet rs = stmt.executeQuery()) {  
 				if (rs.next()) {  
-					String storedPasswordHash = rs.getString("password\_hash");  
+					String storedPasswordHash = rs.getString("password_hash");  
 					// Hash found  
 					password = new HashedPassword(storedPasswordHash);  
 				} else {  
@@ -918,7 +919,7 @@ final class ApiAccount implements Account {
 	private final Account account;
 
 	public ApiAccount(Account account) {  
-		this.account \= account;  
+		this.account = account;  
 	}
 
 	@Override  
@@ -932,13 +933,14 @@ final class ApiAccount implements Account {
 	 */  
 	public Response authenticate(Credentials credentials) {  
 		try {  
-			if (\!credentials.isValid()) {  
+			if (!credentials.isValid()) {  
 				throw new SecurityException("Email or password missing.");  
 			}  
 			String sessionToken = authenticate(credentials.getEmail(), credentials.getPassword());  
 			// Success: 200 OK  
 			return Response.status(Status.OK)  
-					.entity("{\"token\": \"" + sessionToken + "\", \"message\": \"Login successful.\"}").build();  
+					.entity("{\"token\": \"" + sessionToken + "\", \"message\": \"Login successful.\"}")
+					.build();  
 		} catch (SecurityException e) {  
 			// Domain Error: Invalid credentials (401 Unauthorized)  
 			return Response.status(Status.UNAUTHORIZED)  
@@ -946,12 +948,12 @@ final class ApiAccount implements Account {
 					.build();  
 		} catch (SQLException e) {  
 			// Database Error (e.g., connection lost) (400 Bad Request / Data issue)  
-			return Response.status(Status.BAD\_REQUEST)  
+			return Response.status(Status.BAD_REQUEST)  
 					.entity("{\"Error\": \"" + e.getMessage() + "\", \"message\": \"Login failed.\"}")  
 					.build();  
 		} catch (Exception e) {  
 			// Generic Error: 500 Internal Server Error  
-			return Response.status(Status.INTERNAL\_SERVER\_ERROR)  
+			return Response.status(Status.INTERNAL_SERVER\_ERROR)  
 					.entity("{\"Error\": \"" + e.getMessage() + "\", \"message\": \"Internal Server Error.\"}")  
 					.build();  
 		}  
