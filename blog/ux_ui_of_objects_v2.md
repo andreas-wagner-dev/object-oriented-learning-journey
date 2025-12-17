@@ -26,7 +26,7 @@ Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte
 
 ### **1.1 Das Problem mit stummen Objekten**
 
-Der Status quo in vielen Anwendungen wird von Architekturen bestimmt, die (oft in Anlehnung an das Model-View-Controller (MVC) Muster) eine strikte Layer-Trennung fordern. Diese Praxis wird primär durch die Dominanz der Mainstream-Literatur (wie bestimmte Interpretationen von Clean Architecture und Domain-Driven Design) und Best-Practice-Guides populärer Frameworks (z. B. Spring, Java EE oder Hibernate) gefördert. Diese strikte Trennung führt zur Fehlinterpretation des Model-Teils in MVC und resultiert im **Anemic Domain Model** (blutleeres Domänenmodell). Das Objekt hält zwar den Zustand, besitzt aber kein oder kaum eigenes Verhalten. Die gesamte Business-Logik wird dabei in Service-Klassen aggregiert, was diese zu schwer wartbaren "God Objects” macht.
+Der Status quo in vielen Anwendungen wird von Architekturen bestimmt, die (oft in Anlehnung an das Model-View-Controller (MVC) Muster) eine strikte [Layer-Trennung](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/) fordern. Diese Praxis wird primär durch die Dominanz der Mainstream-Literatur (wie bestimmte Interpretationen von [Clean Architecture](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom) und [Domain-Driven Design](https://github.com/VaughnVernon/IDDD_Samples)) und Best-Practice-Guides populärer Frameworks (z. B. Spring, Java EE oder Hibernate) gefördert. Diese strikte Trennung führt zur Fehlinterpretation des Model-Teils in MVC und resultiert im [**Anemic Domain Model**](https://www.martinfowler.com/bliki/AnemicDomainModel.html). Das Objekt hält zwar den Zustand, besitzt aber kein oder kaum eigenes Verhalten. Die gesamte Business-Logik wird dabei in Service-Klassen aggregiert, was diese zu schwer wartbaren "God Objects” macht.
 
 Die Verwendung von Mutator-Methoden (auch sogenannte Getter und Setter) verletzt die Kapselung und führt zur **semantischen Kopplung**. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, weiß er plötzlich alles über die geschachtelte Struktur des Users. Dies ist auch eine direkte Verletzung des **Law of Demeter** (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
 
@@ -1017,5 +1017,12 @@ public class AccountResource {
 * Max Stepanov: Object-Oriented UX and Object-Oriented UI (2024)  
 * Alen bob: [More on getters and setters (2004)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)  
 * Robert Bräutigam: [Single Responsibility Principle (2018)](https://speakerdeck.comrobertbraeutigamsingle-responsibility-principle)  
-* Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)  
+* Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)
+*Martin Fowler [Anemic Domain Model (2003)](https://www.martinfowler.com/bliki/AnemicDomainModel.html)
 * Andreas Wagner: The Mechanics of Good Object (2025)
+
+* Robert Bräutigam: [data-boundaries-are-the-root-cause-of-maintenance-problems](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/)
+
+**Source Code Samples**
+* Clean Coders: [Clean Code Case Study](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom)
+* Vaughn Vernon: [Code Samples](https://github.com/VaughnVernon/IDDD_Samples)
