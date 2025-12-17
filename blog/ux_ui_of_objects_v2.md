@@ -26,11 +26,11 @@ Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte
 
 ### **1.1 Das Problem mit stummen Objekten**
 
-Der Status quo in vielen Anwendungen wird von Architekturen bestimmt, die (oft in Anlehnung an das Model-View-Controller (MVC) Muster) eine strikte [Layer-Trennung](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/) fordern. Diese Praxis wird primär durch die Dominanz der Mainstream-Literatur (wie bestimmte Interpretationen von [Clean Architecture](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom) und [Domain-Driven Design](https://github.com/VaughnVernon/IDDD_Samples)) und Best-Practice-Guides populärer Frameworks (z. B. [Spring](https://github.com/spring-projects/spring-petclinic), [Java EE](https://github.com/eclipse-ee4j/jakartaee-examples/tree/main/applications/kickoff/src/main/java/org/example/kickoff) oder [Hibernate-Demos](https://github.com/hibernate/hibernate-demos)) gefördert. Diese strikte Trennung führt zur [Fehlinterpretation](https://martinfowler.com/eaaDev/uiArchs.html) des Model-Teils in MVC und resultiert im [Anemic Domain Model](https://www.martinfowler.com/bliki/AnemicDomainModel.html). Das Objekt hält zwar den Zustand, besitzt aber kein oder kaum eigenes Verhalten. Die gesamte Business-Logik wird dabei in Service-Klassen aggregiert, was diese zu schwer wartbaren "God Objects” macht.
+Der Status quo in vielen Anwendungen wird von Architekturen bestimmt, die (oft in Anlehnung an das Model-View-Controller (MVC) Muster) eine strikte [Layer-Trennung](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/) fordern. Diese Praxis wird primär durch die Dominanz der Mainstream-Literatur (wie bestimmte Interpretationen von [Clean Architecture](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom) und [Domain-Driven Design](https://github.com/VaughnVernon/IDDD_Samples)) und Best-Practice-Guides populärer Frameworks (z. B. [Spring](https://github.com/spring-petclinic/spring-framework-petclinic/tree/main/src/main/java/org/springframework/samples/petclinic), [Jakarta EE](https://github.com/eclipse-ee4j/jakartaee-examples/tree/main/applications/kickoff/src/main/java/org/example/kickoff) oder [Hibernate](https://github.com/hibernate/hibernate-demos)) gefördert. Diese strikte Trennung führt zur [Fehlinterpretation](https://martinfowler.com/eaaDev/uiArchs.html) des Model-Teils in MVC und resultiert im [Anemic Domain Model](https://www.martinfowler.com/bliki/AnemicDomainModel.html). Das Objekt hält zwar den Zustand, besitzt aber kein oder kaum eigenes Verhalten.
 
-Die Verwendung von Mutator-Methoden (auch sogenannte Getter und Setter) verletzt die Kapselung und führt zur **semantischen Kopplung**. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, weiß er plötzlich alles über die geschachtelte Struktur des Users. Dies ist auch eine direkte Verletzung des **Law of Demeter** (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
+Durch das Auslagern der gesamte Business-Logik in Service- oder Controller-Klassen wird die Kapselung aufgebrochen; die nötigen Getter und Setter erzeugen dabei eine unerwünschte [**semantische Kopplung**](https://en.wikipedia.org/wiki/Coupling_(computer_programming)) zwischen den Komponenten. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI-Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, ist er semantisch an die Struktur des User-Objekts gekoppelt. Dies ist auch eine direkte Verletzung des [**Law of Demeter**](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/) (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
 
-Das Kernproblem wurzelt bereits im traditionellen UI-Design, da es sich primär auf Aktionen und Abläufe – also auf das, was der Nutzer tun möchte (Verben) – konzentriert. Beispielsweise legt eine Musik-App den Fokus auf Funktionen wie 'Musik abspielen' statt die Objekte 'Lied' oder 'Album' als zentrale Einheiten in den Vordergrund zu stellen.
+Das Kernproblem wurzelt bereits im traditionellen UI-Design, da es sich primär auf Aktionen und Abläufe – also auf das, was der Nutzer tun möchte (Verben) – konzentriert. Beispielsweise legt eine Musik-Applikation den Fokus auf Funktionen wie 'Musik abspielen' statt die Objekte 'Lied' oder 'Album' als zentrale Einheiten in den Vordergrund zu stellen. Diese prozedurale Sichtweise führt dazu, dass Software-Strukturen eins-zu-eins die UI-Abläufe widerspiegeln: Es entstehen "Service-Klassen", die als reine Funktionssammlungen agieren, während die eigentlichen Domänenobjekte zu passiven Datencontainern ohne eigene Logik verkommen.
 
 ### **1.2 Die Lösung sind sprechende Objekte**
 
@@ -1015,19 +1015,21 @@ public class AccountResource {
 
 * Alen Key: [Definition of Object-Oriented-Programming (2003)](www.quora.comWhat-does-Alan-Kay-mean-when-he-said-OOP-to-me-means-only-messaging-local-retention-and-protection-and-hiding-of-state-process-and-extreme-late-binding-of-all-things-It-can-be-done-in-Smalltalk-and-in-LISP)  
 * Max Stepanov: Object-Oriented UX and Object-Oriented UI (2024)  
-* Alen bob: [More on getters and setters (2004)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)  
+* Alen bob: [More on getters and setters (2004)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)
+* Robert Bräutigam: [Data boundaries are the root cause of maintenance problems (2019)](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/)
+* Robert Bräutigam: [Law of Demeter (2017)](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
 * Robert Bräutigam: [Single Responsibility Principle (2018)](https://speakerdeck.comrobertbraeutigamsingle-responsibility-principle)  
 * Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)
 * Martin Fowler [GUI Architecturesl (2006)](https://martinfowler.com/eaaDev/uiArchs.html)
 * Martin Fowler [Anemic Domain Model (2003)](https://www.martinfowler.com/bliki/AnemicDomainModel.html)
 * Andreas Wagner: The Mechanics of Good Object (2025)
 
-* Robert Bräutigam: [data-boundaries-are-the-root-cause-of-maintenance-problems](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/)
+
 
 **Source Code Samples**
 * Clean Coders: [Clean Code Case Study](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom)
 * Vaughn Vernon: [Code Samples](https://github.com/VaughnVernon/IDDD_Samples)
-* Spring Offizielle Implementierungen [Spring-Petclinic](https://github.com/spring-projects/spring-petclinic)
-* Eclipse EE4J: [Kickoff](https://github.com/eclipse-ee4j/jakartaee-examples/tree/main/applications/kickoff/src/main/java/org/example/kickoff)
-* Hibernate Offizielle: [Hibernate-Demos](https://github.com/hibernate/hibernate-demos) 
+* Springframework: [Spring-Petclinic](https://github.com/spring-petclinic/spring-framework-petclinic/tree/main/src/main/java/org/springframework/samples/petclinic)
+* Jakarta EE: [Kickoff](https://github.com/eclipse-ee4j/jakartaee-examples/tree/main/applications/kickoff/src/main/java/org/example/kickoff)
+* Hibernate: [Hibernate-Demos](https://github.com/hibernate/hibernate-demos) 
 
