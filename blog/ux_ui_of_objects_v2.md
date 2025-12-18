@@ -36,8 +36,6 @@ Durch das Auslagern der gesamte Business-Logik in Service- oder Controller-Klass
 
 Das Kernproblem wurzelt bereits im traditionellen UI-Design, das sich primär auf Aktionen und Abläufe konzentriert – also auf das, was der Nutzer tun möchte (Verben). Eine Musik-Applikation fokussiert sich beispielsweise auf Funktionen wie "Musik abspielen", anstatt die Objekte "Lied" oder "Album" als handelnde Einheiten in den Vordergrund zu stellen. Diese prozedurale Sichtweise führt dazu, dass Software-Strukturen die UI-Abläufe lediglich spiegeln. Selbst moderne Ansätze wie Domain-Driven Design (DDD) und Clean Architecture tappen in der Praxis oft in diese "Aktions-Falle": Anstatt die Autonomie der Domänenobjekte zu stärken, rücken ihre Implementierungsbeispiele oft "Use Cases" oder "Application Services" ins Zentrum. Diese fungieren wie statuslose Hilfs-Klassen, die den Ablauf steuern und das Objekt zum reinen Datenlieferanten degradieren.
 
-
-
 ### **1.2 Die Lösung sind sprechende Objekte**
 
 Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, verlagert der moderne Ansatz des **Object-Oriented UX (OOUX)** den Fokus auf die realen Objekte, mit denen Benutzer interagieren. Nutzer denken an reale Dinge (Ich archiviere diese E-Mail) statt an Datenbankzeilen (Ich setze den Status-Flag der Entity ID 123 auf 'ARCHIVED'). Diese Denkweise impliziert den Termin "User Interface of Objects”, welcher in der modernen Softwarearchitektur-Debatte maßgeblich von Robert Bräutigam geprägt und propagiert wird.
@@ -47,7 +45,7 @@ Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, ve
 Der Vorschlag, dass Domänenobjekte sich selbst präsentieren sollen, ist kontrovers, aber wesentlich für echte Kohäsion.
 
 * **Contra:** Kritiker weisen oft auf einen Abstraktionsbruch sowie eine technische Kopplung der Domäne an spezifische UI-Bibliotheken (z.B. React oder JavaFX) hin. Dies würde das Domänenobjekt weniger wiederverwendbar machen.  
-* **Pro:** Befürworter (wie Robert Bräutigam) argumentieren mit hoher Kohäsion (**High Cohesion**). Das Wissen darüber, wie ein Kunde in Listenform dargestellt wird (Name fett, ID kursiv), gehört zum Kunde-Objekt selbst, da es dessen Verantwortung ist. Die UI sollte als Teil der Anforderungen (Ubiquitous Language) vom *Business* betrachtet werden. Die kritische Unterscheidung liegt in der Abstraktion: Das Objekt spricht mit abstrakten Interfaces (`InfoPanel`, `TextInput`), nicht mit konkreten *HTML-Tags* oder *CSS-Klassen*.
+* **Pro:** Befürworter (wie Alen Bob und Robert Bräutigam) argumentieren mit hoher Kohäsion (**High Cohesion**). Das Wissen darüber, wie ein Kunde in Listenform dargestellt wird (Name fett, ID kursiv), gehört zum Kunde-Objekt selbst, da es dessen Verantwortung ist. Die UI sollte als Teil der Anforderungen (Ubiquitous Language) vom *Business* betrachtet werden. Die kritische Unterscheidung liegt in der Abstraktion: Das Objekt spricht mit abstrakten Interfaces (`InfoPanel`, `TextInput`), nicht mit konkreten *HTML-Tags* oder *CSS-Klassen*.
 
 Ein Objekt sollte demnach wie ein reales Subjekt sprechen und seine Daten **animieren**, anstatt sie zu mappen. Es sollte nicht gefragt werden: 'Gib mir deinen Titel, damit ich ihn sehen oder übertragen kann'. Stattdessen sollte man ihm sagen: **Hier ist eine Bühne (z. B. ein View oder Interface), bitte präsentiere dich.** Dies ist die Anwendung des objektorientierten Designprinzips "**Tell, Don't Ask**” in seiner reinsten Form.
 
@@ -1021,7 +1019,7 @@ public class AccountResource {
 
 * Alen Key: [Definition of Object-Oriented-Programming (2003)](www.quora.comWhat-does-Alan-Kay-mean-when-he-said-OOP-to-me-means-only-messaging-local-retention-and-protection-and-hiding-of-state-process-and-extreme-late-binding-of-all-things-It-can-be-done-in-Smalltalk-and-in-LISP)  
 * Max Stepanov: Object-Oriented UX and Object-Oriented UI (2024)  
-* Alen bob: [More on getters and setters (2004)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)
+* Alen Bob: [More on getters and setters (2004)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)
 * Robert Bräutigam: [Data boundaries are the root cause of maintenance problems (2019)](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/)
 * Robert Bräutigam: [Law of Demeter (2017)](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
 * Robert Bräutigam: [Single Responsibility Principle (2018)](https://speakerdeck.comrobertbraeutigamsingle-responsibility-principle)  
