@@ -168,7 +168,7 @@ public final class Person {
 
 Die `Person` weiß, wie man sich zur Eingabe darstellt, indem sie sich aus kleineren, selbst-darstellenden Objekten (`Address`) zusammensetzt. Das Objekt behält die volle Kontrolle darüber, wie und wann seine Daten exponiert werden, und schützt seine internen Regeln. Dadurch kann das Prinzip der **Data Animation** konsequent umgesetzt werden, indem das Objekt die View aktiv instruiert (Push-Prinzip) und Darstellung, Validierung sowie Formatierung selbst durchführt.
 
-**Abstrakte UI:** Um die Kopplung der Domäne an spezifische UI-Bibliotheken zu lösen, kann eine zusätliche Abstraktion der UI Objekte verwendet werden. Ein Ansatz hierzu wird vom Alen Bob als sogennanter **“Bidirectional Builder”** vorgeschlagen, das eine Kombination aus dem Builder- und Visitor-Pattern darstellt.
+**Abstrakte UI:** Um die Kopplung der Domäne an spezifische UI-Bibliotheken zu lösen, kann eine zusätliche Abstraktion der UI Objekte verwendet werden. Ein Ansatz hierzu wird vom Allen Holub als sogennanter [Bidirectional Builder](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html) vorgeschlagen, das eine Kombination aus dem Builder- und Visitor-Pattern darstellt.
 
 ```java
 public final class Person {
