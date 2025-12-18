@@ -22,19 +22,19 @@ Stellen Sie sich vor, Sie betreten eine Party. Sie gehen auf jemanden zu, um sic
 
 Klingt absurd? In der modernen Softwareentwicklung ist das der Standard.
 
-Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte, nichts weiter als aufgewertete Aktenschränke (Datencontainer) sind. Sie besitzen Schubladen (Getter und Setter), haben aber keine Fähigkeiten, aktive Nachrichten an ihre Nutzer zu übermitteln. Stattdessen werden sie auf Rollwägen überall hin gefahren (oft als Data Transfer Objects (DTOs) missbraucht) und deren Inhalte von gesonderten Zustellern (meist von Service- oder Controller-Klassen) ans Tageslicht gezerrt und dann manipuliert.
+Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte, nichts weiter als aufgewertete Aktenschränke (Datencontainer) sind. Sie besitzen Schubladen (Getter und Setter), haben aber keine Fähigkeiten, aktive Nachrichten an ihre Nutzer zu übermitteln. Stattdessen werden sie auf Rollwägen überall hin gefahren (oft als [Data Transfer Objects](https://www.yegor256.com/2016/07/06/data-transfer-object.html) (DTOs) missbraucht) und deren Inhalte von gesonderten Zustellern (meist von Service- oder Controller-Klassen) ans Tageslicht gezerrt und dann manipuliert.
 
 ### **1.1 Das Problem mit stummen Objekten**
 
-Der Status quo vieler Anwendungen ist geprägt von Architekturen, die – oft unter Berufung auf das Model-View-Controller-Muster (MVC) – eine strikte Schichtentrennung erzwingen und dadurch schwer wartbare sowie starre [Datengrenzen](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/) entstehen lassen. 
+Der Status quo vieler Anwendungen ist geprägt von Architekturen, die – oft unter Berufung auf das [Model-View-Controller-Muster](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) (MVC) – eine strikte Schichtentrennung erzwingen und dadurch schwer wartbare sowie starre [Datengrenzen](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/) entstehen lassen. 
 
 Diese Praxis wird primär durch die Dominanz der Mainstream-Literatur und deren spezifische Auslegung von Konzepten wie [Clean Architecture](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom) oder [Domain-Driven Design](https://github.com/VaughnVernon/IDDD_Samples) befeuert. Verstärkt wird diese Entwicklung durch die Best-Practice-Guides populärer Frameworks wie [Spring](https://github.com/spring-petclinic/spring-framework-petclinic/tree/main/src/main/java/org/springframework/samples/petclinic), [Jakarta EE](https://github.com/eclipse-ee4j/jakartaee-examples/tree/main/applications/kickoff/src/main/java/org/example/kickoff) oder [Hibernate](https://github.com/hibernate/hibernate-demos), die diese Schichtentrennung als Standard vorgeben.
 
 Diese strikte Trennung der Belange führt zu einer [Fehlinterpretation](https://martinfowler.com/eaaDev/uiArchs.html) des Models innerhalb geschichteter MVC Architekturen und mündet zwangsläufig im [Anemic Domain Model](https://www.martinfowler.com/bliki/AnemicDomainModel.html). Dabei verkommt das Objekt zum reinen Datenträger, der zwar den Zustand hält, aber kaum oder gar kein eigenes Verhalten besitzt.
 
-Durch das Auslagern der gesamte Business-Logik in Service- oder Controller-Klassen wird die Kapselung aufgebrochen; die nötigen Getter und Setter erzeugen dabei eine unerwünschte [semantische Kopplung](https://en.wikipedia.org/wiki/Coupling_(computer_programming)) zwischen den Komponenten. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI-Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, ist er semantisch an die Struktur des User-Objekts gekoppelt. Dies ist auch eine direkte Verletzung des [Law of Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/) (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
+Durch das Auslagern der gesamte Business-Logik in Service- oder Controller-Klassen wird die Kapselung aufgebrochen; die nötigen Getter und Setter erzeugen dabei eine unerwünschte [semantische Kopplung](https://en.wikipedia.org/wiki/Coupling_(computer_programming)) zwischen den Komponenten. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI-Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, ist er semantisch an die Struktur des `User`-Objekts gekoppelt. Dies ist auch eine direkte Verletzung des [Law of Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/) (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
 
-Das Kernproblem wurzelt bereits im traditionellen UI-Design, das sich primär auf Aktionen und Abläufe konzentriert – also auf das, was der Nutzer tun möchte (Verben). Eine Musik-Applikation fokussiert sich beispielsweise auf Funktionen wie "Musik abspielen", anstatt die Objekte "Lied" oder "Album" als handelnde Einheiten in den Vordergrund zu stellen. Diese prozedurale Sichtweise führt dazu, dass Software-Strukturen die UI-Abläufe lediglich spiegeln. Selbst moderne Ansätze wie Domain-Driven Design (DDD) und Clean Architecture tappen in der Praxis oft in diese "Aktions-Falle": Anstatt die Autonomie der Domänenobjekte zu stärken, rücken ihre Implementierungsbeispiele oft "Use Cases" oder "Application Services" ins Zentrum. Diese fungieren wie statuslose Hilfs-Klassen, die den Ablauf steuern und das Objekt zum reinen Datenlieferanten degradieren.
+Das Kernproblem wurzelt bereits im traditionellen UI-Design, das sich primär auf Aktionen und Abläufe konzentriert – also auf das, was der Nutzer tun möchte (Verben). Eine Musik-Applikation fokussiert sich beispielsweise auf Funktionen wie "Musik abspielen", anstatt die Objekte `Lied` oder `Album` als handelnde Einheiten in den Vordergrund zu stellen. Diese prozedurale Sichtweise führt dazu, dass Software-Strukturen die UI-Abläufe lediglich spiegeln. Selbst moderne Ansätze wie Domain-Driven Design (DDD) und Clean Architecture tappen in der Praxis oft in diese "Aktions-Falle": Anstatt die Autonomie der Domänenobjekte zu stärken, rücken ihre Implementierungsbeispiele oft `Use Cases` oder Application `Services` ins Zentrum. Diese fungieren wie statuslose Hilfs-Klassen, die den Ablauf steuern und das Objekt zum reinen Datenlieferanten degradieren.
 
 ### **1.2 Die Lösung sind sprechende Objekte**
 
@@ -110,13 +110,15 @@ Weil Nutzer an Objekte denken, muss der Code dies spiegeln. Wenn aber Getter ver
 
 Die Antwort ist: *Gar nicht*.
 
-Man lässt das Objekt die Arbeit machen und behält die Kontrolle. Das Objekt fungiert als unveränderlicher Animator von veränderlichen Daten. Dabei wird fundamental zwischen **State, Identität und Verhalten** eines Objekts unterschieden:
+Man lässt das Objekt die Arbeit machen und behält die Kontrolle. Das Objekt fungiert als unveränderlicher [Animator von veränderlichen Daten](https://www.yegor256.com/2014/12/09/immutable-object-state-and-behavior.html). Dabei wird fundamental zwischen **State, Identität und Verhalten** eines Objekts unterschieden:
 
 * **State:** Das sind Daten, statische und potenziell mutierbare Informationen (in der Datenquelle wie Datenbank, JSON, etc.).  
 * **Identität:** Die Identität eines Objekts ist seine unveränderliche Einzigartigkeit (z. B. seine Speicheradresse oder seine eindeutige ID).  
 * **Behavior:** Das ist die lebendige Hülle um die Daten. Es muss **unveränderlich** (immutable) sein, um seine Integrität zu gewährleisten und Race Conditions zu vermeiden.
 
-Ein gutes Objekt mappt die Daten nicht einfach aus einem Speicher, stattdessen agiert es als **Immutable-Proxy**. Es repräsentiert die Identität einer Entität in der Domäne, ohne deren ständig wechselnden Zustand in internen Feldern zu speichern.
+Ein gutes Objekt mappt die Daten nicht einfach aus einem Speicher, stattdessen agiert es als **Immutable-Proxy**. Es repräsentiert die Identität einer Entität in der Domäne, ohne deren ständig wechselnden Zustand in internen Feldern zu speichern. 
+
+Ein möglicher Ansatz, um die eingangs erwähnte "*Animation*" von Daten in Objekten umzusetzen, ist der Verzicht auf Getter zugunsten von **Printers**. Wie Yegor Bugayenko in seinem Blog-Artikel [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html) erläutert, fragen wir ein Objekt nicht nach seinem Zustand, um ihn dann mühsam in ein anderes Format zu mappen. Stattdessen übergeben wir dem Objekt ein Ziel – einen Printer – und lassen es sich selbst dort manifestieren. Das Objekt bleibt Herr über seine Daten, und wir erreichen eine saubere Trennung zwischen der logischen Essenz des Objekts und seiner technischen Repräsentation.“ Indem man Getter entfernt, zwingt man sich dazu, Verhalten in die Objekte zu legen. Das Objekt wird von einer passiven Datenstruktur zu einem aktiven, "lebendigen" Subjekt.
 
 Man stelle sich ein Objekt `Person` vor.
 
@@ -137,7 +139,7 @@ render(title);
 Macht man objektorientiert:
 
 ```java
-// Objekt animiert seine Daten auf der View (Push and Tell)    
+// Objekt animiert seine Daten auf einem Printer (Push and Tell)    
 person.displayTitle(inputTitlePanel);
 
 // alternativ mit Rückgabe von UI-Controls (nur Tell)
@@ -269,11 +271,11 @@ String html = htmlPersonView.toString();
  */  
 interface Person {
 
-       String id();
+    // identity (immutable)
+	String id();
 
-       String name();
-
-       Address address();  
+	// printer method
+	String toJson();
 }
 
 /**  
@@ -290,7 +292,18 @@ class UnknownPerson implements Person {
         this.address = new Address("Unknown");  
 	}
 
-    // implementation of id(), name() and address()...  
+	@Override   
+    public String id() { return id;}
+
+	@override
+	public String toJson() {
+	    return String.format(
+	      "{\"id\":\"%s\", \"name\":\"%s\", \"address\":\"%s\"}",
+	      this.id, this.name, this.address.toString()
+	    );
+	}
+
+    // implementation of equals(...) and hashCode()
 }
 
 /**  
@@ -298,6 +311,7 @@ class UnknownPerson implements Person {
  */  
 class DsPerson implements Person {
 
+	private final String id;  
 	private final DataSource ds;  
     // other fields id, name and address...
 
@@ -317,6 +331,9 @@ class DsPerson implements Person {
 		this.address = new Address(rs.getString("address"));  
 	}
 
+	@Override   
+    public String id() { return id;}
+
     // factory/looup method for persons from database  
 	public static Person ofId(DataSource ds, String id) throws SQLException  {  
 		try (PreparedStatement stmt = ds.getConnection()  
@@ -331,7 +348,15 @@ class DsPerson implements Person {
 		return new UnknownPerson();  
 	}
 
-    // implementation of id(), name() and address()...  
+    @override
+	public String toJson() {
+	    return String.format(
+	      "{\"id\":\"%s\", \"name\":\"%s\", \"address\":\"%s\"}",
+	      this.id, this.name, this.address.toString()
+	    );
+	}
+
+    // implementation of equals(...) and hashCode()
 }
 
 /**  
@@ -354,9 +379,8 @@ final class RsPerson implements Person {
 		try {   
 			// can not be null, but unknown...    
 			if (person.id().equals(personIdToFind)) {  
-			return Response.status(Status.OK)  
-				.entity("{\"name\": \"" + person.name()   
-						+ "\", \"address\": \"" + person.address.toString() + "\"}")  
+				return Response.status(Status.OK)  
+				.entity(person.toJson())  
 				.build();  
 			} else {  
 				return Response.status(Status.NOT_FOUND)  
@@ -376,7 +400,7 @@ final class RsPerson implements Person {
 		}  
 	}
 
-    // implementation of id(), name() and address()...  
+    // implementation of equals(...) and hashCode()
 }
 
 // Usage: some HTTP GET method with Url "api/person/{id}"
@@ -500,11 +524,13 @@ final class TextBuffer {
 // 3. Domain object hierarchy (according to OOUX/OOP principles)
 
 // 3.1 Domain object Password Interface  
-interface Password {  
+interface Password {
+
+    //  performs actual checking    
 	boolean matches(String cleartextPassword);  
 }
 
-// 3.2 Implementation of Password for a found hash (Performs actual checking)  
+// 3.2 Implementation of Password for a found hash
 final class HashedPassword implements Password {
 
 	private final String storedHash;
@@ -1024,7 +1050,9 @@ public class AccountResource {
 * Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)
 * Martin Fowler [GUI Architecturesl (2006)](https://martinfowler.com/eaaDev/uiArchs.html)
 * Martin Fowler [Anemic Domain Model (2003)](https://www.martinfowler.com/bliki/AnemicDomainModel.html)
+* Yegor Bugayenko: [Data Transfer Object Is a Shame (2016)](https://www.yegor256.com/2016/07/06/data-transfer-object.html)
 * Yegor Bugayenko: [How an Immutable Object Can Have State and Behavior? (2014)](https://www.yegor256.com/2014/12/09/immutable-object-state-and-behavior.html)
+* Yegor Bugayenko: [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html)
 * Max Stepanov: Object-Oriented UX and Object-Oriented UI (2024)  
 **Source Code Samples**
 * Clean Coders: [Clean Code Case Study](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom)
