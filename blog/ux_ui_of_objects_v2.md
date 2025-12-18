@@ -69,6 +69,21 @@ Im Gegensatz zum traditionellen, aufgabenorientierten UX-Design, das sich auf di
 * **Kontext:** Verständnis dafür, dass Objekte sich je nach Kontext (Listenansicht vs. Detailansicht) unterschiedlich verhalten, aber dennoch dieselbe Kernidentität beibehalten müssen.  
 * **Modulares Denken:** Gestaltung von Objekten als wiederverwendbare Komponenten. Dieser modulare Ansatz fördert die Konsistenz des Designsystems.
 
+Eine moderne Methodik ist der **ORCA-Prozess** (Objects, Relationships, Capabilities, Attributes), der von Sophia Prater als Standard-Framework für OOUX (Object-Oriented User Experience) entwickelt wurde. Sein Ziel ist es, die Lücke zwischen Software-Architektur und User Interface Design zu schließen.
+
+Der Prozess umfasst vier Phasen und fordert, dass Designer nicht in flüchtigen „Seiten“ (Views), sondern in stabilen „Objekten“ denken. Dabei wird strikt darauf geachtet, dass diese Objekte der mentalen Welt des Nutzers entsprechen (Domain-Modell). Die Methodik orientiert sich an Navigationsmodellen, die auf der logischen Struktur der Daten basieren, anstatt auf willkürlichen Menüstrukturen. Zudem wird konsequent zwischen Kerninhalten (Content) und Metadaten unterschieden
+
+* Phase 1. **Objects** (Objekte)
+Zuerst werden die „Dinge“ identifiziert, die für den Nutzer und das Business real sind (z. B. Buch, Autor, Bestellung).
+* Phase 2. **Relationships** (Beziehungen)
+Hier wird definiert, wie die Objekte zueinander stehen (z. B. „Ein Autor schreibt viele Bücher“).
+* Phase 3. **Capabilities** (Fähigkeiten / Aktionen)
+Was kann man mit den Objekten tun? (z. B. Veröffentlichen, Archivieren, Drucken).
+* Phase 4. **Attributes** (Attribute)
+Erst im letzten Schritt werden die konkreten Datenfelder definiert (z. B. Titel, ISBN, Preis).
+
+Für die praktische Anwendung des Prozesses ist der Guide von [Rewired](https://www.rewiredux.com/ooux) UX sehr empfehlenswert.
+
 ### **Object-Oriented UI (OOUI)**
 
 Der Erfolg von OOUX hängt stark davon ab, wie diese konzeptuellen Objekte visuell zum Leben erweckt werden. Hier kommt Object-Oriented UI (OOUI) ins Spiel. OOUI nutzt interaktive Objekte, indem es von der realen Welt inspirierte Texturen und Dimensionen hinzufügt. OOUI ist die visuelle und taktile Manifestation des OOUX-Entwurfs.
@@ -1051,6 +1066,7 @@ public class AccountResource {
 * Martin Fowler: [GUI Architecturesl (2006)](https://martinfowler.com/eaaDev/uiArchs.html)
 * Martin Fowler: [Anemic Domain Model (2003)](https://www.martinfowler.com/bliki/AnemicDomainModel.html)
 * Martin Fowler: [Tell, Don’t Ask (2013)](https://martinfowler.com/bliki/TellDontAsk.html)
+* Sophia Prater: [Object-Oriented UX (2025)](https://www.rewiredux.com/ooux)
 * Max Stepanov: [Object-Oriented UX and Object-Oriented UI (2024)](https://outmn.medium.com/object-oriented-ux-and-object-oriented-ui-722b5abcb763)
 * Mihai A. RODEGBFR: [Data Should Be Animated, Not Mapped (2017)](https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html)
 * Yegor Bugayenko: [Data Transfer Object Is a Shame (2016)](https://www.yegor256.com/2016/07/06/data-transfer-object.html)
