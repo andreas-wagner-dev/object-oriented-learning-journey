@@ -44,9 +44,9 @@ Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, ve
 
 Der Vorschlag, dass Domänenobjekte sich selbst präsentieren sollen, ist kontrovers, aber wesentlich für echte Kohäsion.
 
-* **Contra:** DDD-Experten und Anhänger der Clean Architecture (nach Robert C. Martin, "Uncle Bob") weisen oft auf einen Abstraktionsbruch sowie eine technische Kopplung der Domäne an spezifische UI-Bibliotheken (z. B. React oder JavaFX) hin. Dies mindere die Wiederverwendbarkeit der Domänenobjekte. Sie argumentieren, dass ein Domänenobjekt ausschließlich für die Geschäftslogik zuständig sein sollte; UI-Code innerhalb des Objekts verstoße gegen das **Single Responsibility Principle (SRP)**. Eine Klasse sollte demnach nur einen einzigen Grund haben, sich zu ändern: Ändert sich das UI-Layout, darf nicht die Business-Klasse angepasst werden müssen.
+* **Contra:** DDD-Experten (wie Vaughn Vernon) und Anhänger der Clean Architecture (nach Robert C. Martin, "Uncle Bob") weisen oft auf einen Abstraktionsbruch sowie eine technische Kopplung der Domäne an spezifische UI-Bibliotheken (z. B. React oder JavaFX) hin. Dies mindere die Wiederverwendbarkeit der Domänenobjekte. Sie argumentieren, dass ein Domänenobjekt ausschließlich für die Geschäftslogik zuständig sein sollte; UI-Code innerhalb des Objekts verstoße gegen das [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) **(SRP)**. Eine Klasse sollte demnach nur einen einzigen Grund haben, sich zu ändern: Ändert sich das UI-Layout, darf nicht die Business-Klasse angepasst werden müssen.
 
-* **Pro:** Befürworter (wie Allen Holub und Robert Bräutigam) argumentieren mit hoher Kohäsion (**High Cohesion**). Das Wissen darüber, wie ein Kunde in einer Liste dargestellt wird (z. B. Name fett, ID kursiv), gehöre zum Kunden-Objekt selbst, da dies Teil seiner Verantwortung sei. Die Darstellung sollte als Teil der Anforderungen und der Ubiquitous Language des Fachbereichs betrachtet werden. Die entscheidende Differenzierung liegt in der Abstraktion: Das Objekt kommuniziert über abstrakte Interfaces statt über konkrete *HTML-Tags* oder *CSS-Klassen*. Anstatt Daten per Getter preiszugeben (was Kopplung erzeugt), nutzen sie Interfaces (z. B. `Media`, `InfoPanel`, `TextInput`), um die UI-Abhängigkeit zu abstrahieren. Zudem wird an den traditionellen SRP-Definitionen bemängelt, dass sie aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage bieten: Begriffe wie *Verantwortung*, *Änderungsgrund* oder die Orientierung an *Akteuren* sind zu vage für die praktische Umsetzung und führen oft zu einer unnötigen Zersplitterung des Codes. Robert Bräutigam schlägt stattdessen eine pragmatische, objektiv messbare Definition vor: **SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung**.
+* **Pro:** Befürworter (wie Allen Holub und Robert Bräutigam) argumentieren mit hoher Kohäsion (**High Cohesion**). Das Wissen darüber, wie ein Kunde in einer Liste dargestellt wird (z. B. Name fett, ID kursiv), gehöre zum `Kunden`-Objekt selbst, da dies Teil seiner Verantwortung sei. Die Darstellung sollte als Teil der Anforderungen und der [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) des Fachbereichs betrachtet werden. Die entscheidende Differenzierung liegt in der Abstraktion: Das Objekt kommuniziert über abstrakte Interfaces statt über konkrete *HTML-Tags* oder *CSS-Klassen*. Anstatt Daten per Getter preiszugeben (was Kopplung erzeugt), nutzen sie Interfaces (z. B. `Media`, `InfoPanel`, `TextInput`), um die UI-Abhängigkeit zu abstrahieren. Zudem wird an den traditionellen SRP-Definitionen bemängelt, dass sie aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage bieten: Begriffe wie *Verantwortung*, *Änderungsgrund* oder die Orientierung an *Akteuren* sind zu vage für die praktische Umsetzung und führen oft zu einer unnötigen Zersplitterung des Codes. Robert Bräutigam schlägt stattdessen eine pragmatische, objektiv messbare Definition vor: **SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung**.
 
 Ein Objekt sollte demnach wie ein reales Subjekt agieren (sprechen) und seine Daten animieren, anstatt sie lediglich zu mappen. Man sollte es nicht fragen: **Gib mir deinen Titel, damit ich ihn anzeigen oder übertragen kann**. Stattdessen sagt man ihm: **Hier ist eine Bühne (z. B. ein UI-Control oder Interface) – bitte präsentiere dich dort.** Dies ist die Anwendung des Designprinzips **Tell, Don’t Ask** in seiner reinsten Form.
 
@@ -161,14 +161,14 @@ public final class Person {
           
     public InputComponent<Person> displayInput() {      
         return new InputGroup()      
-            .add(new TextInput(Name, name))      
+            .add(new TextInput("Name", name))      
             .add(address.displayInput())  // ← Composition: UI of Address!      
             .map(Person::new);      
     }      
 }
 ```
 
-Die `Person` weiß, wie man sich zur Eingabe darstellt, indem sie sich aus kleineren, selbst-darstellenden Objekten (`Address`) zusammensetzt. Das Objekt behält die volle Kontrolle darüber, wie und wann seine Daten exponiert werden, und schützt seine internen Regeln. Dadurch kann das Prinzip der **Data Animation** konsequent umgesetzt werden, indem das Objekt die View aktiv instruiert (Push-Prinzip) und Darstellung, Validierung sowie Formatierung selbst durchführt.
+Die `Person` weiß, wie man sich zur Eingabe darstellt, indem sie sich aus kleineren, selbst-darstellenden Objekten (`Address`) zusammensetzt. Das Objekt behält die volle Kontrolle darüber, wie und wann seine Daten exponiert werden, und schützt seine internen Regeln. Dadurch kann das Prinzip der [Data Animation](https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html) konsequent umgesetzt werden, indem das Objekt die View aktiv instruiert (Push-Prinzip) und Darstellung, Validierung sowie Formatierung selbst durchführt.
 
 **Abstrakte UI:** Um die Kopplung der Domäne an spezifische UI-Bibliotheken zu lösen, kann eine zusätliche Abstraktion der UI Objekte verwendet werden. Ein Ansatz hierzu wird vom Allen Holub als sogennanter [Bidirectional Builder](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html) vorgeschlagen, das eine Kombination aus dem Builder- und Visitor-Pattern darstellt.
 
@@ -1050,10 +1050,12 @@ public class AccountResource {
 * Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)
 * Martin Fowler [GUI Architecturesl (2006)](https://martinfowler.com/eaaDev/uiArchs.html)
 * Martin Fowler [Anemic Domain Model (2003)](https://www.martinfowler.com/bliki/AnemicDomainModel.html)
+* Max Stepanov: [Object-Oriented UX and Object-Oriented UI (2024)](https://outmn.medium.com/object-oriented-ux-and-object-oriented-ui-722b5abcb763)
+* Mihai A. RODEGBFR. [Data Should Be Animated, Not Mapped (2017)](https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html)
 * Yegor Bugayenko: [Data Transfer Object Is a Shame (2016)](https://www.yegor256.com/2016/07/06/data-transfer-object.html)
 * Yegor Bugayenko: [How an Immutable Object Can Have State and Behavior? (2014)](https://www.yegor256.com/2014/12/09/immutable-object-state-and-behavior.html)
 * Yegor Bugayenko: [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html)
-* Max Stepanov: Object-Oriented UX and Object-Oriented UI (2024)  
+
 **Source Code Samples**
 * Clean Coders: [Clean Code Case Study](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom)
 * Vaughn Vernon: [Code Samples](https://github.com/VaughnVernon/IDDD_Samples)
