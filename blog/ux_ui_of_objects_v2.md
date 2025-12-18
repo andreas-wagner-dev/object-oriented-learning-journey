@@ -69,14 +69,12 @@ Im Gegensatz zum traditionellen, aufgabenorientierten UX-Design, das sich auf di
 * **Kontext:** Verständnis dafür, dass Objekte sich je nach Kontext (Listenansicht vs. Detailansicht) unterschiedlich verhalten, aber dennoch dieselbe Kernidentität beibehalten müssen.  
 * **Modulares Denken:** Gestaltung von Objekten als wiederverwendbare Komponenten. Dieser modulare Ansatz fördert die Konsistenz des Designsystems.
 
-Eine moderne Methodik ist der **ORCA-Prozess** (Objects, Relationships, Capabilities, Attributes), der von Sophia Prater als Standard-Framework für OOUX (Object-Oriented User Experience) entwickelt wurde. Sein Ziel ist es, die Lücke zwischen Software-Architektur und User Interface Design zu schließen.
-
-Der Prozess umfasst vier Phasen und fordert, dass Designer nicht in flüchtigen „Seiten“ (Views), sondern in stabilen „Objekten“ denken. Dabei wird strikt darauf geachtet, dass diese Objekte der mentalen Welt des Nutzers entsprechen (Domain-Modell). Die Methodik orientiert sich an Navigationsmodellen, die auf der logischen Struktur der Daten basieren, anstatt auf willkürlichen Menüstrukturen. Zudem wird konsequent zwischen Kerninhalten (Content) und Metadaten unterschieden
+Um die Lücke zwischen Software-Architektur und UI-Design zu schließen, bietet das OOUX-Framework den **ORCA-Prozess** (Objects, Relationships, Capabilities, Attributes) nach Sophia Prater. Der Prozess umfasst vier Phasen und fordert, dass Designer nicht in flüchtigen "Seiten" (Views), sondern in stabilen „Objekten“ denken. Dabei wird strikt darauf geachtet, dass diese Objekte der mentalen Welt des Nutzers entsprechen (Domain-Modell). Die Methodik orientiert sich an Navigationsmodellen, die auf der logischen Struktur der Daten basieren, anstatt auf willkürlichen Menüstrukturen. Zudem wird konsequent zwischen Kerninhalten (Content) und Metadaten unterschieden
 
 * Phase 1. **Objects** (Objekte)
 Zuerst werden die „Dinge“ identifiziert, die für den Nutzer und das Business real sind (z. B. Buch, Autor, Bestellung).
 * Phase 2. **Relationships** (Beziehungen)
-Hier wird definiert, wie die Objekte zueinander stehen (z. B. „Ein Autor schreibt viele Bücher“).
+Hier wird definiert, wie die Objekte zueinander stehen (z. B. "Ein Autor schreibt viele Bücher").
 * Phase 3. **Capabilities** (Fähigkeiten / Aktionen)
 Was kann man mit den Objekten tun? (z. B. Veröffentlichen, Archivieren, Drucken).
 * Phase 4. **Attributes** (Attribute)
@@ -92,7 +90,7 @@ Der Erfolg von OOUX hängt stark davon ab, wie diese konzeptuellen Objekte visue
 
 * **Texturen und Materialität:** Einbindung von Texturen, die realen Materialien (Papier, Metall) ähneln, um digitale Elemente vertrauter und fühlbarer zu machen.  
 * **Tiefe und Schatten:** Nutzung von realistischen Schatten und Ebenen zur Erzeugung von Hierarchie und räumlichen Beziehungen. Dies lenkt die Aufmerksamkeit des Nutzers und visualisiert Interaktionsmöglichkeiten.  
-* **Neumorphismus:** Ein Design-Trend, der durch die Kombination von Skeuomorphismus und Flat Design UI-Elemente sanft geprägt oder vertieft aus dem Hintergrundmaterial erscheinen lässt. Diese Technik schafft ein subtiles Gefühl von Körperlichkeit, wodurch digitale Schaltflächen den Eindruck erwecken, als könnten sie tatsächlich gedrückt werden.
+* [Neumorphismus](https://en.wikipedia.org/wiki/Neumorphism): Ein Design-Trend, der durch die Kombination von [Skeuomorphismus](https://en.wikipedia.org/wiki/Skeuomorph) und [Flat Design](https://en.wikipedia.org/wiki/Flat_design) UI-Elemente sanft geprägt oder vertieft aus dem Hintergrundmaterial erscheinen lässt. Diese Technik schafft ein subtiles Gefühl von Körperlichkeit, wodurch digitale Schaltflächen den Eindruck erwecken, als könnten sie tatsächlich gedrückt werden.
 
 **Vorteile der Kombination:**
 
