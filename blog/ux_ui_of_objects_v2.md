@@ -1055,7 +1055,7 @@ public class AccountResource {
 * Mihai A. RODEGBFR: [Data Should Be Animated, Not Mapped (2017)](https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html)
 * Yegor Bugayenko: [Data Transfer Object Is a Shame (2016)](https://www.yegor256.com/2016/07/06/data-transfer-object.html)
 * Yegor Bugayenko: [How an Immutable Object Can Have State and Behavior? (2014)](https://www.yegor256.com/2014/12/09/immutable-object-state-and-behavior.html)
-* Yegor Bugayenko: [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html)
+* Yegor Bugayenko: [Printers Instead of Getters (2016)](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html)
 
 **Source Code Samples**
 * Clean Coders: [Clean Code Case Study](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom)
