@@ -1050,7 +1050,7 @@ public class AccountResource {
 * Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)
 * Martin Fowler: [GUI Architecturesl (2006)](https://martinfowler.com/eaaDev/uiArchs.html)
 * Martin Fowler: [Anemic Domain Model (2003)](https://www.martinfowler.com/bliki/AnemicDomainModel.html)
-* Martin Fowler: [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html)
+* Martin Fowler: [Tell, Don’t Ask (2013)](https://martinfowler.com/bliki/TellDontAsk.html)
 * Max Stepanov: [Object-Oriented UX and Object-Oriented UI (2024)](https://outmn.medium.com/object-oriented-ux-and-object-oriented-ui-722b5abcb763)
 * Mihai A. RODEGBFR: [Data Should Be Animated, Not Mapped (2017)](https://amihaiemil.com/2017/09/01/data-should-be-animated-not-represented.html)
 * Yegor Bugayenko: [Data Transfer Object Is a Shame (2016)](https://www.yegor256.com/2016/07/06/data-transfer-object.html)
