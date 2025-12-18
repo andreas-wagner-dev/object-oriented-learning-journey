@@ -318,13 +318,13 @@ class DsPerson implements Person {
 	}
 
     // factory/looup method for persons from database  
-	public static Person of(DataSource ds, String id) throws SQLException  {  
+	public static Person ofId(DataSource ds, String id) throws SQLException  {  
 		try (PreparedStatement stmt = ds.getConnection()  
 				.prepareStatement("SELECT id, name, address FROM person WHERE id = ?;")) {  
 			stmt.setString(1, id);  
 			try (ResultSet rs = stmt.executeQuery()) {  
 				while (rs.next()) {  
-				       return new DsPerson(ds, rs);  
+					return new DsPerson(ds, rs);  
 				}  
 			}  
 		}  
@@ -344,7 +344,7 @@ final class RsPerson implements Person {
 
 	public RsPerson(Person person, String personIdToFind) {  
 		this.person = person;  
-	        this.personIdToFind = personIdToFind;  
+		this.personIdToFind = personIdToFind;  
 	}
 
 	/**  
@@ -352,17 +352,17 @@ final class RsPerson implements Person {
 	 */  
 	public Response toJsonResponse() {  
 		try {   
-                // can not be null, but unknown...    
-                if (person.id().equals(personIdToFind)) {  
-		        return Response.status(Status.OK)  
-					.entity("{\"name\": \"" + person.name()   
-							+ "\", \"address\": \"" + person.address.toString() + "\"}")  
-					.build();  
-                } else {  
-                 	return Response.status(Status.NOT_FOUND)  
-					.entity("{\"message\": \"Person not found.\"}")  
-					.build();  
-               }  
+			// can not be null, but unknown...    
+			if (person.id().equals(personIdToFind)) {  
+			return Response.status(Status.OK)  
+				.entity("{\"name\": \"" + person.name()   
+						+ "\", \"address\": \"" + person.address.toString() + "\"}")  
+				.build();  
+			} else {  
+				return Response.status(Status.NOT_FOUND)  
+				.entity("{\"message\": \"Person not found.\"}")  
+				.build();  
+			}  
 		} catch (SQLException e) {  
 			return Response.status(Status.BAD_REQUEST)  
 					.entity("{\"Error\": \"" + e.getMessage()   
@@ -387,7 +387,7 @@ String personIdFind = // requested from client...
 DataSource ds = null; // Placeholder
 
 // translated result as (JAX-RS) Response  
-return new RsPerson(DsPerson.of(ds, personIdFind), personIdFind).toJsonResponse();
+return new RsPerson(DsPerson.ofId(ds, personIdFind), personIdFind).toJsonResponse();
 ```
 
 Dieser Ansatz ist konsequent objektorientiert: **Das Domänenobjekt spricht direkt zum Client**, während die API-Schicht lediglich die Transport- und Protokollverantwortung trägt. Es kontrolliert vollständig, wie es dargestellt wird – ob auf einem UI-Control oder in einem JSON-Stream. Dadurch wird die Kohäsion maximiert und der "Service"-Layer eliminiert. 
