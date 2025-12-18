@@ -44,10 +44,9 @@ Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, ve
 
 Der Vorschlag, dass Domänenobjekte sich selbst präsentieren sollen, ist kontrovers, aber wesentlich für echte Kohäsion.
 
-* **Contra:** Experten und Anhänger der Clean Architecture (nach Robert C. Martin, "Uncle Bob") weisen oft auf einen Abstraktionsbruch sowie eine technische Kopplung der Domäne an spezifische UI-Bibliotheken (z. B. React oder JavaFX) hin. Dies mindere die Wiederverwendbarkeit der Domänenobjekte. Sie argumentieren, dass ein Domänenobjekt ausschließlich für die Geschäftslogik zuständig sein sollte; UI-Code innerhalb des Objekts verstoße gegen das **Single Responsibility Principle (SRP)**. Eine Klasse sollte demnach nur einen einzigen Grund haben, sich zu ändern: Ändert sich das UI-Layout, darf nicht die Business-Klasse angepasst werden müssen.
-* **Pro:** Befürworter (wie Allen Holub und Robert Bräutigam) argumentieren mit hoher Kohäsion (**High Cohesion**). Das Wissen darüber, wie ein Kunde in einer Liste dargestellt wird (z. B. Name fett, ID kursiv), gehöre zum Kunden-Objekt selbst, da dies Teil seiner Verantwortung sei. Die Darstellung sollte als Teil der Anforderungen und der Ubiquitous Language des Fachbereichs betrachtet werden. Die entscheidende Differenzierung liegt in der Abstraktion: Das Objekt kommuniziert über abstrakte Interfaces statt über konkrete HTML-Tags oder CSS-Klassen. Anstatt Daten per Getter preiszugeben (was Kopplung erzeugt), nutzen sie Interfaces (z. B. Media, InfoPanel, TextInput), um die UI-Abhängigkeit zu abstrahieren. Zudem wird an den traditionellen SRP-Definitionen bemängelt, dass sie aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage bieten: Begriffe wie *Verantwortung*, *Änderungsgrund* oder die Orientierung an *Akteuren* sind zu vage für die praktische Umsetzung und führen oft zu einer unnötigen Zersplitterung des Codes. Robert Bräutigam schlägt stattdessen eine objektive Definition vor: **SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung**.
+* **Contra:** DDD-Experten und Anhänger der Clean Architecture (nach Robert C. Martin, "Uncle Bob") weisen oft auf einen Abstraktionsbruch sowie eine technische Kopplung der Domäne an spezifische UI-Bibliotheken (z. B. React oder JavaFX) hin. Dies mindere die Wiederverwendbarkeit der Domänenobjekte. Sie argumentieren, dass ein Domänenobjekt ausschließlich für die Geschäftslogik zuständig sein sollte; UI-Code innerhalb des Objekts verstoße gegen das **Single Responsibility Principle (SRP)**. Eine Klasse sollte demnach nur einen einzigen Grund haben, sich zu ändern: Ändert sich das UI-Layout, darf nicht die Business-Klasse angepasst werden müssen.
 
-Ein Objekt sollte demnach wie ein reales Subjekt sprechen und seine Daten **animieren**, anstatt sie zu mappen. Es sollte nicht gefragt werden: 'Gib mir deinen Titel, damit ich ihn sehen oder übertragen kann'. Stattdessen sollte man ihm sagen: **Hier ist eine Bühne (z. B. ein View oder Interface), bitte präsentiere dich.** Dies ist die Anwendung des objektorientierten Designprinzips **"Tell, Don't Ask"** in seiner reinsten Form.
+* **Pro:** Befürworter (wie Allen Holub und Robert Bräutigam) argumentieren mit hoher Kohäsion (**High Cohesion**). Das Wissen darüber, wie ein Kunde in einer Liste dargestellt wird (z. B. Name fett, ID kursiv), gehöre zum Kunden-Objekt selbst, da dies Teil seiner Verantwortung sei. Die Darstellung sollte als Teil der Anforderungen und der Ubiquitous Language des Fachbereichs betrachtet werden. Die entscheidende Differenzierung liegt in der Abstraktion: Das Objekt kommuniziert über abstrakte Interfaces statt über konkrete *HTML-Tags* oder *CSS-Klassen*. Anstatt Daten per Getter preiszugeben (was Kopplung erzeugt), nutzen sie Interfaces (z. B. `Media`, `InfoPanel`, `TextInput`), um die UI-Abhängigkeit zu abstrahieren. Zudem wird an den traditionellen SRP-Definitionen bemängelt, dass sie aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage bieten: Begriffe wie *Verantwortung*, *Änderungsgrund* oder die Orientierung an *Akteuren* sind zu vage für die praktische Umsetzung und führen oft zu einer unnötigen Zersplitterung des Codes. Robert Bräutigam schlägt stattdessen eine pragmatische, objektiv messbare Definition vor: **SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung**.
 
 Ein Objekt sollte demnach wie ein reales Subjekt agieren (sprechen) und seine Daten animieren, anstatt sie lediglich zu mappen. Man sollte es nicht fragen: **Gib mir deinen Titel, damit ich ihn anzeigen oder übertragen kann**. Stattdessen sagt man ihm: **Hier ist eine Bühne (z. B. ein UI-Control oder Interface) – bitte präsentiere dich dort.** Dies ist die Anwendung des Designprinzips **Tell, Don’t Ask** in seiner reinsten Form.
 
@@ -59,9 +58,7 @@ Vom mentalen Modell zur visuellen Darstellung
 
 OOUX ist ein Designansatz, der die gleichen Konzepte wie die objektorientierte Programmierung anwendet. Es konzentriert sich auf die Identifizierung und Priorisierung von Objekten – konzeptuellen Entitäten, die reale Elemente, Ideen, Personen, Orte oder Ereignisse abbilden.
 
-**Aufgabenorientiertes vs. Objektorientiertes Design:**
-
-Im Gegensatz zum traditionellen, aufgabenorientierten UX-Design, das sich auf die Abfolge von Aktionen (**Verben**) konzentriert und bei wachsender Aufgabenanzahl zu komplexen, verzweigten Schnittstellen führen kann, stellt OOUX die Objekte (**Nomen**) in den Mittelpunkt. OOUX organisiert die Benutzeroberfläche um Entitäten (z. B. Album, Song), was zu einer effizienteren, entitätszentrierten Struktur führt. Die Aktionen sind dabei logisch an den Objekten selbst angebracht. Diese Ausrichtung auf die mentalen Modelle der Benutzer (z.B. der Gedanke an "E-Mails" oder "Kontakte" anstatt an "Senden" oder Sortieren) schafft intuitive Benutzererlebnisse.
+Im Gegensatz zum traditionellen, aufgabenorientierten UX-Design, das sich auf die Abfolge von Aktionen (**Verben**) konzentriert und bei wachsender Aufgabenanzahl zu komplexen, verzweigten Schnittstellen führen kann, stellt OOUX die Objekte (**Nomen**) in den Mittelpunkt. OOUX organisiert die Benutzeroberfläche um Entitäten (z. B. `Album`, `Song`), was zu einer effizienteren, entitätszentrierten Struktur führt. Die Aktionen sind dabei logisch an den Objekten selbst angebracht. Diese Ausrichtung auf die mentalen Modelle der Benutzer (z.B. der Gedanke an "E-Mails" oder "Kontakte" anstatt an "Senden" oder "Sortieren") schafft intuitive Benutzererlebnisse.
 
 **Prinzipien der OOUX-Implementierung:**
 
@@ -111,7 +108,7 @@ Anstatt Daten in Controller und View zu fragmentieren, werden die Rollen von MVC
 
 Weil Nutzer an Objekte denken, muss der Code dies spiegeln. Wenn aber Getter verbannt werden, wie greift man auf Daten zu?
 
-Die Antwort ist: Gar nicht.
+Die Antwort ist: *Gar nicht*.
 
 Man lässt das Objekt die Arbeit machen und behält die Kontrolle. Das Objekt fungiert als unveränderlicher Animator von veränderlichen Daten. Dabei wird fundamental zwischen **State, Identität und Verhalten** eines Objekts unterschieden:
 
@@ -119,14 +116,14 @@ Man lässt das Objekt die Arbeit machen und behält die Kontrolle. Das Objekt fu
 * **Identität:** Die Identität eines Objekts ist seine unveränderliche Einzigartigkeit (z. B. seine Speicheradresse oder seine eindeutige ID).  
 * **Behavior:** Das ist die lebendige Hülle um die Daten. Es muss **unveränderlich** (immutable) sein, um seine Integrität zu gewährleisten und Race Conditions zu vermeiden.
 
-Ein gutes Objekt mappt die Daten nicht einfach in den Speicher (wie es traditionelle Entities oft tun). Stattdessen agiert es als **Immutable-Proxy**. Es repräsentiert die Identität einer Entität in der Domäne, ohne deren ständig wechselnden Zustand als internes Feld zu speichern.
+Ein gutes Objekt mappt die Daten nicht einfach aus einem Speicher, stattdessen agiert es als **Immutable-Proxy**. Es repräsentiert die Identität einer Entität in der Domäne, ohne deren ständig wechselnden Zustand in internen Feldern zu speichern.
 
-Man stelle sich ein Objekt Person vor.
+Man stelle sich ein Objekt `Person` vor.
 
 * **Traditionell:** Das Objekt lädt beim Start title und address in den Speicher. Wenn sich die externe Datenbasis (DB) ändert, ist das Objekt veraltet (stale) und die Kapselung ist nur scheinbar vorhanden.  
 * **Immutable Proxy:** Das UI Objekt hält nur eine einzige Information: Seine Identität (z. B. die ID 50). Es ist ein Proxy für die echte Datenquelle.
 
-Wenn `person.title()` aufgerufen wird, gibt es nicht einen gespeicherten String zurück, sondern es geht in diesem Moment zur Datenquelle und holt ihn (oder animiert ihn). Das Objekt sagt: **Ich bin nicht der Titel. Ich bin der Repräsentant von Dokument #50 und ich weiß, wo der Titel steht und wie ich ihn formatiere und präsentiere.**
+Wenn `person.title()` aufgerufen wird, gibt es nicht einen gespeicherten String zurück, sondern es geht in diesem Moment zur Datenquelle und holt ihn (oder animiert ihn). Das Objekt sagt: **Ich bin nicht der Titel. Ich bin der Repräsentant von Dokument Nummer: 50 und ich weiß, wo der Titel steht und wie ich ihn formatiere und präsentiere.**
 
 Anstatt prozedural:
 ```java
