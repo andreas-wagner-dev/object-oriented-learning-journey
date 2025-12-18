@@ -32,7 +32,7 @@ Diese Praxis wird primär durch die Dominanz der Mainstream-Literatur und deren 
 
 Diese strikte Trennung der Belange führt zu einer [Fehlinterpretation](https://martinfowler.com/eaaDev/uiArchs.html) des Models innerhalb geschichteter MVC Architekturen und mündet zwangsläufig im [Anemic Domain Model](https://www.martinfowler.com/bliki/AnemicDomainModel.html). Dabei verkommt das Objekt zum reinen Datenträger, der zwar den Zustand hält, aber kaum oder gar kein eigenes Verhalten besitzt.
 
-Durch das Auslagern der gesamte Business-Logik in Service- oder Controller-Klassen wird die Kapselung aufgebrochen; die nötigen Getter und Setter erzeugen dabei eine unerwünschte [**semantische Kopplung**](https://en.wikipedia.org/wiki/Coupling_(computer_programming)) zwischen den Komponenten. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI-Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, ist er semantisch an die Struktur des User-Objekts gekoppelt. Dies ist auch eine direkte Verletzung des [**Law of Demeter**](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/) (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
+Durch das Auslagern der gesamte Business-Logik in Service- oder Controller-Klassen wird die Kapselung aufgebrochen; die nötigen Getter und Setter erzeugen dabei eine unerwünschte [semantische Kopplung](https://en.wikipedia.org/wiki/Coupling_(computer_programming)) zwischen den Komponenten. Diese Kopplungsart liegt vor, wenn eine Klasse Wissen über die interne Struktur einer anderen Klasse benötigt. Wenn beispielsweise ein UI-Controller die folgende Sequenz `user.getAddress().getCity().getZipCode()` aufruft, ist er semantisch an die Struktur des User-Objekts gekoppelt. Dies ist auch eine direkte Verletzung des [Law of Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/) (Gesetz des geringsten Wissens). Ändert sich die interne Struktur des Users (z. B. die Adresse wird durch eine Location-Klasse ersetzt), bricht die gesamte Aufrufkette in der UI, obwohl die eigentliche Domänenlogik intakt bleibt.
 
 Das Kernproblem wurzelt bereits im traditionellen UI-Design, das sich primär auf Aktionen und Abläufe konzentriert – also auf das, was der Nutzer tun möchte (Verben). Eine Musik-Applikation fokussiert sich beispielsweise auf Funktionen wie "Musik abspielen", anstatt die Objekte "Lied" oder "Album" als handelnde Einheiten in den Vordergrund zu stellen. Diese prozedurale Sichtweise führt dazu, dass Software-Strukturen die UI-Abläufe lediglich spiegeln. Selbst moderne Ansätze wie Domain-Driven Design (DDD) und Clean Architecture tappen in der Praxis oft in diese "Aktions-Falle": Anstatt die Autonomie der Domänenobjekte zu stärken, rücken ihre Implementierungsbeispiele oft "Use Cases" oder "Application Services" ins Zentrum. Diese fungieren wie statuslose Hilfs-Klassen, die den Ablauf steuern und das Objekt zum reinen Datenlieferanten degradieren.
 
@@ -1017,7 +1017,6 @@ public class AccountResource {
 ## **6. Quellen**
 
 * Alen Key: [Definition of Object-Oriented-Programming (2003)](www.quora.comWhat-does-Alan-Kay-mean-when-he-said-OOP-to-me-means-only-messaging-local-retention-and-protection-and-hiding-of-state-process-and-extreme-late-binding-of-all-things-It-can-be-done-in-Smalltalk-and-in-LISP)  
-* Max Stepanov: Object-Oriented UX and Object-Oriented UI (2024)  
 * Allen Holub: [More on getters and setters (2004)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)
 * Robert Bräutigam: [Data boundaries are the root cause of maintenance problems (2019)](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/)
 * Robert Bräutigam: [Law of Demeter (2017)](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
@@ -1025,10 +1024,8 @@ public class AccountResource {
 * Robert Bräutigam: [Object-Oriented Domain-Driven Design (2018)](https://speakerdeck.comrobertbraeutigamobject-oriented-domain-driven-design)
 * Martin Fowler [GUI Architecturesl (2006)](https://martinfowler.com/eaaDev/uiArchs.html)
 * Martin Fowler [Anemic Domain Model (2003)](https://www.martinfowler.com/bliki/AnemicDomainModel.html)
-* Andreas Wagner: The Mechanics of Good Object (2025)
-
-
-
+* Yegor Bugayenko: [How an Immutable Object Can Have State and Behavior? (2014)](https://www.yegor256.com/2014/12/09/immutable-object-state-and-behavior.html)
+* Max Stepanov: Object-Oriented UX and Object-Oriented UI (2024)  
 **Source Code Samples**
 * Clean Coders: [Clean Code Case Study](https://github.com/cleancoders/CleanCodeCaseStudy/tree/master/src/cleancoderscom)
 * Vaughn Vernon: [Code Samples](https://github.com/VaughnVernon/IDDD_Samples)
