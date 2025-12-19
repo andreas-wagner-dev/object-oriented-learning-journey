@@ -28,7 +28,7 @@ Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller
 
 * **Verlust der OOP-Prinzipien:** In der reinen objektorientierten Programmierung (OOP) ist der `new`-Operator der Schlüssel zur Kontrolle. Durch das Verstecken der Objekterzeugung durch den Container wird die zentrale Rolle des Konstruktors in der Objekthierarchie geschwächt.
 
-Im folgendem betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
+Im folgenden betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
 
 Ein Team aus drei Personen (Junior-, Mid- und Senior-Entwickler) baut es schrittweise auf und wir beobachten, welche Probleme mit den wachsenden Anforderungen entstehen können.
 
@@ -135,10 +135,9 @@ public class PaymentService {
 ```
 
 
-
 **Problem:** An dieser Stelle ist es bereits unklar, wie die Objekte wirklich zusammenhängen.    
 
-Das Objekt der Klasse `SpringPaymentApp` sowie die Komponente `SpringData` für Zugriffe auf die Datenbank schwebt isoliert "herum" und der DI-Container verwaltet alles im Hintergrund.
+Das Objekt der Klasse `SpringPaymentApp` sowie die Komponente `SpringData` für Zugriffe auf die Datenbank schweben isoliert "herum" und der DI-Container verwaltet alles im Hintergrund.
 
 #### Anforderung 2: (Customer hinzufügen)
 
@@ -372,9 +371,11 @@ public class CustomerService {
 }
 ```
 
-> Der Junior-Entwickler lernte dabei zwar, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet.
+Die Integrationstests verliefen wieder reibungslos. Der Junior-Entwickler war erleichtert, und es blieb ihm noch Zeit für einen Kaffee, um die Lösung gemeinsam mit dem Middle-Entwickler zu besprechen.
 
-Diese „Lösung“ änderte jedoch nichts daran, dass die Architektur weiterhin eine *zyklische Abhängigkeit* aufweist, denn korrekte Behebung erforderte jedoch das Verständnis tieferliegender Architekturprinzipien.
+Der Junior-Entwickler lernte dabei, wie man mit dem Problem umgeht, aber nicht, wie man es richtig behebt oder vermeidet.
+
+Diese ‚Lösung‘ änderte jedoch nichts daran, dass die Architektur weiterhin eine zyklische Abhängigkeit aufwies, denn die korrekte Behebung erforderte ein tieferliegendes Verständnis der Architekturprinzipien.
 
 > Im Rahmen eines Code-Reviews bemerkte jedoch ein Senior-Entwickler die Schwachstelle und lehnte den Pull-Request ab. Der Senior hatte dabei die Modul-Prinzipien (von Robert C. Martin) im Hinterkopf und schlug stattdessen vor, die *zyklische Abhängigkeit* durch eine neue Klasse wie z. B. `CustomerInvoiceService` aufzulösen, welche die Funktionalität von `InvoiceService` und `CustomerRepository` kombiniert.
 
@@ -401,17 +402,13 @@ public class CustomerInvoiceService {
     // ...  
 }
 ```
+Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem Single Responsibility Principle (SRP), da die ursprüngliche Klasse CustomerService zwei Verantwortlichkeiten vereinte: die Verwaltung von Kunden sowie von Rechnungen.
 
-> Der Senior begründete seinen Vorschlag gegenüber dem Team mit dem **Single Responsibility Principle** (SRP). Weil die ursprüngliche Klasse `CustomerService` zwei Verantwortlichkeiten enthielt – Verwalten von *Kunden* sowie *Rechnungen*.
+Er war von der Richtigkeit der Lösung überzeugt und stützte sich dabei auf die Interpretation des SRP nach Robert C. Martin: "Each software module should have one and only one responsibility". Er fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Moduls zwangsläufig zu einem zerbrechlichen Design führten.
 
-> Er war über die Richtigkeit der Lösung basierend auf Interpretation vom SRP (nach Robert C. Martin): 
-*"Each software module should have one and only one responsibility"* überzeugt. Und fügte hinzu, dass mehrere Verantwortlichkeiten innerhalb eines Software-Moduls zu einem zerbrechlichen Design führen. 
+Das Team nahm dies stillschweigend an; schließlich wusste es der Senior besser und hatte zudem die Bücher von Robert C. Martin gelesen. Der Mid-Level-Entwickler lernte daraus, dass auch er diese Bücher lesen müsse, wenn er jemals zum Senior aufsteigen wolle.
 
-> Das Team nahm es stillschweigend an, denn der Senior wusste es ja besser und er hatte ja auch die Bücher von Robert C. Martin gelesen.
-
-> Der Mid-Level-Entwickler lernte nun, dass er auch die Bücher von Robert C. Martin lesen sollte, wenn er zum Senior aufsteigen möchte.
-
-Allerdings löste dies nicht das Problem der schlechten Komposition, da die neue Service-Klasse weiterhin Business- und Repository-Logik vermischte – ein Problem, das durch die erzwungene Layer-Architektur des DI-Containers gefördert wurde. 
+Allerdings entsprach die finale Lösung nicht der oben genannten Definition des SRP, da die neue Service-Klasse weiterhin Business- und Repository-Logik vermischte – ein Problem, das durch die erzwungene Schichtenarchitektur des DI-Containers zusätzlich gefördert wurde.
 
 Der Senior (Autor) steht dieser Interpretation des Single Responsibility Principle (SRP) mittlerweile kritisch gegenüber. Sie führt oft zu künstlich aufgeblähten Service-Klassen, anstatt eine kohärente und sinnvolle Komposition zu fördern. Wie sich diese Erkenntnis über die Jahre entwickelt hat und welche Fallstricke dabei vermieden wurden, ist allerdings eine andere, längere Geschichte, die in einem separaten Artikel ausführlich behandelt wird.
 
