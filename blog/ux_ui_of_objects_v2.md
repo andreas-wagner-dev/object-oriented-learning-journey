@@ -84,7 +84,7 @@ Für die praktische Anwendung des Prozesses ist der Guide von [Rewired](https://
 
 ### **Object-Oriented UI (OOUI)**
 
-Der Erfolg von OOUX hängt stark davon ab, wie diese konzeptuellen Objekte visuell zum Leben erweckt werden. Hier kommt Object-Oriented UI (OOUI) ins Spiel. OOUI nutzt interaktive Objekte, indem es von der realen Welt inspirierte Texturen und Dimensionen hinzufügt. OOUI ist die visuelle und taktile Manifestation des OOUX-Entwurfs.
+Der Erfolg von OOUX hängt stark davon ab, wie diese konzeptuellen Objekte visuell zum Leben erweckt werden. Hier kommt Object-Oriented UI (OOUI) ins Spiel. OOUI nutzt interaktive Objekte, indem es von der realen Welt inspirierte Texturen und Dimensionen hinzufügt. OOUI ist die optische und bedienbare Umsetzung der OOUX-Struktur. Dabei geht es darum, dass Nutzer abstrakte Daten als konkrete "Dinge" (Objekte) wahrnehmen, die sie im Interface "anfassen" können.
 
 **Visuelle Techniken:**
 
@@ -100,7 +100,7 @@ Die Übernahme dieses ganzheitlichen Ansatzes richtet das Design konsequent an d
 
 Vom Design zum Code mit Kapselung der Darstellung
 
-Während klassische OOUI-Begriffe von IBM oder Dave Collins stammen, ist Robert Bräutigam derjenige, der den spezifischen Begriff "UI of Objects" im Kontext moderner Architektur und DDD als Lösung für das "Anemic Domain Model" verwendet.
+Während klassische [OOUI-Begriffe](https://en.wikipedia.org/wiki/Object-oriented_user_interface) von IBM oder Dave Collins stammen, ist Robert Bräutigam derjenige, der den spezifischen Begriff "UI of Objects" im Kontext moderner Architektur und DDD als Lösung für das "Anemic Domain Model" verwendet.
 
 ### **Kernprinzipien von UI of Objects**
 
