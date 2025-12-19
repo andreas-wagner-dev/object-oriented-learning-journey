@@ -28,7 +28,7 @@ Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller
 
 * **Verlust der OOP-Prinzipien:** In der reinen objektorientierten Programmierung (OOP) ist der `new`-Operator der Schlüssel zur Kontrolle. Durch das Verstecken der Objekterzeugung durch den Container wird die zentrale Rolle des Konstruktors in der Objekthierarchie geschwächt.
 
-Betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
+Im folgendem betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
 
 Ein Team aus drei Personen (Junior-, Mid- und Senior-Entwickler) baut es schrittweise auf und wir beobachten, welche Probleme mit den wachsenden Anforderungen entstehen können.
 
