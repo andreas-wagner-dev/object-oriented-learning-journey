@@ -1037,7 +1037,7 @@ As core abstractions from the business requirements, the entities **Folder, Task
 The true ***"Pro..."*** is characterized by the fact that they:
 
 * **Always reflect the domain:** They exclusively use the language of the domain in the package structure to create a navigation aid that directly follows the business logic (Rule 3).  
-* **Know the OOPD principles and measurement procedures:** They use the component principles (REP, CCP, CRP, ADP, SDP, SAP) and **metrics (A, I, and D) for quantifying code quality** and identifying problem cases in the architecture.  
+* **Know the OOPD principles and measurement procedures:** They use the component principles (REP, CCP, CRP, ADP, SDP, SAP) and metrics (A, I, and D) for quantifying code quality and identifying problem cases in the architecture.  
 * **Act pragmatically according to rules, measure, and adjust if necessary:** They apply the three golden rules (no dependency on sub-packages, progressive detailing, domain-specific names) as pragmatic guidelines to prevent cycles (Rule 1) and ensure a progressive story (Rule 2).
 
 > Code structure is an architectural decision that lays the foundation for the long-term success of your project.
