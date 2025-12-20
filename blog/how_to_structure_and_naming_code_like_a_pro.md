@@ -55,12 +55,12 @@ service/
     └── UserDTO (data only)
             ↓
 domain/
-    ├── UserEntity (data only)
-    │       ↓
-    └── UserDbModel (data only)
+    └──  UserDomain (data only)
             ↓
 repository/
-    └── UserRepository (no logic)
+    ├── UserRepository (no logic)
+    │       ↓
+    └── UserDbModel (data only)
 ```
 
 **Problem:** 
