@@ -195,7 +195,7 @@ According to best practices (see [Amihai Emil](https://amihaiemil.com/2018/01/07
 * `AwsInvoice` or `AzureInvoice` (indicates environment)
 * `HttpRequest` or `FtpRequest` (indicates protocol)
 
-This approach improves clarity without resorting the architecture with ***suffixes*** like -`Manager` or -`Service`.
+This approach improves clarity without reporting the architecture with ***suffixes*** like -`Service`, -`Repository`, -`Controller`, -`Usecase`, -`Manager`, -`Entity`, -`DTO` or -`Model`.
 
 ### **3.2 Methods Naming**
 
@@ -350,7 +350,7 @@ com.example.todo/
   * A = 1 / 5 = 0.2  
 * **Instability (I):**  
   * The package task does not depend on any other package → $C_e$ = 0  
-  * 4 other packages use task (e.g., main, folder, exchange, user) → $C_a$ = 4  
+  * 4 other packages use task (e.g., `main`, `folder`, `exchange`, `user`) → $C_a$ = 4  
   * I = 0 / (4 + 0) = 0 / 4 = 0  
 * **Main Sequence:**  
   A + I = 0.2 + 0 = 0.2  
@@ -420,7 +420,7 @@ Use the language of the domain, not that of the framework or an architectural pa
 | `service/`, `usecase/`, `consumer/`, `producer/`, `job/` | `billing/`, `payment/`, `audit/`, `alert/`, ``task/``, `notification/`|
 | `entity/`, `model/`, `value/`, `db/`, `aggregate/`, `repository/` | `bill/`, `order/`, `car/`, `customer/`, ``account/``, `store/`, `storage/`, `base/` |
 | `common/`, `util/`, `client/`, `client.http/`, `lib/`, `logger/`, `security/` | `tax/`, `rule/`, `unit/`, `unit.iso/`, `jira/`, `jira.http/`, `log/`, `text/`, `text.regex/`, `some-concept-need-security.sha2/` |
-| `config/`, `properties/`, `injections/` | name of main concept compostition: `com.company.todolist.todo/` or more abstract: `com.company.todo.app/`, `game/` or technical: `boot``, `startup/`, `setup/`, `main/`, `launch/``|
+| `config/`, `properties/`, `injections/` | name of main concept compostition: `com.company.todolist.todo/` or more abstract: `com.company.todo.app/`, `game/` or technical: `boot`, `startup/`, `setup/`, `main/`, `launch/`|
 
 
 **Advantage:**
