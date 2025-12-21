@@ -21,12 +21,12 @@
 
 In this context, a **package** should not be understood as a folder for grouping related classes, as is often the case in a *[Layered Architecture](https://javadevguy.wordpress.com/2019/01/06/reevaluating-the-layered-architecture/)*. Instead, it represents a **logical, modular unit** that **encapsulates the technical realization** of domain concepts.
 
-The **demarcation** of Object-Oriented Package Design from **"Layered Architecture"** is the **crucial point**. Well-known representatives like Clean Architecture or the package structures often proposed in Domain-Driven Design (DDD) organize code according to technical layers (```domain```, ```application```, ```infrastructure```, ```presentation```). Although these approaches are intended to promote maintainability and further development through the **separation of concerns into package layers**, in practice, they often achieve the opposite and **contradict the Single Responsibility Principle (SRP)**.
+The **demarcation** of Object-Oriented Package Design from **"Layered Architecture"** is the **crucial point**. Well-known representatives like Clean Architecture or the package structures often proposed in Domain-Driven Design (DDD) organize code according to technical layers (`domain`, `application`, `infrastructure`, `presentation`). Although these approaches are intended to promote maintainability and further development through the **separation of concerns into package layers**, in practice, they often achieve the opposite and **contradict the Single Responsibility Principle (SRP)**.
 
 Robert Bräutigam describes the core problems in his blog article *[Data Boundaries are the root cause of Maintenance Problems](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/)*. Let's identify and understand the underlying problems.
 
 **Data-Oriented Abstractions through Data Boundaries:**  
-The constant transfer of data across layer boundaries (```User``` -> ```UserDTO``` -> ```UserViewModel```) creates unnecessary code and causes the original, domain-specific abstraction to disintegrate. Each layer must transform the data for its own purpose, leading to rigid and maintenance-intensive systems.
+The constant transfer of data across layer boundaries (`User` -> `UserDTO` -> `UserViewModel`) creates unnecessary code and causes the original, domain-specific abstraction to disintegrate. Each layer must transform the data for its own purpose, leading to rigid and maintenance-intensive systems.
 
 **Technical Communication via Architecture:**  
 A layered architecture describes technical dependencies, not domain-specific ones. A new developer must first understand the entire architecture before they can dive into the business logic. 
@@ -68,7 +68,7 @@ repository/
 - Compound names of objects with **suffixes** describe the architecture patterns  
 - Many transformations between packages
 - Logic scattered in Service layer
-- Technical package names (```controller```, ```service```, ```domain```, ```repository```)
+- Technical package names (`controller`, `service`, `domain`, `repository`)
 
 **OOP without DTOs**
 
@@ -82,10 +82,10 @@ user/
 
 **Advantage:**
 - One object, one responsibility
-- One Concept, one Name (```User.java```)
+- One Concept, one Name (`User.java`)
 - No transformations needed
-- Logic where it belongs, within the object's implementation, identified by a prefix (like ```DbUser.java```).
-- Domain-oriented package names (```user```)
+- Logic where it belongs, within the object's implementation, identified by a prefix (like `DbUser.java`).
+- Domain-oriented package names (`user`)
 
 This is why and how Robert Bräutigam defines the **SRP** more pragmatically and objectively through the principles of **Coupling** and **Cohesion**:
 
@@ -108,18 +108,18 @@ Software is structured into independent, clearly defined modules (packages). Eac
 Each module (package) hide its implementation details and provides only a clearly defined interface to the outside.  
 
 **Encapsulation:**  
-A module (package) should hide the implementation details (e.g., ```database access```, ```external API calls```, or ```complex algorithms```) from the outside world. The classes within the module work together to fulfill a single, abstract business logic (```Business Concept```).
+A module (package) should hide the implementation details (e.g., `database access`, `external API calls`, or `complex algorithms`) from the outside world. The classes within the module work together to fulfill a single, abstract business logic (`Business Concept`).
 
 **Focus on Business Concepts:**  
 Ideally, the **package** as a module represents an **abstract business concept**, such as:
 
-* Order management (```Order```)  
-* Customer master data (```Customer```, ```Customerbase```)  
-* Payment processing (```Bill```, ```Billing``` , ```Payment```)  
-* External API integration (```Jira```, ```Http```)
+* Order management (`Order`)  
+* Customer master data (`Customers`, `Customerbase`)  
+* Payment processing (`Bill`, `Billing` , `Payment`)  
+* External API integration (`Jira`, `Http`)
 
 and **not a technical view** , such as:
-* ```Entity```, ```Model```, ```Service```, ```Repository```, ```Controller```, ```JiraClient```, ```JiraModel```, ```JiraAdapter```  
+* `Entity`, `Model`, `Service`, `Repository`, `Controller`, `JiraClient`, `JiraModel`, `JiraAdapter`  
 
 as well as **not technical layers** , such as:
 * ```Domain```, ```Application```, ```Infrastructure```, ```Presentation```
@@ -154,7 +154,7 @@ These principles govern the relationships between packages in a large project.
 
 | Principle | Summary | Goal |
 | :---- | :---- | :---- |
-| **Acyclic Dependencies Principle (ADP)** | The dependency structure of the packages must be a Directed ```Acyclic Graph (DAG)```. | ```Cycles (circular dependencies)``` between packages are forbidden! They make releases difficult and lead to the ["Morning-After-Syndrome"](https://stackoverflow.com/questions/45783173/acyclic-dependency-principle-how-could-component-dependency-cycles-be-reason-f). |
+| **Acyclic Dependencies Principle (ADP)** | The dependency structure of the packages must be a Directed `Acyclic Graph (DAG)`. | `Cycles (circular dependencies)` between packages are forbidden! They make releases difficult and lead to the ["Morning-After-Syndrome"](https://stackoverflow.com/questions/45783173/acyclic-dependency-principle-how-could-component-dependency-cycles-be-reason-f). |
 | **Stable Dependencies Principle (SDP)** | Dependencies should point in the direction of **stability**. | A package should only depend on packages that are more stable than itself. Stable packages are hard to change and have many incoming dependencies. |
 | **Stable Abstractions Principle (SAP)** | Stable packages should be **abstract**. Unstable packages should be **concrete**. | Stable (hard to change) packages should be easily extensible through interfaces and abstract classes (**Open-Closed Principle** at the package level). |
 
@@ -178,11 +178,11 @@ A domain-driven object should have a single, clear noun. If the name becomes lon
 * **Examples of corrections:** `UserAccountManager` → `User` or `Account`, `DatabaseConnectionHolder` → `Connection`.
 
 **Avoid Functional Endings:** 
-* **Name Endings:** `FileWriter → File`, `DataValidator → Rule` , `JiraClient → Jira` or just `Http` instead of `HttpClient`.
+* **Name Endings:** `FileWriter` → `File`, `DataValidator` → `Rule` , `JiraClient` → `Jira` or just `Http` instead of `HttpClient`.
 
-**Avoid “Utility” Suffixes:**:
-* **Suffixes like** `-Manager`, `-Controller``, `-Helper`, `-Util`, `-Service`, or `-Client` often indicate a violation of the **Single Responsibility Principle** (SRP). They suggest that the object coordinates multiple unrelated tasks instead of owning a clear, domain-focused responsibility.
-* Also **Suffixes** such as `-e`, `-or`, `-able` often signal procedural decomposition or *“naked data”*.
+**Avoid Utility Suffixes:**:
+* **Suffixes like** `-Manager`, `-Controller`, `-Helper`, `-Util`, `-Service`, or `-Client` often indicate a violation of the **Single Responsibility Principle** (SRP). They suggest that the object coordinates multiple unrelated tasks instead of owning a clear, domain-focused responsibility.
+* Also **Suffixes** such as `-e`, `-or`, `-able` often signal procedural decomposition or *"naked data"*.
 
 **Prefixed Maming**  
 According to best practices (see [Amihai Emil](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html) and [Yegor Bugayenko](https://www.yegor256.com/2020/03/03/prefixed-naming.html)), classes should start with a *prefix* that reflects their role or context, especially when multiple implementations exist.
@@ -195,7 +195,7 @@ According to best practices (see [Amihai Emil](https://amihaiemil.com/2018/01/07
 * `AwsInvoice` or `AzureInvoice` (indicates environment)
 * `HttpRequest` or `FtpRequest` (indicates protocol)
 
-This approach improves clarity without resorting to ***suffixes*** like -`Manager` or -`Service`.
+This approach improves clarity without resorting the architecture with ***suffixes*** like -`Manager` or -`Service`.
 
 ### **3.2 Methods Naming**
 
@@ -211,8 +211,8 @@ Methods that change state or produce a modified object should be named as comman
 
 #### **3.2.3 Query Naming (Accessors)**  
 Methods without side effects should be named as queries, clearly expressing their nature.
-*  **Avoid:** Using **get** or **set** as a prefix, e.g., ```getFirstName()``` or```setFirstName(String firstName)```.  
-*  **Compliant:** ```firstName()```, ```isCompleted()```, ```hasPermissions()```, ```toXml()```.
+*  **Avoid:** Using **get** or **set** as a prefix, e.g., `getFirstName()` or `setFirstName(String firstName)`.  
+*  **Compliant:** `firstName()`, `isCompleted()`, `hasPermissions()`, `toXml()`.
 
 #### **3.2.4 Method Chaining (Access to Objects)**  
 Methods returning domain objects (`value objects`, `entities`, `collections`) should be named after the returned object. This supports encapsulation and Fluent APIs according to the [Law-of-Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/).
@@ -326,7 +326,7 @@ The following diagram summarizes the interpretation from above.
 ### **Example Calculation:**
 
 **Assumption**  
-In the package todo, there is 1 Interface (```Task.java```). In the subpackage task, there are 4 concrete classes:
+In the package todo, there is 1 Interface (`Task.java`). In the subpackage task, there are 4 concrete classes:
 
 ```
 com.example.todo/  
@@ -371,25 +371,25 @@ To truly structure *packages and code* like a pro, we must stop writing code tha
 | :---- | :---- | :---- |
 | **Level 0: Works** | Procedural | Code compiles and fulfills the task. Long, procedural methods, deep nesting, logical errors. **Consequence:** The reader must mentally simulate the entire technical process. |
 | **Level 1: Appearance** | Syntax (Clean Code) | Short methods, meaningful names, consistent formatting. The scene is well-lit. **Problem:** The code is *readable*, but *information-poor*. Knowledge is "distributed" in the code, which destroys maintainability (e.g., empty PetType class). |
-| **Level 2: Localized** | Context & Patterns | The dialogue is in context. Classes summarize the entire context for a piece of code. **Technique:** Shift the context from the outside into the class (e.g., Vets.toApiFormat()). Methods can become private. |
+| **Level 2: Localized** | Context & Patterns | The dialogue is in context. Classes summarize the entire context for a piece of code. **Technique:** Shift the context from the outside into the class (e.g., `vets.toApiFormat()`). Methods can become private. |
 | **Level 3: Requirement-Relevant** | Domain & Intent | Classes tell something about the application's requirements, not just about implementation details like frameworks (DTO, Service, Controller). **Goal:** Objects are tightly tailored to the application's needs to maximize information density. |
 | **Level 4: Organized** | Hierarchy & Flow | Information is presented **progressively**. The top-level packages contain the most important domain concepts, subpackages contain more details. **Result:** The reader can gradually gain an overview and finds features along the domain concepts. |
 
-The transition from **Level 3** (Requirement-Relevant) to **Level 4** (Organized) requires a conscious break from the habit of **technical grouping** (e.g.,``` model/```, ```service/```, ```web/```). The professional instead follows a clear navigation path that helps the reader localize changes efficiently.
+The transition from **Level 3** (Requirement-Relevant) to **Level 4** (Organized) requires a conscious break from the habit of **technical grouping** (e.g., `model/`, `service/`, `repository/`, `usecase/`, `ui/`, `web/`). The professional instead follows a clear navigation path that helps the reader localize changes efficiently.
 
 **Starting Point of the Story (The Beginning!):**
 
-* The **Root-Package** must **contain** the most important, most **abstract concepts** (e.g., ```Interfaces/Abstract``` Classes).  
-* **Subpackages** are always created **based on abstractions** in the **next higher package** (e.g., ```User.java``` -> ```user/```).
+* The **Root-Package** must **contain** the most important, most **abstract concepts** (e.g., `Interfaces/Abstract` Classes).  
+* **Subpackages** are always created **based on abstractions** in the **next higher package** (e.g., `User.java` -> `user/`).
 
 **Technical Grouping (Avoid!):**
 
-* **Example:** ```model/```, ```repository/```, ```service/```, ```web/```.  
+* **Example:** `model/`, `repository/`, `service/`, `web/`.  
 * **Problem:** The developer must know the entire architecture (e.g., "Layered Architecture") to know where to apply a change. Knowledge is **distributed**.
 
 **Domain Packaging (The Goal!):**
 
-* **Example (Better):** ```pet/```, ```owner/```, ```visit/```.  
+* **Example (Better):** `pet/`, `owner/`, `visit/`.  
 * **Advantage:** One directly selects the **domain context** of the change and then proceeds to the details. Knowledge is **localized**.
 
 ## **6 Three Pragmatic Packaging Rules**
@@ -407,7 +407,7 @@ This is the most important rule to ensure the Directed Acyclic Graph (DAG) and s
 
 The entire logical feature set of the application must already be recognizable in the parent package, usually in the form of interfaces or abstract classes.
 
-* **Sub-packages** only serve to provide **more details** (```implementations```, ```specializations```) of the concepts defined in the parent package.  
+* **Sub-packages** only serve to provide **more details** (`implementations`, `specializations`) of the concepts defined in the parent package.  
 * **Consequence:** The reader does not have to dive into all sub-packages to ensure they haven't missed an important feature. They can progressively and safely work through the hierarchy.
 
 **Rule 3: Packages should reflect business concepts, not technical concepts. (Do not use technical grouping!)**
@@ -416,11 +416,11 @@ Use the language of the domain, not that of the framework or an architectural pa
 
 | Technical (Bad) | Domain (Better) |
 | :---- | :---- |
-| ``controller/``,  ``adapter/``,  ``web/``,  ``ui/``,  ``api/`` | ``checkout/``, ``expose/``, ``exchange/``, ``human/``, ``page/``, ``site/``, ``display/``, ``control/`` |
-| ``service/``, ``usecase/``, ``consumer/``, ``producer/``, ``job/`` | ``billing/``, ``payment/``, ``audit/``, ``alert/``, ``task/``, ``notification/``|
-| ``entity/``, ``model/``, ``value/``, ``db/``, ``aggregate/``, ``repository/`` | ``bill/``, ``order/``, ``car/``, ``customer/``, ``account/``, ``store/``, ``storage/``, ``base/`` |
-| ``common/``, ``util/``, ``client/``, ``client.http/``, ``lib/``, ``logger/``, ``security/`` | ``tax/``, ``rule/``, ``unit/``, ``unit.iso/``, ``jira/``, ``jira.http/``,   ``log/``, ``text/``, ``text.regex/``,  ``some-concept-need-security.sha2/`` |
-| ``config/``, ``properties/``, ``injections/`` | name of main concept compostition: ``com.company.todolist.todo/`` or more abstract: ``com.company.todo.app/``, ``game/`` or technical: ``boot``, ``startup/``, ``setup/``, ``main/``, ``launch/``|
+| `controller/`,  `adapter/`,  `web/`,  `ui/`,  `api/` | `checkout/`, `expose/`, `exchange/`, `human/`, `page/`, `site/`, `display/`, `control/` |
+| `service/`, `usecase/`, `consumer/`, `producer/`, `job/` | `billing/`, `payment/`, `audit/`, `alert/`, ``task/``, `notification/`|
+| `entity/`, `model/`, `value/`, `db/`, `aggregate/`, `repository/` | `bill/`, `order/`, `car/`, `customer/`, ``account/``, `store/`, `storage/`, `base/` |
+| `common/`, `util/`, `client/`, `client.http/`, `lib/`, `logger/`, `security/` | `tax/`, `rule/`, `unit/`, `unit.iso/`, `jira/`, `jira.http/`, `log/`, `text/`, `text.regex/`, `some-concept-need-security.sha2/` |
+| `config/`, `properties/`, `injections/` | name of main concept compostition: `com.company.todolist.todo/` or more abstract: `com.company.todo.app/`, `game/` or technical: `boot``, `startup/`, `setup/`, `main/`, `launch/``|
 
 
 **Advantage:**
@@ -474,9 +474,9 @@ However, before the first lines of code are written, it is necessary to precisel
 ### **7.2. Implementation of the Core Logic**
 
 The heart of every application is the Root Package (com.example.todo), which serves as the stable, domain-specific API of the entire application.  
-Technical aspects such as: initialization ```init/```, configuration ```config/```, persistence ```db/```, human ```ui/``` and machine interfaces ```api/```, are implementation details and are hidden according to the motto:
+Technical aspects such as: initialization `init/`, configuration `config/`, persistence `db/`, human interfaces `ui/` and machine interfaces `api/`, are implementation details and are hidden according to the motto:
 
-> * “Model the problem, not the technology! …hide implementation details, like the fact that you are using MVC.”
+> * "Model the problem, not the technology! …hide implementation details, like the fact that you are using MVC."
 
 Thus, **details are not mapped as separate packages**, but are hidden as concrete implementation within the domain packages, following the package structure of Variant 1
 
@@ -497,7 +497,7 @@ com.example.todo/
 └── User.java
 ```
 
-**Result** for the reader: The reader now knows that the app manages (```Task```(s) in ```Folder```(s) for ```User```(s).")
+**Result** for the reader: The reader now knows that the app manages (`Task`(s) in `Folder`(s) for `User`(s).")
 
 **Layer 1: Subpackages**
 
@@ -525,7 +525,7 @@ com.example.todo/
 ├── Task.java
 ```
 
-**Result for the reader:** The reader now knows that "```Task.java``` has ```InMemory...```, ```DB...```, and ```Json...``` variants of implementation as decoration."
+**Result for the reader:** The reader now knows that "`Task.java` has `InMemory...`, `DB...`, and `Json...` variants of implementation as decoration."
 
 **Layer 2: Class Details**
 
@@ -548,12 +548,12 @@ public final class DbTask implements Task {
 }
 ```
 
-**Result for the reader:** The reader now knows that ("```DbTask.java``` speaks directly with SQL.")
+**Result for the reader:** The reader now knows that ("`DbTask.java` speaks directly with SQL.")
 
-* ```app/``` - Entry point, initialization, and configuration of the entire application.
-* ```folder/``` - Database, user interfaces, and exchange via Http.  
-* ```task/``` - Database, user interfaces, and exchange via Http.  
-* ```user/``` - Database, user interfaces, exchange via Http, email sending, and authorization.  
+* `app/` - Entry point, initialization, and configuration of the entire application.
+* `folder/` - Database, user interfaces, and exchange via Http.  
+* `task/` - Database, user interfaces, and exchange via Http.  
+* `user/` - Database, user interfaces, exchange via Http, email sending, and authorization.  
 
 ```mermaid
 graph TB
@@ -610,11 +610,11 @@ com.example.todo/
 └── User.java
 ```
 
-* ```folder/```, ```task/```, ```user/``` - concrete realizations, e.g., for communication with the **real** database.  
-* ```alert/``` - automatic notification upon certain events.  
-* ```human/``` - user interfaces with graphical controls.  
-* ```exchange/``` - exchange via Http.  
-* ```main/``` - entry point for initialization and configuration of the entire application.
+* `folder/`, `task/`, `user/` - concrete realizations, e.g., for communication with the **real** database.  
+* `alert/` - automatic notification upon certain events.  
+* `human/` - user interfaces with graphical controls.  
+* `exchange/` - exchange via Http.  
+* `main/` - entry point for initialization and configuration of the entire application.
 
 ```mermaid
 graph TB    
@@ -683,11 +683,11 @@ com.example.todo/
 └── User.java
 ```
 
-* ```folder/``` - Database, user interfaces, and exchange via Http.  
-* ```task/``` - Database, user interfaces, and exchange via Http.  
-* ```person/``` - Database, user interfaces, exchange via Http.  
-* ```user/``` - User interfaces, exchange via Http, email sending, and authorization.  
-* ```main/``` - Entry point for initialization and configuration of the entire application.
+* `folder/` - Database, user interfaces, and exchange via Http.  
+* `task/` - Database, user interfaces, and exchange via Http.  
+* `person/` - Database, user interfaces, exchange via Http.  
+* `user/` - User interfaces, exchange via Http, email sending, and authorization.  
+* `main/` - Entry point for initialization and configuration of the entire application.
 
 ```mermaid
 graph TB    
@@ -746,11 +746,11 @@ com.example.todos/
 └── User.java
 ```
 
-* ```storage/``` - all realizations for communication with the real database  
-* ```email/``` - all helper classes for communication with email server  
-* ```browser/``` - all user interfaces with graphical controls.  
-* ```expose/``` - exchange of all resources via Http  
-* ```setup/``` - entry point for initialization and configuration of the entire application.
+* `storage/` - all realizations for communication with the real database  
+* `email/` - all helper classes for communication with email server  
+* `browser/` - all user interfaces with graphical controls.  
+* `expose/` - exchange of all resources via Http  
+* `setup/` - entry point for initialization and configuration of the entire application.
 
 ```mermaid
 graph TB
@@ -929,7 +929,7 @@ graph TB
 
 ## **8 Full-Stack Example**
 
-The final example (full-stack application) demonstrates how the root package (```com.example.todo/```) serves as a stable API and all **implementation details** are **encapsulated** in the **domain-oriented** subpackages. The **goal** is to create **loosely coupled, maintainable**, and above all, **domain-clear structures** through composition and encapsulation.
+The final example (full-stack application) demonstrates how the root package (`com.example.todo/`) serves as a stable API and all **implementation details** are **encapsulated** in the **domain-oriented** subpackages. The **goal** is to create **loosely coupled, maintainable**, and above all, **domain-clear structures** through composition and encapsulation.
 
 ```
 com.example.todo/  
@@ -1003,34 +1003,34 @@ As core abstractions from the business requirements, the entities **Folder, Task
 
 ### **8.1. Initialization, Dependency Injection, and Configuration (app/)**
 
-* **Domain Justification:** The ```App.java``` is the highest abstraction of the application. Initialization, configuration, and building the object graph **(DI)** are implementation details of the App abstraction and therefore belong in the subpackage ```app/```.  
-* **Package Name:** ```app/```. This name is domain-abstract and describes the core of the application.  
-* **Content:** The package contains the concrete implementations of the ```App.java``` interface, such as ```TodoApp.java```, ```ConsoleApp.java```, or ```WebApp.java```.  
+* **Domain Justification:** The `App.java` is the highest abstraction of the application. Initialization, configuration, and building the object graph **(DI)** are implementation details of the App abstraction and therefore belong in the subpackage `app/`.  
+* **Package Name:** `app/`. This name is domain-abstract and describes the core of the application.  
+* **Content:** The package contains the concrete implementations of the `App.java` interface, such as `TodoApp.java`, `ConsoleApp.java`, or `WebApp.java`.  
 * **DI Container:** External DI containers are avoided to keep the construction of the object graph transparent and traceable. Dependency injection and configuration occur in a single place in the App.java implementations.
 
 ### **8.2. User Interface and its Subpackages (user/)**
 
-* **Domain Justification:** The user interface **(UI)** is a central business concept from the end-user perspective **("How do I interact with my tasks?")**. The abstractions ```User.java```, ```Page.java```, and ```Control.java``` define the interface of the UI, while the subpackage ```user/``` encapsulates its implementation details.  
-* **Package Name:** ```user/```. The package is dedicated to the domain concept **"User"** and implements its **UI** interaction.  
-* **Content:** The subpackage contains the implementation of ```WebUser.java```. It also includes internal, UI-specific subpackages such as ```control/``` (reusable UI controls) and ```page/``` (complete page views), which completely encapsulate the technical details of the chosen UI technology (e.g., HTML/CSS/JS, frameworks).
+* **Domain Justification:** The user interface **(UI)** is a central business concept from the end-user perspective **("How do I interact with my tasks?")**. The abstractions `User.java`, `Page.java`, and `Control.java` define the interface of the UI, while the subpackage `user/` encapsulates its implementation details.  
+* **Package Name:** `user/`. The package is dedicated to the domain concept **"User"** and implements its **UI** interaction.  
+* **Content:** The subpackage contains the implementation of ```WebUser.java```. It also includes internal, UI-specific subpackages such as `control/` (reusable UI controls) and `page/` (complete page views), which completely encapsulate the technical details of the chosen UI technology (e.g., HTML/CSS/JS, frameworks).
 
 ### **8.3. Database Persistence (Decorator Pattern)**
 
-* **Domain Justification:** Persistence is an internal detail for the realization of domain concepts (```Folder```, ```Task```, ```Person```). Instead of a technical ```db/``` package, the **Decorator design pattern** is used to extend objects with persistence behavior. The ```Db.java``` interface in the root package abstracts database access.  
-* **Packaging:** The persistence logic is directly integrated into the domain packages (```folder/```, ```task/```, ```person/```, ```user/```).  
-* **Example:** ```DbFolder.java``` **(Decorator):** A class that implements the ```Folder``` interface and decorates another ```Folder``` object to make it persistent. It injects the Db abstraction. The details of the database implementation (JDBC, ORM) are encapsulated within this class.
+* **Domain Justification:** Persistence is an internal detail for the realization of domain concepts (`Folder`, `Task`, `Person`). Instead of a technical `db/` package, the **Decorator design pattern** is used to extend objects with persistence behavior. The `Db.java` interface in the root package abstracts database access.  
+* **Packaging:** The persistence logic is directly integrated into the domain packages (`folder/`, `task/`, `person/`, `user/`).  
+* **Example:** `DbFolder.java` **(Decorator):** A class that implements the `Folder` interface and decorates another `Folde`` object to make it persistent. It injects the Db abstraction. The details of the database implementation (JDBC, ORM) are encapsulated within this class.
 
 ### **8.4. API Interface and its Subpackages (exchange/)**
 
-* **Domain Justification:** The API is the domain concept of information exchange with external systems. It is abstracted by the ```Resource.java``` interface in the root package. The subpackage ```resource/``` realizes this interface and summarizes all technical details of the API provision (e.g., JAX-RS, SOAP).  
-* **Package Name:** ```exchange/```. This name is domain-specific and describes the information exchange between external applications.  
-* **Content:** It contains implementations of Resource.java (e.g., TodoResource.java for JAX-RS), Message.java, and Service.java, as well as technical subpackages like ```envelop/``` and ```media/``` for encapsulating I/O objects and formats (e.g., HATEOAS).
+* **Domain Justification:** The API is the domain concept of information exchange with external systems. It is abstracted by the ```Resource.java``` interface in the root package. The subpackage `resource/` realizes this interface and summarizes all technical details of the API provision (e.g., JAX-RS, SOAP).  
+* **Package Name:** `exchange/`. This name is domain-specific and describes the information exchange between external applications.  
+* **Content:** It contains implementations of Resource.java (e.g., `TodoResource.java` for JAX-RS), `Message.java`, and `Service.java`, as well as technical subpackages like `envelop/` and `media/` for encapsulating I/O objects and formats (e.g., HATEOAS).
 
 ### **8.5. Utility Classes - Avoidance of (util/)**
 
 * **Domain Justification:** In a strictly object-oriented world, static utility classes do not exist. Logic should always be encapsulated in an object and reused via composition or the Decorator pattern.  
-* **Avoidance of util/ packages:** Packages like ```util/``` or ```helper/``` are too technical and **violate Rule 3**.  
-* **Solution:** Package-private helper classes within the domain packages or independent objects (e.g., ```JsonPerson.java``` with its own JSON logic) that are included via composition. This promotes adherence to SRP and testability.
+* **Avoidance of util/ packages:** Packages like `util/` or `helper/` are too technical and **violate Rule 3**.  
+* **Solution:** Package-private helper classes within the domain packages or independent objects (e.g., `JsonPerson.java` with its own JSON logic) that are included via composition. This promotes adherence to SRP and testability.
 
 ## **9 Conclusion: The "Pro..." as an Architect**
 
