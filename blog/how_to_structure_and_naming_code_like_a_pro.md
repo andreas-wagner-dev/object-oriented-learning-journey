@@ -188,12 +188,12 @@ A domain-driven object should have a single, clear noun. If the name becomes lon
 According to best practices (see [Amihai Emil](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html) and [Yegor Bugayenko](https://www.yegor256.com/2020/03/03/prefixed-naming.html)), classes should start with a *prefix* that reflects their role or context, especially when multiple implementations exist.
 
 **Samples for good prefixes of names:**
-* `ValidInvoice` vs. `ValidetedInvoice` (indicates vertical Bussines Concept)
-* `CalcedBill` vs. `CalculatedBill` (indicates horizonzal Bussines Concept)
-* `SyncdUser` vs. `SynchronizedUser` (indicates vertical technical Aspect)
-* `DbPerson` vs. `StoredPerson` (indicates horizonzal technical Aspect)
-* `AwsInvoice` vs. `AzureInvoice` (indicates environment)
-* `HttpRequest` vs. `FtpRequest` (indicates protocol)
+* `ValidInvoice` or `ValidetedInvoice` (indicates vertical Bussines Concept)
+* `CalcedBill` or `CalculatedBill` (indicates horizonzal Bussines Concept)
+* `SyncdUser` or `SynchronizedUser` (indicates vertical technical Aspect)
+* `DbPerson` or `StoredPerson` (indicates horizonzal technical Aspect)
+* `AwsInvoice` or `AzureInvoice` (indicates environment)
+* `HttpRequest` or `FtpRequest` (indicates protocol)
 
 This approach improves clarity without resorting to ***suffixes*** like -`Manager` or -`Service`.
 
