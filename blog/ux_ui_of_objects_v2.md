@@ -442,6 +442,10 @@ Im OOUX-Framework (Object-Oriented User Experience) steht die Identifizierung de
 
 Hier ist das mentale Modell eines Benutzers für ein Login-Beispiel nach der OOUX-Methodik (ORCA-Prozess):
 
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ux_user_mental_model.png) 
+
+
 #### **4.1.1 Die Kern-Objekte (Objects)**
 
 Der Benutzer denkt beim Login nicht an "Code", sondern an digitale Repräsentationen von realen Dingen:
