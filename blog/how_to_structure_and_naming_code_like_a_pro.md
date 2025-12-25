@@ -568,7 +568,7 @@ graph TB
         
         V1_USER["<b>user/</b><br/>DbUser, UiUser<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.0</b><br/><b>D=0.5</b>"]
         
-        V1_MAIN["<b>main/</b><br/>TodoApp, Config<br/>Ca=0, Ce=4<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
+        V1_MAIN["<b>app/</b><br/>TodoApp, Config<br/>Ca=0, Ce=4<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
         
         V1_MAIN --> V1_ROOT
         V1_MAIN --> V1_FOLDER
