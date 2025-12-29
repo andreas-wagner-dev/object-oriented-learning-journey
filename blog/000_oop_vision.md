@@ -110,7 +110,7 @@ class AutocrineCell {
 }
 ```
 
-### **4.2 Direct Contact (Tight Coupling)**
+### **4.2 Direct Contact**
 
 Two objects communicate directly and synchronously with each other, often via interfaces or direct references.
 
@@ -245,42 +245,339 @@ class EndocrineSystem {
 }
 ```
 
+
+### **4.5 Actor Model Architecture**
+
+The following diagram illustrates the communication between autonomous cells and the bloodstream, including the feedback mechanism.
+
 ```mermaid
 graph TD
-    subgraph "Zentrale Infrastruktur (Shared Pool)"
+    subgraph "Infrastructur (Shared Pool)"
         B[Bloodstream]
     end
 
-    subgraph "Sender & Feedback-Empfänger"
+    subgraph "Sender & Feedback-Receiver"
         P[PancreasCell]
     end
 
-    subgraph "Abonnenten (Target Cells)"
+    subgraph "Subscribers (Target Cells)"
         L[Liver / TargetCell]
         M[Muscle / TargetCell]
     end
 
-    %% Initialer Fluss
-    P -- "1. secrete('Hormone: Insulin')" --> B
+    %% Initial Flow
+    P -- "1. secrete<br/>('Hormone: Insulin')" --> B
     
     %% Routing
-    B -- "2. route to subscribers" --> L
-    B -. "Ignore (no receptor)" .-> M
+    B -- "2. route to<br/>subscribers" --> L
+    B -. "Ignore<br/>(no receptor)" .-> M
 
-    %% Interner Prozess & Sättigung
-    L -- "3. process (check saturation)" --> L
+    %% Internal Process & Saturation
+    L -- "3. process<br/>(check saturation)" --> L
 
     %% Feedback Loop
-    L -- "4. Feedback: Glucose_Low" --> B
+    L -- "4. Feedback:<br/>Glucose_Low" --> B
     B -- "5. notify" --> P
     
-    %% Statusänderung
+    %% State Change
     P -- "6. inhibitProduction = true" --> P
 
     style B fill:#f9f,stroke:#333,stroke-width:2px
     style L fill:#bbf,stroke:#333,stroke-width:2px
     style P fill:#dfd,stroke:#333,stroke-width:2px
 ```
+**Explanation of the Diagram:**
+
+* **Bloodstream (Broker):** Acts as an intermediary. Cells do not know each other; they only interact with the bloodstream.
+* **Asynchrony:** All arrows represent asynchronous messages processed via stream (`BlockingQueue`) and the shared thread pool.
+* **Feedback Loop:** The dashed line from the Liver back to the Pancreas (via the bloodstream) shows the biological regulatory circuit preventing overproduction.
+* **Isolation:** Each cell decides locally (Step 3) whether to accept a signal or ignore it due to saturation.
+
+**Example: Asynchronous Messaging**
+
+The following simulation demonstrates a decentralized, asynchronous communication system inspired by biological cell signaling.
+
+```java
+package com.example.msg;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Advanced Actor Model Simulation. 
+ * 1. Pub-Sub Discovery (Bloodstream as Broker). 
+ * 2. Feedback Loops (Bidirectional communication). 
+ * 3. Shared Thread Pool (Resource efficiency). 
+ * 4. Receptor Saturation (Refractory period).
+ */
+public class ActorModelDemo {
+
+	// Shared Thread Pool for all cells
+	private static final ExecutorService SHARED_POOL = Executors
+			.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+	/** The Message interface represents the signal. */
+	interface Message {
+		boolean containsHormone(String type);
+	}
+
+	/** The Cell interface defines interaction points for autonomous units. */
+	interface Cell {
+		void accept(String content, Cell sender);
+		void accept(Message message);
+	}
+
+	/** Implementation of a received signal. */
+	static class ReceivedMessage implements Message {
+		private final String content;
+		private final Cell sender;
+
+		public ReceivedMessage(String content, Cell sender) {
+			this.content = content;
+			this.sender = sender;
+		}
+
+		@Override
+		public boolean containsHormone(String receptorType) {
+			return content.toLowerCase().contains(receptorType.toLowerCase());
+		}
+
+		@Override
+		public String toString() {
+			return content + " (from " + sender.toString() + ")";
+		}
+	}
+
+	/** Decorator that allows a message to deliver itself to a stream. */
+	static class SelfDeliveredMessage implements Message {
+		private final Message inner;
+
+		public SelfDeliveredMessage(Message message) {
+			this.inner = message;
+		}
+
+		public void sendTo(BlockingQueue<Message> stream) {
+			stream.offer(this);
+		}
+
+		@Override
+		public boolean containsHormone(String receptorType) {
+			return inner.containsHormone(receptorType);
+		}
+		
+		@Override
+		public String toString() {
+			return inner.toString();
+		}
+	}
+
+	/** Base implementation with an autonomous processing loop. */
+	abstract static class BaseCell implements Cell {
+		protected final String name;
+		private final BlockingQueue<Message> transcription = new LinkedBlockingQueue<>();
+
+		public BaseCell(String name) {
+			this.name = name;
+			SHARED_POOL.submit(() -> {
+				while (!Thread.currentThread().isInterrupted()) {
+					try {
+						onReceive(transcription.take());
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+			});
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		@Override
+		public void accept(String content, Cell sender) {
+			this.accept(new ReceivedMessage(content, sender));
+		}
+
+		@Override
+		public void accept(Message message) {
+			this.receive(message);
+		}
+
+		protected void receive(Message message) {
+			new SelfDeliveredMessage(message).sendTo(transcription);
+		}
+
+		protected abstract void onReceive(Message msg);
+	}
+
+	/**
+	 * Bloodstream as Pub-Sub Broker. Routes signals to registered subscribers.
+	 */
+	static class Bloodstream extends BaseCell {
+		private final Map<String, List<Cell>> cellRegistry = new ConcurrentHashMap<>();
+
+		public Bloodstream(String name) {
+			super(name);
+		}
+
+		public void subscribe(String hormoneType, Cell cell) {
+			cellRegistry.computeIfAbsent(hormoneType.toLowerCase(), k -> new ArrayList<>()).add(cell);
+			System.out.println("[System] " + cell.toString() + " subscribed to " + hormoneType);
+		}
+
+		@Override
+		protected void onReceive(Message msg) {
+			System.out.println("[" + name + "] Routing Signal: " + msg.toString());
+			cellRegistry.forEach((hormoneType, cells) -> {
+				if (msg.containsHormone(hormoneType)) {
+					cells.forEach(c -> c.accept(msg));
+				}
+			});
+		}
+	}
+
+	/**
+	 * Target cell with Feedback Loop. Sends feedback back to the bloodstream after activation.
+	 */
+	static class TargetCell extends BaseCell {
+		private final String receptorType;
+		private final Bloodstream bloodstream;
+		private long lastActivation = 0;
+		private static final long REFRACTORY_MS = 800;
+
+		public TargetCell(String name, String receptorType, Bloodstream bloodstream) {
+			super(name);
+			this.receptorType = receptorType;
+			this.bloodstream = bloodstream;
+		}
+
+		@Override
+		protected void onReceive(Message msg) {
+			if (msg.containsHormone(receptorType)) {
+				long now = System.currentTimeMillis();
+				if (now - lastActivation < REFRACTORY_MS) {
+					System.out.println("[" + name + "] ! SATURATED (Ignoring " + msg.toString() + ")");
+					return;
+				}
+
+				lastActivation = now;
+				System.out.println("[" + name + "] >>> RECEPTOR (" + receptorType + ") ACTIVATED!");
+
+				// Feedback-Loop: Report success back to the system
+				if (receptorType.equalsIgnoreCase("Insulin")) {
+					System.out.println("[" + name + "] Sending feedback: Glucose dropping...");
+					bloodstream.accept("Feedback: Glucose_Low", this);
+				}
+			}
+		}
+	}
+
+	/**
+	 * A "Sender Actor" that reacts to feedback.
+	 */
+	static class PancreasCell extends BaseCell {
+		private final Bloodstream bloodstream;
+		private volatile boolean inhibitProduction = false;
+
+		public PancreasCell(String name, Bloodstream bloodstream) {
+			super(name);
+			this.bloodstream = bloodstream;
+		}
+
+		public void releaseInsulin() {
+			if (inhibitProduction) {
+				System.out.println("[" + name + "] Production inhibited (Feedback loop active).");
+			} else {
+				System.out.println("[" + name + "] Secreting Insulin...");
+				bloodstream.accept("Hormone: Insulin", this);
+			}
+		}
+
+		@Override
+		protected void onReceive(Message msg) {
+			if (msg.containsHormone("Glucose_Low")) {
+				System.out.println("[" + name + "] <<< FEEDBACK RECEIVED: Glucose level low. Stopping production.");
+				this.inhibitProduction = true;
+			}
+		}
+	}
+
+	public static void main(String[] args) throws InterruptedException {
+		System.out.println("--- Actor Simulation with Feedback Loops ---\n");
+
+		Bloodstream bloodstream = new Bloodstream("Bloodstream");
+		PancreasCell pancreas = new PancreasCell("Pancreas", bloodstream);
+		TargetCell liver = new TargetCell("Liver", "Insulin", bloodstream);
+
+		// Registration
+		bloodstream.subscribe("Insulin", liver);
+		bloodstream.subscribe("Glucose_Low", pancreas);
+
+		System.out.println("\n--- Cycle 1: Initial Stimulus ---");
+		pancreas.releaseInsulin();
+
+		// Wait for asynchronous messages (Insulin -> Liver -> Feedback -> Pancreas) to arrive
+		TimeUnit.MILLISECONDS.sleep(1500);
+
+		System.out.println("\n--- Cycle 2: Second Stimulus (Should be inhibited by feedback) ---");
+		pancreas.releaseInsulin();
+
+		System.out.println("\nSimulation wrapping up...");
+		TimeUnit.MILLISECONDS.sleep(1000);
+
+		SHARED_POOL.shutdownNow();
+		System.out.println("\n--- Simulation terminated ---");
+	}
+}
+
+```
+
+
+
+**Code flow  step-by-step:**
+
+* **1. Initialization and Registration**
+**Actor Creation:** The main method initializes the Bloodstream (the message broker), the `PancreasCell` (the sender), and the `TargetCell` (the liverreceiver).
+
+**Subscription**: Actors register their "receptors" with the `Bloodstream`. The Liver subscribes to "Insulin", and the Pancreas subscribes to "Glucose_Low" feedback signals.
+
+* **2. Autonomous Processing (The Actor Loop)**
+Every `BaseCell` starts its own background thread upon instantiation.
+
+This thread continuously polls an internal transcription (`BlockingQueue`). When a message arrives, the cell processes it via the onReceive method autonomously, ensuring that no external thread can directly manipulate the cell's internal state.
+
+* **3. Cycle 1: The Stimulus Path**
+**Action:** `pancreas.releaseInsulin()` is called.
+
+**Propagation:** The Pancreas sends an "Insulin" hormone string to the Bloodstream.
+
+**Routing:** The Bloodstream receives the message and asynchronously routes it to all cells registered for the "Insulin" key (in this case, the Liver).
+
+**Activation:** The Liver receives the message. It checks if it is in a "Refractory Period" (receptor saturation). If not, it activates and triggers a Feedback Loop.
+
+* **4. The Feedback Loop**
+**Signal Back:** Upon activation, the Liver sends a new message "Feedback: Glucose_Low" back into the `Bloodstream`.
+
+**Inhibition:** The `Bloodstream` routes this feedback to the Pancreas.
+
+**State Change:** The Pancreas processes this message and sets its internal volatile boolean `inhibitProduction` to true.
+
+* **5. Cycle 2:** Negative Feedback in Action
+**Action:** After a delay (sleep), `pancreas.releaseInsulin()` is called again.
+
+**Result:** The Pancreas checks its internal `inhibitProduction` flag. Since the feedback loop from the first cycle was successful, it now refuses to secrete more insulin, printing: "Production inhibited (Feedback loop active).".
+
+* **6. Cleanup**
+The `SHARED_POOL` is shut down, terminating the background threads of all autonomous cells, and the simulation ends.
+
 
 ## **5. Summary and Conclusion**
 
