@@ -2,13 +2,12 @@
 
 ## **1. Introduction: Nature as a Teacher**
 
-Significant innovations in bionics – from Velcro to artificial neural networks – impressively illustrate how technology learns from nature. In the same way, Dr. Alan Kay, one of the pioneers of object-oriented programming (OOP) and creator of Smalltalk, was significantly inspired by cell biology. In particular, the autonomy of individual cells served as a model for him to define the conceptual pillars of OOP. Alan Kay once said that the best way to understand OOP is to read *Molecular Biology of the Cell*.
+Significant innovations in bionics – from Velcro to artificial neural networks – impressively illustrate how technology learns from nature. In the same way, Dr. Alan Kay, one of the pioneers of object-oriented programming (OOP) and creator of Smalltalk, was significantly inspired by cell biology. In particular, the autonomy of individual cells served as a model for him to define the conceptual pillars of OOP. Alan Kay once said that the best way to understand OOP is to read *[Molecular Biology of the Cell](https://www.thriftbooks.com/w/molecular-biology-of-the-cell_keith-roberts_bruce-alberts/248824/#edition=1769535&idiq=4179002)*.
 
 Kay recognized that the way cells in an organism communicate with each other represents a perfect model for the organization of software. Interestingly, he later expressed his dissatisfaction with the term "object orientation" he had chosen because, in his view, it neglected the core aspect of **messaging**.
 
 In 2003, Alan Kay gave the following definition of object-oriented programming:
-
-"OOP to me means only messaging, local retention and protection and hiding of state-process, and extreme late-binding of all things."
+< "OOP to me means only messaging, local retention and protection and hiding of state-process, and extreme late-binding of all things."
 
 This definition calls for a radical rethink: OOP focuses on autonomous units interacting via messages rather than mere class hierarchies. In languages like C++ or Java, however, this vision gave way to a reality that Kay criticized as "syntactic sugar" for synchronous function calls. This criticism aims at the fact that synchronous calls force tight temporal coupling, while true messaging promotes temporal and spatial decoupling (asynchronicity). In this process, true late binding is lost, as receivers are often already fixed at compile time. In addition, objects often violate encapsulation by disclosing their state, while blocking interactions make concurrency seem like a laboriously added foreign body.
 
@@ -223,8 +222,10 @@ class EndocrineSystem {
         bloodstream.execute(targetAction);  
     }
 
-    public static void main(String[] args) throws InterruptedException {  
-        EndocrineSystem body = new EndocrineSystem();  
+    public static void main(String[] args) throws InterruptedException {
+
+        EndocrineSystem body = new EndocrineSystem();
+
         body.secrete("Adrenaline", () -> System.out.println("Heart Muscle: Increased heart rate!"));  
         body.secrete("Adrenaline", () -> System.out.println("Lungs: Bronchi dilated!"));  
           
@@ -254,16 +255,16 @@ The analogy between cell communication and object-oriented programming reveals f
 
 ### **Outlook**
 
-Nature shows us: Good software design reflects universal principles. When we program, we create digital organisms – systems of objects that communicate, cooperate, and together form something larger than the sum of their parts. In modern programming, the **[Actor Model](https://www.google.com/search?q=https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)** (as in Erlang or Akka) comes closest to this vision of autonomous units communicating only via messages. The Actor Model serves as the primary solution to the limitations of traditional object-oriented programming in distributed systems. While traditional OOP objects often compromise their encapsulation through the use of public getters and setters, which expose internal state to the outside world, actors preserve **strict encapsulation** by interacting solely through immutable message passing, thereby enabling scalable and maintainable concurrency by eliminating shared mutable state.
+Nature shows us: Good software design reflects universal principles. When we program, we create digital organisms – systems of objects that communicate, cooperate, and together form something larger than the sum of their parts. In modern programming, the *[Actor Model](https://www.google.com/search?q=https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)* (as in Erlang or Akka) comes closest to this vision of autonomous units communicating only via messages. The Actor Model serves as the primary solution to the limitations of traditional object-oriented programming in distributed systems. While traditional OOP objects often compromise their encapsulation through the use of public getters and setters, which expose internal state to the outside world, actors preserve **strict encapsulation** by interacting solely through immutable message passing, thereby enabling scalable and maintainable concurrency by eliminating shared mutable state.
 
 ## **6. Sources**
 
-* Alan Kay, "The Meaning of 'Object-Oriented Programming'" (2003)  
-* Alberts, B. et al., "Molecular Biology of the Cell", 6th Edition, Garland Science (2014)  
+* Alan Kay, [The Meaning of 'Object-Oriented Programming' (2003)](https://en.wikipedia.org/wiki/Object-oriented_programming)  
+* Alberts, B. et al., [Molecular Biology of the Cell(1994)](https://www.thriftbooks.com/w/molecular-biology-of-the-cell_keith-roberts_bruce-alberts/248824/#edition=1769535&idiq=4179002)  
 * Alex Dzwonchyk, [Object Oriented Biology (2017)](https://medium.com/launch-school/object-oriented-biology-6ed991d9e82a)
+* Håvar Stavseth, [Why the Actor Model Is the Closest Realization of Alan Kay’s Original Vision of Object-Oriented Programming (2025)](https://www.google.com/search?q=https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)
 * Khan Academy [Introduction to cell signaling (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/introduction-to-cell-signaling)
-* Khan Academy [Introduction to cell signaling (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/introduction-to-cell-signaling)
-* Khan Academy [Introduction to cell signaling (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/introduction-to-cell-signaling)
-* Khan Academy [Introduction to cell signaling (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/introduction-to-cell-signaling)
+* Khan Academy [Signal-Perception (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/signal-perception)
+* Khan Academy [Intracellular-Signal-Transduction (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/intracellular-signal-transduction)
+* Khan Academy [Cellular-Response (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/cellular-response)
 
-* Håvar Stavseth, [“Why the Actor Model Is the Closest Realization of Alan Kay’s Original Vision of Object-Oriented Programming” (2025)](https://www.google.com/search?q=https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)
