@@ -1,5 +1,5 @@
 # **Object-Oriented Programming - “the Nature is the Key…”**
-
+> Did you know that modern Object-Oriented Programming (OOP) has its roots not in mathematics, but in biology?
 ## **1. Introduction: Nature as a Teacher**
 
 Significant innovations in bionics – from Velcro to artificial neural networks – impressively illustrate how technology learns from nature. In the same way, Dr. Alan Kay, one of the pioneers of object-oriented programming (OOP) and creator of Smalltalk, was significantly inspired by cell biology. In particular, the autonomy of individual cells served as a model for him to define the conceptual pillars of OOP. Alan Kay once said that the best way to understand OOP is to read *[Molecular Biology of the Cell](https://www.thriftbooks.com/w/molecular-biology-of-the-cell_keith-roberts_bruce-alberts/248824/#edition=1769535&idiq=4179002)*.
