@@ -245,6 +245,43 @@ class EndocrineSystem {
 }
 ```
 
+```mermaid
+graph TD
+    subgraph "Zentrale Infrastruktur (Shared Pool)"
+        B[Bloodstream]
+    end
+
+    subgraph "Sender & Feedback-Empfänger"
+        P[PancreasCell]
+    end
+
+    subgraph "Abonnenten (Target Cells)"
+        L[Liver / TargetCell]
+        M[Muscle / TargetCell]
+    end
+
+    %% Initialer Fluss
+    P -- "1. secrete('Hormone: Insulin')" --> B
+    
+    %% Routing
+    B -- "2. route to subscribers" --> L
+    B -. "Ignore (no receptor)" .-> M
+
+    %% Interner Prozess & Sättigung
+    L -- "3. process (check saturation)" --> L
+
+    %% Feedback Loop
+    L -- "4. Feedback: Glucose_Low" --> B
+    B -- "5. notify" --> P
+    
+    %% Statusänderung
+    P -- "6. inhibitProduction = true" --> P
+
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style L fill:#bbf,stroke:#333,stroke-width:2px
+    style P fill:#dfd,stroke:#333,stroke-width:2px
+```
+
 ## **5. Summary and Conclusion**
 
 The analogy between cell communication and object-oriented programming reveals fundamental principles of organizing complex systems.
