@@ -130,25 +130,39 @@ Basierend auf den [drei goldenen Regeln](https://javadevguy.wordpress.com/2017/1
 
 ```
 com.test.catalog                       ← Hauptkontext (Domain Core)
-├── jira/                             ← Externer Kontext
+├── app/                               → Startup, DI, Config
+│   └── CatalogApplication/            → main method for Startup, DI, Config
+├── exchange/                          ← Externer Kontext
+│   ├── resource/                      → JAX-RS Resources
+│   ├── service/                       → JAX-WS ervices
+│   └── database/                      → JPA Entities
+├── jira/                              ← Externer Kontext
 │   ├── JiraClient.java
-│   ├── JiraTicketMapper.java
-│   └── JiraMessageConsumer.java
+│   ├── JiraTickeItem.java
+│   └── JiraConsumedMessage.java
 ├── codebeamer/                       ← Externer Kontext
 │   ├── CodebeamerClient.java
 │   └── RequirementSync.java
 ├── doors/                            ← Externer Kontext
 │   ├── DoorsClient.java
-│   └── DocumentImporter.java
-├── web/                              ← UI Kontext
-│   ├── app/         → Startup, DI, Config
-│   ├── rs/          → JAX-RS Resources
-│   ├── ws/          → Services
-│   ├── db/          → JPA Entities
-│   └── ui/          → JSF/Frontend
-├── Catalog.java                      ← Domain Entity
-├── Item.java                         ← Domain Entity
-└── Synchronization.java              ← Domain Service
+│   └── DocumentImport.java
+├── item/                              ← Item Kontext (used in user/page/)
+│   ├── XmlItem.java
+│   ├── JsonItem.java                   ← used in exchange/resource/)
+│   └── DbItem.java
+├── user/                              ← UI Kontext
+│   ├── control/                       → common Forms, Panel, Table, List,... (used in user/page/)
+│   ├── layout/                        → common Layout, Font, Color,... (used in user/page/)
+│   ├── page/                          
+│   │     ├── ItemForm.java
+│   │     ├── ItemTable.java
+│   │     ├── ...
+│   │     └── ...
+│   └── WebUser.java                  ← impl. of User.java Interface
+├── Catalog.java                      ← Domain Interface
+├── Item.java                         ← Domain Interface
+├── Synchronization.java              ← Domain Interface
+└── User.java                         ← Domain Interface
 ```
 
 ## Vorher/Nachher: Echtes Projekt-Beispiel
@@ -204,7 +218,7 @@ com.company.shop
 ├── payment/          → PayPal, Stripe Integration
 ├── inventory/        → Warehouse, Stock Management  
 ├── shipping/         → DHL, UPS Integration
-├── web/             → Frontend, APIs
+├── user/             → Frontend, APIs
 ├── Product.java
 └── Order.java
 ```
@@ -214,8 +228,8 @@ com.company.shop
 com.company.monitoring
 ├── prometheus/       → Metrics Collection
 ├── grafana/         → Dashboard Integration
-├── alertmanager/    → Alert Processing
-├── web/            → Admin UI
+├── alert            → Alert Processing
+├── user/            → Admin UI
 ├── Metric.java
 └── Alert.java
 ```
@@ -223,6 +237,7 @@ com.company.monitoring
 ### Template 3: Document Management
 ```
 com.company.docmgmt
+│   └── app/          → Startup, DI, Config
 ├── confluence/       → Confluence Sync
 │   ├── http/
 │   │   └── HttpConfluence.java      → implements Confluence interface
@@ -241,7 +256,7 @@ com.company.docmgmt
 │   ├── Mail.java                    → main interface
 │   ├── MailNotification.java        → implements Notification from root
 │   └── MailNotifications.java       → implements Notifications from root
-├── web/             → Document UI
+├── user/            → Document UI
 │   ├── app/         → Startup, DI, Config
 │   ├── db/          → JPA Entities
 │   ├── rs/          → JAX-RS Resources
