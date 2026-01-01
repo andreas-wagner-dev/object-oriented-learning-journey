@@ -876,14 +876,14 @@ graph TB
         
         V5_USER["<b>user/</b><br/>+ 3 Subpackages<br/>Ca=1, Ce=2<br/><b>I=0.67, A=0.67</b><br/><b>D=0.34</b>"]
         
-        V5_MAIN["<b>main/</b><br/>TodoApp<br/>Ca=0, Ce=5<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
+        V5_APP["<b>app/</b><br/>TodoApp<br/>Ca=0, Ce=5<br/><b>I=1.0, A=0.0</b><br/><b>D=0.0 ✓</b>"]
         
-        V5_MAIN --> V5_ROOT
-        V5_MAIN --> V5_RESOURCE
-        V5_MAIN --> V5_PERSON
-        V5_MAIN --> V5_FOLDER
-        V5_MAIN --> V5_TASK
-        V5_MAIN --> V5_USER
+        V5_APP --> V5_ROOT
+        V5_APP --> V5_RESOURCE
+        V5_APP --> V5_PERSON
+        V5_APP --> V5_FOLDER
+        V5_APP --> V5_TASK
+        V5_APP --> V5_USER
         
         V5_RESOURCE --> V5_ROOT
         V5_PERSON --> V5_ROOT
