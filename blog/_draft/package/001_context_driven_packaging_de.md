@@ -196,7 +196,7 @@ com.test.catalog                       ← Hauptkontext (Domain Core)
 - **Nachher**: BA sagt "Jira-Problem" → Developer geht direkt zu `com.test.catalog.jira/`
 - **Verbesserung**: Null Übersetzungsaufwand
 
-## Die drei goldenen Regeln (erweitert)
+## Die drei goldenen Regeln
 
 1. **Pakete sollen niemals von Sub-Paketen abhängen**
    - Root Package = Domain Core, unabhängig von allem
@@ -215,10 +215,13 @@ com.test.catalog                       ← Hauptkontext (Domain Core)
 ### Template 1: E-Commerce System
 ```
 com.company.shop
-├── payment/          → PayPal, Stripe Integration
-├── inventory/        → Warehouse, Stock Management  
-├── shipping/         → DHL, UPS Integration
-├── user/             → Frontend, APIs
+├── app/                     → Startup, DI, Config
+│   ├── ShopApp.java         → main Composition of the app
+│   └── ShopApi.java         → JAX-RS Resources
+├── payment/                 → PayPal, Stripe Integration
+├── inventory/               → Warehouse, Stock Management  
+├── shipping/                → DHL, UPS Integration
+├── user/                    → Frontend, APIs
 ├── Product.java
 └── Order.java
 ```
@@ -226,50 +229,58 @@ com.company.shop
 ### Template 2: Monitoring System  
 ```
 com.company.monitoring
-├── prometheus/       → Metrics Collection
-├── grafana/         → Dashboard Integration
-├── alert            → Alert Processing
-├── user/            → Admin UI
+├── app/                           → Startup, DI, Config
+│   ├── MonitoringApp.java         → main Composition of the app
+│   └── MonitoringApi.java         → JAX-RS Resources
+├── alert                          → Alert Processing
+├── grafana/                       → Dashboard Integration
+├── prometheus/                    → Metrics Collection
+├── user/                          → Admin UI
+├── Alert.java
 ├── Metric.java
-└── Alert.java
+└── User.java
 ```
 
 ### Template 3: Document Management
 ```
 com.company.docmgmt
-│   └── app/          → Startup, DI, Config
-├── confluence/       → Confluence Sync
+├── app/                             → Startup, DI, Config
+│   ├── DocManagementApp.java        → main Composition of the app
+│   ├── DocManagementApp.java        → JAX-RS Configuration
+│   └── DocManagementConfig.java     → DI Configuration
+├── confluence/                      → Confluence Integration
 │   ├── http/
 │   │   └── HttpConfluence.java      → implements Confluence interface
-│   ├── Confluence.java              → main interface
+│   ├── Confluence.java              → Confluence interface
 │   ├── ConfluenceDocument.java      → implements Document from root
 │   └── ConfluenceDocuments.java     → implements Documents from root
-├── sharepoint/       → SharePoint Integration
+├── sharepoint/                      → SharePoint Integration
 │   ├── kafka/
 │   │   └── KafkaSharepoint.java
 │   ├── SharePoint.java
 │   ├── SharePointDocument.java
 │   └── SharePointDocuments.java
-├── mail/            → Email Notifications
+├── mail/                            → Email Integration
 │   ├── smtp/
 │   │   └── SmtpMail.java            → implements Mail interface
-│   ├── Mail.java                    → main interface
+│   ├── Mail.java                    → mail interface
 │   ├── MailNotification.java        → implements Notification from root
 │   └── MailNotifications.java       → implements Notifications from root
-├── user/            → Document UI
-│   ├── app/         → Startup, DI, Config
-│   ├── db/          → JPA Entities
-│   ├── rs/          → JAX-RS Resources
-│   ├── ms/          → Kafka Messaging
-│   └── ui/          → JSF Frontend
-│       ├── admin/   → User Management
-│       └── document/ → Document Management
+├── user/                            → User/Frontend/UI
+│   ├── admin/                       → implementins of User Forms
+│   ├── document/                    → implementins of Document Forms
+│   ├── .../                         → implementins of other Forms
+│   ├── Form.java                    → shered abstract Form Class
+│   ├── Menu.java                    → shered Frontend Class
+│   └── ...java                      → other shered Class
 ├── Document.java
 ├── Documents.java
 ├── ChangedDocument.java
 ├── NewDocument.java
 ├── Notification.java
-└── Notifications.java
+├── Notifications.java
+├── User.java
+└── Users.java
 ```
 
 ## Implementierung: Schritt für Schritt
