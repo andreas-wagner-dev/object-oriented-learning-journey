@@ -252,7 +252,7 @@ The following diagram illustrates the communication between autonomous cells and
 
 ```mermaid
 graph TD
-    subgraph "Infrastructur (Shared Pool)"
+    subgraph "Infrastructure (Shared Pool)"
         B[Bloodstream]
     end
 
