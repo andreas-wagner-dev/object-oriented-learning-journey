@@ -654,9 +654,9 @@ Autonomy and Encapsulation: Both cells and objects are autonomous units with pro
 
 **Nature shows us:** Good software design reflects universal principles. When we program, we create digital organisms – systems of objects that communicate, cooperate, and together form something larger than the sum of their parts. 
 
-In modern programming, the *[Actor Model](https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf) (as in Erlang or Akka) comes closest to this vision of autonomous units communicating only via messages. The Actor Model serves as the primary solution to the limitations of traditional object-oriented programming in distributed systems. While traditional OOP objects often compromise their encapsulation through the use of public getters and setters, which expose internal state to the outside world, actors preserve **strict encapsulation** by interacting solely through **immutable message** passing.
+In modern programming, the *[Actor Model](https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)* (as in Erlang or Akka) comes closest to this vision of autonomous units communicating only via messages. The Actor Model serves as the primary solution to the limitations of traditional object-oriented programming in distributed systems. While traditional OOP objects often compromise their encapsulation through the use of public getters and setters, which expose internal state to the outside world, actors preserve **strict encapsulation** by interacting solely through **immutable message** passing.
 
-Furthermore, **Event-Driven Architecture** (EDA) scales this biological principle to the macro-level of entire enterprise landscapes. By treating service interactions like endocrine signaling, we move away from rigid, fragile machines toward resilient, evolving digital ecosystems. The convergence of the Actor Model (for local concurrency) and EDA (for global distribution) represents the most faithful modern realization of the "Nature of Software" that Alan Kay envisioned.
+Furthermore, *[Event Driven Architecture 2025](https://www.confluent.io/learn/event-driven-architecture/)* (EDA) scales this biological principle to the macro-level of entire enterprise landscapes. By treating service interactions like endocrine signaling, we move away from rigid, fragile machines toward resilient, evolving digital ecosystems. The convergence of the Actor Model (for local concurrency) and EDA (for global distribution) represents the most faithful modern realization of the "Nature of Software" that Alan Kay envisioned.
 
 
 ## **7. Sources**
@@ -664,6 +664,7 @@ Furthermore, **Event-Driven Architecture** (EDA) scales this biological principl
 * Alan Kay, [The Meaning of 'Object-Oriented Programming' (2003)](https://en.wikipedia.org/wiki/Object-oriented_programming)  
 * Alberts, B. et al., [Molecular Biology of the Cell(1994)](https://www.thriftbooks.com/w/molecular-biology-of-the-cell_keith-roberts_bruce-alberts/248824/#edition=1769535&idiq=4179002)  
 * Alex Dzwonchyk, [Object Oriented Biology (2017)](https://medium.com/launch-school/object-oriented-biology-6ed991d9e82a)
+* Confluent [Event Driven Architecture (2025)](https://www.confluent.io/learn/event-driven-architecture/)
 * Håvar Stavseth, [Why the Actor Model Is the Closest Realization of Alan Kay’s Original Vision of Object-Oriented Programming (2025)](https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)
 * Khan Academy [Introduction to cell signaling (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/introduction-to-cell-signaling)
 * Khan Academy [Signal-Perception (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/signal-perception)
