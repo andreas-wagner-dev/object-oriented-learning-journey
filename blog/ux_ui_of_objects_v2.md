@@ -12,8 +12,6 @@
 
 Gute Software spricht die Sprache der Objekte ebenso wie die der Benutzer. Dieser Beitrag beleuchtet die Diskrepanz zwischen heutiger Entwicklungspraxis und der ursprünglichen Idee der Objektorientierung und zeigt, wie man durch OOUX und "UI of Objects" eine intuitive Verbindung vom Design der User Interfaces bis in den Code hinein schaffen kann.
 
-"OOP means only messaging, local retention, protection and hiding of state-process, with extreme late-binding of all things." - Alan Kay
-
 ## **1. Das Schweigen der Objekte**
 
 Eine schweigende Party
