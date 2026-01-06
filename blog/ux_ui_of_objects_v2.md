@@ -630,7 +630,7 @@ class DsAccount implements Account {
 	}  
 }
 
-// 4\. Domain UI-Object:   
+// 4. Domain UI-Object:   
 // Represents the active state of the login process (Session)  
 final class AccountSession {
 
