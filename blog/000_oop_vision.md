@@ -542,17 +542,17 @@ public class ActorModelDemo {
 
 **Code flow  step-by-step:**
 
-* **1. Initialization and Registration**
+* **Step 1. Initialization and Registration**
 **Actor Creation:** The main method initializes the Bloodstream (the message broker), the `PancreasCell` (the sender), and the `TargetCell` (the liverreceiver).
 
 **Subscription**: Actors register their "receptors" with the `Bloodstream`. The Liver subscribes to "Insulin", and the Pancreas subscribes to "Glucose_Low" feedback signals.
 
-* **2. Autonomous Processing (The Actor Loop)**
+* **Step 2. Autonomous Processing (The Actor Loop)**
 Every `BaseCell` starts its own background thread upon instantiation.
 
 This thread continuously polls an internal transcription (`BlockingQueue`). When a message arrives, the cell processes it via the onReceive method autonomously, ensuring that no external thread can directly manipulate the cell's internal state.
 
-* **3. Cycle 1: The Stimulus Path**
+* **Step 3. Cycle 1: The Stimulus Path**
 **Action:** `pancreas.releaseInsulin()` is called.
 
 **Propagation:** The Pancreas sends an "Insulin" hormone string to the Bloodstream.
@@ -561,25 +561,24 @@ This thread continuously polls an internal transcription (`BlockingQueue`). When
 
 **Activation:** The Liver receives the message. It checks if it is in a "Refractory Period" (receptor saturation). If not, it activates and triggers a Feedback Loop.
 
-* **4. The Feedback Loop**
+* **Step 4. The Feedback Loop**
 **Signal Back:** Upon activation, the Liver sends a new message "Feedback: Glucose_Low" back into the `Bloodstream`.
 
 **Inhibition:** The `Bloodstream` routes this feedback to the Pancreas.
 
 **State Change:** The Pancreas processes this message and sets its internal volatile boolean `inhibitProduction` to true.
 
-* **5. Cycle 2:** Negative Feedback in Action
+* **Step 5. Cycle 2:** Negative Feedback in Action
 **Action:** After a delay (sleep), `pancreas.releaseInsulin()` is called again.
 
 **Result:** The Pancreas checks its internal `inhibitProduction` flag. Since the feedback loop from the first cycle was successful, it now refuses to secrete more insulin, printing: "Production inhibited (Feedback loop active).".
 
-* **6. Cleanup**
+* **Step 6. Cleanup**
 The `SHARED_POOL` is shut down, terminating the background threads of all autonomous cells, and the simulation ends.
-
 
 ## 6 Event-Driven Architecture (EDA)
 
-Event-Driven Architecture (EDA) represents an evolutionary development of this messaging vision. At its core, it is an event-controlled architecture. While Alan Kay's messaging concept primarily focused on interaction within a closed system, EDA scales this philosophy to modern, distributed IT landscapes. As a software design pattern, EDA defines the application flow through the targeted generation, detection, and reaction to significant events.
+An evolutionary development of the messaging vision is presented by the Event Driven Architecture (EDA). At its core, it is an event-controlled architecture. While Alan Kay's messaging concept primarily focused on interaction within a closed system, EDA scales this philosophy to modern, distributed IT landscapes. As a software design pattern, EDA defines the application flow through the targeted generation, detection, and reaction to significant events.
 
 Event-driven architectures have increasingly come into focus recently, especially regarding serverless backends (e.g., AWS Lambdas).
 
@@ -603,9 +602,9 @@ graph LR
 2. **Event Broker:** The heart of the infrastructure (e.g., Kafka or RabbitMQ). It receives events, stores them if necessary, and forwards them to interested parties. It decouples producers and consumers spatially and temporally.  
 3. **Event Consumer:** Components that "observe" the broker for specific events. When a relevant event arrives, the consumer reacts (e.g., "Create Invoice").
 
-### **Actor Model vs. Event-Driven Architecture (EDA)**
+### **Actor Model vs. Event-Driven Architecture**
 
-Although both the Actor Model and EDA are based on asynchronous messaging, they operate at different levels of granularity and serve different primary purposes. In many modern systems, the Actor Model is viewed as a specialized, highly structured implementation of an event-driven design.
+Although both the Actor Model and Event-Driven Architecture are based on asynchronous messaging, they operate at different levels of granularity and serve different primary purposes. In many modern systems, the Actor Model is viewed as a specialized, highly structured implementation of an event-driven design.
 
 ### **Key Differences at a Glance**
 
@@ -636,27 +635,28 @@ These approaches are not mutually exclusive. A common "best-of-both-worlds" patt
 
 The analogy between cell communication and object-oriented programming reveals fundamental principles of organizing complex systems.
 
-### **Core Principles of Both Systems**
+**Core Principles of Both Systems**
 
-**Autonomy and Encapsulation**: Both cells and objects are autonomous units with protected internal states. They decide for themselves how to react to external signals.
+Autonomy and Encapsulation: Both cells and objects are autonomous units with protected internal states. They decide for themselves how to react to external signals.
 
-**Communication instead of direct manipulation**: Interaction occurs exclusively via defined interfaces (receptors or methods). No external system directly accesses the internal state.
+* **Communication instead of direct manipulation:** Interaction occurs exclusively via defined interfaces (receptors or methods). No external system directly accesses the internal state.
+* **Specialization with a common basis:** Different cell types share basic characteristics but differ in their specialization – just like derived classes in the inheritance hierarchy.
+* **Loose Coupling through Mediation:** Just as the endocrine system uses the bloodstream to distribute signals without sender and receiver needing to know each other, EDA uses brokers to ensure maximum independence between components.
 
-**Specialization with a common basis**: Different cell types share basic characteristics but differ in their specialization – just like derived classes in the inheritance hierarchy.
+**Lessons Learned:** What we can learn from nature?
 
-### **Lessons Learned: What we can learn from nature**
+1. **Messaging is central:** Alan Kay's original vision emphasized messaging more than classes. The focus should be on communication between objects.
+2. **Information hiding is essential:** The cell membrane protects the sensitive cell interior. Encapsulation protects against unwanted dependencies.
+3. **Interfaces are more powerful than implementations:** It is not important HOW a cell reacts to a signal, but THAT it has a receptor for it.
+4. **Events as Facts:** In nature and in EDA, an event is a fact that has occurred. Systems should be built to react to these facts rather than trying to control the world through command-and-control structures.
 
-1. **Messaging is central**: Alan Kay's original vision emphasized messaging more than classes. The focus should be on communication between objects.  
-2. **Information hiding is essential**: The cell membrane protects the sensitive cell interior. Encapsulation protects against unwanted dependencies.  
-3. **Interfaces are more powerful than implementations**: It is not important HOW a cell reacts to a signal, but THAT it has a receptor for it.
+### Outlook
 
-### **Outlook**
+**Nature shows us:** Good software design reflects universal principles. When we program, we create digital organisms – systems of objects that communicate, cooperate, and together form something larger than the sum of their parts. 
 
-Nature shows us: Good software design reflects universal principles. When we program, we create digital organisms – systems of objects that communicate, cooperate, and together form something larger than the sum of their parts. In modern programming, the *[Actor Model](https://www.google.com/search?q=https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)* (as in Erlang or Akka) comes closest to this vision of autonomous units communicating only via messages. 
+In modern programming, the *[Actor Model](https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf) (as in Erlang or Akka) comes closest to this vision of autonomous units communicating only via messages. The Actor Model serves as the primary solution to the limitations of traditional object-oriented programming in distributed systems. While traditional OOP objects often compromise their encapsulation through the use of public getters and setters, which expose internal state to the outside world, actors preserve **strict encapsulation** by interacting solely through **immutable message** passing.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_vision_5_min.png)
-
-The Actor Model serves as the primary solution to the limitations of traditional object-oriented programming in distributed systems. While traditional OOP objects often compromise their encapsulation through the use of public getters and setters, which expose internal state to the outside world, actors preserve **strict encapsulation** by interacting solely through immutable message passing, thereby enabling scalable and maintainable concurrency by eliminating shared mutable state.
+Furthermore, **Event-Driven Architecture** (EDA) scales this biological principle to the macro-level of entire enterprise landscapes. By treating service interactions like endocrine signaling, we move away from rigid, fragile machines toward resilient, evolving digital ecosystems. The convergence of the Actor Model (for local concurrency) and EDA (for global distribution) represents the most faithful modern realization of the "Nature of Software" that Alan Kay envisioned.
 
 
 ## **7. Sources**
@@ -664,7 +664,7 @@ The Actor Model serves as the primary solution to the limitations of traditional
 * Alan Kay, [The Meaning of 'Object-Oriented Programming' (2003)](https://en.wikipedia.org/wiki/Object-oriented_programming)  
 * Alberts, B. et al., [Molecular Biology of the Cell(1994)](https://www.thriftbooks.com/w/molecular-biology-of-the-cell_keith-roberts_bruce-alberts/248824/#edition=1769535&idiq=4179002)  
 * Alex Dzwonchyk, [Object Oriented Biology (2017)](https://medium.com/launch-school/object-oriented-biology-6ed991d9e82a)
-* Håvar Stavseth, [Why the Actor Model Is the Closest Realization of Alan Kay’s Original Vision of Object-Oriented Programming (2025)](https://www.google.com/search?q=https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)
+* Håvar Stavseth, [Why the Actor Model Is the Closest Realization of Alan Kay’s Original Vision of Object-Oriented Programming (2025)](https://www.linkedin.com/pulse/why-actor-model-closest-realization-alan-kays-vision-h%25C3%25A5var-stavseth-bqpqf)
 * Khan Academy [Introduction to cell signaling (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/introduction-to-cell-signaling)
 * Khan Academy [Signal-Perception (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/signal-perception)
 * Khan Academy [Intracellular-Signal-Transduction (2025)](https://en.khanacademy.org/science/biology/cell-signaling/mechanisms-of-cell-signaling/a/intracellular-signal-transduction)
