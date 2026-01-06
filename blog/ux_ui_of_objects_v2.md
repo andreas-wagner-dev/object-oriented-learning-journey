@@ -5,8 +5,8 @@
 
 
 **Status:** Entwurf
-
-**Thema:** **Warum man aufhören muss, Objekte wie stumme Datencontainer zu behandeln**  #OOP, #OOUX, UI of Objects, Data Animation
+**Apell** **Warum man aufhören muss, Objekte wie stumme Datencontainer zu behandeln**
+**Thema:** #OOP, #OOUX, UI of Objects, Data Animation
 
 > Um zu verhindern, dass Ihre Objekte stumm bleiben, müssen Sie ihnen eine Methode verleihen, um ihren internen Zustand (Daten, Funktion oder Existenz) in eine für den Benutzer verständliche Sprache (Text, visuelles Feedback oder narrativer Dialog) zu übersetzen.
 
