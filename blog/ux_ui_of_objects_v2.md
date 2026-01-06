@@ -6,7 +6,7 @@
 
 **Thema:** OOP, OOUX, UI of Objects, Data Animation
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ui_of_objects_meme.png)  
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ui_of_objects_meme.png)
 
 *(The most common argument against user interface logic in the domain objects)*
 
