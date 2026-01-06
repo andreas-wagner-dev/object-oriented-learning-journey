@@ -1,8 +1,8 @@
 # **Teach your Objects speak to User "otherwise they will be dumb…"**
 
-**Status:** Entwurf
-**Appell** **Warum man aufhören muss, Objekte wie stumme Datencontainer zu behandeln**
-**Thema:** #OOP, #OOUX, UI of Objects, Data Animation
+* **Status:** Entwurf
+* **Appell:** *Warum man aufhören muss, Objekte wie stumme Datencontainer zu behandeln*
+* **Thema:** #OOP, #OOUX, UI of Objects, Data Animation
 
 > Um zu verhindern, dass Ihre Objekte stumm bleiben, müssen Sie ihnen eine Methode verleihen, um ihren internen Zustand (Daten, Funktion oder Existenz) in eine für den Benutzer verständliche Sprache (Text, visuelles Feedback oder narrativer Dialog) zu übersetzen.
 
