@@ -131,7 +131,7 @@ public class CarDbContext : DbContext
 
 ```csharp
 // carpool/InMemoryCar.cs - Core Implementation
-namespace CarRental.Car;
+namespace CarRental.CarPool;
 
 public sealed class InMemoryCar : ICar
 {
@@ -158,7 +158,7 @@ public sealed class InMemoryCar : ICar
 // carpool/DbCar.cs - Database Decorator (using storage/)
 using CarRental.Storage;
 
-namespace CarRental.Car;
+namespace CarRental.CarPool;
 
 public sealed class DbCar : ICar
 {
@@ -206,7 +206,7 @@ public sealed class DbCar : ICar
 ## application/ - Framework Integration & DI
 
 ```csharp
-using CarRental.Car;
+using CarRental.CarPool;
 using CarRental.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -247,14 +247,14 @@ public class CarRentalApp : ICarRentalApp
 
 ## Summary of Rules
 
-✅ **Correct:**
+✅ **Correct:** (only what the business/customer says)
 
 - `InMemoryCar`, `DbCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
 - `KafkaCarMessage`, `KafkaReceivedCar` (Kafka prefix)
 - `storage/` at first level for ORM
 - `ICarRentalApp` interface in root, `CarRentalApp` in app/
 
-❌ **Wrong:**
+❌ **Wrong:** (meaning of technical architecture pattern)
 
 - `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes)
 - `CarRepository`, `CarValidator` (technical roles)
@@ -424,3 +424,8 @@ Each phase maintains the same principles - only deployment boundaries change.
 **Screaming Architecture:** —> means your package structure IS your business context diagram. 
 
 No *mental* translation/mapping needed.
+
+---
+# References
+
+Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
