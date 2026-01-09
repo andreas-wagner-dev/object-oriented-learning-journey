@@ -292,7 +292,7 @@ The `application/` package is the only exception for technical infrastructure.
 
 ### 3. Packages and Classes Reflect Business Contexts, Not Technical Roles
 
-✅ **Correct: Nouns (things) with descriptive prefixes (RESULT oriented)**
+✅ **Correct: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
 - `CachedCar`, `DbCar`, `ValidCar`
 - `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
 - `customer/DbCustomer`, `customer/ValidCustomer`
@@ -303,7 +303,7 @@ The `application/` package is the only exception for technical infrastructure.
 - `exchange/` (HTTP / REST interfaces)
 - `storage/` or `database/` (interfaces)
 
-❌ **Wrong: Verbs or technical suffixes — very Bad (it is a SHAME)**
+❌ **Wrong: Classes names - Verbs or technical suffixes — very Bad (it is a SHAME)**
 - `carpool/CarProcessor`, `carpool/CarManager`, `carpool/CarClient`
 - `payment/PaymentRepository`, `payment/PaymentService`
 - `customer/CustomerHandler`, `customer/CustomerValidator`
@@ -421,6 +421,6 @@ payment-service/   ← artifact (build as deployable .dll)
 
 Each phase maintains the same principles - only deployment boundaries change.
 
-**Screaming Architecture:** —> means Your package structure IS your business context diagram. 
+**Screaming Architecture:** —> means your package structure IS your business context diagram. 
 
-No mental mapping needed.
+No *mental* translation/mapping needed.
