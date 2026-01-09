@@ -4,10 +4,10 @@
 
 ```
 carrental/
-├── app/
+├── application/
 │   ├── CarRentalApp.cs          ← ASP.NET Core Main + DI
 │   └── KafkaQueueConfig.cs      ← Kafka Configuration
-├── car/
+├── carpool/
 │   ├── DbCar.cs                 ← Database Decorator
 │   ├── DbCarPool.cs             ← Database Decorator
 │   ├── CachedCarPool.cs         ← Cache Decorator
@@ -127,10 +127,10 @@ public class CarDbContext : DbContext
 
 ---
 
-## car/ - Implementations with Decorators
+## carpool/ - Implementations with Decorators
 
 ```csharp
-// car/InMemoryCar.cs - Core Implementation
+// carpool/InMemoryCar.cs - Core Implementation
 namespace CarRental.Car;
 
 public sealed class InMemoryCar : ICar
@@ -155,7 +155,7 @@ public sealed class InMemoryCar : ICar
 ```
 
 ```csharp
-// car/DbCar.cs - Database Decorator (using storage/)
+// carpool/DbCar.cs - Database Decorator (using storage/)
 using CarRental.Storage;
 
 namespace CarRental.Car;
@@ -203,7 +203,7 @@ public sealed class DbCar : ICar
 
 ---
 
-## app/ - Framework Integration & DI
+## application/ - Framework Integration & DI
 
 ```csharp
 using CarRental.Car;
@@ -211,7 +211,7 @@ using CarRental.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CarRental.App;
+namespace CarRental.Application;
 
 public class CarRentalApp : ICarRentalApp
 {
@@ -280,7 +280,7 @@ Root package = Domain core, independent of everything.
 - e.g., `ICar`, `ICustomer` as interfaces or abstract classes
 
 Sub-packages = Implementations (adapters), dependent on core.
-- e.g., `car/ValidCar.cs` implements `ICar`
+- e.g., `carpool/ValidCar.cs` implements `ICar`
 
 ### 2. Sub-Packages Don't Introduce New Concepts, Only Details
 
@@ -288,7 +288,7 @@ Sub-packages = Implementations (adapters), dependent on core.
 
 No new business concepts in sub-packages that don't exist as interfaces in root.
 
-The `app/` package is the only exception for technical infrastructure.
+The `application/` package is the only exception for technical infrastructure.
 
 ### 3. Packages and Classes Reflect Business Contexts, Not Technical Roles
 
@@ -304,7 +304,7 @@ The `app/` package is the only exception for technical infrastructure.
 - `storage/` or `database/` (interfaces)
 
 ❌ **Wrong: Verbs or technical suffixes — very Bad (it is a SHAME)**
-- `car/CarProcessor`, `car/CarManager`, `car/CarClient`
+- `carpool/CarProcessor`, `carpool/CarManager`, `carpool/CarClient`
 - `payment/PaymentRepository`, `payment/PaymentService`
 - `customer/CustomerHandler`, `customer/CustomerValidator`
 
@@ -319,7 +319,7 @@ When using ORMs like EF Core, isolate them in the `storage/` package at first le
 
 ```
 carrental/
-├── car/                 ← First level (parallel to car/, payment/)
+├── carpool/             ← First level (parallel to car/, payment/)
 │   └── DbCar.cs         ← Uses storage/ for persistence
 ├── storage/             
 │   ├── CarEntity.cs     ← EF Core Entity
@@ -332,9 +332,9 @@ carrental/
 
 **Important:**
 
-- `storage/` is at first level, parallel to `car/`, `payment/`
+- `storage/` is at first level, parallel to `carpool/`, `payment/`
 - All ORM classes (Entity, DbContext) live in `storage/`
-- Domain adapters (like `DbCar` in `car/`) access `storage/`
+- Domain adapters (like `DbCar` in `carpool/`) access `storage/`
 - Domain interfaces in root never know ORM classes
 
 ### 5. Composition Root Pattern
@@ -388,16 +388,16 @@ This ensures framework independence and clean dependency flow.
 
 ## Evolution Path
 
-### Packages (Phase 1)
+### Mono Artifact (Phase 1)
 ```
 carrental/
-├── app/
-├── car/
+├── application/
+├── carpool/
 ├── customer/
 └── payment/
 ```
 
-### Modules (Phase 2)
+### Modulith Artifacts (Phase 2)
 ```
 carrental-service/      ← service is something deployable or an artifact
 ├── carrental/          ← Core module (all common or shared intefaces/classes)
@@ -410,10 +410,10 @@ carrental-service/      ← service is something deployable or an artifact
 ### Microservices (Phase 3)
 
 Split at package/module boundaries.
-
+Each service is structured like the **Mono** artifact (in Phase 1 or 2)
 ```
 carrental-gateway/ ← artifact (build as deployable .dll)
-carrental-client/  ← frontend (build as deployable  .dll)
+carrental-client/  ← artifact frontend (build as deployable  .dll)
 carpool-service/   ← artifact (build as deployable  .dll)
 customer-service/  ← artifact (build as deployable .dll)
 payment-service/   ← artifact (build as deployable .dll)
