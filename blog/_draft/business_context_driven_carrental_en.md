@@ -20,7 +20,7 @@ carrental/
 │   ├── DbCustomers.cs           ← Database Decorator
 │   ├── NotifiedCustomer.cs      ← Email Decorator
 │   └── ...cs                   
-├── exchange/                    ← REST API of the app
+├── exchange/                    ← client user contepts, REST API of the app
 │   ├── CarResoure.cs            ← DTO of Entity
 │   ├── CarResoures.cs           ← Entry Point class
 │   ├── CarRequest.cs            ← Request DTO
@@ -29,7 +29,7 @@ carrental/
 │   ├── CarEntity.cs             ← EF Core Entity DTO
 │   ├── CarDbContext.cs          ← EF Core Entity DTO
 │   └── ...cs                   
-├── user/                        ← User/Pages/Layout/Style (server side UI)
+├── user/                        ← user contepts and server side UI rendering
 │   ├── control/                 ← UI specific controls (used in page/)
 │   ├── layout/                  ← UI Layout/Style components (used in page/)
 │   ├── page/                    ← UI pages of the application
