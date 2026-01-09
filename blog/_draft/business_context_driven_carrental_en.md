@@ -1,5 +1,5 @@
-# CarRental - App & Car Implementation (C#)
-> Let your  package structure screams the business context diagram
+# Business Context Driven Packaging - CarRental App (C#)
+> Let your package structure screams the business context diagram
 ## Project Structure
 
 ```
