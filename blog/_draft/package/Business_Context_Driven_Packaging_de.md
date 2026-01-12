@@ -6,26 +6,29 @@
 
 Stellen Sie sich vor: Ein Business Analyst zeigt Ihnen ein System Context Diagramm von einem E-Commerce Shop, das mit PayPal/Stripe, einem Warehouse (Inventory) und Versanddienstleistern (Shipping) integriert ist:
 
-                            User  
-                              │  
-                              ▼  
-     ┌───────────┐    ┌───────────────┐    ┌─────────────┐  
-     │  Payment │    │              │    │  Inventory │  
-     │ (PayPal) │────│     Shop      │────│ (Warehouse)│  
-     │          │    │              │    │            │  
-     └───────────┘    └───────────────┘    └─────────────┘  
-                              │  
-                              ▼  
-                      ┌───────────────┐  
-                      │              │  
-                      │   Shipping   │  
-                      │   (DHL/UPS)  │  
-                      └───────────────┘
+```
+                      User
+
+                        │  
+                        ▼  
+ ┌─────────┐    ┌─────────────────┐    ┌─────────────┐  
+ │ Payment │    │                 │    │  Inventory  │  
+ │ (PayPal)│────│      Shop       │────│ (Warehouse) │  
+ │         │    │                 │    │             │  
+ └─────────┘    └─────────────────┘    └─────────────┘  
+                        │  
+                        ▼  
+                ┌───────────────┐  
+                │               │  
+                │   Shipping    │  
+                │  (DHL/UPS)    │  
+                └───────────────┘
+```
 
 Dann öffnen Sie den Code und finden:
 
 **Beispiel 1: Klassische Layered Architecture**
-
+```
 com.company.shop  
 ├── controller/  
 ├── service/  
@@ -33,9 +36,9 @@ com.company.shop
 ├── dto/  
 ├── entity/  
 └── config/
-
+```
 **Beispiel 2: Clean Architecture** (nach Robert C. Martin)
-
+```
 com.company.shop  
 ├── domain/  
 │   ├── entity/  
@@ -47,9 +50,9 @@ com.company.shop
 │   ├── database/  
 │   └── external/  
 └── presentation/
-
+```
 **Beispiel 3: DDD Structure** (nach Eric Evans)
-
+```
 com.company.shop  
 ├── aggregate/  
 ├── entity/  
@@ -58,11 +61,11 @@ com.company.shop
 ├── service/  
 ├── factory/  
 └── specification/
-
+```
 **Beispiel 4: Hexagonal Architecture**
 
 Quelle: Alistair Cockburn's Hexagonal Architecture
-
+```
 com.company.shop  
 ├── domain/  
 ├── port/  
@@ -73,11 +76,11 @@ com.company.shop
 │   ├── database/  
 │   └── messaging/  
 └── application/
-
+```
 **Beispiel 5: Vertical Slices Architecture**
 
 Quelle: Jimmy Bogard's Vertical Slices
-
+```
 com.company.shop  
 ├── features/  
 │   ├── process-order/  
@@ -85,7 +88,7 @@ com.company.shop
 │   └── calculate-shipping/  
 ├── shared/  
 └── infrastructure/
-
+```
 Wo ist Payment?
 
 Wo ist das Inventory?
@@ -109,13 +112,13 @@ Selbst moderne Patterns wie Vertical Slices konzentrieren sich häufig primär a
 ## **Die Lösung: Context-Driven Packaging**
 
 Die Lösung ist verblüffend einfach: Ihre Package-Struktur sollte in erster Linie das Context-Diagramm widerspiegeln.
-
+```
 com.company.shop  
 ├── payment/  
 ├── inventory/  
 ├── shipping/  
 └── user/
-
+```
 Dies ist ein entscheidender **strategischer Aspekt** der Softwarearchitektur: Durch die direkte Abbildung der fachlichen Kontexte im Code wenden wir die **Ubiquitous Language** (allgegenwärtige Sprache) konsequent auf jeder Ebene der Systemorganisation an.
 
 **Vorher/Nachher: Echtes Projekt-Beispiel**
