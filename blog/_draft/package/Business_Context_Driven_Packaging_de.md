@@ -4,7 +4,7 @@
 
 **Das Problem: Die Übersetzung-Lücke**
 
-Stellen Sie sich vor: Ein Business Analyst zeigt Ihnen ein System Context Diagramm von einem E-Commerce Shop, das mit PayPal/Stripe, einem Warehouse (Inventory) und Versanddienstleistern (Shipping) integriert ist:
+Stellen Sie sich vor: Ein Business Analyst zeigt Ihnen ein System Context Diagramm von einem E-Commerce `Shop`, das mit `PayPal`/`Stripe`, einem Warehouse (`Inventory`) und Versanddienstleistern (`Shipping`) integriert ist:
 
 ```
                       User
