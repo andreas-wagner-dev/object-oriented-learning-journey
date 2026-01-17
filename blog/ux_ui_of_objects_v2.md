@@ -6,11 +6,16 @@
 
 > Um zu verhindern, dass Ihre Objekte stumm bleiben, müssen Sie ihnen eine Methode verleihen, um ihren internen Zustand (Daten, Funktion oder Existenz) in eine für den Benutzer verständliche Sprache (Text, visuelles Feedback oder narrativer Dialog) zu übersetzen.
 
+TL;DR: Durch OOUX und das Konzept der „UI of Objects“ schaffen Sie eine durchgängige objektorientierte Verbindung vom UI-Design bis tief in den Quellcode und ihre Objekte werden nicht mehr schweigen, sie zum User sprechen. 
+
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ui_of_objects_meme.png)
 
 *(The most common argument against user interface logic in the domain objects)*
 
-Gute Software spricht die Sprache der Objekte ebenso wie die der Benutzer. Dieser Beitrag beleuchtet die Diskrepanz zwischen heutiger Entwicklungspraxis und der ursprünglichen Idee der Objektorientierung und zeigt, wie man durch OOUX und "UI of Objects" eine intuitive Verbindung vom Design der User Interfaces bis in den Code hinein schaffen kann.
+## Einleitung und Zielgruppe
+
+Gute Software spricht die Sprache der Objekte ebenso wie die der Nutzer. Viele moderne Systeme leiden unter einem Bruch zwischen hochgradig entkoppelter Logik und prozeduralen Frontends. Dieser Beitrag zeigt Senior-Developern und Architekten im Kontext geschichteter Architekturen (DDD / Clean Architecture), wie sie diese klaffende Lücke schließen können. Er präsentiert konkrete Methoden und Lösungsansätze, wie OOUX (Object-Oriented User Experience) und das Konzept der „UI of Objects“ eine nahtlose Verbindung vom Interface-Design bis tief in den Quellcode herstellen.
+
 
 ## **1. Das Schweigen der Objekte**
 
@@ -1056,7 +1061,11 @@ public class AccountResource {
 
 **UI of Objects** erfordert auf Code-Ebene ein Umdenken: Weg von anämischen Datencontainern hin zu **Immutable-Proxies-Objekten**. Die konsequente Umsetzung von OOP manifestiert sich in Architekturen mit maximaler Kohäsion und minimaler semantischer Kopplung.
 
-**Die Objekte schweigen nicht mehr: Sie sprechen zum User.**
+**Das Kernprinzip (Tell, Don't Ask):** Es geht um UI-Intention in der Domäne, nicht um UI-Code. Die Vereinigung von OOUX und UI of Objects führt nicht zu einer Vermischung der Schichten. Im Gegenteil: Sie gibt die Verantwortung für die Präsentation dorthin zurück, wo das Wissen liegt – in das Objekt.
+* UI-Code in der Domäne? Nein.
+* UI-Intention in der Domäne? Ja.
+
+Die Objekte schweigen nicht mehr: Sie sprechen zum Nutzer, während die UI den schützenden Rahmen dafür bildet.
 
 ## **6. Quellen**
 
