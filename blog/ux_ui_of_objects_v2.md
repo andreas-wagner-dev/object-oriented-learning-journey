@@ -6,16 +6,15 @@
 
 > Um zu verhindern, dass Ihre Objekte stumm bleiben, müssen Sie ihnen eine Methode verleihen, um ihren internen Zustand (Daten, Funktion oder Existenz) in eine für den Benutzer verständliche Sprache (Text, visuelles Feedback oder narrativer Dialog) zu übersetzen.
 
-TL;DR: Durch OOUX und das Konzept der „UI of Objects“ schaffen Sie eine durchgängige objektorientierte Verbindung vom UI-Design bis tief in den Quellcode und ihre Objekte werden nicht mehr schweigen, sie zum User sprechen. 
-
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ui_of_objects_meme.png)
 
 *(The most common argument against user interface logic in the domain objects)*
 
+**TL;DR:** Durch Object-Oriented User Experience (OOUX) und das Konzept der „UI of Objects“ schaffen Sie eine durchgängige objektorientierte Verbindung vom UI-Design bis tief in den Quellcode und ihre Objekte werden nicht mehr schweigen, sie zum User sprechen. 
+
 ## Einleitung und Zielgruppe
 
-Gute Software spricht die Sprache der Objekte ebenso wie die der Nutzer. Viele moderne Systeme leiden unter einem Bruch zwischen hochgradig entkoppelter Logik und prozeduralen Frontends. Dieser Beitrag zeigt Senior-Developern und Architekten im Kontext geschichteter Architekturen (DDD / Clean Architecture), wie sie diese klaffende Lücke schließen können. Er präsentiert konkrete Methoden und Lösungsansätze, wie OOUX (Object-Oriented User Experience) und das Konzept der „UI of Objects“ eine nahtlose Verbindung vom Interface-Design bis tief in den Quellcode herstellen.
-
+Viele moderne Systeme leiden unter einem Bruch zwischen hochgradig entkoppelter Logik und prozeduralen Frontends. Dieser Beitrag zeigt Senior-Developern und Architekten im Kontext geschichteter Architekturen (DDD / Clean Architecture), wie sie diese klaffende Lücke schließen können. Er präsentiert konkrete Methoden und Lösungsansätze, wie OOUX (Object-Oriented User Experience) und das Konzept der „UI of Objects“ eine nahtlose Verbindung vom Interface-Design bis tief in den Quellcode herstellen.
 
 ## **1. Das Schweigen der Objekte**
 
@@ -1054,6 +1053,8 @@ public class AccountResource {
 ### **4.5 Anwendung mit UI of Objects (mit React)**
 
 ## **5. Fazit**
+
+**Gute Software spricht die Sprache der Objekte ebenso wie die der Nutzer. **
 
 **Object-Oriented UX** stellt eine bedeutende Verschiebung in der Art und Weise dar, wie das Design von Benutzeroberflächen angegangen wird. Durch die Konzentration auf Objekte anstelle von Aufgaben stimmt OOUX stärker mit den mentalen Modellen der Benutzer überein, fördert die Konsistenz und verbessert die Skalierbarkeit.
 
