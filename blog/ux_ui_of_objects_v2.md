@@ -1054,7 +1054,7 @@ public class AccountResource {
 
 ## **5. Fazit**
 
-**Gute Software spricht die Sprache der Objekte ebenso wie die der Nutzer. **
+**Gute Software spricht die Sprache der Objekte ebenso wie die der Nutzer.**
 
 **Object-Oriented UX** stellt eine bedeutende Verschiebung in der Art und Weise dar, wie das Design von Benutzeroberflächen angegangen wird. Durch die Konzentration auf Objekte anstelle von Aufgaben stimmt OOUX stärker mit den mentalen Modellen der Benutzer überein, fördert die Konsistenz und verbessert die Skalierbarkeit.
 
