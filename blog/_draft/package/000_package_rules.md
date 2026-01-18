@@ -1,3 +1,30 @@
+```mermaid
+graph TD
+    subgraph Root_Package ["Root Package: Business Domain"]
+        style Root_Package fill:#f9f,stroke:#333,stroke-width:2px
+        TheSystem(ISystemComposition<br/>Interface/Abstract Class)<-->Rule1[Rule 1: Central Entry Point]
+        ConceptA(ICoreConceptA<br/>Interface)
+        ConceptB(ICoreConceptB<br/>Interface)
+    end
+
+    subgraph Sales_Context ["Subpackage: Sales Context"]
+        style Sales_Context fill:#ccf,stroke:#333,stroke-width:1px
+        SalesImpl(SalesImplementation<br/>implements ICoreConceptA)-->Rule2a[Rule 2: Implements Parent Concept]
+    end
+
+    subgraph Shipping_Context ["Subpackage: Shipping Context"]
+        style Shipping_Context fill:#ccf,stroke:#333,stroke-width:1px
+        ShipImpl(ShippingImplementation<br/>implements ICoreConceptB)-->Rule2b[Rule 2: Implements Parent Concept]
+    end
+
+    Sales_Context -->|Depends on| Root_Package
+    Shipping_Context -->|Depends on| Root_Package
+    
+    Rule3[Rule 3: Packages follow<br/>Ubiquitous Language] -.-> Sales_Context
+    Rule3 -.-> Shipping_Context
+
+    linkStyle 3,4,5 stroke-width:2px,fill:none,stroke:blue;
+```
 
 ```mermaid
 graph TD
