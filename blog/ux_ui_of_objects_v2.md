@@ -533,6 +533,8 @@ Durch diesen OOUX-Ansatz vermeiden Sie ein rein prozessgesteuertes Design und sc
 
 Um die Theorie in die Praxis umzusetzen, betrachten wir ein Java Swing-Beispiel. Anstatt ein JFrame zu bauen, das Daten aus einem User-Objekt zieht (`user.getName()`), drehen wir den Spieß um. Wir geben dem Objekt eine "Leinwand" (Interface als eine digitale Arbeitsfläche), auf die es sich selbst malt. Das Objekt `AccountSession` ist der Chef. Es bestimmt, wie der Login aussieht und was passiert, wenn geklickt wird. Die Swing-Klassen sind nur dumme Werkzeuge.
 
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ux_ui_swing_sample.png)
+
 ```java
 
 package com.example.account.desktop;
@@ -1094,6 +1096,8 @@ public class AccountResource {
 ```
 
 ### 5.4 Frontend Client (mit JavaScript)
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ux_ui_js_sample.png)
 
 ```html
 <!DOCTYPE html>
