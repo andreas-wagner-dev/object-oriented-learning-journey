@@ -14,9 +14,9 @@
 
 ## Einleitung und Zielgruppe
 
-Viele moderne Systeme – insbesondere im Kontext geschichteter Architekturen wie DDD oder Clean Architecture – leiden unter einem Paradigmenbruch im Sinne echter Objektorientierung: Während der fachliche Kern hochgradig entkoppelt ist, verharren Backend-Integrationen und Frontend-Komponenten oft in anämischen, statuslosen, prozeduralen Strukturen.
+Viele moderne Business-Anwendungen – insbesondere im Kontext geschichteter Architekturen wie Domain-Driven Design oder Clean Architecture – leiden unter einem Paradigmenbruch im Sinne echter Objektorientierung: Während der fachliche Kern hochgradig entkoppelt ist, verstumpfen Backend- und Frontend-Komponenten oft in anämischen, statuslosen, prozeduralen Strukturen.
 
-Dieser Beitrag zeigt Senior-Developern und Architekten, wie sie diese Lücke schließen können. Er präsentiert OOUX (Object-Oriented User Experience) und das Konzept der „UI of Objects“ als Methoden, um eine konsistente fachliche Identität vom Interface-Design bis tief in den Quellcode objektorientiert sicherzustellen.
+Dieser Beitrag zeigt Developern und Architekten, mit welchen Werkzeugen sowie OOP-Prinzipien sie diesen Paradigmenbruch beheben können. Er präsentiert OOUX (Object-Oriented User Experience) als Methode und das Konzept der „UI of Objects“, um eine konsistente fachliche Identität vom Interface-Design bis tief in den Quellcode objektorientiert sicherzustellen.
 
 ## **1. Das Schweigen der Objekte**
 
@@ -116,7 +116,7 @@ Während klassische [OOUI-Begriffe](https://en.wikipedia.org/wiki/Object-oriente
 * **Verhalten statt Daten:** Die UI-Komponente fordert das Objekt auf, etwas zu tun, anstatt Daten abzufragen. (z.B. `person.displayEditForm(uiContext)`).  
 * **Komposition:** Komplexe Oberflächen entstehen durch die Komposition kleinerer, sich selbst darstellender Objekte.
 
-**Die MVC-Rollen bei UI of Objects**
+### 3.1 Die MVC-Rollen bei UI of Objects**
 
 Anstatt Daten in Controller und View zu fragmentieren, werden die Rollen von MVC im Kontext von UI of Objects wie folgt betrachtet:
 
@@ -124,7 +124,7 @@ Anstatt Daten in Controller und View zu fragmentieren, werden die Rollen von MVC
 * **Controller:** Als (abstraktes) UI-Steuerelement (Control), das die Aktionen (z. B. Klick, Submit) des Nutzers als Befehl an das Model als Nachricht weiterleitet, anstatt dessen Daten abzufragen.  
 * **View:** Die konkrete Rendering-Logik (HTML, JSF-Tags, React-Komponenten).
 
-### **Die Mechanik von "UI of Objects"**
+### 3.2 Die Mechanik von "UI of Objects"
 
 Weil Nutzer an Objekte denken, muss der Code dies spiegeln. Wenn aber Getter verbannt werden, wie greift man auf Daten zu?
 
@@ -283,7 +283,8 @@ jonathan.display(htmlPersonView);
 String html = htmlPersonView.toString();
 ```
 
-**API Serialisierung:** Das **Tell, Don't Ask**-Prinzip kann analog nicht nur auf die Logik, sondern auch auf die **Serialisierung** angewendet werden. Anstatt dass die API-Schicht (z. B. JAX-RS oder Spring Controller) Daten aus dem Domänenobjekt extrahiert und diese dann über einen externen Mapper (wie Jackson) serialisiert, kann das Objekt angewiesen, sich **selbst in den Response-Stream zu schreiben oder die Antwort zu generieren**. 
+### 3.3 API Client User und Serialisierung 
+Das **Tell, Don't Ask**-Prinzip kann analog nicht nur auf die Logik, sondern auch auf die **Serialisierung** angewendet werden. Anstatt dass die API-Schicht (z. B. JAX-RS oder Spring Controller) Daten aus dem Domänenobjekt extrahiert und diese dann über einen externen Mapper (wie Jackson) serialisiert, kann das Objekt angewiesen, sich **selbst in den Response-Stream zu schreiben oder die Antwort zu generieren**. 
 
 ```java
 /**  
@@ -436,11 +437,47 @@ return new RsPerson(DsPerson.ofId(ds, personIdFind), personIdFind).toJsonRespons
 
 Dieser Ansatz ist konsequent objektorientiert: **Das Domänenobjekt spricht direkt zum Client**, während die API-Schicht lediglich die Transport- und Protokollverantwortung trägt. Es kontrolliert vollständig, wie es dargestellt wird – ob auf einem UI-Control oder in einem JSON-Stream. Dadurch wird die Kohäsion maximiert und der "Service"-Layer eliminiert. 
 
-## **4. Praktische Anwendung**
+## 4 Abgegrenzt: UI vs. Domain
+
+Ein häufiges Missverständnis bei "sprechenden Objekten" ist die Angst, UI-Code in die Domäne zu mischen. Hier sind die klaren Trennlinien:
+
+### 4.1 Fachlogik im UI-Code
+
+Wann ist es zulässing, Fachlogik im UI-Code zu haben?
+
+Eigentlich: **Nie**. Aber es gibt eine Ausnahme, die oft mit Fachlogik verwechselt wird: UI-Logik.
+
+* Synchronisation: Wenn ein Button deaktiviert wird, weil ein Feld leer ist, ist das UI-Logik (User Experience).
+* Formatierung: Dass ein Datum in der UI als "vor 2 Tagen" statt "12.05.2024" angezeigt wird, ist UI-Logik.
+* Abhängigkeiten: Die UI darf wissen: "Wenn der User 'Privatkunde' wählt, blende das Feld 'Umsatzsteuer-ID' aus." Das ist Layout-Steuerung basierend auf dem Zustand des Objekts.
+
+### 4.2 UI-Code-Smell
+
+Wann ist es ein  Probleme (Code-Smell)?
+
+Du weißt, dass deine Architektur korrodiert, wenn:
+
+* Berechnungen in der View: Wenn das UI-Template berechnet: if (user.age > 18 && user.hasBalance). Das gehört in die Methode user.isEligibleForPurchase().
+* Datenbank-Wissen in der UI: Wenn die UI weiß, dass ein Objekt "dirty" ist oder gespeichert werden muss.
+* Duplizierung: Wenn du die gleiche if-Bedingung in der Web-App, der Mobile-App und dem Export-Modul schreiben musst.
+* Import-Smell: Wenn in deiner Domänenklasse (z.B. Invoice.java) Klassen wie Color, Button oder Layout auftauchen
+
+### 4.3 Trennung von Domäne und Präsentationsschicht
+
+Die Trennung von Domäne und Präsentationsschicht lässt sich technisch wie folgt betrachten:
+
+Die Domäne verwaltet den Zustand und die Fachlogik. Sie definiert die fachliche Absicht (z. B. eine Statusänderung oder eine spezifische Kontextbedingung). Die UI übernimmt die konkrete Darstellung und die technische Umsetzung. Sie entscheidet, wie diese fachliche Absicht visuell oder haptisch für den Nutzer übersetzt wird.
+
+**Der Irrtum:** Wenn die Domäne technologische Details vorgibt (z. B. "Setze CSS-Klasse X auf aktiv"). Sobald die Technologie der Benutzeroberfläche gewechselt wird, verliert die Domänenlogik ihre Gültigkeit und muss angepasst werden.
+
+**Die Lösung:** Die Domäne definiert eine abstrakte Anforderung (z. B. die Signalisierung einer Warnung). Wie die technische Schicht dies umsetzt – ob durch eine Farbänderung, ein Icon oder ein akustisches Signal –, obliegt allein der Implementierung der UI-Komponente.
+
+
+## **5. Praktische Anwendung**
 
 Am Beispiel eines typischen Login-Prozesses wird im Folgedem demonstriert, wie die Prinzipien von OOUX und UI of Objects in der Praxis angewendet werden.
 
-### **4.1 Anwendung der OOUX Methodik**
+### **5.1 Anwendung der OOUX Methodik**
 
 Im OOUX-Framework (Object-Oriented User Experience) steht die Identifizierung der realen Objekte im Fokus, bevor über Bildschirme oder Flows nachgedacht wird. Ein Login-Prozess wird hier nicht als bloßer Ablauf betrachtet, sondern als Interaktion zwischen Objekten.
 
@@ -450,7 +487,7 @@ Hier ist das mentale Modell eines Benutzers für ein Login-Beispiel nach der OOU
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ux_user_mental_model.png) 
 
 
-#### **4.1.1 Die Kern-Objekte (Objects)**
+#### **5.1.1 Die Kern-Objekte (Objects)**
 
 Der Benutzer denkt beim Login nicht an "Code", sondern an digitale Repräsentationen von realen Dingen:
 
@@ -460,7 +497,7 @@ Der Benutzer denkt beim Login nicht an "Code", sondern an digitale Repräsentati
 * **Berechtigung (Permission):** Was darf ich tun, wenn ich drin bin?  
 * **Sitzung (Session):** Der Zustand des Eingeloggt-Seins auf einem bestimmten Gerät.
 
-#### **4.1.2 Beziehungen (Relationships)**
+#### **5.1.2 Beziehungen (Relationships)**
 
 Das mentale Modell des Nutzers verknüpft diese Objekte:
 
@@ -468,7 +505,7 @@ Das mentale Modell des Nutzers verknüpft diese Objekte:
 * Ein Konto ist mit einer E-Mail-Adresse verknüpft.  
 * Eine Sitzung gehört zu genau einem Konto auf einem spezifischen Gerät.
 
-#### **4.1.3. Handlungen (CapabilitiesActions)**
+#### **5.1.3. Handlungen (CapabilitiesActions)**
 
 In OOUX werden Aktionen direkt an die Objekte geknüpft. Der Benutzer fragt sich: Was kann ich mit diesem Objekt tun?
 
@@ -476,7 +513,7 @@ In OOUX werden Aktionen direkt an die Objekte geknüpft. Der Benutzer fragt sich
 * **Sitzung:** Starten (Login), Beenden (Logout), Verlängern (Angemeldet bleiben).  
 * **Passwort:** Ändern, Zurücksetzen (wenn vergessen).
 
-#### **4.1.4 Mentales Modell: Das Schlüssel-Schloss-Prinzip**
+#### **5.1.4 Mentales Modell: Das Schlüssel-Schloss-Prinzip**
 
 Der Benutzer navigiert durch den Login-Prozess mit folgendem mentalen Schema:
 
@@ -484,7 +521,7 @@ Der Benutzer navigiert durch den Login-Prozess mit folgendem mentalen Schema:
 2. **Authentifizierung:** Ich beweise mit einem Schlüssel (Passwort/Token), dass ich der Besitzer bin.  
 3. **Autorisierung:** Das System startet eine Sitzung und gewährt mir Zugriff auf meine Inhalte.
 
-### **4.2 Anwendung im UI-Design**
+### **5.2 Anwendung im UI-Design**
 
 Wenn wie das Modell auf 4.1.4 umsetzen möchten, sollte die UI diese logischen Einheiten widerspiegeln:
 
@@ -494,7 +531,7 @@ Wenn wie das Modell auf 4.1.4 umsetzen möchten, sollte die UI diese logischen E
 
 Durch diesen OOUX-Ansatz vermeiden Sie ein rein prozessgesteuertes Design und schaffen eine Benutzeroberfläche, die intuitiv mit dem Verständnis des Nutzers von Besitz und Zugang übereinstimmt.
 
-### **4.3 UI of Objects (mit Swing)**
+### **5.3 UI of Objects (mit Swing)**
 
 Um die Theorie in die Praxis umzusetzen, betrachten wir ein Java Swing-Beispiel. Anstatt ein JFrame zu bauen, das Daten aus einem User-Objekt zieht (`user.getName()`), drehen wir den Spieß um. Wir geben dem Objekt eine "Leinwand" (Interface als eine digitale Arbeitsfläche), auf die es sich selbst malt. Das Objekt `AccountSession` ist der Chef. Es bestimmt, wie der Login aussieht und was passiert, wenn geklickt wird. Die Swing-Klassen sind nur dumme Werkzeuge.
 
@@ -1316,7 +1353,7 @@ public class AccountResource {
 </html>
 ```
 
-## **5. Fazit**
+## **6. Zusamenfassung und Fazit**
 
 **Gute Software spricht die Sprache der Objekte ebenso wie die der Nutzer.**
 
@@ -1332,7 +1369,7 @@ public class AccountResource {
 
 Die Objekte schweigen nicht mehr: Sie sprechen zum Nutzer, während die UI den schützenden Rahmen dafür bildet.
 
-## **6. Quellen**
+## **6. Quellen und Referenzen**
 
 * Alen Key: [Definition of Object-Oriented-Programming (2003)](www.quora.comWhat-does-Alan-Kay-mean-when-he-said-OOP-to-me-means-only-messaging-local-retention-and-protection-and-hiding-of-state-process-and-extreme-late-binding-of-all-things-It-can-be-done-in-Smalltalk-and-in-LISP)  
 * Allen Holub: [More on getters and setters (2004)](https://www.infoworld.com/article/2161050/more-on-getters-and-setters.html)
