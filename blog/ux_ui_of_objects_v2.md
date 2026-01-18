@@ -499,312 +499,306 @@ Durch diesen OOUX-Ansatz vermeiden Sie ein rein prozessgesteuertes Design und sc
 Um die Theorie in die Praxis umzusetzen, betrachten wir ein Java Swing-Beispiel. Anstatt ein JFrame zu bauen, das Daten aus einem User-Objekt zieht (`user.getName()`), drehen wir den Spieß um. Wir geben dem Objekt eine "Leinwand" (Interface als eine digitale Arbeitsfläche), auf die es sich selbst malt. Das Objekt `AccountSession` ist der Chef. Es bestimmt, wie der Login aussieht und was passiert, wenn geklickt wird. Die Swing-Klassen sind nur dumme Werkzeuge.
 
 ```java
-import java.sql.*;  
-import javax.sql.DataSource;  
+
+import java.awt.*;
+import java.sql.*;
+import javax.sql.*;
 import javax.swing.*;
 
-import java.awt.*;  
-import java.awt.event.ActionListener;  
-import java.sql.Connection;  
-import java.sql.PreparedStatement;  
-import java.sql.ResultSet;  
-import java.sql.SQLException;  
-import java.util.Objects;
+/**
+ * OOUX (Object-Oriented User Experience) IMPLEMENTATION GUIDE (ORCA Process)
+ * * 5.1 OOUX Methodology Application:
+ * Instead of focusing on flows/screens, we focus on real-world objects.
+ * A login process is seen as an interaction between objects, not just a procedure.
+ */
 
-// 1. The Abstraction (The "Canvas" as the digital workspace)  
-// The object communicates with this interface, not directly with Swing or HTML.  
-interface AccountCanvas { 
+// ==========================================================
+// 1. ABSTRACT CANVAS (The Canvas for OOUX Objects)
+// 5.2 UI Design: Logic units are reflected in the interface.
+// ==========================================================
+interface AccountCanvas {
+	void addEmailField(String label); // Part of "Identification"
 
-	/** Adds an input email and binds it to a buffer. */  
-	AccountCanvas addEmail(String label, TextBuffer buffer);  
-	
-	/** Adds an input password and binds it to a buffer. */  
-	AccountCanvas addPassword(String label, TextBuffer buffer);  
-	
-	/** Adds a button and binds an action to it. */  
-	AccountCanvas addButton(String label, ActionListener action);  
-	
-	/** Shows the entire UI. */  
-	void show();  
+	void addPasswordField(String label); // Part of "Authentication"
+
+	void addSignInAction(String label, SignInAction action); // Capability: Authenticate
+
+	void notifySuccess(String message);
+
+	void notifyError(String message); // Feedback related to the Account object
+
+	void updateIdentityStatus(String identityInfo); // Visualization of the "Identity" object
 }
 
-// 2. A simple buffer for data transfer (instead of Getters/Setters)  
-final class TextBuffer {
+interface SignInAction {
+	void authenticate(String email, String password);
+}
 
-	private String content = "";
+// ==========================================================
+// 2. DOMAIN: IDENTITY (Who am I?)
+// 5.1.1 Objects: Represents the "Identity" (e.g., private vs. business profile)
+// ==========================================================
+interface Identity {
+	boolean verify(String secret);
+	boolean unknown();
+}
 
-	/** Updates the buffer content (e.g., via UI input). */  
-	public void update(String text) {  
-		// Ensure that the content is not null  
-		this.content = Objects.requireNonNull(text, "text must not be null");  
+final class VerifiedIdentity implements Identity {
+	private final String email;
+	private final String storedSecret;
+
+	public VerifiedIdentity(String email, String storedSecret) {
+		this.email = email;
+		this.storedSecret = storedSecret;
 	}
 
-	/** Returns the current content. */  
-	public String content() {  
-		return content;  
-	}  
-}
-
-// 3. Domain object hierarchy (according to OOUX/OOP principles)
-
-// 3.1 Domain object Password Interface  
-interface Password {
-
-    //  performs actual checking    
-	boolean matches(String cleartextPassword);  
-}
-
-// 3.2 Implementation of Password for a found hash
-final class HashedPassword implements Password {
-
-	private final String storedHash;
-
-	public HashedPassword(String storedHash) {  
-		this.storedHash = storedHash;  
+	@Override
+	public boolean verify(String secret) {
+		return storedSecret.equals(secret);
 	}
 
-	@Override  
-	public boolean matches(String cleartextPassword) {  
-		// Simulation of a hash check  
-		return storedHash.equals(hashSimulated(cleartextPassword));  
+	@Override
+	public boolean unknown() {
+		return false;
+	}
+}
+
+final class AnonymousIdentity implements Identity {
+	@Override
+	public boolean verify(String secret) {
+		return false;
 	}
 
-	// Simulated hashing function for demonstration  
-	private String hashSimulated(String password) {  
-		if (password.equals("passwort")) {  
-			return "Hashed_Pass_123";  
-		}  
-		return "Simulated_Invalid_Hash";  
-	}  
+	@Override
+	public boolean unknown() {
+		return true;
+	}
 }
 
-// 3.3 Implementation of Password when no Account is found (Always fails)   
-final class InvalidPassword implements Password {
-
-	@Override  
-	public boolean matches(String cleartextPassword) {  
-		return false;  
-	}  
+// ==========================================================
+// 3. DOMAIN: ACCOUNT (The Overarching Object)
+// 5.1.1 Objects: The central object representing access to the service.
+// Attributes: Email, Password (hidden), Security Status.
+// 5.1.3 Capabilities: Create, Verify, Authenticate (Login).
+// ==========================================================
+interface Account {
+	Identity identify(String email);
 }
 
-// 3.4 Domain object Account Interface  
-interface Account {  
-	String authenticate(String email, String password) throws SecurityException;  
-}
-
-// 3.5 DbAccount implementation  
-class DsAccount implements Account {
-
+final class DbAccount implements Account {
 	private final DataSource dataSource;
 
-	public DsAccount(DataSource dataSource) {  
-		this.dataSource = dataSource;  
+	public DbAccount(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
-	@Override  
-	public String authenticate(String email, String userPassword) throws SecurityException {  
-		// 1. Domain logic: Database query  
-		String SQL = "SELECT password FROM accounts WHERE email = ?";  
-		try (Connection conn = dataSource.getConnection();   
-				PreparedStatement stmt = conn.prepareStatement(SQL)) {  
-			stmt.setString(1, email);  
-			Password password;  
-			try (ResultSet rs = stmt.executeQuery()) {  
-				if (rs.next()) {  
-					String storedPasswordHash = rs.getString("password");  
-					// Decorating: A hash was found  
-					password = new HashedPassword(storedPasswordHash);  
-				} else {  
-					// Decorating: No Account found for this email  
-					password = new InvalidPassword();  
-				}  
-			}  
-			// 2. Matching: The Password object is instructed
-            // to check the cleartext password.  
-			if (password.matches(userPassword)) {  
-				// Logic: Generate Session Token  
-				return "JWT_TOKEN_" + email.toUpperCase();  
-			} else {  
-				// Failed authentication  
-				throw new SecurityException("Invalid credentials.");  
-			}  
-		} catch (SQLException e) {  
-			throw new SecurityException("Connection error.", e);  
-		}  
-	}  
+	@Override
+	public Identity identify(String email) {
+		String sql = "SELECT password FROM accounts WHERE email = ?";
+		try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, email);
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next())
+					return new VerifiedIdentity(email, rs.getString("password"));
+			}
+		} catch (SQLException e) {
+			System.err.println("Domain Error: " + e.getMessage());
+		}
+		return new AnonymousIdentity();
+	}
 }
 
-// 4. Domain UI-Object:   
-// Represents the active state of the login process (Session)  
+// ==========================================================
+// 4. DOMAIN: SESSION (The state of being logged in)
+// 5.1.1 Objects: State of being logged in on a specific device.
+// 5.1.4 Mental Model: Identification -> Authentication -> Authorization (Session Start)
+// ==========================================================
 final class AccountSession {
 
-	// Data input buffer  
-	private final TextBuffer email = new TextBuffer();  
-	private final TextBuffer password = new TextBuffer();
-
-	// Account domain Object interface  
 	private final Account account;
 
-	public AccountSession(Account account) {  
-		this.account = account;  
+	public AccountSession(Account account) {
+		this.account = account;
 	}
 
-	public void displayOn(AccountCanvas canvas) {  
-		// Tell principle: The AccountSession instructs the canvas how to render itself  
-		canvas.addEmail("Email Address", email)  
-				.addPassword("Password", password)  
-				.addButton("Sign In", e -> this.authenticate());  
-		// display  
-		canvas.show();  
-	}
+	public void displayOn(AccountCanvas canvas) {
+		// 5.1.4 Identification: Telling the system which account belongs to me
+		canvas.addEmailField("Identification (Email)");
+		// 5.1.4 Authentication: Proving ownership with a key (Password)
+		canvas.addPasswordField("Authentication (Password)");
 
-	private void authenticate() {  
-		String emailContent = email.content();  
-		String passwordContent = password.content();  
-		System.out.println("Attempting login for: " + emailContent);  
-		// verify inputs  
-		if (emailContent.isEmpty() || passwordContent.isEmpty()) {  
-			// Display Error dialog  
-			JOptionPane.showMessageDialog(null, "Please enter email and password.", "Error", JOptionPane.ERROR_MESSAGE);  
-		} else {  
-			try {  
-				// Tell principle: Instruct the Account domain object to authenticate  
-				String token = account.authenticate(emailContent, passwordContent);  
-				// Display results using UI message dialog  
-				JOptionPane.showMessageDialog(null, "Login successful. Token: " + token, "Success",  
-						JOptionPane.INFORMATION_MESSAGE);  
-			} catch (SecurityException e) {  
-				// Display Error dialog  
-				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);  
-			}  
-		}  
-	}  
+		canvas.addSignInAction("Sign In", (email, pass) -> {
+			if (email.isEmpty() || pass.isEmpty()) {
+				canvas.notifyError("Please fill in all fields.");
+				return;
+			}
+
+			Identity identity = account.identify(email);
+			if (identity.unknown()) {
+				// 5.2 Feedback: Error relates to the Account object
+				canvas.notifyError("Account not found.");
+			} else if (identity.verify(pass)) {
+				// 5.1.4 Authorization: System starts a session and grants access
+				canvas.updateIdentityStatus("Logged in as: " + email);
+				canvas.notifySuccess("Session active.");
+			} else {
+				// 5.2 Feedback: Object is blocked/access denied
+				canvas.notifyError("Authentication failed for this account.");
+			}
+		});
+	}
 }
 
-// 5. Concrete Swing Implementation of the Canvas (The View layer)  
-final class SwingAccountCanvas implements AccountCanvas {
+// ==========================================================
+// 5. INFRASTRUCTURE: SWING IMPLEMENTATION
+// 5.2 UI Design - Grouping & Feedback
+// ==========================================================
+final class SwingAccountPanel extends JPanel implements AccountCanvas {
+	private static final long serialVersionUID = 1L;
+	private final JTextField emailField = new JTextField("john.doe@example.com");
+	private final JPasswordField passwordField = new JPasswordField("secure123");
+	private final JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
+	private final SwingMainForm parentForm;
 
-	private final JFrame frame = new JFrame("OOUX Account");  
-	private final JPanel panel = new JPanel(new GridLayout(0, 1, 10, 10));
-
-	public SwingAccountCanvas() {  
-		// Layout and Styling  
-		panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  
-		frame.add(panel, BorderLayout.CENTER);  
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
-		frame.setSize(400, 250);  
-		frame.setLocationRelativeTo(null); // central to window  
+	public SwingAccountPanel(SwingMainForm parentForm) {
+		this.parentForm = parentForm;
+		setPreferredSize(new Dimension(350, 260));
+		setLayout(new GridLayout(6, 1, 5, 5));
+		// 5.2 Grouping: Fields placed in a clearly defined area (Panel)
+		setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(new Color(200, 200, 200)),
+				BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+		setBackground(Color.WHITE);
+		statusLabel.setFont(new Font("SansSerif", Font.BOLD, 11));
 	}
 
-	@Override  
-	public AccountCanvas addEmail(String label, TextBuffer buffer) {  
-		JTextField field = new JTextField();  
-		// Add listener to receive message as action events  
-		ActionListener updateAction = e -> buffer.update(field.getText());  
-		field.addActionListener(updateAction);  
-		field.addFocusListener(new java.awt.event.FocusAdapter() {  
-			public void focusLost(java.awt.event.FocusEvent evt) {  
-				buffer.update(field.getText());  
-			}  
-		});  
-		// Add to panel  
-		panel.add(new JLabel(label));  
-		panel.add(field);  
-		return this;  
+	@Override
+	public void addEmailField(String label) {
+		add(new JLabel(label));
+		add(emailField);
 	}
 
-	@Override  
-	public AccountCanvas addPassword(String label, TextBuffer buffer) {  
-		JTextField field = new JPasswordField();  
-		// Add listener to receive message as action events  
-		ActionListener updateAction = e -> buffer.update(field.getText());  
-		field.addActionListener(updateAction);  
-		field.addFocusListener(new java.awt.event.FocusAdapter() {  
-			public void focusLost(java.awt.event.FocusEvent evt) {  
-				buffer.update(field.getText());  
-			}  
-		});  
-		// Add to panel  
-		panel.add(new JLabel(label));  
-		panel.add(field);  
-		return this;  
+	@Override
+	public void addPasswordField(String label) {
+		add(new JLabel(label));
+		add(passwordField);
 	}
 
-	@Override  
-	public AccountCanvas addButton(String label, ActionListener action) {  
-		JButton btn = new JButton(label);  
-		// Bind Button action  
-		btn.addActionListener(action);  
-		// Minimal styling - Medium Sea Green for better esthetics  
-		btn.setBackground(new Color(60, 179, 113));  
-		btn.setForeground(Color.WHITE);  
-		btn.setFocusPainted(false);  
-		btn.setFont(btn.getFont().deriveFont(Font.BOLD, 14f));  
-		// Add to panel  
-		panel.add(btn);  
-		return this;  
+	@Override
+	public void addSignInAction(String label, SignInAction action) {
+		JButton button = new JButton(label);
+		button.setBackground(new Color(41, 128, 185)); // Action tied to the object
+		button.setForeground(Color.WHITE);
+		button.setFocusPainted(false);
+		button.setOpaque(true);
+		button.setBorderPainted(false);
+
+		button.addActionListener(e -> {
+			statusLabel.setText(" ");
+			action.authenticate(emailField.getText(), new String(passwordField.getPassword()));
+		});
+		add(button);
+		add(statusLabel);
 	}
 
-	@Override  
-	public void show() {  
-		// Ensure UI updates are on the Event Dispatch Thread  
-		SwingUtilities.invokeLater(() -> frame.setVisible(true));  
+	@Override
+	public void notifySuccess(String message) {
+		statusLabel.setForeground(new Color(39, 174, 96));
+		statusLabel.setText(message);
 	}
 
+	@Override
+	public void notifyError(String message) {
+		statusLabel.setForeground(new Color(192, 57, 43));
+		statusLabel.setText(message);
+	}
+
+	@Override
+	public void updateIdentityStatus(String identityInfo) {
+		parentForm.setIdentityHeader(identityInfo);
+	}
 }
 
-// 6. Application Start  
-public class SwingApplication {
+class SwingMainForm extends JFrame {
+	private static final long serialVersionUID = 1L;
+	// 5.2 Status Display: Label in header visualizing the active "Identity" object
+	private final JLabel identityLabel = new JLabel("Status: Not logged in", SwingConstants.RIGHT);
+	private final JPanel centerWrapper = new JPanel(new GridBagLayout());
 
-	public static void main(String[] args) {  
-		// Initialize Data Source  
-		DataSource dataSource = initH2DataSource();  
-		// Create the Account Session object, injecting the Account domain logic  
-		AccountSession accountSession = new AccountSession(new DsAccount(dataSource));  
-		// Tell the AccountSession object to display itself on the Swing Canvas  
-		accountSession.displayOn(new SwingAccountCanvas());  
+	public SwingMainForm() {
+		setTitle("OOUX Login Framework (ORCA Process)");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(600, 500);
+
+		JPanel header = new JPanel(new BorderLayout());
+		header.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+		header.add(identityLabel, BorderLayout.EAST);
+		add(header, BorderLayout.NORTH);
+
+		centerWrapper.setBackground(new Color(245, 245, 245));
+		add(centerWrapper, BorderLayout.CENTER);
 	}
 
-	// Utility method to set up an in-memory H2 database  
-	static DataSource initH2DataSource() {  
-		// 1. Initialize and configure the H2 DataSource  
-		org.h2.jdbcx.JdbcDataSource ds = new org.h2.jdbcx.JdbcDataSource();  
-		// Use an in-memory database.  
-		// DB_CLOSE_DELAY=-1 keeps the data alive as long as the JVM is running.  
-		ds.setURL("jdbc:h2:mem:account_db;DB_CLOSE_DELAY=-1");  
-		ds.setUser("sa");  
-		ds.setPassword("");  
-		// 2. Establish a connection from the DataSource  
-		try (Connection conn = ds.getConnection()) {  
-			// 3. Define the DDL for the Account schema  
-			String createTableSql = "CREATE TABLE IF NOT EXISTS accounts ("   
-			        + "id BIGINT AUTO_INCREMENT PRIMARY KEY,"  
-					+ "username VARCHAR(50) NOT NULL UNIQUE,"   
-			        + "email VARCHAR(100) NOT NULL UNIQUE,"  
-					+ "password VARCHAR(255) NOT NULL,"   
-			        + "active BOOLEAN DEFAULT TRUE,"  
-					+ "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP" + ")";  
-			try (Statement stmt = conn.createStatement()) {  
-				stmt.execute(createTableSql);  
-				System.out.println("DDL executed: Table 'accounts' created successfully.");  
-			}  
-			// 4. Insert a sample record (DML)  
-			String insertSql = "INSERT INTO accounts (username, email, password) VALUES (?, ?, ?)";  
-			// Simulate a simple hash for 'password' (matches the HashedPassword simulation)  
-			String sampleHash = "Hashed_Pass_123";  
-			try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {  
-				pstmt.setString(1, "john_doe");  
-				pstmt.setString(2, "john.doe@example.com");  
-				pstmt.setString(3, sampleHash);  
-				pstmt.executeUpdate();  
-				System.out.println("Sample account inserted.");  
-			}  
-		} catch (Exception e) {  
-			throw new RuntimeException(e);  
-		}  
-		return ds;  
+	public void setIdentityHeader(String text) {
+		identityLabel.setText(text);
+		identityLabel.setForeground(new Color(41, 128, 185));
 	}
 
+	public void addContent(JPanel contentPanel) {
+		centerWrapper.removeAll();
+		centerWrapper.add(contentPanel);
+		centerWrapper.revalidate();
+		centerWrapper.repaint();
+	}
+
+	public void display() {
+		setLocationRelativeTo(null);
+		setVisible(true);
+	}
+}
+
+// ==========================================================
+// 6. APPLICATION START
+// ==========================================================
+public class SwingAccountApplication {
+	public static void main(String[] args) {
+		System.setProperty("awt.useSystemAAFontSettings", "on");
+		System.setProperty("swing.aatext", "true");
+
+		SwingUtilities.invokeLater(() -> {
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+				DataSource ds = setupDatabase();
+				Account account = new DbAccount(ds);
+				AccountSession session = new AccountSession(account);
+
+				SwingMainForm mainForm = new SwingMainForm();
+				SwingAccountPanel loginPanel = new SwingAccountPanel(mainForm);
+
+				session.displayOn(loginPanel);
+
+				mainForm.addContent(loginPanel);
+				mainForm.display();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	private static DataSource setupDatabase() {
+		org.h2.jdbcx.JdbcDataSource ds = new org.h2.jdbcx.JdbcDataSource();
+		ds.setURL("jdbc:h2:mem:ooux_db;DB_CLOSE_DELAY=-1");
+		ds.setUser("sa");
+		try (Connection conn = ds.getConnection(); Statement st = conn.createStatement()) {
+			st.execute("CREATE TABLE accounts(email VARCHAR(255) PRIMARY KEY, password VARCHAR(255))");
+			st.execute("INSERT INTO accounts VALUES('john.doe@example.com', 'secure123')");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ds;
+	}
 }
 ```
 
