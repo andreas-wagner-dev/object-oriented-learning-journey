@@ -529,7 +529,7 @@ Wenn wie das Modell auf 4.1.4 umsetzen möchten, sollte die UI diese logischen E
 
 Durch diesen OOUX-Ansatz vermeiden Sie ein rein prozessgesteuertes Design und schaffen eine Benutzeroberfläche, die intuitiv mit dem Verständnis des Nutzers von Besitz und Zugang übereinstimmt.
 
-### **5.3 UI of Objects (mit Swing)**
+### **5.3 Desktop Client (mit Swing)**
 
 Um die Theorie in die Praxis umzusetzen, betrachten wir ein Java Swing-Beispiel. Anstatt ein JFrame zu bauen, das Daten aus einem User-Objekt zieht (`user.getName()`), drehen wir den Spieß um. Wir geben dem Objekt eine "Leinwand" (Interface als eine digitale Arbeitsfläche), auf die es sich selbst malt. Das Objekt `AccountSession` ist der Chef. Es bestimmt, wie der Login aussieht und was passiert, wenn geklickt wird. Die Swing-Klassen sind nur dumme Werkzeuge.
 
@@ -864,7 +864,8 @@ public class SwingAccountApplication {
 * **Inversion of Control (Push-Prinzip):** Das Domänenobjekt (Model) instruiert die View (canvas.addEmail(), canvas.addPassword()) aktiv über seine Darstellung (Push-Prinzip). Dadurch wird die logische Trennung zwischen 'Was' (Objekt) und 'Wie' (View) gewährleistet.  
 * **Starke Verhaltenskohäsion (Single Responsibility Principle - SRP):** Die gesamte Interaktionslogik (z. B. der ActionListener für den 'Login'-Knopf) ist *innerhalb* der AccountSession gekapselt (this.authenticate()). Das Objekt trägt die alleinige Verantwortung für sein Verhalten.
 
-### **5.4 Selbst-Serialisierung (für REST API mit JAX-RS)**
+### 5.4 Backend-API (mit JAX-RS)
+
 ```java
 package com.example.account.api;
 
@@ -1092,7 +1093,7 @@ public class AccountResource {
 }
 ```
 
-### **5 Anwendung mit UI of Objects (mit React)**
+### 5.4 Frontend Client (mit JavaScript)
 
 ```html
 <!DOCTYPE html>
