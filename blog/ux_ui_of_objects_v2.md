@@ -863,10 +863,12 @@ public class SwingAccountApplication {
 **Kernprinzipien im Code**
 
 * **Volle Kapselung und Verzicht auf Getter:** Die AccountSession fragt nicht nach Daten (keine Getter), sondern delegiert die Verantwortung an andere Objekte (Tell, Don't Ask). Dadurch bleibt der interne Zustand (E-Mail und Passwort) gekapselt.  
-* **Inversion of Control (Push-Prinzip):** Das Domänenobjekt (Model) instruiert die View (canvas.addEmail(), canvas.addPassword()) aktiv über seine Darstellung (Push-Prinzip). Dadurch wird die logische Trennung zwischen 'Was' (Objekt) und 'Wie' (View) gewährleistet.  
-* **Starke Verhaltenskohäsion (Single Responsibility Principle - SRP):** Die gesamte Interaktionslogik (z. B. der ActionListener für den 'Login'-Knopf) ist *innerhalb* der AccountSession gekapselt (this.authenticate()). Das Objekt trägt die alleinige Verantwortung für sein Verhalten.
+* **Inversion of Control (Push-Prinzip):** Das Domänenobjekt (Model) instruiert die View (`canvas.addEmailField()`, `canvas.addPasswordField()`) aktiv über seine Darstellung (Push-Prinzip). Dadurch wird die logische Trennung zwischen 'Was' (Objekt) und 'Wie' (View) gewährleistet.  
+* **Starke Verhaltenskohäsion (Single Responsibility Principle - SRP):** Die gesamte Interaktionslogik (z. B. der `ActionListener` für den 'Sign-In'-Knopf) ist *innerhalb* der `AccountSession` gekapselt (`this.authenticate()`). Das Objekt trägt die alleinige Verantwortung für sein Verhalten.
 
 ### 5.4 Backend-API (mit JAX-RS)
+
+Die folgende Backend-Implementierung demonstriert, wie das Prinzip **„Tell, Don't Ask“** auf einen Webdienst übertragen wird. Anstatt die Logik prozedural zu orchestrieren, delegiert die Klasse `AccountResource` als Controller die gesamte Authentifizierung und Antwortgenerierung an die Domänenobjekte. Das `ApiAccount`-Objekt fungiert als spezialisierter Dekorator, der das Domänenergebnis direkt in das *HTTP-Protokoll* übersetzt.
 
 ```java
 package com.example.account.api;
@@ -1096,6 +1098,8 @@ public class AccountResource {
 ```
 
 ### 5.4 Frontend Client (mit JavaScript)
+
+Auf *Clientseite* wird der objektorientierte Ansatz fortgesetzt, indem der Interaktionsstatus in einer `AccountSession`-Klasse gekapselt wird. Dieses Frontend-„Sprechobjekt“ verwaltet die asynchrone Kommunikation mit der API und sendet Statusaktualisierungen direkt an einen `Callback`-Mechanismus. Dadurch bleiben die *UI-Komponenten* schlank und auf das Layout fokussiert, während die Verhaltenslogik der Anmeldesitzung zentralisiert und in sich abgeschlossen ist.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ux_ui_js_sample.png)
 
