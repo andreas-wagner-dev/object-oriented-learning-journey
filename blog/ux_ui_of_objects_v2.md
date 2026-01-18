@@ -4,13 +4,13 @@
 * **Appell:** *Warum man aufhören muss, Objekte wie stumme Datencontainer zu behandeln*
 * **Thema:** #OOP, #OOUX, UI of Objects, Data Animation
 
+**TL;DR:** Durch Object-Oriented User Experience (OOUX) und das Konzept der „UI of Objects“ schaffen Sie eine durchgängige objektorientierte Verbindung von Backend- und UI-Design bis tief in den Quellcode und ihre Objekte werden nicht mehr schweigen, sie zum Nuter sprechen.
+
 > Um zu verhindern, dass Ihre Objekte stumm bleiben, müssen Sie ihnen eine Methode verleihen, um ihren internen Zustand (Daten, Funktion oder Existenz) in eine für den Benutzer verständliche Sprache (Text, visuelles Feedback oder narrativer Dialog) zu übersetzen.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ui_of_objects_meme.png)
 
 *(The most common argument against user interface logic in the domain objects)*
-
-**TL;DR:** Durch Object-Oriented User Experience (OOUX) und das Konzept der „UI of Objects“ schaffen Sie eine durchgängige objektorientierte Verbindung von Backend- und UI-Design bis tief in den Quellcode und ihre Objekte werden nicht mehr schweigen, sie zum Nuter sprechen.
 
 ## Einleitung und Zielgruppe
 
