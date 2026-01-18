@@ -18,7 +18,7 @@ Viele moderne Business-Anwendungen – insbesondere im Kontext geschichteter Arc
 
 Dieser Beitrag zeigt Developern und Architekten, mit welchen Werkzeugen sowie OOP-Prinzipien sie diesen Paradigmenbruch beheben können. Er präsentiert OOUX (Object-Oriented User Experience) als Methode und das Konzept der „UI of Objects“, um eine konsistente fachliche Identität vom Interface-Design bis tief in den Quellcode objektorientiert sicherzustellen.
 
-## **1. Das Schweigen der Objekte**
+## 1. Das Schweigen der Objekte
 
 Eine schweigende Party
 
@@ -28,7 +28,7 @@ Klingt absurd? In der modernen Softwareentwicklung ist das der Standard.
 
 Die Analogie findet man in modernen "Enterprise"-Anwendungen wo "Domain"-Objekte, nichts weiter als aufgewertete Aktenschränke (Datencontainer) sind. Sie besitzen Schubladen (Getter und Setter), haben aber keine Fähigkeiten, aktive Nachrichten an ihre Nutzer zu übermitteln. Stattdessen werden sie auf Rollwägen überall hin gefahren (oft als [Data Transfer Objects](https://www.yegor256.com/2016/07/06/data-transfer-object.html) (DTOs) missbraucht) und deren Inhalte von gesonderten Zustellern (meist von Service- oder Controller-Klassen) ans Tageslicht gezerrt und dann manipuliert.
 
-### **1.1 Das Problem mit stummen Objekten**
+### 1.1 Das Problem mit stummen Objekten
 
 Der Status quo vieler Anwendungen ist geprägt von Architekturen, die – oft unter Berufung auf das [Model-View-Controller-Muster](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) (MVC) – eine strikte Schichtentrennung erzwingen und dadurch schwer wartbare sowie starre [Datengrenzen](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/) entstehen lassen. 
 
@@ -40,7 +40,7 @@ Durch das Auslagern der gesamte Business-Logik in Service- oder Controller-Klass
 
 Das Kernproblem wurzelt bereits im traditionellen UI-Design, das sich primär auf Aktionen und Abläufe konzentriert – also auf das, was der Nutzer tun möchte (**Verben**). Eine Musik-Applikation fokussiert sich beispielsweise auf Funktionen wie "Musik abspielen", anstatt die Objekte `Lied` oder `Album` als handelnde Einheiten in den Vordergrund zu stellen. Diese prozedurale Sichtweise führt dazu, dass Software-Strukturen die UI-Abläufe spiegeln. Selbst moderne Ansätze wie Domain-Driven Design (DDD) und Clean Architecture tappen in der Praxis oft in diese "Aktions-Falle": Anstatt die Autonomie der Domänenobjekte zu stärken, rücken ihre Implementierungsbeispiele oft `Use Cases` oder Application `Services` ins Zentrum. Diese fungieren wie statuslose Hilfs-Klassen, die den Ablauf steuern und das Objekt zum reinen Datenlieferanten degradieren.
 
-### **1.2 Die Lösung sind sprechende Objekte**
+### 1.2 Die Lösung sind sprechende Objekte
 
 Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, verlagert der moderne Ansatz des **Object-Oriented UX (OOUX)** den Fokus auf die realen Objekte, mit denen Anwender interagieren. Nutzer denken an reale Dinge (Ich archiviere diese E-Mail) statt an Datenbankzeilen (Ich setze den Status-Flag der Entity ID 123 auf 'ARCHIVED'). Diese Denkweise impliziert den Termin "User Interface of Objects”, welcher in der modernen Softwarearchitektur-Debatte maßgeblich von Robert Bräutigam geprägt und propagiert wird.
 
@@ -57,11 +57,11 @@ Der Vorschlag, dass Domänenobjekte sich selbst präsentieren sollen, ist kontro
 
 Ein Objekt sollte demnach wie ein reales Subjekt agieren (sprechen) und seine Daten animieren, anstatt sie lediglich zu mappen. Man sollte es nicht fragen: **Gib mir deinen Titel, damit ich ihn anzeigen oder übertragen kann**. Stattdessen sagt man ihm: **Hier ist eine Bühne (z. B. ein UI-Control oder Interface) – bitte präsentiere dich dort.** Dies ist die Anwendung des Designprinzips [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html) in seiner reinsten Form.
 
-## **2. Object-Oriented User-Experience (UX) und -Interface (UI)**
+## 2. Object-Oriented User-Experience (UX) und -Interface (UI)
 
 Vom mentalen Modell zur visuellen Darstellung
 
-### **Object-Oriented UX**
+### 2.1 Object-Oriented UX
 
 OOUX ist ein Designansatz, der die gleichen Konzepte wie die objektorientierte Programmierung anwendet. Es konzentriert sich auf die Identifizierung und Priorisierung von Objekten – konzeptuellen Entitäten, die reale Elemente, Ideen, Personen, Orte oder Ereignisse abbilden.
 
@@ -89,7 +89,7 @@ Erst im letzten Schritt werden die konkreten Datenfelder definiert (z. B. Titel,
 
 Für die praktische Anwendung des Prozesses ist der Guide von [Rewired](https://www.rewiredux.com/ooux) UX sehr empfehlenswert.
 
-### **Object-Oriented UI (OOUI)**
+### 2.2 Object-Oriented UI (OOUI)
 
 Der Erfolg von OOUX hängt stark davon ab, wie diese konzeptuellen Objekte visuell zum Leben erweckt werden. Hier kommt Object-Oriented UI (OOUI) ins Spiel. OOUI nutzt interaktive Objekte, indem es von der realen Welt inspirierte Texturen und Dimensionen hinzufügt. OOUI ist die optische und bedienbare Umsetzung der OOUX-Struktur. Dabei geht es darum, dass Nutzer abstrakte Daten als konkrete "Dinge" (Objekte) wahrnehmen, die sie im Interface "anfassen" können.
 
@@ -103,20 +103,20 @@ Der Erfolg von OOUX hängt stark davon ab, wie diese konzeptuellen Objekte visue
 
 Die Übernahme dieses ganzheitlichen Ansatzes richtet das Design konsequent an den mentalen Modellen der Benutzer aus, fördert Konsistenz und Wiederverwendbarkeit im gesamten Designsystem und verbessert die Skalierbarkeit. Wenn Systeme wachsen, ermöglicht der modulare Ansatz von OOUX, dass neue Funktionen oder Objekte hinzugefügt werden können, ohne die bestehende Domänenstruktur zu stören, was die langfristige Wartbarkeit verbessert.
 
-## **3. User Interface of Objects**
+## 3. User Interface of Objects
 
 Vom Design zum Code mit Kapselung der Darstellung
 
 Während klassische [OOUI-Begriffe](https://en.wikipedia.org/wiki/Object-oriented_user_interface) von IBM oder Dave Collins stammen, ist Robert Bräutigam derjenige, der den spezifischen Begriff "UI of Objects" im Kontext moderner Architektur und DDD als Lösung für das "Anemic Domain Model" verwendet.
 
-### **Kernprinzipien von UI of Objects**
+### 3.1 Kernprinzipien von UI of Objects
 
 * **Objekt im Zentrum:** Die UI organisiert sich um Domänenobjekte (`Kunde`, `Produkt`), nicht um generische Aktionen oder Tabellen.  
 * **Starke Kohäsion:** Die UI-Struktur (was dargestellt wird und welche Felder zur Interaktion notwendig sind) wird als natürliche Eigenschaft des Objekts betrachtet. Das Objekt weiß, wie es sich in verschiedenen Kontexten darstellen soll (`displaySummary()`, `displayFullDetails()`).  
 * **Verhalten statt Daten:** Die UI-Komponente fordert das Objekt auf, etwas zu tun, anstatt Daten abzufragen. (z.B. `person.displayEditForm(uiContext)`).  
 * **Komposition:** Komplexe Oberflächen entstehen durch die Komposition kleinerer, sich selbst darstellender Objekte.
 
-### 3.1 Die MVC-Rollen bei UI of Objects**
+### 3.2 MVC-Rollen bei UI of Objects
 
 Anstatt Daten in Controller und View zu fragmentieren, werden die Rollen von MVC im Kontext von UI of Objects wie folgt betrachtet:
 
@@ -124,7 +124,7 @@ Anstatt Daten in Controller und View zu fragmentieren, werden die Rollen von MVC
 * **Controller:** Als (abstraktes) UI-Steuerelement (Control), das die Aktionen (z. B. Klick, Submit) des Nutzers als Befehl an das Model als Nachricht weiterleitet, anstatt dessen Daten abzufragen.  
 * **View:** Die konkrete Rendering-Logik (HTML, JSF-Tags, React-Komponenten).
 
-### 3.2 Die Mechanik von "UI of Objects"
+### 3.3 Mechanik von UI of Objects
 
 Weil Nutzer an Objekte denken, muss der Code dies spiegeln. Wenn aber Getter verbannt werden, wie greift man auf Daten zu?
 
@@ -283,7 +283,7 @@ jonathan.display(htmlPersonView);
 String html = htmlPersonView.toString();
 ```
 
-### 3.3 API Client User und Serialisierung 
+### 3.4 Client User und API Serialisierung 
 Das **Tell, Don't Ask**-Prinzip kann analog nicht nur auf die Logik, sondern auch auf die **Serialisierung** angewendet werden. Anstatt dass die API-Schicht (z. B. JAX-RS oder Spring Controller) Daten aus dem Domänenobjekt extrahiert und diese dann über einen externen Mapper (wie Jackson) serialisiert, kann das Objekt angewiesen, sich **selbst in den Response-Stream zu schreiben oder die Antwort zu generieren**. 
 
 ```java
