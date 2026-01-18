@@ -500,10 +500,13 @@ Um die Theorie in die Praxis umzusetzen, betrachten wir ein Java Swing-Beispiel.
 
 ```java
 
+package com.example.account.desktop;
+
 import java.awt.*;
 import java.sql.*;
 import javax.sql.*;
 import javax.swing.*;
+
 
 /**
  * OOUX (Object-Oriented User Experience) IMPLEMENTATION GUIDE (ORCA Process)
@@ -517,6 +520,7 @@ import javax.swing.*;
 // 5.2 UI Design: Logic units are reflected in the interface.
 // ==========================================================
 interface AccountCanvas {
+	
 	void addEmailField(String label); // Part of "Identification"
 
 	void addPasswordField(String label); // Part of "Authentication"
@@ -544,6 +548,7 @@ interface Identity {
 }
 
 final class VerifiedIdentity implements Identity {
+	
 	private final String email;
 	private final String storedSecret;
 
@@ -561,9 +566,15 @@ final class VerifiedIdentity implements Identity {
 	public boolean unknown() {
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return email;
+	}
 }
 
 final class AnonymousIdentity implements Identity {
+	
 	@Override
 	public boolean verify(String secret) {
 		return false;
@@ -572,6 +583,11 @@ final class AnonymousIdentity implements Identity {
 	@Override
 	public boolean unknown() {
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "Not logged in: Anonymous";
 	}
 }
 
@@ -586,6 +602,7 @@ interface Account {
 }
 
 final class DbAccount implements Account {
+	
 	private final DataSource dataSource;
 
 	public DbAccount(DataSource dataSource) {
@@ -622,12 +639,14 @@ final class AccountSession {
 	}
 
 	public void displayOn(AccountCanvas canvas) {
+		
 		// 5.1.4 Identification: Telling the system which account belongs to me
 		canvas.addEmailField("Identification (Email)");
 		// 5.1.4 Authentication: Proving ownership with a key (Password)
 		canvas.addPasswordField("Authentication (Password)");
 
 		canvas.addSignInAction("Sign In", (email, pass) -> {
+			
 			if (email.isEmpty() || pass.isEmpty()) {
 				canvas.notifyError("Please fill in all fields.");
 				return;
@@ -645,6 +664,7 @@ final class AccountSession {
 				// 5.2 Feedback: Object is blocked/access denied
 				canvas.notifyError("Authentication failed for this account.");
 			}
+			
 		});
 	}
 }
@@ -654,6 +674,7 @@ final class AccountSession {
 // 5.2 UI Design - Grouping & Feedback
 // ==========================================================
 final class SwingAccountPanel extends JPanel implements AccountCanvas {
+	
 	private static final long serialVersionUID = 1L;
 	private final JTextField emailField = new JTextField("john.doe@example.com");
 	private final JPasswordField passwordField = new JPasswordField("secure123");
@@ -802,251 +823,498 @@ public class SwingAccountApplication {
 }
 ```
 
-**Zusammenfassung der Kernprinzipien im Code**
+**Kernprinzipien im Code**
 
 * **Volle Kapselung und Verzicht auf Getter:** Die AccountSession fragt nicht nach Daten (keine Getter), sondern delegiert die Verantwortung an andere Objekte (Tell, Don't Ask). Dadurch bleibt der interne Zustand (E-Mail und Passwort) gekapselt.  
 * **Inversion of Control (Push-Prinzip):** Das Domänenobjekt (Model) instruiert die View (canvas.addEmail(), canvas.addPassword()) aktiv über seine Darstellung (Push-Prinzip). Dadurch wird die logische Trennung zwischen 'Was' (Objekt) und 'Wie' (View) gewährleistet.  
 * **Starke Verhaltenskohäsion (Single Responsibility Principle - SRP):** Die gesamte Interaktionslogik (z. B. der ActionListener für den 'Login'-Knopf) ist *innerhalb* der AccountSession gekapselt (this.authenticate()). Das Objekt trägt die alleinige Verantwortung für sein Verhalten.
 
-### **4.4 Selbst-Serialisierung (für REST API mit JAX-RS)**
+### **5.4 Selbst-Serialisierung (für REST API mit JAX-RS)**
 ```java
-import jakarta.ws.rs.ApplicationPath;  
-import jakarta.ws.rs.core.Application;
+package com.example.account.api;
 
-/**  
-* JAX-RS application configuration class.   
-* Define the base path for all resources as "/api".  
-*/  
-@ApplicationPath("/api")  
-public class ApplicationResource extends Application {  
-	// used for configuration  
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.ServletContext;
+import javax.sql.*;
+import java.sql.*;
+
+
+/**
+ * JAX-RS Configuration. Base path: /api
+ */
+@ApplicationPath("/api")
+class ApplicationResource extends Application {
 }
 
-import jakarta.ws.rs.*;  
-import jakarta.ws.rs.POST;  
-import jakarta.ws.rs.Path;  
-import jakarta.ws.rs.Produces;  
-import jakarta.ws.rs.core.MediaType;  
-import jakarta.ws.rs.core.Response;  
-import jakarta.ws.rs.core.Response.Status;
-
-import jakarta.inject.Inject;  
-import jakarta.annotation.PostConstruct;  
-import jakarta.servlet.ServletContext;
-
-import javax.sql.DataSource;
-
-import java.sql.Connection;  
-import java.sql.PreparedStatement;  
-import java.sql.ResultSet;  
-import java.sql.SQLException;
-
-/** Data Transfer Object (DTO) for login credentials. */  
+/**
+ * DTO for Login Requests. Represents attributes of the mental model:
+ * Identification & Authentication.
+ */
 final class Credentials {
-
-	private String email;  
+	
+	private String email;
 	private String password;
 
-	public String getEmail() {  
-		return email;  
+	public String getEmail() {
+		return email;
 	}
 
-	public String getPassword() {  
-		return password;  
+	public String getPassword() {
+		return password;
 	}
 
-	/** Checks if both email and password fields are present and non-empty. */  
-	public boolean isValid() {  
-		return email != null && !email.trim().isEmpty() && password != null && !password.trim().isEmpty();  
-	}  
+	public boolean isValid() {
+		return email != null && !email.trim().isEmpty() && password != null && !password.trim().isEmpty();
+	}
 }
 
-/**  
-* Domain interface for Account operations.  
-*/  
-interface Account {  
-	/** Authenticates a user and returns a session token upon success. */  
-	String authenticate(String email, String password) throws SecurityException, SQLException;  
+// ==========================================================
+// OOUX DOMAIN: OBJECTS (Core of the ORCA Process)
+// ==========================================================
+
+/**
+ * 5.1.1 Object: Identity - "Who am I?"
+ */
+interface Identity {
+	boolean verify(String secret);
+	boolean unknown();
 }
 
-/**  
-* Domain interface for Password logic (Tell, Don't Ask).  
-*/  
-interface Password {  
-	/** Instructs the password object to check if the cleartext matches. */  
-	boolean matches(String cleartextPassword);  
-}
+final class VerifiedIdentity implements Identity {
+	
+	private final String email;
+	private final String storedSecret;
 
-/**  
-* Implementation for a known hashed password.  
-*/  
-final class HashedPassword implements Password {
-
-	private final String storedHash;
-
-	public HashedPassword(String storedHash) {  
-		this.storedHash = storedHash;  
+	public VerifiedIdentity(String email, String storedSecret) {
+		this.email = email;
+		this.storedSecret = storedSecret;
 	}
 
-	@Override  
-	public boolean matches(String cleartextPassword) {  
-		// Simulation of a hash check  
-		return storedHash.equals(hashSimulated(cleartextPassword));  
+	@Override
+	public boolean verify(String secret) {
+		return storedSecret.equals(secret);
 	}
 
-	// Simulated hashing function for demonstration purposes  
-	private String hashSimulated(String password) {  
-		if (password.equals("passwort")) {  
-			return "hashed_passwort_12345";  
-		}  
-		return "invalid_hash";  
-	}  
+	@Override
+	public String toString() {
+		return email;
+	}
+
+	@Override
+	public boolean unknown() {
+		return false;
+	}
 }
 
-/**  
-* Implementation for a non-existent password (always fails authentication).  
-*/  
-final class InvalidPassword implements Password {
+final class AnonymousIdentity implements Identity {
+	
+	@Override
+	public boolean verify(String secret) {
+		return false;
+	}
 
-	@Override  
-	public boolean matches(String cleartextPassword) {  
-		return false;  
-	}  
+	@Override
+	public String toString() {
+		return "Not logged in";
+	}
+
+	@Override
+	public boolean unknown() {
+		return true;
+	}
 }
 
-/**  
-* Domain implementation of Account using a JDBC DataSource.  
-*/  
+/**
+ * 5.1.1 Object: Account - Overarching object representing access.
+ */
+interface Account {
+	/**
+	 * * Determines the identity based on the account (Identification).
+	 */
+	Identity identify(String email);
+}
+
+/**
+ * Implementation of the Account object using JDBC.
+ */
 class DsAccount implements Account {
-
+	
 	private final DataSource dataSource;
 
-	public DsAccount(DataSource dataSource) {  
-		this.dataSource = dataSource;  
+	public DsAccount(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
-	@Override  
-	public String authenticate(String email, String passwordText) throws SecurityException, SQLException {  
-		// 1. Domain logic: Database query  
-		String SQL = "SELECT password_hash FROM accounts WHERE email = ?";  
-		try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(SQL)) {  
-			stmt.setString(1, email);  
-			Password password;  
-			try (ResultSet rs = stmt.executeQuery()) {  
-				if (rs.next()) {  
-					String storedPasswordHash = rs.getString("password_hash");  
-					// Hash found  
-					password = new HashedPassword(storedPasswordHash);  
-				} else {  
-					// No account found for this email  
-					password = new InvalidPassword();  
-				}  
-			}  
-			// 2. The Password object is instructed to check itself.  
-			if (password.matches(passwordText)) {  
-				// Logic: Generate Session Token  
-				return "JWT_TOKEN_" + email.toUpperCase();  
-			} else {  
-				// Failed authentication  
-				throw new SecurityException("Invalid credentials.");  
-			}  
-		} catch (SQLException e) {  
-			// Database connection/query error  
-			throw new SecurityException("Connection error.", e);  
-		}  
-	}  
+	@Override
+	public Identity identify(String email) {
+		String sql = "SELECT password_hash FROM accounts WHERE email = ?";
+		try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, email);
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					return new VerifiedIdentity(email, rs.getString("password_hash"));
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Database Error: " + e.getMessage());
+		}
+		return new AnonymousIdentity();
+	}
 }
 
-/**  
- * API layer decorator for the Account domain object.  
- * It translates the domain result (token or exception) into a JAX-RS Response.  
- */  
-final class ApiAccount implements Account {
-
+/**
+ * 5.1.1 Object: Session - Orchestrates the login process. Follows the
+ * Key-and-Lock Principle (5.1.4).
+ */
+final class ApiAccount {
+	
 	private final Account account;
 
-	public ApiAccount(Account account) {  
-		this.account = account;  
+	public ApiAccount(Account account) {
+		this.account = account;
 	}
 
-	@Override  
-	public String authenticate(String email, String password) throws SecurityException, SQLException {  
-		// 1. Delegate domain logic and receive token  
-		return account.authenticate(email, password);  
-	}
+	public Response authenticate(Credentials credentials) {
+		try {
+			if (!credentials.isValid()) {
+				return Response.status(Status.BAD_REQUEST).entity("{\"error\": \"Email or password missing.\"}")
+						.build();
+			}
 
-	/**  
-	 * Main method to authenticate and build a structured Response.  
-	 */  
-	public Response authenticate(Credentials credentials) {  
-		try {  
-			if (!credentials.isValid()) {  
-				throw new SecurityException("Email or password missing.");  
-			}  
-			String sessionToken = authenticate(credentials.getEmail(), credentials.getPassword());  
-			// Success: 200 OK  
-			return Response.status(Status.OK)  
-					.entity("{\"token\": \"" + sessionToken + "\", \"message\": \"Login successful.\"}")
-					.build();  
-		} catch (SecurityException e) {  
-			// Domain Error: Invalid credentials (401 Unauthorized)  
-			return Response.status(Status.UNAUTHORIZED)  
-					.entity("{\"Error\": \"" + e.getMessage() + "\", \"message\": \"Login unauthorized.\"}")  
-					.build();  
-		} catch (SQLException e) {  
-			// Database Error (e.g., connection lost) (400 Bad Request / Data issue)  
-			return Response.status(Status.BAD_REQUEST)  
-					.entity("{\"Error\": \"" + e.getMessage() + "\", \"message\": \"Login failed.\"}")  
-					.build();  
-		} catch (Exception e) {  
-			// Generic Error: 500 Internal Server Error  
-			return Response.status(Status.INTERNAL_SERVER\_ERROR)  
-					.entity("{\"Error\": \"" + e.getMessage() + "\", \"message\": \"Internal Server Error.\"}")  
-					.build();  
-		}  
-	}  
+			// 1. IDENTIFICATION: Which account belongs to me?
+			Identity identity = account.identify(credentials.getEmail());
+
+			if (identity.unknown()) {
+				// 5.2 Feedback: Reference to the Account object
+				return Response.status(Status.UNAUTHORIZED).entity("{\"error\": \"Account not found.\"}").build();
+			}
+
+			// 2. AUTHENTICATION: Proving ownership with a key (Password)
+			if (identity.verify(credentials.getPassword())) {
+				// 3. AUTHORIZATION: Start session (Response with Identity)
+				String token = "JWT_" + identity.toString().toUpperCase() + "_" + System.currentTimeMillis();
+				return Response.status(Status.OK).entity("{\"token\": \"" + token + "\", \"identity\": \""
+						+ identity.toString() + "\", \"message\": \"Session active.\"}").build();
+			} else {
+				// 5.2 Feedback: Account object is blocked / Password incorrect
+				return Response.status(Status.UNAUTHORIZED)
+						.entity("{\"error\": \"Authentication failed for this account.\"}").build();
+			}
+
+		} catch (Exception e) {
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{\"error\": \"Internal server error.\"}")
+					.build();
+		}
+	}
 }
-```
 
+// ==========================================================
+// API LAYER (Infrastructure)
+// ==========================================================
 
-```java
-/**  
- * The JAX-RS Resource (API Layer) - Facade for the Account Resource.   
- * The URL /account reflects the interaction with the Account domain object (Login).  
- * URL path becomes /api/account  
- */  
-@Path("account")  
+@Path("account")
 public class AccountResource {
 
-	@Inject  
-	private ServletContext server;
+	// @Inject
+	// private ServletContext server;
 
 	private DataSource dataSource;
 
-	@PostConstruct  
-	public void init() {  
-		// Get the DataSource provided by the ServletContext (e.g., from CDI or JNDI)  
-		dataSource = (DataSource) server.getAttribute(DataSource.class.getSimpleName());  
+	@PostConstruct
+	public void init() {
+		// dataSource = (DataSource) server.getAttribute(DataSource.class.getSimpleName());
+		
+		org.h2.jdbcx.JdbcDataSource ds = new org.h2.jdbcx.JdbcDataSource();
+		ds.setURL("jdbc:h2:mem:ooux_db;DB_CLOSE_DELAY=-1");
+		ds.setUser("sa");
+		try (Connection conn = ds.getConnection(); Statement st = conn.createStatement()) {
+			st.execute("CREATE TABLE accounts(email VARCHAR(255) PRIMARY KEY, password VARCHAR(255))");
+			st.execute("INSERT INTO accounts VALUES('john.doe@example.com', 'secure123')");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		dataSource = ds;
 	}
 
-	/**  
-	 * POST /api/account/login  
-	 * Performs the login and creates a session.  
-	 * @param credentials The credentials from the client.  
-	 * @return Response object, mainly for status and header control.  
-	 */  
-	@POST  
-	@Path("/login")  
-	@Produces(MediaType.APPLICATION_JSON)  
-	@Consumes(MediaType.APPLICATION_JSON)  
-	public Response login(Credentials credentials) {  
-		// TELL PRINCIPLE: We use the ApiAccount Decorator, which handles the domain logic  
-		// and the conversion to the JAX-RS Response.  
-		return new ApiAccount(new DsAccount(this.dataSource)).authenticate(credentials);  
-	}  
+	/**
+	 * POST /api/account/login Interaction between Account, Identity, and Session
+	 * objects.
+	 */
+	@POST
+	@Path("/login")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response login(Credentials credentials) {
+		// Uses the decorator to transform domain logic into API responses
+		return new ApiAccount(new DsAccount(this.dataSource)).authenticate(credentials);
+	}
 }
 ```
-### **4.5 Anwendung mit UI of Objects (mit React)**
+
+### **5 Anwendung mit UI of Objects (mit React)**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOUX Account Client - Login Objects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --label-class: 'text-sm text-gray-500 mb-1 font-medium';
+            --input-class: 'border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none transition-all';
+            --button-class: 'w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors mt-4';
+            --fieldset-class: 'border-l-4 border-gray-200 pl-6 my-6 bg-white/50 p-4 rounded-r-lg shadow-sm';
+            --legend-class: 'px-2 font-bold text-blue-800 tracking-wide uppercase text-xs';
+            --container-class: 'flex flex-col mb-4';
+            --header-class: 'bg-blue-600 text-white p-6 shadow-lg mb-8';
+            --header-content-class: 'max-w-md mx-auto';
+            --header-title-class: 'font-bold text-center text-1xl';
+            --header-subtitle-class: 'text-blue-100 text-base italic text-center block';
+            --main-class: 'max-w-md mx-auto px-4';
+        }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        fieldset { transition: all 0.2s ease-in-out; }
+        fieldset:hover { border-color: var(--primary); }
+        .status-msg { font-size: 0.875rem; margin-top: 0.5rem; text-align: center; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div id="app-root"></div>
+
+    <script type="module">
+
+        /**
+         * BASIC FRAMEWORK CONCEPTS (Abstracts)
+         */
+        class Control {
+            render() { throw new Error("Render method must be implemented."); }
+        }
+
+        class CssVar {
+            constructor(element, propertyName) {
+                const property = getComputedStyle(document.documentElement).getPropertyValue(propertyName);
+                element.className = property.replace(/'/g, "");  
+            }
+        }
+
+        /**
+         * ATOMIC UI CONTROLS
+         */
+        class TextInput extends Control {
+            constructor(labelText, type = "text", initialValue = "") {
+                super();
+                this.container = document.createElement('div');
+                this.label = document.createElement('label');
+                this.input = document.createElement('input');
+                
+                this.label.innerText = labelText;
+                this.input.type = type;
+                this.input.value = initialValue;
+
+                this.container.appendChild(this.label);
+                this.container.appendChild(this.input);
+
+                new CssVar(this.container, '--container-class'); 
+                new CssVar(this.input, '--input-class'); 
+                new CssVar(this.label, '--label-class');  
+            }
+
+            val() { return this.input.value; }
+
+            render() { return this.container; }
+        }
+
+        class Button extends Control {
+            constructor(labelText) {
+                super();
+                this.btn = document.createElement('button');                        
+                this.btn.innerText = labelText;
+                new CssVar(this.btn, '--button-class'); 
+            }
+            onClick(handler) {
+                this.btn.onclick = handler;
+                return this;
+            }
+            render() { return this.btn; }
+        }
+
+        class InputGroup extends Control {
+            constructor(legendText) {
+                super();
+                this.legendText = legendText;
+                this.children = [];
+            }
+            add(component) {
+                this.children.push(component);
+                return this;
+            }
+            render() {
+                const fieldset = document.createElement('fieldset');
+                const legend = document.createElement('legend');
+                legend.innerText = this.legendText;
+                fieldset.appendChild(legend);
+                new CssVar(fieldset, '--fieldset-class'); 
+                new CssVar(legend, '--legend-class');
+                this.children.forEach(child => fieldset.appendChild(child.render()));
+                return fieldset;
+            }
+        }
+
+        /**
+         * 5.1.1 OOUX DOMAIN OBJECTS
+         */
+
+        /**
+         * The Account Gateway (Infrastructure/Backend Connector)
+         */
+        class AccountApi {
+            async login(email, password) {
+                console.log(`System: Identifying account for ${email}...`);
+
+                /**
+                 * HOW TO CALL LOCALHOST:
+                 * There are two primary ways to call the client against a local server:
+                 * * 1. Same Host (Recommended):
+                 * Host the HTML file on the same server where the Java API is running.
+                 * * 2. Different Hosts:
+                 * Provide the absolute URL in fetch: 'http://localhost:8080/api/account/login'.
+                 * NOTE: CORS must be enabled in the Java app.
+                 */
+                const apiUrl = '/api/account/login'; 
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    return await response.json();
+                } catch (error) {
+                    return { error: "Network error: Connection to the Account Service failed." };
+                }
+            }
+        }
+
+        /**
+         * The AccountSession Object
+         */
+        class AccountSession {
+            constructor(accountApi, onStatusChange) {
+                this.accountApi = accountApi;
+                this.onStatusChange = onStatusChange;
+                
+                this.emailInput = new TextInput("Identification (Email)", "email", "john.doe@example.com");
+                this.passwordInput = new TextInput("Authentication (Password)", "password", "secure123");
+            }
+
+            async authenticate() {
+                const email = this.emailInput.val();
+                const pass = this.passwordInput.val();
+
+                this.onStatusChange("Authenticating...", "text-blue-600");
+
+                const result = await this.accountApi.login(email, pass);
+
+                if (result.token) {
+                    this.onStatusChange(`Welcome back! Identity: ${result.identity}`, "text-green-600");
+                } else {
+                    this.onStatusChange(result.error || "Login failed.", "text-red-600");
+                }
+            }
+
+            displayInput() {
+                return new InputGroup("Account Access")
+                    .add(this.emailInput)
+                    .add(this.passwordInput);
+            }
+        }
+
+        /**
+         * PAGE COMPONENT
+         */
+        class AccountPage extends Control {
+            constructor(session) {
+                super();
+                this.session = session;
+                this.statusDisplay = document.createElement('div');
+                this.statusDisplay.className = "status-msg";
+            }
+
+            updateStatus(text, colorClass) {
+                this.statusDisplay.innerText = text;
+                this.statusDisplay.className = `status-msg ${colorClass}`;
+            }
+
+            render() {
+                const root = document.createElement('div');
+                
+                const header = document.createElement('header');
+                new CssVar(header, '--header-class'); 
+                
+                const headerContent = document.createElement('div');
+                new CssVar(headerContent, '--header-content-class');
+
+                const title = document.createElement('h1');
+                title.innerText = "Account Client - OOUX & 'UI of Objects'";
+                new CssVar(title, '--header-title-class');
+
+                const subtitle = document.createElement('p');
+                subtitle.innerText = "Mental Model: Account with Identification & Authentication";
+                new CssVar(subtitle, '--header-subtitle-class');
+
+                headerContent.appendChild(title);
+                headerContent.appendChild(subtitle);
+                header.appendChild(headerContent);
+                root.appendChild(header);
+
+                const main = document.createElement('main');
+                new CssVar(main, '--main-class');
+
+                main.appendChild(this.session.displayInput().render());
+
+                const loginBtn = new Button("Sign In").onClick(() => this.session.authenticate());
+                main.appendChild(loginBtn.render());
+                
+                main.appendChild(this.statusDisplay);
+
+                root.appendChild(main);
+                return root;
+            }
+        }
+
+        /**
+         * APP ROOT
+         */
+        class AccountApp {
+            run() {
+                const appRoot = document.getElementById('app-root');
+                const accountApi = new AccountApi();
+                
+                let page;
+                const session = new AccountSession(accountApi, (msg, cls) => page.updateStatus(msg, cls));
+                page = new AccountPage(session);
+
+                appRoot.appendChild(page.render());
+            }
+        }
+
+        window.onload = () => new AccountApp().run();
+    </script>
+</body>
+</html>
+```
 
 ## **5. Fazit**
 
