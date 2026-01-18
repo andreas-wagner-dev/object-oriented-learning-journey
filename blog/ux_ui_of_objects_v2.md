@@ -521,7 +521,7 @@ Der Benutzer navigiert durch den Login-Prozess mit folgendem mentalen Schema:
 
 ### **5.2 Anwendung im UI-Design**
 
-Wenn wie das Modell auf 4.1.4 umsetzen möchten, sollte die UI diese logischen Einheiten widerspiegeln:
+Wenn wir das Modell auf 5.1.4 umsetzen möchten, sollte die UI diese logischen Einheiten widerspiegeln:
 
 * **Gruppierung:** Platzieren Sie Felder für die Identifikation (E-Mail) und Authentifizierung (Passwort) in einem klar abgegrenzten Bereich (Panel), der das Login-Objekt repräsentiert.  
 * **Feedback:** Wenn das Passwort falsch ist, ist das Objekt Konto blockiert. Die Fehlermeldung sollte sich auf das Objekt beziehen (Konto nicht gefunden oder das Passwort für dieses Konto inkorrekt).  
