@@ -1,10 +1,8 @@
 # **Teach your Objects to speak to the User "otherwise they will be dumb…"**
 
-* **Status:** Draft  
-* **Appeal:** *Why we must stop treating objects like mute data containers*  
-* **Topic:** #OOP, #OOUX, UI of Objects, Data Animation
-
 **TL;DR:** Through Object-Oriented User Experience (OOUX) and the concept of "UI of Objects," you create a seamless object-oriented connection from backend and UI design deep into the source code. Your objects will no longer be silent; they will speak to the user.
+
+---
 
 > To prevent your objects from remaining silent (dumb), you must give them a method to translate their internal state (data, function, or existence) into a user-understandable language (text, visual feedback, or narrative dialogue).
 
