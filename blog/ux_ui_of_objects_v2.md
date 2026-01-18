@@ -483,7 +483,7 @@ Im OOUX-Framework (Object-Oriented User Experience) steht die Identifizierung de
 
 Hier ist das mentale Modell eines Benutzers für ein Login-Beispiel nach der OOUX-Methodik (ORCA-Prozess):
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ux_user_mental_model.png) 
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ux_user_mental_model_nb.png) 
 
 #### **5.1.1 Die Kern-Objekte (Objects)**
 
@@ -1364,13 +1364,15 @@ public class AccountResource {
 
 **Object-Oriented UI** ist dabei der starke Partner, der diese abstrakten Konzepte in greifbare, interaktive Elemente übersetzt. Durch die Nutzung von Texturen, Dimensionen und interaktiven Elementen macht OOUI digitale Schnittstellen ansprechender.
 
-**UI of Objects** erfordert auf Code-Ebene ein Umdenken: Weg von anämischen Datencontainern hin zu **Immutable-Proxies-Objekten**. Die konsequente Umsetzung von OOP manifestiert sich in Architekturen mit maximaler Kohäsion und minimaler semantischer Kopplung.
+**UI of Objects** erfordert auf Code-Ebene ein Umdenken **(Tell, Don't Ask)**: Weg von anämischen Datencontainern hin zu **Immutable-Proxies-Objekten**. Die konsequente Umsetzung von OOP manifestiert sich in Architekturen mit maximaler Kohäsion und minimaler semantischer Kopplung.
 
-**Das Kernprinzip (Tell, Don't Ask):** Es geht um UI-Intention in der Domäne, nicht um UI-Code. Die Vereinigung von OOUX und UI of Objects führt nicht zu einer Vermischung der Schichten. Im Gegenteil: Sie gibt die Verantwortung für die Präsentation dorthin zurück, wo das Wissen liegt – in das Objekt.
+**Das Kernprinzip:** Es geht um UI-Intention in der Domäne, nicht um UI-Code. Die Vereinigung von OOUX und UI of Objects führt nicht zu einer Vermischung der Schichten. Im Gegenteil: Sie gibt die Verantwortung für die Präsentation dorthin zurück, wo das Wissen liegt – in das Objekt.
 * UI-Code in der Domäne? Nein.
 * UI-Intention in der Domäne? Ja.
 
 Die Objekte schweigen nicht mehr: Sie sprechen zum Nutzer, während die UI den schützenden Rahmen dafür bildet.
+
+> Giving up “procedural thinking” isn’t easy, but it’s worth doing. - (Allen Holub)
 
 ## **6. Quellen und Referenzen**
 
