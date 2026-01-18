@@ -42,7 +42,7 @@ Das Kernproblem wurzelt bereits im traditionellen UI-Design, das sich primär au
 
 ### 1.2 Die Lösung sind sprechende Objekte
 
-Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, verlagert der moderne Ansatz des **Object-Oriented UX (OOUX)** den Fokus auf die realen Objekte, mit denen Anwender interagieren. Nutzer denken an reale Dinge (Ich archiviere diese E-Mail) statt an Datenbankzeilen (Ich setze den Status-Flag der Entity ID 123 auf 'ARCHIVED'). Diese Denkweise impliziert den Termin "User Interface of Objects”, welcher in der modernen Softwarearchitektur-Debatte maßgeblich von Robert Bräutigam geprägt und propagiert wird.
+Während sich das traditionelle UI-Design oft um Aufgaben und Aktionen dreht, verlagert der moderne Ansatz des **Object-Oriented UX (OOUX)** den Fokus auf die realen Objekte, mit denen Anwender interagieren. Nutzer denken an reale Dinge (Ich archiviere diese E-Mail) statt an Datenbankzeilen (Ich setze den Status-Flag der Entity ID 123 auf 'ARCHIVED'). Diese Denkweise impliziert den Begriff "User Interface of Objects”, welcher in der modernen Softwarearchitektur-Debatte maßgeblich von Robert Bräutigam geprägt und propagiert wird.
 
 **Die UI-Debatte: Gehört die Präsentation in die Domäne?**
 
@@ -503,7 +503,7 @@ Das mentale Modell des Nutzers verknüpft diese Objekte:
 * Ein Konto ist mit einer E-Mail-Adresse verknüpft.  
 * Eine Sitzung gehört zu genau einem Konto auf einem spezifischen Gerät.
 
-#### **5.1.3. Handlungen (CapabilitiesActions)**
+#### **5.1.3. Handlungen (Capabilities/Actions)**
 
 In OOUX werden Aktionen direkt an die Objekte geknüpft. Der Benutzer fragt sich: Was kann ich mit diesem Objekt tun?
 
