@@ -447,22 +447,22 @@ Wann ist es zulässing, Fachlogik im UI-Code zu haben?
 
 Eigentlich: **Nie**. Aber es gibt eine Ausnahme, die oft mit Fachlogik verwechselt wird: UI-Logik.
 
-* Synchronisation: Wenn ein Button deaktiviert wird, weil ein Feld leer ist, ist das UI-Logik (User Experience).
-* Formatierung: Dass ein Datum in der UI als "vor 2 Tagen" statt "12.05.2024" angezeigt wird, ist UI-Logik.
-* Abhängigkeiten: Die UI darf wissen: "Wenn der User 'Privatkunde' wählt, blende das Feld 'Umsatzsteuer-ID' aus." Das ist Layout-Steuerung basierend auf dem Zustand des Objekts.
+* **Synchronisation:** Wenn ein Button deaktiviert wird, weil ein Feld leer ist, ist das UI-Logik (User Experience).
+* **Formatierung:** Dass ein Datum in der UI als "vor 2 Tagen" statt "12.05.2024" angezeigt wird, ist UI-Logik.
+* **Abhängigkeiten:** Die UI darf wissen: "Wenn der User 'Privatkunde' wählt, blende das Feld 'Umsatzsteuer-ID' aus." Das ist Layout-Steuerung basierend auf dem Zustand des Objekts.
 
 ### 4.2 UI-Code-Smell
 
-Wann ist es ein  Probleme (Code-Smell)?
+Wann ist es ein Probleme (Code-Smell)?
 
-Du weißt, dass deine Architektur korrodiert, wenn:
+Die Architektur korrodiert, wenn:
 
-* Berechnungen in der View: Wenn das UI-Template berechnet: if (user.age > 18 && user.hasBalance). Das gehört in die Methode user.isEligibleForPurchase().
-* Datenbank-Wissen in der UI: Wenn die UI weiß, dass ein Objekt "dirty" ist oder gespeichert werden muss.
-* Duplizierung: Wenn du die gleiche if-Bedingung in der Web-App, der Mobile-App und dem Export-Modul schreiben musst.
-* Import-Smell: Wenn in deiner Domänenklasse (z.B. Invoice.java) Klassen wie Color, Button oder Layout auftauchen
+* **Berechnungen in der View: Wenn das UI-Template berechnet:** `if (user.age > 18 && user.hasBalance)`. Das gehört in die Methode `user.isEligibleForPurchase()`.
+* **Datenbank-Wissen in der UI:** Wenn die UI weiß, dass ein Objekt "dirty" ist oder gespeichert werden muss.
+* **Duplizierung:** Wenn du die gleiche if-Bedingung in der **Web-App**, der **Mobile-App** und dem **Export-Modul** schreiben musst.
+* **Import-Smell:** Wenn in deiner Domänenklasse (z.B. Invoice.java) Klassen wie Color, Button oder Layout auftauchen
 
-### 4.3 Trennung von Domäne und Präsentationsschicht
+### 4.3 Trennung von Domäne und Präsentation
 
 Die Trennung von Domäne und Präsentationsschicht lässt sich technisch wie folgt betrachten:
 
@@ -483,9 +483,7 @@ Im OOUX-Framework (Object-Oriented User Experience) steht die Identifizierung de
 
 Hier ist das mentale Modell eines Benutzers für ein Login-Beispiel nach der OOUX-Methodik (ORCA-Prozess):
 
-
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/ux_user_mental_model.png) 
-
 
 #### **5.1.1 Die Kern-Objekte (Objects)**
 
