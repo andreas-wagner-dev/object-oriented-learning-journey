@@ -1093,255 +1093,312 @@ On the client side, the object-oriented approach continues by encapsulating the 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OOUX Account Client - Login Objects</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --secondary: #64748b;
-            --label-class: 'text-sm text-gray-500 mb-1 font-medium';
-            --input-class: 'border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none transition-all';
-            --button-class: 'w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors mt-4';
-            --fieldset-class: 'border-l-4 border-gray-200 pl-6 my-6 bg-white/50 p-4 rounded-r-lg shadow-sm';
-            --legend-class: 'px-2 font-bold text-blue-800 tracking-wide uppercase text-xs';
-            --container-class: 'flex flex-col mb-4';
-            --header-class: 'bg-blue-600 text-white p-6 shadow-lg mb-8';
-            --header-content-class: 'max-w-md mx-auto';
-            --header-title-class: 'font-bold text-center text-1xl';
-            --header-subtitle-class: 'text-blue-100 text-base italic text-center block';
-            --main-class: 'max-w-md mx-auto px-4';
-        }
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-        fieldset { transition: all 0.2s ease-in-out; }
-        fieldset:hover { border-color: var(--primary); }
-        .status-msg { font-size: 0.875rem; margin-top: 0.5rem; text-align: center; font-weight: 600; }
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOUX Account Client - Login Objects</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+    :root {
+        --primary: #2563eb;
+        --secondary: #64748b;
+        --label-class: 'text-sm text-gray-500 mb-1 font-medium';
+        --input-class: 'border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none transition-all';
+        --button-class: 'w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors mt-4';
+        --fieldset-class: 'border-l-4 border-gray-200 pl-6 my-6 bg-white/50 p-4 rounded-r-lg shadow-sm';
+        --legend-class: 'px-2 font-bold text-blue-800 tracking-wide uppercase text-xs';
+        --container-class: 'flex flex-col mb-4';
+        --header-class: 'bg-blue-600 text-white p-6 shadow-lg mb-8';
+        --header-content-class: 'max-w-md mx-auto';
+        --header-title-class: 'font-bold text-center text-1xl';
+        --header-subtitle-class: 'text-blue-100 text-base italic text-center block';
+        --main-class: 'max-w-md mx-auto px-4';
+        --info-msg-class: 'status-msg text-blue-600';
+        --success-msg-class: 'status-msg text-green-600';
+        --error-msg-class: 'status-msg text-red-600';
+    }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+    fieldset { transition: all 0.2s ease-in-out; }
+    fieldset:hover { border-color: var(--primary); }
+    .status-msg { font-size: 0.875rem; margin-top: 0.5rem; text-align: center; font-weight: 600; }
+</style>
+
 </head>
 <body>
 
-    <div id="app-root"></div>
+<div id="app-root"></div>
 
-    <script type="module">
+<script type="module">
 
-        /**
-         * BASIC FRAMEWORK CONCEPTS (Abstracts)
-         */
-        class Control {
-            render() { throw new Error("Render method must be implemented."); }
+    /**
+     * BASIC FRAMEWORK CONCEPTS (Abstracts)
+     */
+    class Control {
+        render() { throw new Error("Render method must be implemented."); }
+    }
+
+    class CssVar {
+        constructor(element, propertyName) {
+            const property = getComputedStyle(document.documentElement)
+                              .getPropertyValue(propertyName);
+            element.className = property.replace(/'/g, "");  
         }
+    }
 
-        class CssVar {
-            constructor(element, propertyName) {
-                const property = getComputedStyle(document.documentElement).getPropertyValue(propertyName);
-                element.className = property.replace(/'/g, "");  
-            }
-        }
-
-        /**
-         * ATOMIC UI CONTROLS
-         */
-        class TextInput extends Control {
-            constructor(labelText, type = "text", initialValue = "") {
-                super();
-                this.container = document.createElement('div');
-                this.label = document.createElement('label');
-                this.input = document.createElement('input');
+    /**
+    * ATOMIC UI CONTROLS
+    */
+    class TextInput extends Control {
+        constructor(labelText, type = "text", initialValue = "") {
+            super();
+            this.container = document.createElement('div');
+            this.label = document.createElement('label');
+            this.input = document.createElement('input');
                 
-                this.label.innerText = labelText;
-                this.input.type = type;
-                this.input.value = initialValue;
+            this.label.innerText = labelText;
+            this.input.type = type;
+            this.input.value = initialValue;
 
-                this.container.appendChild(this.label);
-                this.container.appendChild(this.input);
+            this.container.appendChild(this.label);
+            this.container.appendChild(this.input);
 
-                new CssVar(this.container, '--container-class'); 
-                new CssVar(this.input, '--input-class'); 
-                new CssVar(this.label, '--label-class');  
-            }
-
-            val() { return this.input.value; }
-
-            render() { return this.container; }
+            new CssVar(this.container, '--container-class'); 
+            new CssVar(this.input, '--input-class'); 
+            new CssVar(this.label, '--label-class');  
         }
 
-        class Button extends Control {
-            constructor(labelText) {
-                super();
-                this.btn = document.createElement('button');                        
-                this.btn.innerText = labelText;
-                new CssVar(this.btn, '--button-class'); 
-            }
-            onClick(handler) {
-                this.btn.onclick = handler;
-                return this;
-            }
-            render() { return this.btn; }
+        val() { return this.input.value; }
+
+        render() { return this.container; }
+    }
+
+    class Button extends Control {
+
+        constructor(labelText) {
+            super();
+            this.btn = document.createElement('button');                        
+            this.btn.innerText = labelText;
+            new CssVar(this.btn, '--button-class'); 
         }
 
-        class InputGroup extends Control {
-            constructor(legendText) {
-                super();
-                this.legendText = legendText;
-                this.children = [];
+        onClick(handler) {
+            this.btn.onclick = handler;
+            return this;
+        }
+
+        render() { return this.btn; }
+    }
+
+    class InputGroup extends Control {
+
+        constructor(legendText) {
+            super();
+            this.legendText = legendText;
+            this.children = [];
+        }
+
+        add(component) {
+            this.children.push(component);
+            return this;
+        }
+
+        render() {
+            const fieldset = document.createElement('fieldset');
+            const legend = document.createElement('legend');
+            legend.innerText = this.legendText;
+            fieldset.appendChild(legend);
+            new CssVar(fieldset, '--fieldset-class'); 
+            new CssVar(legend, '--legend-class');
+            this.children.forEach(child => fieldset.appendChild(child.render()));
+            return fieldset;
+        }
+    }
+
+    /**
+     * 5.1.1 OOUX DOMAIN OBJECTS
+     */
+
+    /**
+     * The Account Gateway (Infrastructure/Backend Connector)
+     */
+    class AccountApi {
+
+        async login(email, password) {
+            console.log(`System: Identifying account for ${email}...`);
+
+            /**
+             * HOW TO CALL LOCALHOST:
+             * There are two primary ways to call the
+             * client against a local server:
+             *
+             * 1. Same Host (Recommended):
+             * Host the HTML file on the same server 
+             * where the Java API is running.
+             *
+             * 2. Different Hosts:
+             * Provide the absolute URL in fetch: 
+             * 'http://localhost:8080/api/account/login'.
+             *
+             * NOTE: CORS must be enabled in the Java app.
+             */
+            const apiUrl = '/api/account/login'; 
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                return await response.json();
+            } catch (error) {
+                return { error: "Network error: Connection to the Account Service failed." };
             }
-            add(component) {
-                this.children.push(component);
-                return this;
-            }
-            render() {
-                const fieldset = document.createElement('fieldset');
-                const legend = document.createElement('legend');
-                legend.innerText = this.legendText;
-                fieldset.appendChild(legend);
-                new CssVar(fieldset, '--fieldset-class'); 
-                new CssVar(legend, '--legend-class');
-                this.children.forEach(child => fieldset.appendChild(child.render()));
-                return fieldset;
+        }
+    }
+
+    /**
+     * The AccountSession Object
+     * Pure logic, decoupled from UI styling.
+     */
+    class AccountSession {
+
+        constructor(accountApi) {
+            this.accountApi = accountApi;
+            this.emailInput = new TextInput("Identification (Email)", "email", "john.doe@example.com");
+            this.passwordInput = new TextInput("Authentication (Password)", "password", "secure123");
+            
+            this.notifyInfo = function (msg) {};
+            this.notifySuccess = function (msg) {};
+            this.notifyError = function (msg) {};
+        }
+
+        onInfo(notifyInfo) {
+            this.notifyInfo = notifyInfo;
+        }
+
+        onSuccess(notifySuccess) {
+            this.notifySuccess = notifySuccess;
+        }
+
+        onError(notifyError) {
+            this.notifyError = notifyError;
+        }
+
+        async authenticate() {
+            const email = this.emailInput.val();
+            const pass = this.passwordInput.val();
+
+            this.notifyInfo("Authenticating...");
+
+            const result = await this.accountApi.login(email, pass);
+
+            if (result.token) {
+                this.notifySuccess(`Welcome back! Identity: ${result.identity}`);
+            } else {
+                 this.notifyError(result.error || "Login failed.");
             }
         }
 
-        /**
-         * 5.1.1 OOUX DOMAIN OBJECTS
-         */
-
-        /**
-         * The Account Gateway (Infrastructure/Backend Connector)
-         */
-        class AccountApi {
-            async login(email, password) {
-                console.log(`System: Identifying account for ${email}...`);
-
-                /**
-                 * HOW TO CALL LOCALHOST:
-                 * There are two primary ways to call the client against a local server:
-                 * * 1. Same Host (Recommended):
-                 * Host the HTML file on the same server where the Java API is running.
-                 * * 2. Different Hosts:
-                 * Provide the absolute URL in fetch: 'http://localhost:8080/api/account/login'.
-                 * NOTE: CORS must be enabled in the Java app.
-                 */
-                const apiUrl = '/api/account/login'; 
-
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
-                    });
-                    return await response.json();
-                } catch (error) {
-                    return { error: "Network error: Connection to the Account Service failed." };
-                }
-            }
-        }
-
-        /**
-         * The AccountSession Object
-         */
-        class AccountSession {
-            constructor(accountApi, onStatusChange) {
-                this.accountApi = accountApi;
-                this.onStatusChange = onStatusChange;
-                
-                this.emailInput = new TextInput("Identification (Email)", "email", "john.doe@example.com");
-                this.passwordInput = new TextInput("Authentication (Password)", "password", "secure123");
-            }
-
-            async authenticate() {
-                const email = this.emailInput.val();
-                const pass = this.passwordInput.val();
-
-                this.onStatusChange("Authenticating...", "text-blue-600");
-
-                const result = await this.accountApi.login(email, pass);
-
-                if (result.token) {
-                    this.onStatusChange(`Welcome back! Identity: ${result.identity}`, "text-green-600");
-                } else {
-                    this.onStatusChange(result.error || "Login failed.", "text-red-600");
-                }
-            }
-
-            displayInput() {
-                return new InputGroup("Account Access")
+        displayInput() {
+            return new InputGroup("Account Access")
                     .add(this.emailInput)
                     .add(this.passwordInput);
-            }
+        }
+    }
+
+    /**
+     * PAGE COMPONENT
+     * Handles the visual mapping of business states using specific feedback methods.
+     */
+    class AccountPage extends Control {
+
+        constructor(session) {
+            super();
+            this.session = session;
+            this.statusDisplay = document.createElement('div');
+            this.statusDisplay.className = "status-msg";
         }
 
-        /**
-         * PAGE COMPONENT
-         */
-        class AccountPage extends Control {
-            constructor(session) {
-                super();
-                this.session = session;
-                this.statusDisplay = document.createElement('div');
-                this.statusDisplay.className = "status-msg";
-            }
-
-            updateStatus(text, colorClass) {
-                this.statusDisplay.innerText = text;
-                this.statusDisplay.className = `status-msg ${colorClass}`;
-            }
-
-            render() {
-                const root = document.createElement('div');
+        render() {
+            const root = document.createElement('div');
+            
+            const header = document.createElement('header');
+            new CssVar(header, '--header-class'); 
                 
-                const header = document.createElement('header');
-                new CssVar(header, '--header-class'); 
+            const headerContent = document.createElement('div');
+            new CssVar(headerContent, '--header-content-class');
+
+            const title = document.createElement('h1');
+            title.innerText = "Account Client - OOUX & 'UI of Objects'";
+            new CssVar(title, '--header-title-class');
+
+            const subtitle = document.createElement('p');
+            subtitle.innerText = "Mental Model: Account with Identification & Authentication";
+            new CssVar(subtitle, '--header-subtitle-class');
+
+            headerContent.appendChild(title);
+            headerContent.appendChild(subtitle);
+            header.appendChild(headerContent);
+            root.appendChild(header);
+
+            const main = document.createElement('main');
+            new CssVar(main, '--main-class');
+
+            main.appendChild(this.session.displayInput().render());
+
+            const loginBtn = new Button("Sign In").onClick(() => this.session.authenticate());
+            main.appendChild(loginBtn.render());
                 
-                const headerContent = document.createElement('div');
-                new CssVar(headerContent, '--header-content-class');
+            main.appendChild(this.statusDisplay);
 
-                const title = document.createElement('h1');
-                title.innerText = "Account Client - OOUX & 'UI of Objects'";
-                new CssVar(title, '--header-title-class');
+            root.appendChild(main);
 
-                const subtitle = document.createElement('p');
-                subtitle.innerText = "Mental Model: Account with Identification & Authentication";
-                new CssVar(subtitle, '--header-subtitle-class');
+            // Subscription: Logic of state message,
+            // Page displays to specific status feedback
+            this.session.onInfo((msg) => {
+                this.statusDisplay.innerText = msg;
+                new CssVar(this.statusDisplay, '--info-msg-class');
+            });
 
-                headerContent.appendChild(title);
-                headerContent.appendChild(subtitle);
-                header.appendChild(headerContent);
-                root.appendChild(header);
+            this.session.onSuccess((msg) => {
+                this.statusDisplay.innerText = msg;
+                new CssVar(this.statusDisplay, '--success-msg-class');
+            });
 
-                const main = document.createElement('main');
-                new CssVar(main, '--main-class');
 
-                main.appendChild(this.session.displayInput().render());
+            this.session.onError((msg) => {
+                this.statusDisplay.innerText = msg;
+                new CssVar(this.statusDisplay, '--error-msg-class');
+            });
 
-                const loginBtn = new Button("Sign In").onClick(() => this.session.authenticate());
-                main.appendChild(loginBtn.render());
+            return root;
+        }
+    }
+
+    /**
+     * APP ROOT Compotition
+     */
+    class AccountApp {
+
+        run() {
+  
+            const accountApi = new AccountApi();
                 
-                main.appendChild(this.statusDisplay);
+            const session = new AccountSession(accountApi);
+            const page = new AccountPage(session);
 
-                root.appendChild(main);
-                return root;
-            }
+            const appRoot = document.getElementById('app-root');
+            appRoot.appendChild(page.render());
         }
 
-        /**
-         * APP ROOT
-         */
-        class AccountApp {
-            run() {
-                const appRoot = document.getElementById('app-root');
-                const accountApi = new AccountApi();
-                
-                let page;
-                const session = new AccountSession(accountApi, (msg, cls) => page.updateStatus(msg, cls));
-                page = new AccountPage(session);
+    }
 
-                appRoot.appendChild(page.render());
-            }
-        }
+    // on start run
+    window.onload = () => new AccountApp().run();
 
-        window.onload = () => new AccountApp().run();
-    </script>
+</script>
+
 </body>
 </html>
 ```
