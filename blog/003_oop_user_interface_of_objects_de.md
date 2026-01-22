@@ -1388,7 +1388,7 @@ Auf *Clientseite* wird der objektorientierte Ansatz fortgesetzt, indem der Inter
     }
 
     /**
-     * APP ROOT Compotition
+     * APP ROOT Composition
      */
     class AccountApp {
 
