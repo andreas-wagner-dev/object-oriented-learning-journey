@@ -75,14 +75,14 @@ Unlike traditional, task-oriented UX design, which focuses on the sequence of ac
 * **Context:** Understanding that objects behave differently depending on the context (`list view` vs. `detail view`) but must maintain the same core identity.  
 * **Modular Thinking:** Designing objects as reusable components. This modular approach promotes design system consistency.
 
-To bridge the gap between software architecture and UI design, the OOUX framework offers the **ORCA process** (Objects, Relationships, Capabilities, Attributes) by Sophia Prater. The process spans four phases and demands that designers think in stable "objects" rather than fleeting "pages" (views). It strictly ensures that these objects correspond to the user's mental world (Domain Model). The methodology is oriented toward navigation models based on the logical structure of the data rather than arbitrary menu structures. Furthermore, it consistently distinguishes between core content and metadata.
+To bridge the gap between software architecture and UI design, the OOUX framework offers the **ORCA process** (Objects, Relationships, Calls-to-Action and Attributes) by Sophia Prater. The process spans four phases and demands that designers think in stable "objects" rather than fleeting "pages" (views). It strictly ensures that these objects correspond to the user's mental world (Domain Model). The methodology is oriented toward navigation models based on the logical structure of the data rather than arbitrary menu structures. Furthermore, it consistently distinguishes between core content and metadata.
 
-* **Phase 1: Objects** First, the "things" that are real for the user and the business are identified (e.g., `Book`, `Author`, `Order`).  
-* **Phase 2: Relationships** Here, it is defined how objects relate to each other (e.g., "An author writes many books").  
-* **Phase 3: Capabilities** What can be done with the objects? (e.g., Publish, Archive, Print).  
-* **Phase 4: Attributes** Only in the last step are specific data fields defined (e.g., Title, ISBN, Price).
+* **Phase 1:** *Objects* - First, the "things" that are real for the user and the business are identified (e.g., `Book`, `Author`, `Order`).  
+* **Phase 2:** *Relationships* - Here, it is defined how objects relate to each other (e.g., "An author writes many books").  
+* **Phase 3:** *Calls-to-Action* - What can be done with the objects? (e.g., Publish, Archive, Print).  
+* **Phase 4:** *Attributes* - Only in the last step are specific data fields defined (e.g., Title, ISBN, Price).
 
-For the practical application of the process, the guide from [Rewired](https://www.rewiredux.com/ooux) UX is highly recommended.
+The ORCA process is “less of a strict phase model, more of an iterative exploration of user mental models”. For the practical application of the process, the guide from [Rewired](https://www.rewiredux.com/ooux) UX is highly recommended.
 
 ### **2.2 Object-Oriented UI (OOUI)**
 
@@ -1377,7 +1377,7 @@ On the client side, the object-oriented approach continues by encapsulating the 
     }
 
     /**
-     * APP ROOT Compotition
+     * APP ROOT Composition
      */
     class AccountApp {
 
