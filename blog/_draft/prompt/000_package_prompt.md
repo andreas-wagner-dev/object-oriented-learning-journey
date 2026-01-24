@@ -13,7 +13,7 @@ Generate a package structure for any given project requirement (Java, C#, Python
 
 ## AXIOMS
 
-Existence Rule for Abstractions:
+**Existence Rule for Abstractions:**
 
 `a[n] ∈ {n[0], n[0].*}`
 
@@ -21,7 +21,7 @@ Existence Rule for Abstractions:
 
 (Every single and aggregate abstraction exists at level n within the namespace.)
 
-Existence Rule for Packages:
+**Existence Rule for Packages:**
 
 `∃ a[n] ∨ ∃ aa[n.m] : a[n], aa[n.m] ∈ {n[0], n[0].*} ⇒ p[n] may exist.`
 
