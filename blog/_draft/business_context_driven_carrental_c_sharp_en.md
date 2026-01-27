@@ -492,12 +492,12 @@ This ensures framework independence and clean dependency flow.
 
 **2. Onboarding New Developers**
 - Before: "Where is the car logic?" → 5 minutes explanation
-- After: "Look in the car/ package" → 30 seconds
+- After: "Look in the carpool/ package" → 30 seconds
 - Improvement: ~90% less explanation effort
 
 **3. Business-Developer Communication**
-- Before: Business says "car problem" → Developer mentally translates to technical packages
-- After: Business says "car problem" → Developer goes directly to `car/`
+- Before: Business says "carpool problem" → Developer mentally translates to technical packages
+- After: Business says "carpool problem" → Developer goes directly to `carpool/`
 - Improvement: No translation overhead
 
 ---
