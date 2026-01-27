@@ -839,19 +839,18 @@ com.example.todo/
 │ ├── Layout.java  
 │ ├── Page.java  
 │ ├── DbUser.java  
-│ └── WebUser.java  
-├── App.java  
+│ └── WebUser.java   
 ├── Db.java  
-├── Message.java  
 ├── Folder.java  
 ├── Person.java  
-├── Task.java  
+├── Task.java
+├── TodoApp.java 
 └── User.java
 ```
 
 The inevitable technical aspects to be realized, such as initialization, integration of configuration, UI, persistence, and API interfaces, are also mapped as an abstraction in the root package to maximize readability and maintainability.
 
-* **App** - **abstracts** the application itself. - Entry point, init... and config... of the **entire** application.  
+* **TodoApp** - **abstracts** the application itself. - Entry point, init... and config... of the **entire** application.  
 * **Db** - **abstracts** persistence in the application. - Communication with the real database.  
 * **User** - **abstracts** user-specific controls and layout elements.  
 * **Resource** - **abstracts** the exchange of **resources**.  
@@ -862,9 +861,9 @@ graph TB
     subgraph "Variant 5: Abstraction-Oriented"
         direction TB
         
-        V5_ROOT["<b>com.example.todo/</b><br/>App, Db, Folder, Person,<br/>Task, User, Resource<br/>Ca=0, Ce=7<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
+        V5_ROOT["<b>com.example.todo/</b><br/>TodoApp, Db, Folder, Person,<br/>Task, User<br/>Ca=0, Ce=7<br/><b>I=1.0, A=1.0</b><br/><b>D=0.0 ✓</b>"]
         
-        V5_APP["<b>app/</b><br/>TodoApp, WebApp<br/>Ca=0, Ce=7<br/><b>I=1.0, A=0.33</b><br/><b>D=0.33</b>"]
+        V5_APP["<b>app/</b><br/>ConsoleTodoApp, WebTodoApp<br/>Ca=0, Ce=7<br/><b>I=1.0, A=0.33</b><br/><b>D=0.33</b>"]
         
         V5_RESOURCE["<b>resource/</b><br/>+ 4 Subpackages<br/>Ca=1, Ce=1<br/><b>I=0.5, A=0.67</b><br/><b>D=0.17 ✓</b>"]
         
@@ -934,11 +933,10 @@ The final example (full-stack application) demonstrates how the root package (`c
 ```
 com.example.todo/  
 ├── app/  
-│ ├── ConsoleApp.java  
+│ ├── ConsoleTodoApp.java  
 │ ├── ResourceApp.java  
-│ ├── TodoApp.java  
 │ ├── TodoDb.java  
-│ └── WebApp.java  
+│ └── WebTodoApp.java  
 ├── exchange/  
 │ ├── envelop/  
 │ │ ├── WrappedRequest.java  
@@ -990,16 +988,15 @@ com.example.todo/
 │ ├── Page.java  
 │ ├── DbUser.java  
 │ └── WebUser.java  
-├── App.java  
-├── Db.java  
-├── Message.java  
+├── Db.java 
 ├── Folder.java  
 ├── Person.java  
-├── Task.java  
+├── Task.java
+├── TodoApp.java    
 └── User.java
 ```
 
-As core abstractions from the business requirements, the entities **Folder, Task, Person, Message** and **User** are placed as interfaces directly in the root package, supplemented by technical abstractions such as **App, Db**, and **Served**. The subpackages refer exclusively to the abstractions in the next higher package and encapsulate the implementation details. Likewise, a strict dependency inversion (**Inversion of Control**) is ensured. The root package thus remains independent of the implementation details.
+As core abstractions from the business requirements, the entities **Folder, Task, Person, Message** and **User** are placed as interfaces directly in the root package, supplemented by **TodoApp** as composition root of the application and technical abstractions such as **Db**. The subpackages refer exclusively to the abstractions in the next higher package and encapsulate the implementation details. Likewise, a strict dependency inversion (**Inversion of Control**) is ensured. The root package thus remains independent of the implementation details.
 
 ### **8.1. Initialization, Dependency Injection, and Configuration (app/)**
 
