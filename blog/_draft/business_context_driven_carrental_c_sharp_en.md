@@ -528,11 +528,11 @@ carrental-service/      ← service is something deployable or an artifact
 Split at package/module boundaries.
 Each service is structured like the **Mono** artifact (in Phase 1 or 2)
 ```
-carrental-gateway/ ← artifact (build as deployable .dll)
-carrental-client/  ← artifact frontend (build as deployable  .dll)
-carpool-service/   ← artifact (build as deployable  .dll)
-customer-service/  ← artifact (build as deployable .dll)
-payment-service/   ← artifact (build as deployable .dll)
+carrental-gateway-service   ← artifact (build as deployable .dll)
+carrental-client-service    ← artifact frontend (build as deployable  .dll)
+carrental-carpool-service   ← artifact (build as deployable  .dll)
+carrental-customer-service  ← artifact (build as deployable .dll)
+carrental-payment-service   ← artifact (build as deployable .dll)
 ```
 
 Each phase maintains the same principles - only deployment boundaries change.
