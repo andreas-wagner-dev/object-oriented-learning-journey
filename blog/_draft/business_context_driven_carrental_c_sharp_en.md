@@ -114,8 +114,7 @@ carrental/
 └── user/
 ```
 
-**This is a crucial strategic aspect of software architecture:** By directly mapping business contexts in code, we consistently apply the Ubiquitous Language at every level of system organization.
-
+**This is a crucial strategic aspect of software architecture:** By directly mapping business contexts in code, we consistently apply the *Ubiquitous Language* at every level of system organization.
 
 ## Business Context-Driven - Project Structure
 
@@ -321,6 +320,16 @@ public sealed class DbCar : ICar
 }
 ```
 
+**Decorator Composition:**
+
+```
+  → ValidCar (Validation)
+    → DbCar (Persistence via exchange/storage/)
+      → CachedCar (Caching)
+        → LoggedCar (Logging)
+          → PublishedCar (Events)
+```
+
 ---
 
 ## application/ - Framework Integration & Root Composition with DI
@@ -363,36 +372,10 @@ public class CarRentalApp : ICarRentalApp
 }
 ```
 
----
-
-## Summary of Rules
-
-✅ **Correct:** (only what the business/customer says)
-
-- `InMemoryCar`, `DbCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
-- `KafkaCarMessage`, `KafkaReceivedCar` (Kafka prefix)
-- `storage/` at first level for ORM
-- `ICarRentalApp` interface in root, `CarRentalApp` in app/
-
-❌ **Wrong:** (meaning of technical architecture pattern)
-
-- `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes)
-- `CarRepository`, `CarValidator` (technical roles)
-- `CarDTO`, `CarModel` (technical classification)
-- `CarConsumer`, `CarProducer` (use Kafka prefix instead)
-
-**Decorator Composition:**
-```
-  → ValidCar (Validation)
-    → DbCar (Persistence via storage/)
-      → CachedCar (Caching)
-        → LoggedCar (Logging)
-          → KafkaCarMessage (Events)
-```
 
 ---
 
-## Key Principles
+## Key Principles and Conventions
 
 ### 1. Packages Should Never Depend on Sub-Packages
 
@@ -416,22 +399,33 @@ The `application/` package provide main method + (DI) injections of technical in
 - `CachedCar`, `DbCar`, `ValidCar`
 - `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
 - `customer/DbCustomer`, `customer/ValidCustomer`
+- `InMemoryCar`, `DbCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
+- `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
+- `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
+- 
+Only what the business/customer says with result oriented prefixes.
 
 ✅ **Correct: Package names from Context Diagram**
 - `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
 - `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
-- `exchange/` (HTTP / REST interfaces)
-- `storage/` or `database/` (interfaces)
+- `exchange/` (everything that requires data exchange with external systems HTTP / REST / DB /...)
+- `exchange/storage/` or `exchange/database/`
 
 ❌ **Wrong: Classes names - Verbs or technical suffixes — very Bad (it is a SHAME)**
 - `carpool/CarProcessor`, `carpool/CarManager`, `carpool/CarClient`
 - `payment/PaymentRepository`, `payment/PaymentService`
 - `customer/CustomerHandler`, `customer/CustomerValidator`
+- `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes)
+- `CarRepository`, `CarValidator` (technical roles)
+- `CarDTO`, `CarModel` (technical classification)
+- `CarConsumer`, `CarProducer` (use Kafka prefix instead)
 
 ❌ **Wrong: Technical package names — very Bad (it is a SHAME)**
 - `service/`, `repository/`, `controller/`, `presentation/`, `persistence/`
 - `common/`, `shared/`, `util/`, `helper/`
 - `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
+
+Avoid meaning of technical things and suffixes of architecture pattern.
 
 ### 4. Isolation of Frameworks and Libraries 
 
@@ -468,6 +462,7 @@ E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` pack
 
 ```
 carrental/
+├── application/ 
 ├── carpool/            
 │   └── DbCar.cs             ← Uses exchange/storage/ for persistence
 ├── exchange/
@@ -503,9 +498,9 @@ public interface ICarRentalApp
 }
 ```
 
-**Implementation in app/:**
+**Implementation in application/:**
 ```csharp
-// app/CarRentalApp.cs
+// application/CarRentalApp.cs
 public class CarRentalApp : ICarRentalApp
 {
     public static void Main(string[] args) { ... }
