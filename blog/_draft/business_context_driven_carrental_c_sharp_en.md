@@ -129,8 +129,8 @@ carrental/
 │   ├── CachedCarPool.cs         ← Cache Decorator
 │   ├── LoggedCar.cs             ← Logging Decorator
 │   ├── ValidCar.cs              ← Validation Decorator
-│   ├── PublishedCar.cs          ← Kafka Producer (Events)
-│   └── ReceivedCar.cs           ← Kafka Consumer
+│   ├── PublishedCar.cs          ← Kafka Producer (Message)
+│   └── ReceivedCar.cs           ← Kafka Consumer (Events)
 ├── customer/
 │   ├── DbCustomer.cs            ← Database Decorator
 │   ├── DbCustomers.cs           ← Database Decorator
@@ -140,7 +140,7 @@ carrental/
 │   ├── endpoint/                → HTTP classes JSON/XML DTOs
 │   ├── resource/                → REST classes JSON/XML DTOs
 │   │   ├── CarResoure.cs        ← DTO of Entity
-│   │   ├── CarResoures.cs       ← Entry Point class
+│   │   ├── CarResoures.cs       ← Entry Point class (REST-Service)
 │   │   ├── CarRequest.cs        ← Request DTO
 │   │   └── CarResponse.cs       ← Response DTO
 │   ├── storage/                 ← EF Core Entity           
