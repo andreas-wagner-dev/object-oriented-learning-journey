@@ -92,13 +92,13 @@ com.company.carrental
 
 **You must mentally translate:**
 
-* Car is probably hidden in the service package? (Layered)
-* Or maybe in infrastructure? (Clean Architecture)
-* Could also be in domain or application? (DDD)
-* Probably in adapter or port? (Hexagonal Architecture)
-* Maybe in features/rent-car? or shared? (Vertical Slices)
+* Car is probably hidden in the `service` package? - **Layered**
+* Or maybe in `infrastructure`? - **Clean Architecture**
+* Could also be in `domain` or `application`? - **DDD**
+* Probably in `adapter` or `port`? - **Hexagonal Architecture**
+* Maybe in `features/rent-car`? or shared? - **Vertical Slices**
 
-You have to guess whether the Car logic is in repository, service, or some domain package. Where is the PayPal integration? Is Customer in entity or aggregate?
+You have to guess whether the `Car` logic is in `repository`, `service`, or some `domain` package. Where is the `PayPal` integration? Is `Customer` in entity or aggregate?
 
 Even modern patterns like Vertical Slices often focus primarily on technical functionalities and process logic (**verbs** like `rent-car`, `return-car`), instead of directly mapping domain objects (**things** like `Car`, `Customer`) and external contexts as central components of the package structure.
 
