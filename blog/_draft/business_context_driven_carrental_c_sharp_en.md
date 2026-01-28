@@ -198,7 +198,7 @@ public interface ICar
 
 ---
 
-## exchange/storage/ - ORM Layer (First Level!)
+## exchange/storage/ - ORM Layer (Integration)
 
 ```csharp
 // storage/CarEntity.cs
@@ -322,7 +322,7 @@ public sealed class DbCar : ICar
 
 ---
 
-## application/ - Framework Integration & DI
+## application/ - Framework Integration & Root Composition with DI
 
 ```csharp
 using CarRental.CarPool;
