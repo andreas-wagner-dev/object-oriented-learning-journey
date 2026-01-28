@@ -570,6 +570,6 @@ No *mental* translation or mapping needed.
 # References
 
 * Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
-* Mark Seemann, [{Composition Root Pattern (2011)](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
+* Mark Seemann, [Composition Root Pattern (2011)](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
 * Mark Seemann, [Poor Man's DI Pattern (2012)](https://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/)
 * Wikipedia, [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
