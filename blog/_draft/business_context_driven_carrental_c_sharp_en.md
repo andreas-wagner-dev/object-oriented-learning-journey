@@ -129,22 +129,25 @@ carrental/
 │   ├── CachedCarPool.cs         ← Cache Decorator
 │   ├── LoggedCar.cs             ← Logging Decorator
 │   ├── ValidCar.cs              ← Validation Decorator
-│   ├── KafkaCarMessage.cs       ← Kafka Producer (Events)
-│   └── KafkaReceivedCar.cs      ← Kafka Consumer
+│   ├── PublishedCar.cs          ← Kafka Producer (Events)
+│   └── ReceivedCar.cs           ← Kafka Consumer
 ├── customer/
 │   ├── DbCustomer.cs            ← Database Decorator
 │   ├── DbCustomers.cs           ← Database Decorator
 │   ├── NotifiedCustomer.cs      ← Email Decorator
-│   └── ...cs                   
-├── exchange/                    ← client user contepts, REST API of the app
-│   ├── CarResoure.cs            ← DTO of Entity
-│   ├── CarResoures.cs           ← Entry Point class
-│   ├── CarRequest.cs            ← Request DTO
-│   └── CarResponse.cs           ← Response DTO
-├── storage/                     ← ORM at first level!
-│   ├── CarEntity.cs             ← EF Core Entity DTO
-│   ├── CarDbContext.cs          ← EF Core Entity DTO
-│   └── ...cs                   
+│   └── ...cs
+├── exchange/
+│   ├── endpoint/                → HTTP classes JSON/XML DTOs
+│   ├── resource/                → REST classes JSON/XML DTOs
+│   │   ├── CarResoure.cs        ← DTO of Entity
+│   │   ├── CarResoures.cs       ← Entry Point class
+│   │   ├── CarRequest.cs        ← Request DTO
+│   │   └── CarResponse.cs       ← Response DTO
+│   ├── storage/                 ← EF Core Entity           
+│   │   ├── CarEntity.cs         ← EF Core Entity DTO
+│   │   ├── CarDbContext.cs      ← EF Core Entity DTO
+│   │   └── ...cs
+│   └── .../            
 ├── user/                        ← user contepts and server side UI rendering
 │   ├── control/                 ← UI specific controls (used in page/)
 │   ├── layout/                  ← UI Layout/Style components (used in page/)
@@ -195,7 +198,7 @@ public interface ICar
 
 ---
 
-## storage/ - ORM Layer (First Level!)
+## exchange/storage/ - ORM Layer (First Level!)
 
 ```csharp
 // storage/CarEntity.cs
@@ -215,7 +218,7 @@ public class CarEntity
 ```
 
 ```csharp
-// storage/CarDbContext.cs
+// exchange/storage/CarDbContext.cs
 using Microsoft.EntityFrameworkCore;
 
 namespace CarRental.Storage;
@@ -271,7 +274,7 @@ public sealed class InMemoryCar : ICar
 ```
 
 ```csharp
-// carpool/DbCar.cs - Database Decorator (using storage/)
+// carpool/DbCar.cs - Database Decorator (using exchange/storage/)
 using CarRental.Storage;
 
 namespace CarRental.CarPool;
@@ -404,7 +407,7 @@ Sub-packages = Implementations (adapters), dependent on core.
 
 No new business concepts in sub-packages that don't exist as interfaces in root.
 
-The `application/` package is the only exception for technical infrastructure.
+The `application/` package provide main method + (DI) injections of technical infrastructure.
 
 ### 3. Packages and Classes Reflect Business Contexts, Not Technical Roles
 
@@ -429,29 +432,51 @@ The `application/` package is the only exception for technical infrastructure.
 - `common/`, `shared/`, `util/`, `helper/`
 - `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
 
-### 4. Storage Package for ORM Isolation
+### 4. Frameworks Isolation: exchange/ Package 
 
-When using ORMs like EF Core, isolate them in the `storage/` package at first level:
+Ideally, such technical aspects of frameworks should be outsourced to separate projects and integrated into the main project as dependencies.
+
+**Alternative** suitable for projects with small codebases.
+
+Isolate all technical aspects (everything that requires data exchange with external systems) into a dedicated package `exchange/` followed by further subpackages for each aspect, such as:
+* `endpoint/` (classes for HTTP access and helper classes)
+* `resource/` (classes for HTTP REST with JSON/XML DTOs and helper classes)
+* `storage/` (ORM classes with `@Entity`, `@Repository`, and helper classes)
+* `mailing/` (SMTPS, IMAPS, or POP3S classes for email sending and server integration, and helper classes)
+* `messaging/` (AVRO classes for Kafka integration and helper classes)
+* `text/`      → Helper classes for Textformatting
+* `pdf/`       → Helper Library/classes for PDF
+* `other.../`       → Helper Library/classes for ....
+
+The classes in these packages can then be used in the business packages starting at the first level.  
+E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` package:
 
 ```
 carrental/
-├── carpool/             ← First level (parallel to car/, payment/)
-│   └── DbCar.cs         ← Uses storage/ for persistence
-├── storage/             
-│   ├── CarEntity.cs     ← EF Core Entity
-│   ├── CarDbContext.cs  ← EF Core DbContext
-│   ├── Db....cs         ← EF Core common Utils or Helper only for this package
-│   └── ...
+├── carpool/            
+│   └── DbCar.cs             ← Uses exchange/storage/ for persistence
+├── exchange/
+│   ├── endpoint/            → HTTP classes JSON/XML DTOs
+│   ├── resource/            → REST classes JSON/XML DTOs
+│   ├── storage/             ← EF Core Entity       
+│   │   ├── CarEntity.cs     ← EF Core Entity
+│   │   ├── CarDbContext.cs  ← EF Core DbContext
+│   │   ├── Db....cs         ← EF Core common Utils or Helper only for this package
+│   │   └── ...
+│   ├── mailing/             → Email: SMTPS, IMAPS or POP3S Protocol   
+│   ├── messaging/           → Queues Apache Avro or Protocol Buffers DTOs
+│   └── ...  
 ├── .../    
 └── ICar.cs              ← Never knows about EF Core
 ```
 
 **Important:**
 
-- `storage/` is at first level, parallel to `carpool/`, `payment/`
-- All ORM classes (Entity, DbContext) live in `storage/`
-- Domain adapters (like `DbCar` in `carpool/`) access `storage/`
-- Domain interfaces in root never know ORM classes
+- All ORM classes (Entity, DbContext) live in `exchange/storage/`
+- `exchange/storage/` can be used by `carpool/`, `payment/` on otherwise
+- Domain adapters (like `DbCar` in `carpool/`) access `exchange/storage/`
+
+The domain interfaces and classes in the root package should never contain such technical DTO classes.
 
 ### 5. Composition Root Pattern
 
