@@ -451,7 +451,7 @@ E. g. when using ORMs like EF Core, isolate them in a `storage` project and then
 
 **Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical projects.
 
-**Alternative** suitable for projects with small codebases.
+**Alternative:** suitable for projects with small codebases.
 
 Isolate all technical aspects (everything that requires data exchange with external systems) into a dedicated package `exchange/` followed by further subpackages for each aspect, such as:
 * `endpoint/`   → HTTP classes for WEB access with helper classes
@@ -548,7 +548,8 @@ carrental/
 ├── application/
 ├── carpool/
 ├── customer/
-└── payment/
+├── payment/
+└── user/
 ```
 
 ### Modulith Artifacts (Phase 2)
