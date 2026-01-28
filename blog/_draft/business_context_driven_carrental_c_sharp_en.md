@@ -1,6 +1,6 @@
 # Business Context-Driven Package Structure: The Missing Link Between Business and Code
 
-> Why Your Package Structure Should Be Your Business Context Diagram
+> Why Your Package Structure Should Be Your Business Context Diagram?
 
 **The Problem:** The Translation Gap
 
