@@ -201,8 +201,8 @@ public interface ICar
 ## exchange/storage/ - ORM Layer (Integration)
 
 ```csharp
-// storage/CarEntity.cs
-namespace CarRental.Storage;
+// exchange/storage/CarEntity.cs
+namespace CarRental.Exchange.Storage;
 
 public class CarEntity
 {
@@ -221,7 +221,7 @@ public class CarEntity
 // exchange/storage/CarDbContext.cs
 using Microsoft.EntityFrameworkCore;
 
-namespace CarRental.Storage;
+namespace CarRental.Exchange.Storage;
 
 public class CarDbContext : DbContext
 {
@@ -275,7 +275,7 @@ public sealed class InMemoryCar : ICar
 
 ```csharp
 // carpool/DbCar.cs - Database Decorator (using exchange/storage/)
-using CarRental.Storage;
+using CarRental.Exchange.Storage;
 
 namespace CarRental.CarPool;
 
@@ -326,7 +326,7 @@ public sealed class DbCar : ICar
 
 ```csharp
 using CarRental.CarPool;
-using CarRental.Storage;
+using CarRental.Exchange.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
