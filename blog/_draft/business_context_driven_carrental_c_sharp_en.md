@@ -34,7 +34,7 @@ com.company.carrental
 ├── entity/
 └── config/
 ```
-**Example 2:** Clean Architecture (after Robert C. Martin)
+**Example 2:** Clean Architecture (Robert C. Martin)
 ```
 com.company.carrental
 ├── domain/
@@ -48,7 +48,7 @@ com.company.carrental
 │   └── external/
 └── presentation/
 ```
-**Example 3:** DDD Structure (after Eric Evans)
+**Example 3:** DDD Structure (Eric Evans)
 ```
 com.company.carrental
 ├── aggregate/
@@ -59,8 +59,7 @@ com.company.carrental
 ├── factory/
 └── specification/
 ```
-**Example 4:** Hexagonal Architecture  
-**Source:** Alistair Cockburn's Hexagonal Architecture
+**Example 4:** Hexagonal Architecture (Alistair Cockburn's)
 ```
 com.company.carrental
 ├── domain/
@@ -73,8 +72,7 @@ com.company.carrental
 │   └── messaging/
 └── application/
 ```
-**Example 5:** Vertical Slices Architecture  
-**Source:** Jimmy Bogard's Vertical Slices
+**Example 5:** Vertical Slices Architecture (Jimmy Bogard's)
 ```
 com.company.carrental
 ├── features/
@@ -96,7 +94,7 @@ com.company.carrental
 * Or maybe in `infrastructure`? - **Clean Architecture**
 * Could also be in `domain` or `application`? - **DDD**
 * Probably in `adapter` or `port`? - **Hexagonal Architecture**
-* Maybe in `features/rent-car`? or shared? - **Vertical Slices**
+* Maybe in `shared`? or `features/rent-car`? - **Vertical Slices**
 
 You have to guess whether the `Car` logic is in `repository`, `service`, or some `domain` package. Where is the `PayPal` integration? Is `Customer` in entity or aggregate?
 
@@ -432,21 +430,33 @@ The `application/` package provide main method + (DI) injections of technical in
 - `common/`, `shared/`, `util/`, `helper/`
 - `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
 
-### 4. Frameworks Isolation: exchange/ Package 
+### 4. Isolation of Frameworks and Libraries 
 
 Ideally, such technical aspects of frameworks should be outsourced to separate projects and integrated into the main project as dependencies.
+
+carrental                     → depends on: -endpoint, -resource, -storage, -... 
+
+carrental-endpoint            → HTTP classes JSON/XML DTOs
+carrental-resource            → REST classes JSON/XML DTOs
+carrental-storage             ← EF Core Entity   
+carrental-...                 ← other framework or library  
+
+The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level.  
+E. g. when using ORMs like EF Core, isolate them in the `storage` project and then use EF-Classes in the carpool/ package.  
+
+**Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical projects.
 
 **Alternative** suitable for projects with small codebases.
 
 Isolate all technical aspects (everything that requires data exchange with external systems) into a dedicated package `exchange/` followed by further subpackages for each aspect, such as:
-* `endpoint/` (classes for HTTP access and helper classes)
-* `resource/` (classes for HTTP REST with JSON/XML DTOs and helper classes)
-* `storage/` (ORM classes with `@Entity`, `@Repository`, and helper classes)
-* `mailing/` (SMTPS, IMAPS, or POP3S classes for email sending and server integration, and helper classes)
-* `messaging/` (AVRO classes for Kafka integration and helper classes)
-* `text/`      → Helper classes for Textformatting
-* `pdf/`       → Helper Library/classes for PDF
-* `other.../`       → Helper Library/classes for ....
+* `endpoint/`   → classes for HTTP access and helper classes
+* `resource/`   → classes for HTTP REST with JSON/XML DTOs and helper classes
+* `storage/`    → ORM classes with `@Entity`, `@Repository`, and helper classes
+* `mailing/`    → SMTPS, IMAPS, or POP3S classes for email sending and server integration, and helper classes
+* `messaging/`  → AVRO classes for Kafka integration and helper classes
+* `text/`       → Helper classes for Textformatting
+* `pdf/`        → Helper Library/classes for PDF
+* `other.../`   → Helper Library/classes ...
 
 The classes in these packages can then be used in the business packages starting at the first level.  
 E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` package:
@@ -471,12 +481,10 @@ carrental/
 ```
 
 **Important:**
-
-- All ORM classes (Entity, DbContext) live in `exchange/storage/`
-- `exchange/storage/` can be used by `carpool/`, `payment/` on otherwise
-- Domain adapters (like `DbCar` in `carpool/`) access `exchange/storage/`
-
 The domain interfaces and classes in the root package should never contain such technical DTO classes.
+* All ORM classes (Entity, DbContext) live in `exchange/storage/`
+* The package `exchange/storage/` can be used by `carpool/`, `payment/` not otherwise
+* Domain adapters (like `DbCar` in `carpool/`) access `exchange/storage/`
 
 ### 5. Composition Root Pattern
 
