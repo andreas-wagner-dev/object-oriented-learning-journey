@@ -4,7 +4,9 @@
 
 **The Problem:** The Translation Gap
 
-Imagine this: A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with `Payment` providers (`PayPal`/`Stripe`), a `Customer` database, and `User` interfaces:
+*Imagine:*  
+A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with `Payment` providers (`PayPal`/`Stripe`), a `Customer` database, and `User` interfaces.
+
 ```
                       User
                         │
