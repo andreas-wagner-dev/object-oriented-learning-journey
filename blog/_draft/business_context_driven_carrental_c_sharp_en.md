@@ -393,7 +393,7 @@ No new business concepts in sub-packages that don't exist as interfaces in root.
 
 The `application/` package provide main method + (DI) injections of technical infrastructure.
 
-### 3. Packages and Classes Reflect Business Contexts, Not Technical Roles
+### 3. Packages and Classes Reflect Business Concepts, Not Technical Roles
 
 ✅ **Correct: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
 - `CachedCar`, `DbCar`, `ValidCar`
@@ -403,7 +403,7 @@ The `application/` package provide main method + (DI) injections of technical in
 - `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
 - `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
 
-Only what the business/customer says with result oriented prefixes.
+Only what the business/customer says - with result oriented prefixes.
 
 ✅ **Correct: Package names from Context Diagram**
 - `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
