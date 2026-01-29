@@ -443,7 +443,7 @@ carrental-...                 ← other framework or library
 The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level.  
 E. g. when using ORMs like EF Core, isolate them in a `storage` project and then use EF-Classes in the `carpool/` package.  
 
-**Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical projects.
+**Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical of projects.
 
 **Alternative:** suitable for projects with small codebases.
 
