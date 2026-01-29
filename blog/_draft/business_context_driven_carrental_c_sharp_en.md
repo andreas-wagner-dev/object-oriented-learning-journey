@@ -402,7 +402,7 @@ The `application/` package provide main method + (DI) injections of technical in
 - `InMemoryCar`, `DbCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
 - `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
 - `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
-- 
+
 Only what the business/customer says with result oriented prefixes.
 
 ✅ **Correct: Package names from Context Diagram**
