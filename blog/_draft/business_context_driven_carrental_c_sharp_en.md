@@ -116,6 +116,26 @@ carrental/
 
 **This is a crucial strategic aspect of software architecture:** By directly mapping business contexts in code, we consistently apply the *Ubiquitous Language* at every level of system organization.
 
+---
+
+## Benefits
+
+**1. Code Navigation**
+- Before: 1-2 minutes to locate feature
+- After: 10-30 seconds
+- Improvement: ~80-90% less time
+
+**2. Onboarding New Developers**
+- Before: "Where is the car logic?" → 5 minutes explanation
+- After: "Look in the carpool/ package" → 30 seconds
+- Improvement: ~90% less explanation effort
+
+**3. Business-Developer Communication**
+- Before: Business says "carpool problem" → Developer mentally translates to technical packages
+- After: Business says "carpool problem" → Developer goes directly to `carpool/`
+- Improvement: No translation overhead
+
+
 ## Business Context-Driven - Project Structure
 
 ```
@@ -124,21 +144,22 @@ carrental/
 │   ├── CarRentalApp.cs          ← ASP.NET Core Main + DI
 │   └── KafkaQueueConfig.cs      ← Kafka Configuration
 ├── carpool/
-│   ├── StoredCar.cs                 ← Database Decorator
-│   ├── StoredCarPool.cs             ← Database Decorator
 │   ├── CachedCarPool.cs         ← Cache Decorator
 │   ├── LoggedCar.cs             ← Logging Decorator
-│   ├── ValidCar.cs              ← Validation Decorator
-│   ├── PublishedCar.cs          ← Kafka Producer (Message)
-│   └── ReceivedCar.cs           ← Kafka Consumer (Events)
+│   ├── StoredCar.cs             ← Database Decorator
+│   ├── StoredCarPool.cs         ← Database Decorator
+│   ├── ServedCarPool.cs         ← REST service for cars (use DTO's from exchange/resource/)
+│   ├── PublishedCar.cs          ← Kafka Producer of Events (use DTO's from exchange/messaging/)
+│   ├── ReceivedCar.cs           ← Kafka Consumer of Message (use DTO's from exchange/messaging/)
+│   └── ValidCar.cs              ← Validation Decorator
 ├── customer/
-│   ├── DbCustomer.cs            ← Database Decorator
-│   ├── DbCustomers.cs           ← Database Decorator
+│   ├── StoredCustomer.cs        ← Database Decorator
+│   ├── StoredCustomers.cs       ← Database Decorator
 │   ├── NotifiedCustomer.cs      ← Email Decorator
 │   └── ...cs
 ├── exchange/
-│   ├── endpoint/                → HTTP classes JSON/XML DTOs
-│   ├── resource/                → REST classes JSON/XML DTOs
+│   ├── endpoint/                → HTTP client classes JSON/XML DTOs
+│   ├── resource/                → JSON/XML DTOs for REST service classes
 │   │   ├── CarResoure.cs        ← DTO of Entity
 │   │   ├── CarResoures.cs       ← Entry Point class (REST-Service)
 │   │   ├── CarRequest.cs        ← Request DTO
@@ -147,9 +168,12 @@ carrental/
 │   │   ├── CarEntity.cs         ← EF Core Entity DTO
 │   │   ├── CarDbContext.cs      ← EF Core Entity DTO
 │   │   └── ...cs
+│   ├── messaging/               ← Queues like Kafka
+│   │    └── CarRentedEvent.cs   ← AVRO DTOs
+│   │   
 │   └── .../            
 ├── user/                        ← user contepts and server side UI rendering
-│   ├── control/                 ← UI specific controls (used in page/)
+│   ├── control/                 ← UI common controls (used in page/)
 │   ├── layout/                  ← UI Layout/Style components (used in page/)
 │   ├── page/                    ← UI pages of the application
 │   ├── Control.cs               ← abstract Control
@@ -330,6 +354,34 @@ public sealed class StoredCar : ICar
           → PublishedCar (Events)
 ```
 
+**The Core Message: Decorators ARE Your Business Logic**
+
+Here's the paradigm shift:
+
+**Traditional thinking:**
+
+"Decorators are a technical pattern for adding functionality."
+
+**Business-driven thinking:**
+
+"Decorators ARE the business process, made executable."
+
+Look at this decorator chain again:
+
+```
+Validation → Events → Logging → Caching → Persistence
+    ↓          ↓        ↓         ↓          ↓
+ Business   Domain    Audit   Performance   Data
+  Rules     Events    Trail   Optimization  Storage
+This isn't technical plumbing. This is your business.
+```
+
+* When Product Owner says "we need to validate rental dates," you add **ValidCar**. 
+* When Compliance says "we need audit trails," you add **LoggedCar**. 
+* When Operations says "we need event-driven architecture," you add **PublishedCar**.
+
+Each business requirement = one decorator. Clear. Traceable. Maintainable.
+
 ---
 
 ## application/ - Framework Integration & Root Composition with DI
@@ -365,7 +417,7 @@ public class CarRentalApp : ICarRentalApp
     }
 
     public ICustomers Customers() 
-    {   // Composition logic: CachedCustomers(DbCustomers(_services.GetRequiredService<CustomerDbContext>()))
+    {   // Composition logic: CachedCustomers(StoredCustomers(_services.GetRequiredService<CustomerDbContext>()))
         // Returns the collection implementation for customers
         return ...;
     }
@@ -398,7 +450,7 @@ The `application/` package provide main method + (DI) injections of technical in
 ✅ **Correct: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
 - `CachedCar`, `StoredCar`, `ValidCar`
 - `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
-- `customer/DbCustomer`, `customer/ValidCustomer`
+- `customer/StoredCustomer`, `customer/ValidCustomer`
 - `InMemoryCar`, `StoredCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
 - `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
 - `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
@@ -514,24 +566,7 @@ public class CarRentalApp : ICarRentalApp
 
 This ensures framework independence and clean dependency flow.
 
----
 
-## Benefits
-
-**1. Code Navigation**
-- Before: 1-2 minutes to locate feature
-- After: 10-30 seconds
-- Improvement: ~80-90% less time
-
-**2. Onboarding New Developers**
-- Before: "Where is the car logic?" → 5 minutes explanation
-- After: "Look in the carpool/ package" → 30 seconds
-- Improvement: ~90% less explanation effort
-
-**3. Business-Developer Communication**
-- Before: Business says "carpool problem" → Developer mentally translates to technical packages
-- After: Business says "carpool problem" → Developer goes directly to `carpool/`
-- Improvement: No translation overhead
 
 ---
 
