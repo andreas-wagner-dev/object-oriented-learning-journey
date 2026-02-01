@@ -116,9 +116,7 @@ carrental/
 
 **This is a crucial strategic aspect of software architecture:** By directly mapping business contexts in code, we consistently apply the *Ubiquitous Language* at every level of system organization.
 
----
-
-## Benefits
+**Benefits**
 
 **1. Code Navigation**
 - Before: 1-2 minutes to locate feature
@@ -127,14 +125,15 @@ carrental/
 
 **2. Onboarding New Developers**
 - Before: "Where is the car logic?" → 5 minutes explanation
-- After: "Look in the carpool/ package" → 30 seconds
+- After: "Look in the `carpool/` package" → 5-10 seconds
 - Improvement: ~90% less explanation effort
 
 **3. Business-Developer Communication**
-- Before: Business says "carpool problem" → Developer mentally translates to technical packages
-- After: Business says "carpool problem" → Developer goes directly to `carpool/`
+- Before: Business says "PayPal problem" → Developer mentally translates to technical packages
+- After: Business says "PayPal problem" → Developer goes directly to `payment/`
 - Improvement: No translation overhead
 
+---
 
 ## Business Context-Driven - Project Structure
 
