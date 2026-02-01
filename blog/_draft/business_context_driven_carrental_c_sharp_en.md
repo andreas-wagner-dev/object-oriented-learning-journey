@@ -124,8 +124,8 @@ carrental/
 │   ├── CarRentalApp.cs          ← ASP.NET Core Main + DI
 │   └── KafkaQueueConfig.cs      ← Kafka Configuration
 ├── carpool/
-│   ├── DbCar.cs                 ← Database Decorator
-│   ├── DbCarPool.cs             ← Database Decorator
+│   ├── StoredCar.cs                 ← Database Decorator
+│   ├── StoredCarPool.cs             ← Database Decorator
 │   ├── CachedCarPool.cs         ← Cache Decorator
 │   ├── LoggedCar.cs             ← Logging Decorator
 │   ├── ValidCar.cs              ← Validation Decorator
@@ -274,18 +274,18 @@ public sealed class InMemoryCar : ICar
 ```
 
 ```csharp
-// carpool/DbCar.cs - Database Decorator (using exchange/storage/)
+// carpool/StoredCar.cs - Database Decorator (using exchange/storage/)
 using CarRental.Exchange.Storage;
 
 namespace CarRental.CarPool;
 
-public sealed class DbCar : ICar
+public sealed class StoredCar : ICar
 {
     private readonly ICar _origin;
     private readonly CarDbContext _dbContext;
     private readonly string _carId;
 
-    public DbCar(ICar origin, CarDbContext dbContext, string carId)
+    public StoredCar(ICar origin, CarDbContext dbContext, string carId)
     {
         _origin = origin;
         _dbContext = dbContext;
@@ -324,7 +324,7 @@ public sealed class DbCar : ICar
 
 ```
   → ValidCar (Validation)
-    → DbCar (Persistence via exchange/storage/)
+    → StoredCar (Persistence via exchange/storage/)
       → CachedCar (Caching)
         → LoggedCar (Logging)
           → PublishedCar (Events)
@@ -355,9 +355,9 @@ public class CarRentalApp : ICarRentalApp
     public ICarPool CarPool() 
     {
         // Implementation of ICarPool using collection decorators
-        // Composition logic: CachedCarPool(DbCarPool(InMemoryCars))
+        // Composition logic: CachedCarPool(StoredCarPool(InMemoryCars))
         return new CachedCarPool(
-            new DbCarPool(
+            new StoredCarPool(
                 _services.GetRequiredService<CarDbContext>()
             ),
             _services.GetRequiredService<IMemoryCache>()
@@ -387,7 +387,7 @@ Sub-packages = Implementations (adapters), dependent on core.
 
 ### 2. Sub-Packages Don't Introduce New Concepts, Only Details
 
-`car/DbCar.cs` = detail of car persistence.
+`car/StoredCar.cs` = detail of car persistence.
 
 No new business concepts in sub-packages that don't exist as interfaces in root.
 
@@ -396,10 +396,10 @@ The `application/` package provide main method + (DI) injections of technical in
 ### 3. Packages and Classes Reflect Business Concepts, Not Technical Roles
 
 ✅ **Correct: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
-- `CachedCar`, `DbCar`, `ValidCar`
+- `CachedCar`, `StoredCar`, `ValidCar`
 - `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
 - `customer/DbCustomer`, `customer/ValidCustomer`
-- `InMemoryCar`, `DbCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
+- `InMemoryCar`, `StoredCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
 - `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
 - `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
 
@@ -464,7 +464,7 @@ E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` pack
 carrental/
 ├── application/ 
 ├── carpool/            
-│   └── DbCar.cs             ← Uses exchange/storage/ for persistence
+│   └── StoredCar.cs             ← Uses exchange/storage/ for persistence
 ├── exchange/
 │   ├── endpoint/            → HTTP classes JSON/XML DTOs
 │   ├── resource/            → REST classes JSON/XML DTOs
@@ -484,7 +484,7 @@ carrental/
 The domain interfaces and classes in the root package should never contain such technical DTO classes.
 * All ORM classes (Entity, DbContext) live in `exchange/storage/`
 * The package `exchange/storage/` can be used by `carpool/`, `payment/` not otherwise
-* Domain adapters (like `DbCar` in `carpool/`) access `exchange/storage/`
+* Domain adapters (like `StoredCar` in `carpool/`) access `exchange/storage/`
 
 ### 5. Composition Root Pattern
 
