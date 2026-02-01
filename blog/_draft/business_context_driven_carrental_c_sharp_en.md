@@ -1,10 +1,15 @@
-# Business Context-Driven Package Structure: The Missing Link Between Business and Code
+# Business Context-Driven Code Structure 
 
-> Why Your Package Structure Should Be Your Business Context Diagram?
+> *The Missing Link Between Business and Code*
 
-**The Problem:** The Translation Gap
 
-**Imagine:** A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with `Payment` providers (`PayPal`/`Stripe`), a `Customer` database, and `User` interfaces.
+## **The Problem:** The Translation Gap
+
+*Why your code structure ahould be your Business-Context Diagram?*
+
+**Imagine:** 
+
+A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with `Payment` providers (`PayPal`/`Stripe`), a `Customer` database, and `User` interfaces.
 
 ```
                       User
@@ -104,6 +109,7 @@ Is `Customer` in *entity* or *aggregate*?
 Even modern patterns like Vertical Slices often focus primarily on technical functionalities and process logic (**verbs** like `rent-car`, `return-car`), instead of directly mapping domain objects (**things** like `Car`, `Customer`) and external contexts as central components of the package structure.
 
 ## The Solution: Context-Driven Packaging
+
 **The solution is surprisingly simple:** Your package structure should primarily reflect the Context Diagram.
 
 ```
