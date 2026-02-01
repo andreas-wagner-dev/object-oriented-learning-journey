@@ -378,8 +378,8 @@ Validation → Events → Logging → Caching → Persistence
     ↓          ↓        ↓         ↓          ↓
  Business   Domain    Audit   Performance   Data
   Rules     Events    Trail   Optimization  Storage
-This isn't technical plumbing. This is your business.
 ```
+This isn't technical plumbing. This is your business.
 
 * When Product Owner says "we need to validate rental dates," you add **ValidCar**. 
 * When Compliance says "we need audit trails," you add **LoggedCar**. 
