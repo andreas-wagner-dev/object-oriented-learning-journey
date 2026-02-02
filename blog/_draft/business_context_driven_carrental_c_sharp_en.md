@@ -184,7 +184,7 @@ carrental/
 │   ├── Control.cs               ← abstract Control
 │   ├── Layout.cs                ← abstract Layout (Helper/Util)
 │   ├── Page.cs                  ← abstract Page extends Control
-│   ├── DbUser.cs                ← Db Decorator
+│   ├── StoredUser.cs            ← Db Decorator
 │   └── WebUser.cs               ← Web/Session Decorator
 ├── CarNumber.cs                 ← Shared/Util/Helper for all packages
 ├── ICar.cs                      ← Domain Interface
