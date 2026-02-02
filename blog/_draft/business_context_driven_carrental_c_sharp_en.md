@@ -160,7 +160,7 @@ carrental/
 ├── customer/
 │   ├── StoredCustomer.cs        ← Database Decorator
 │   ├── StoredCustomers.cs       ← Database Decorator
-│   ├── NotifiedCustomer.cs      ← Email Decorator
+│   ├── NotifiedCustomer.cs      ← Email Decorator (use SmtpsEmail from exchange/mailing/)
 │   └── ...cs
 ├── exchange/
 │   ├── endpoint/                → HTTP client classes JSON/XML DTOs
@@ -173,6 +173,8 @@ carrental/
 │   │   ├── CarEntity.cs         ← EF Core Entity DTO
 │   │   ├── CarDbContext.cs      ← EF Core Entity DTO
 │   │   └── ...cs
+│   ├── mailing/                 → Email: SMTPS, IMAPS or POP3S Protocol  
+│   │    └── SmtpsEmail.cs       ← AVRO DTOs
 │   ├── messaging/               ← Queues like Kafka
 │   │    └── CarRentedEvent.cs   ← AVRO DTOs
 │   │   
@@ -460,7 +462,7 @@ The `application/` package provide main method + (DI) injections of technical in
 - `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
 - `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
 
-Only what the business/customer says - with result oriented prefixes.
+Only what the business customer says - with result oriented prefixes.
 
 ✅ **Correct: Package names from Context Diagram**
 - `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
@@ -521,7 +523,7 @@ E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` pack
 carrental/
 ├── application/ 
 ├── carpool/            
-│   └── StoredCar.cs             ← Uses exchange/storage/ for persistence
+│   └── StoredCar.cs         ← Uses exchange/storage/ for persistence
 ├── exchange/
 │   ├── endpoint/            → HTTP classes JSON/XML DTOs
 │   ├── resource/            → REST classes JSON/XML DTOs
@@ -534,14 +536,14 @@ carrental/
 │   ├── messaging/           → Queues Apache Avro or Protocol Buffers DTOs
 │   └── ...  
 ├── .../    
-└── ICar.cs              ← Never knows about EF Core
+└── ICar.cs                  ← Never knows about EF Core
 ```
 
 **Important:**
-The domain interfaces and classes in the root package should never contain such technical DTO classes.
-* All ORM classes (Entity, DbContext) live in `exchange/storage/`
+The domain interfaces and classes in the root package should never depends on technical DTO classes.
+* All ORM classes (Entity, DbContext) live in `exchange/storage/` package
 * The package `exchange/storage/` can be used by `carpool/`, `payment/` not otherwise
-* Domain adapters (like `StoredCar` in `carpool/`) access `exchange/storage/`
+* Domain adapters (like `StoredCar` in `carpool/`) depends on DTOs of `exchange/storage/` package
 
 ### 5. Composition Root Pattern
 
@@ -570,8 +572,6 @@ public class CarRentalApp : ICarRentalApp
 ```
 
 This ensures framework independence and clean dependency flow.
-
-
 
 ---
 
