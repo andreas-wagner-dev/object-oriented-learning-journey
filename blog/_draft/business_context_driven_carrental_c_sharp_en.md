@@ -625,9 +625,9 @@ No *mental* translation or mapping needed.
 * Yegor Bugayenko, [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 * Wikipedia, [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
 * Mihai A. RODEGBFR, [My take on object namin](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
-* Yegor Bugayenko, [Virtues of Good Object](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
+* Yegor Bugayenko, [Seven Virtues of a Good Object](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
 * Yegor Bugayenko, [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
-* Yegor Bugayenko, [Objects end with er](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
-* Yegor Bugayenko, [Compound name is code smell](https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html)
-* Yegor Bugayenko, [Evil object name suffix client](https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html)
+* Yegor Bugayenko, [Don't Create Objects That End With -ER](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
+* Yegor Bugayenko, [A Compound Name Is a Code Smell](https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html)
+* Yegor Bugayenko, [Evil Suffix For Object Names](https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html)
 
