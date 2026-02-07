@@ -472,31 +472,32 @@ Only what the business customer says - with result oriented prefixes.
 
 ❌ **Wrong: Classes names - Verbs or technical suffixes — very Bad (it is a SHAME)**
 - `carpool/CarProcessor`, `carpool/CarManager`, `carpool/CarClient`
-- `payment/PaymentRepository`, `payment/PaymentService`
+- `payment/PaymentRepository`, `payment/PaymentService` (architecture pattern)
 - `customer/CustomerHandler`, `customer/CustomerValidator`
-- `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes)
+- `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes of architecture pattern)
 - `CarRepository`, `CarValidator` (technical roles)
-- `CarDTO`, `CarModel` (technical classification)
-- `CarConsumer`, `CarProducer` (use Kafka prefix instead)
+- `CarDTO`, `CarModel` (technical classification of architecture pattern)
+- `MailHelper`, `CarNumberUtil` (technical waste)
+- `CarConsumer`, `CarProducer` (use Received/Published prefix instead)
 
 ❌ **Wrong: Technical package names — very Bad (it is a SHAME)**
 - `service/`, `repository/`, `controller/`, `presentation/`, `persistence/`
 - `common/`, `shared/`, `util/`, `helper/`
 - `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
 
-Avoid meaning of technical things and suffixes of architecture pattern.
+Avoid meaning of technical things and suffixes of architecture patterns.
 
 ### 4. Isolation of Frameworks and Libraries 
 
-Ideally, such technical aspects of frameworks should be outsourced to separate projects and integrated into the main project as dependencies.
+Ideally, technical aspects implemented through frameworks or libraries should be outsourced to **separate projects** and integrated into the main project as dependencies.
 
 ```
 carrental                     → depends on: -endpoint, -resource, -storage, -... 
 
 carrental-endpoint            → HTTP classes JSON/XML DTOs
 carrental-resource            → REST classes JSON/XML DTOs
-carrental-storage             ← EF Core Entity   
-carrental-...                 ← other framework or library  
+carrental-storage             ← EF Core ...DbContexts/Entities
+carrental-...                 ← other framework or library
 ```
 
 The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level.  
@@ -512,9 +513,9 @@ Isolate all technical aspects (everything that requires data exchange with exter
 * `storage/`    → ORM classes for DB access with helper classes
 * `mailing/`    → SMTPS/IMAPS/POP3S for EMAIL sending and server integration with helper classes
 * `messaging/`  → AVRO classes for Kafka integration with helper classes
-* `text/`       → Textformatting Library with helper classes
-* `pdf/`        → PDF Library with helper classes
-* `other.../`   → ... Library/classes ...
+* `text/`       → Textformatting library with helper classes
+* `pdf/`        → PDF library with helper classes
+* `other.../`   → ... library/classes ...
 
 The classes in these packages can then be used in the business packages starting at the first level.  
 E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` package.
