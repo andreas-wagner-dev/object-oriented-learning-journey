@@ -151,8 +151,8 @@ carrental/
 ├── carpool/
 │   ├── CachedCarPool.cs         ← Cache Decorator
 │   ├── LoggedCar.cs             ← Logging Decorator
-│   ├── StoredCar.cs             ← Database Decorator
-│   ├── StoredCarPool.cs         ← Database Decorator
+│   ├── StoredCar.cs             ← Database Decorator (use DTO's from exchange/storage/)
+│   ├── StoredCarPool.cs         ← Database Decorator (use DTO's from exchange/storage/)
 │   ├── ServedCarPool.cs         ← REST service for cars (use DTO's from exchange/resource/)
 │   ├── PublishedCar.cs          ← Kafka Producer of Events (use DTO's from exchange/messaging/)
 │   ├── ReceivedCar.cs           ← Kafka Consumer of Message (use DTO's from exchange/messaging/)
@@ -169,9 +169,9 @@ carrental/
 │   │   ├── CarResoures.cs       ← Entry Point class (REST-Service)
 │   │   ├── CarRequest.cs        ← Request DTO
 │   │   └── CarResponse.cs       ← Response DTO
-│   ├── storage/                 ← EF Core Entity           
-│   │   ├── CarEntity.cs         ← EF Core Entity DTO
-│   │   ├── CarDbContext.cs      ← EF Core Entity DTO
+│   ├── storage/                 ← EF Core           
+│   │   ├── CarEntity.cs         ← EF Core DTO
+│   │   ├── CarDbContext.cs      ← EF Core DAO
 │   │   └── ...cs
 │   ├── mailing/                 → Email: SMTPS, IMAPS or POP3S Protocol  
 │   │    └── SmtpsEmail.cs       ← AVRO DTOs
