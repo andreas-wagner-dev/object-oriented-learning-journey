@@ -622,11 +622,11 @@ No *mental* translation or mapping needed.
 * Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
 * Mark Seemann, [Composition Root Pattern (2011)](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
 * Mark Seemann, [Poor Man's DI Pattern (2012)](https://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/)
-* Mihai A. RODEGBFR, (My take on object namin)[https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html]
-* Yegor Bugayenko, (Virtues of Good Object)[https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html]
-* Yegor Bugayenko, (Prefixed Naming)[https://www.yegor256.com/2020/03/03/prefixed-naming.html]
-* Yegor Bugayenko, (Objects end with er)[https://www.yegor256.com/2015/03/09/objects-end-with-er.html]
-* Yegor Bugayenko, (Compound name is code smell)[https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html]
-* Yegor Bugayenko, (Evil object name suffix client)[https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html]
-* Yegor Bugayenko, (Vertical and Horizontal Decorating)[https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html]
+* Mihai A. RODEGBFR, [My take on object namin](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
+* Yegor Bugayenko, [Virtues of Good Object](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
+* Yegor Bugayenko, [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
+* Yegor Bugayenko, [Objects end with er](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
+* Yegor Bugayenko, [Compound name is code smell](https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html)
+* Yegor Bugayenko, [Evil object name suffix client](https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html)
+* Yegor Bugayenko, [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 * Wikipedia, [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
