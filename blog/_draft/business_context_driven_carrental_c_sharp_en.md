@@ -624,7 +624,7 @@ No *mental* translation or mapping needed.
 * Mark Seemann, [Poor Man's DI Pattern (2012)](https://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/)
 * Yegor Bugayenko, [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 * Wikipedia, [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
-* Mihai A. RODEGBFR, [My take on object namin](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
+* Mihai A. RODEGBFR, [My Take On Object Naming (2018](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
 * Yegor Bugayenko, [Seven Virtues of a Good Object](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
 * Yegor Bugayenko, [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
 * Yegor Bugayenko, [Don't Create Objects That End With -ER](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
