@@ -598,7 +598,7 @@ carrental-service      ← service is something deployable or an artifact
 └── .../
 ```
 
-Detailed FLAT structure 
+**Detailed FLAT structure** 
 
 ```
 
@@ -607,13 +607,15 @@ carrental                     ← Core module (all common or shared intefaces/cl
 carrental-app                 ← deployable module-composition of all projects, main setup & DI
                               → depends on: core carrental and carrental-carpool, carrental-customer 
 
-carrental-carpool             ← Business (Bounded) Context → depends on: core carrental and -endpoint, -resource, -storage, -...
-├── carpool/
-│   ├── CachedCarPool.cs         ← Cache Decorator
-│   ├── LoggedCar.cs             ← Logging Decorator
+carrental-carpool             ← Business (Bounded) Context
+├── carpool/                  → depends on: core carrental and -endpoint, -resource, -storage, -...
+│   ├── CachedCarPool.cs      ← Cache Decorator
+│   ├── LoggedCar.cs          ← Logging Decorator
 ├   ...
-├── ICar.cs                      ← Domain Interface
-├── ICarPool.cs                  ← Collection Interface
+├── CustomerId.cs             ← Value Object
+├── PaymentId.cs              ← Value Object
+├── ICar.cs                   ← Domain Interface
+├── ICarPool.cs               ← Collection Interface
 ...
 carrental-carpool-endpoint    ← Http Clients with JSON DTOs
 carrental-carpool-resource    ← REST Services with JSON DTOs
@@ -621,14 +623,17 @@ carrental-carpool-storage     ← ORM Entity DTOs with Repositories
 carrental-carpool-messaging   ← AVRO Schema generation of DTOs
 
 
-carrental-customer             ← Business (Bounded) Context → depends on: core carrental and -endpoint, -resource, -storage, -...
-├── customer/
-│   ├── StoredCustomer.cs        ← Database Decorator (use SmtpsEmail from ...-customer-storage project)
-│   ├── StoredCustomers.cs       ← Database Decorator (use SmtpsEmail from ...-customer-storage project)
-│   ├── NotifiedCustomer.cs      ← Email Decorator (use SmtpsEmail from ...-customer-mailing project)
+carrental-customer             ← Business (Bounded) Context 
+├── customer/                  → depends on: core carrental and -endpoint, -resource, -storage, -...
+│   ├── StoredCustomer.cs      ← Database Decorator (use SmtpsEmail from ...-customer-storage project)
+│   ├── StoredCustomers.cs     ← Database Decorator (use SmtpsEmail from ...-customer-storage project)
+│   ├── NotifiedCustomer.cs    ← Email Decorator (use SmtpsEmail from ...-customer-mailing project)
 │   └── ...cs
-├── ICustomer.cs                 ← Domain Interface
-├── ICustomers.cs                ← Collection Interface
+├── CarId.cs                   ← Value Object
+├── PaymentId.cs               ← Value Object
+├── ICustomer.cs               ← Domain Interface
+├── ICustomers.cs              ← Collection Interface
+
 ...
 carrental-customer-endpoint    ← Http Clients with JSON DTOs
 carrental-customer-resource    ← REST Services with JSON DTOs
