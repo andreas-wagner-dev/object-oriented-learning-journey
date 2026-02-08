@@ -141,7 +141,7 @@ carrental/
 
 ---
 
-## Business Context-Driven - Project Structure
+## Car-Rental - Business Context-Driven - Project Structure
 
 ```
 carrental/
