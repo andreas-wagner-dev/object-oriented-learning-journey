@@ -590,13 +590,56 @@ carrental/
 
 ### Modulith Artifacts (Phase 2)
 ```
-carrental-service/      ← service is something deployable or an artifact
-├── carrental/          ← Core module (all common or shared intefaces/classes)
-├── carrental-app/      ← ASP.NET Core Main + DI
-├── carrental-carpool/
-├── carrental-customer/
+carrental-service      ← service is something deployable or an artifact
+├── carrental          ← Core module (all common or shared intefaces/classes)
+├── carrental-app      ← ASP.NET Core Main + DI
+├── carrental-carpool
+├── carrental-customer
 └── .../
 ```
+
+Detailed FLAT structure 
+
+```
+
+carrental                     ← Core module (all common or shared intefaces/classes)
+
+carrental-app                 ← deployable module-composition of all projects, main setup & DI
+                              → depends on: core carrental and carrental-carpool, carrental-customer 
+
+carrental-carpool             ← Business (Bounded) Context → depends on: core carrental and -endpoint, -resource, -storage, -...
+├── carpool/
+│   ├── CachedCarPool.cs         ← Cache Decorator
+│   ├── LoggedCar.cs             ← Logging Decorator
+├   ...
+├── ICar.cs                      ← Domain Interface
+├── ICarPool.cs                  ← Collection Interface
+...
+carrental-carpool-endpoint    ← Http Clients with JSON DTOs
+carrental-carpool-resource    ← REST Services with JSON DTOs
+carrental-carpool-storage     ← ORM Entity DTOs with Repositories
+carrental-carpool-messaging   ← AVRO Schema generation of DTOs
+
+
+carrental-customer             ← Business (Bounded) Context → depends on: core carrental and -endpoint, -resource, -storage, -...
+├── customer/
+│   ├── StoredCustomer.cs        ← Database Decorator (use SmtpsEmail from ...-customer-storage project)
+│   ├── StoredCustomers.cs       ← Database Decorator (use SmtpsEmail from ...-customer-storage project)
+│   ├── NotifiedCustomer.cs      ← Email Decorator (use SmtpsEmail from ...-customer-mailing project)
+│   └── ...cs
+├── ICustomer.cs                 ← Domain Interface
+├── ICustomers.cs                ← Collection Interface
+...
+carrental-customer-endpoint    ← Http Clients with JSON DTOs
+carrental-customer-resource    ← REST Services with JSON DTOs
+carrental-customer-storage     ← ORM Entity DTOs with Repositories
+carrental-customer-mailing     ← Email: SMTPS, IMAPS or POP3S Protocol   
+```
+
+**Strategic note on decoupling:**
+
+Ideally, the shared module 'carrental' should be completely eliminated by duplicating the necessary value objects, such as 'CarId', 'CustomerId', and 'PaymentId', in their respective contexts. This prevents a 'common' or 'shared kernal' module from becoming an uncontrolled dumping ground for everything and ensures that each bounded context remains autonomous. "Better duplication than the wrong abstraction." (Sandi Metz, see "The Wall of Coding Wisdom").
+
 
 ### Microservices (Phase 3)
 
@@ -620,6 +663,7 @@ No *mental* translation or mapping needed.
 # References
 
 * Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
+* Philipp Hauer, [Package by Feature (2020)](https://phauer.com/2020/package-by-feature/)
 * Mark Seemann, [Composition Root Pattern (2011)](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
 * Mark Seemann, [Poor Man's DI Pattern (2012)](https://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/)
 * Yegor Bugayenko, [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
