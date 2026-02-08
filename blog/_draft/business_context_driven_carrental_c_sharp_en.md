@@ -590,8 +590,6 @@ carrental/
 
 ### Modulith Artifacts (Phase 2)
 
-**When does the move to a modular architecture make sense?**
-
 Modular architectures are NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
 
 * **The team is growing:** With around 4-5 developers, natural areas of responsibility begin to emerge. Modules allow these boundaries to be defined in the code, so developers are less likely to "poach" on each other's code.
@@ -617,11 +615,11 @@ Ideally, the shared module `carrental` should be completely eliminated by duplic
 **Detailed FLAT structure** 
 
 ```
-
-carrental                     ← Core module (all common or shared intefaces/classes)
-
 carrental-app                 ← deployable module-composition of all projects, main setup & DI
-                              → depends on: core carrental and carrental-carpool, carrental-customer 
+├── application/              → depends on: core carrental and carrental-carpool, carrental-customer 
+│   ├── CarRentalApp.cs       ← ASP.NET Core Main + DI
+│   └── KafkaQueueConfig.cs   ← Kafka Configuration
+...                              
 
 carrental-carpool             ← Business (Bounded) Context
 ├── carpool/                  → depends on: core carrental and -endpoint, -resource, -storage, -...
@@ -649,21 +647,48 @@ carrental-customer             ← Business (Bounded) Context
 ├── PaymentId.cs               ← Value Object
 ├── ICustomer.cs               ← Domain Interface
 ├── ICustomers.cs              ← Collection Interface
-
 ...
+
 carrental-customer-endpoint    ← Http Clients with JSON DTOs
 carrental-customer-resource    ← REST Services with JSON DTOs
 carrental-customer-storage     ← ORM Entity DTOs with Repositories
-carrental-customer-mailing     ← Email: SMTPS, IMAPS or POP3S Protocol   
+carrental-customer-mailing     ← Email: SMTPS, IMAPS or POP3S Protocol
+
+
+carrental-payment
+...
+
+
+carrental-user-client
+...
+
 ```
-
-
-
 
 ### Microservices (Phase 3)
 
+Microservices are NOT an automatic next step. They bring significant complexity. Only consider microservices if:
+
+**Organizational triggers:**
+* Multiple autonomous teams
+* Teams require independent deployment cycles
+* Different technology stacks are needed
+* Clear ownership boundaries are established
+
+**Technical triggers:**
+* Different scaling requirements (Payment needs 5 times more instances than Customer)
+* Individual contexts cause system-wide outages
+* Deployment process takes > minutes
+* Modules are already cleanly separated and stable
+  
+**Business triggers:**
+* Compliance requirements (e.g., isolating payment data)
+* Multi-tenancy with context-specific isolation
+* Different SLAs for different contexts
+
+**Warning:** If you have fewer than 15 developers or your modules are not yet stable, stick with the modular monolith!
+
 Split at package/module boundaries.
-Each service is structured like the **Mono** artifact (in Phase 1 or 2)
+Each service is structured like the **Mono or Modulith** artifact (in Phase 1 or 2)
 ```
 carrental-gateway-service   ← artifact (build as deployable .dll)
 carrental-client-service    ← artifact frontend (build as deployable  .dll)
