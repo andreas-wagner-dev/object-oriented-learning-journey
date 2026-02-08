@@ -589,6 +589,17 @@ carrental/
 ```
 
 ### Modulith Artifacts (Phase 2)
+
+**When does the move to a modular architecture make sense?**
+
+Modular architectures are NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
+
+* **The team is growing:** With around 4-5 developers, natural areas of responsibility begin to emerge. Modules allow these boundaries to be defined in the code, so developers are less likely to "poach" on each other's code.
+* **Cognitive overload:** If a developer has to understand half the system to make a small change to the payment system, encapsulation has failed. The modular architecture restores the mental map.
+* **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
+* **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
+
+
 ```
 carrental-service      ← service is something deployable or an artifact
 ├── carrental          ← Core module (all common or shared intefaces/classes)
@@ -597,6 +608,11 @@ carrental-service      ← service is something deployable or an artifact
 ├── carrental-customer
 └── .../
 ```
+
+**Strategic note on decoupling:**
+
+Ideally, the shared module `carrental` should be completely eliminated by duplicating the necessary value objects, such as `CarId`, `CustomerId`, and `PaymentId`, in their respective contexts. This prevents a `common` or `shared kernal` module from becoming an uncontrolled dumping ground for everything and ensures that each bounded context remains autonomous. 
+* **"Better duplication than the wrong abstraction."** (Sandi Metz, see "The Wall of Coding Wisdom").
 
 **Detailed FLAT structure** 
 
@@ -641,9 +657,7 @@ carrental-customer-storage     ← ORM Entity DTOs with Repositories
 carrental-customer-mailing     ← Email: SMTPS, IMAPS or POP3S Protocol   
 ```
 
-**Strategic note on decoupling:**
 
-Ideally, the shared module 'carrental' should be completely eliminated by duplicating the necessary value objects, such as 'CarId', 'CustomerId', and 'PaymentId', in their respective contexts. This prevents a 'common' or 'shared kernal' module from becoming an uncontrolled dumping ground for everything and ensures that each bounded context remains autonomous. "Better duplication than the wrong abstraction." (Sandi Metz, see "The Wall of Coding Wisdom").
 
 
 ### Microservices (Phase 3)
