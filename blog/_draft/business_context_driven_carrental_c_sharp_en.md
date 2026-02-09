@@ -3,7 +3,7 @@
 > *The Missing Link Between Business and Code*
 
 
-## **The Problem:** The Translation Gap
+## 1. **The Problem:** The Translation Gap
 
 *Why your code structure ahould be your Business-Context Diagram?*
 
@@ -108,7 +108,7 @@ Is `Customer` in *entity* or *aggregate*?
 
 Even modern patterns like Vertical Slices often focus primarily on technical functionalities and process logic (**verbs** like `rent-car`, `return-car`), instead of directly mapping domain objects (**things** like `Car`, `Customer`) and external contexts as central components of the package structure.
 
-## The Solution: Context-Driven Packaging
+## 2. The Solution: Context-Driven Packaging
 
 **The solution is surprisingly simple:** Your package structure should primarily reflect the Context Diagram.
 
@@ -141,7 +141,7 @@ carrental/
 
 ---
 
-## Car-Rental - Business Context-Driven - Project Structure
+## 3. Car-Rental - Business Context-Driven - Project Structure
 
 ```
 carrental/
@@ -201,9 +201,9 @@ carrental/
 
 ---
 
-## Key Principles and Naming Conventions
+## 4. Key Principles and Naming Conventions
 
-### 1. Packages Should Never Depend on Sub-Packages
+### 1) Packages Should Never Depend on Sub-Packages
 
 Root package = Domain core, independent of everything.
 - e.g., `ICar`, `ICustomer` as interfaces or abstract classes
@@ -211,7 +211,7 @@ Root package = Domain core, independent of everything.
 Sub-packages = Implementations (adapters), dependent on core.
 - e.g., `carpool/ValidCar.cs` implements `ICar`
 
-### 2. Sub-Packages Don't Introduce New Concepts, Only Details
+### 2) Sub-Packages Don't Introduce New Concepts, Only Details
 
 `car/StoredCar.cs` = detail of car persistence.
 
@@ -219,7 +219,7 @@ No new business concepts in sub-packages that don't exist as interfaces in root.
 
 The `application/` package provide main method + (DI) injections of technical infrastructure.
 
-### 3. Packages and Classes Reflect Business Concepts, Not Technical Roles
+### 3) Packages and Classes Reflect Business Concepts, Not Technical Roles
 
 ✅ **Correct: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
 - `CachedCar`, `StoredCar`, `ValidCar`
@@ -258,7 +258,7 @@ Avoid meaning of technical things and suffixes of architecture patterns.
 Avoid technical package names for grouping by architecture patterns.
 
 ---
-## Implementation Step by Step
+## 5. Implementation Step by Step
 
 **Interface in Root:**
 
@@ -502,7 +502,7 @@ public class CarRentalApp : ICarRentalApp
 ```
 
 
-### 4. Isolation of Frameworks and Libraries 
+### Isolation of Frameworks and Libraries 
 
 Ideally, technical aspects implemented through frameworks or libraries should be outsourced to **separate projects** and integrated into the main project as dependencies.
 
@@ -565,9 +565,9 @@ This ensures framework independence and clean dependency flow.
 
 ---
 
-## Evolution Path
+## 6. Evolution Path
 
-### Mono Artifact (Phase 1)
+### 6.1 Mono Artifact (Phase 1)
 ```
 carrental/
 ├── application/
@@ -577,7 +577,8 @@ carrental/
 └── user/
 ```
 
-### Modulith Artifacts (Phase 2)
+---
+### 6.2 Modulith Artifacts (Phase 2)
 
 Modular architectures are NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
 
@@ -676,10 +677,11 @@ carrental-customer          → Module-Group - Parent Project
 
 ....
 
-
 ```
 
-### Microservices (Phase 3)
+---
+
+### 6.3 Microservices (Phase 3)
 
 Microservices are NOT an automatic next step. They bring significant complexity. Only consider microservices if:
 
@@ -719,7 +721,7 @@ Each phase maintains the same principles - only deployment boundaries change.
 No *mental* translation or mapping needed.
 
 ---
-# References
+## 7. References
 
 * Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
 * Philipp Hauer, [Package by Feature (2020)](https://phauer.com/2020/package-by-feature/)
