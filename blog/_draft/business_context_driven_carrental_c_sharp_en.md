@@ -201,18 +201,68 @@ carrental/
 
 ---
 
-## Root Level - Domain Interfaces
+## Key Principles and Naming Conventions
 
-```csharp
-// ICarRentalApp.cs - Composition Root Interface (ROOT!)
-namespace CarRental;
+### 1. Packages Should Never Depend on Sub-Packages
 
-public interface ICarRentalApp
-{
-    ICarPool CarPool();
-    ICustomers Customers();
-}
-```
+Root package = Domain core, independent of everything.
+- e.g., `ICar`, `ICustomer` as interfaces or abstract classes
+
+Sub-packages = Implementations (adapters), dependent on core.
+- e.g., `carpool/ValidCar.cs` implements `ICar`
+
+### 2. Sub-Packages Don't Introduce New Concepts, Only Details
+
+`car/StoredCar.cs` = detail of car persistence.
+
+No new business concepts in sub-packages that don't exist as interfaces in root.
+
+The `application/` package provide main method + (DI) injections of technical infrastructure.
+
+### 3. Packages and Classes Reflect Business Concepts, Not Technical Roles
+
+✅ **Correct: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
+- `CachedCar`, `StoredCar`, `ValidCar`
+- `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
+- `customer/StoredCustomer`, `customer/ValidCustomer`
+- `InMemoryCar`, `StoredCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
+- `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
+- `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
+
+Only what the business customer says - with result oriented prefixes.
+
+✅ **Correct: Package names from Context Diagram**
+- `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
+- `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
+- `exchange/` (everything that requires data exchange with external systems HTTP / REST / DB /...)
+
+Each package forms a logical unit that encapsulates a domain concept and hide implementation details.
+
+❌ **Avoid: Classes names - Verbs or technical suffixes — very Bad (it is a SHAME)**
+- `carpool/CarProcessor`, `carpool/CarManager`, `carpool/CarClient`
+- `payment/PaymentRepository`, `payment/PaymentService` (architecture pattern)
+- `customer/CustomerHandler`, `customer/CustomerValidator`
+- `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes of architecture pattern)
+- `CarRepository`, `CarValidator` (technical roles)
+- `CarDTO`, `CarModel` (technical classification of architecture pattern)
+- `MailHelper`, `CarNumberUtil` (technical waste)
+- `CarConsumer`, `CarProducer` (use Received/Published prefix instead)
+
+Avoid meaning of technical things and suffixes of architecture patterns.
+
+❌ **Avoid: Technical package names — very Bad (it is a SHAME)**
+- `service/`, `repository/`, `controller/`, `presentation/`, `persistence/`
+- `common/`, `shared/`, `util/`, `helper/`
+- `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
+
+Avoid technical package names for grouping by architecture patterns.
+
+---
+## Implementation Step by Step
+
+**Interface in Root:**
+
+### Domain Interfaces
 
 ```csharp
 // ICar.cs - Domain Interface (ROOT!)
@@ -227,9 +277,24 @@ public interface ICar
 }
 ```
 
+### Composition Root Pattern
+
+Provide access for **Domain Interfaces**
+
+```csharp
+// ICarRentalApp.cs - Composition Root Interface (ROOT!)
+namespace CarRental;
+
+public interface ICarRentalApp
+{
+    ICarPool CarPool();
+    ICustomers Customers();
+}
+```
+
 ---
 
-## exchange/storage/ - ORM Layer (Integration)
+### ORM Layer (Integration) - exchange/storage/ 
 
 ```csharp
 // exchange/storage/CarEntity.cs
@@ -277,32 +342,7 @@ public class CarDbContext : DbContext
 
 ---
 
-## carpool/ - Implementations with Decorators
-
-```csharp
-// carpool/InMemoryCar.cs - Core Implementation
-namespace CarRental.CarPool;
-
-public sealed class InMemoryCar : ICar
-{
-    private readonly string _id;
-    private readonly string _model;
-    private readonly decimal _dailyRate;
-    private bool _isRented;
-
-    public InMemoryCar(string id, string model, decimal dailyRate)
-    {
-        _id = id;
-        _model = model;
-        _dailyRate = dailyRate;
-    }
-
-    public void Rent(ICustomer customer, DateTime from, DateTime to) => _isRented = true;
-    public void Return() => _isRented = false;
-    public bool IsAvailable() => !_isRented;
-    public decimal CalculatePrice(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
-}
-```
+### Detail Implementations with Decorators - carpool/
 
 ```csharp
 // carpool/StoredCar.cs - Database Decorator (using exchange/storage/)
@@ -351,6 +391,34 @@ public sealed class StoredCar : ICar
 }
 ```
 
+
+
+```csharp
+// carpool/InMemoryCar.cs - Core Implementation
+namespace CarRental.CarPool;
+
+public sealed class InMemoryCar : ICar
+{
+    private readonly string _id;
+    private readonly string _model;
+    private readonly decimal _dailyRate;
+    private bool _isRented;
+
+    public InMemoryCar(string id, string model, decimal dailyRate)
+    {
+        _id = id;
+        _model = model;
+        _dailyRate = dailyRate;
+    }
+
+    public void Rent(ICustomer customer, DateTime from, DateTime to) => _isRented = true;
+    public void Return() => _isRented = false;
+    public bool IsAvailable() => !_isRented;
+    public decimal CalculatePrice(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
+}
+```
+
+
 **Decorator Composition:**
 
 ```
@@ -391,7 +459,7 @@ Each business requirement = one decorator. Clear. Traceable. Maintainable.
 
 ---
 
-## application/ - Framework Integration & Root Composition with DI
+### Implementation in application/
 
 ```csharp
 using CarRental.CarPool;
@@ -404,6 +472,8 @@ namespace CarRental.Application;
 public class CarRentalApp : ICarRentalApp
 {
     private readonly IServiceProvider _services;
+
+    // Framework Integration
     public CarRentalApp(IServiceProvider services) => _services = services;
 
     public static void Main(string[] args) 
@@ -431,61 +501,6 @@ public class CarRentalApp : ICarRentalApp
 }
 ```
 
-
----
-
-## Key Principles and Conventions
-
-### 1. Packages Should Never Depend on Sub-Packages
-
-Root package = Domain core, independent of everything.
-- e.g., `ICar`, `ICustomer` as interfaces or abstract classes
-
-Sub-packages = Implementations (adapters), dependent on core.
-- e.g., `carpool/ValidCar.cs` implements `ICar`
-
-### 2. Sub-Packages Don't Introduce New Concepts, Only Details
-
-`car/StoredCar.cs` = detail of car persistence.
-
-No new business concepts in sub-packages that don't exist as interfaces in root.
-
-The `application/` package provide main method + (DI) injections of technical infrastructure.
-
-### 3. Packages and Classes Reflect Business Concepts, Not Technical Roles
-
-✅ **Correct: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
-- `CachedCar`, `StoredCar`, `ValidCar`
-- `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
-- `customer/StoredCustomer`, `customer/ValidCustomer`
-- `InMemoryCar`, `StoredCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
-- `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
-- `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
-
-Only what the business customer says - with result oriented prefixes.
-
-✅ **Correct: Package names from Context Diagram**
-- `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
-- `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
-- `exchange/` (everything that requires data exchange with external systems HTTP / REST / DB /...)
-- `exchange/storage/` or `exchange/database/`
-
-❌ **Wrong: Classes names - Verbs or technical suffixes — very Bad (it is a SHAME)**
-- `carpool/CarProcessor`, `carpool/CarManager`, `carpool/CarClient`
-- `payment/PaymentRepository`, `payment/PaymentService` (architecture pattern)
-- `customer/CustomerHandler`, `customer/CustomerValidator`
-- `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes of architecture pattern)
-- `CarRepository`, `CarValidator` (technical roles)
-- `CarDTO`, `CarModel` (technical classification of architecture pattern)
-- `MailHelper`, `CarNumberUtil` (technical waste)
-- `CarConsumer`, `CarProducer` (use Received/Published prefix instead)
-
-❌ **Wrong: Technical package names — very Bad (it is a SHAME)**
-- `service/`, `repository/`, `controller/`, `presentation/`, `persistence/`
-- `common/`, `shared/`, `util/`, `helper/`
-- `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
-
-Avoid meaning of technical things and suffixes of architecture patterns.
 
 ### 4. Isolation of Frameworks and Libraries 
 
@@ -546,32 +561,6 @@ The domain interfaces and classes in the root package should never depends on te
 * The package `exchange/storage/` can be used by `carpool/`, `payment/` not otherwise
 * Domain adapters (like `StoredCar` in `carpool/`) depends on DTOs of `exchange/storage/` package
 
-### 5. Composition Root Pattern
-
-**Interface in Root:**
-```csharp
-// ICarRentalApp.cs (ROOT!)
-public interface ICarRentalApp
-{
-    ICarPool CarPool();
-    ICustomers Customers();
-}
-```
-
-**Implementation in application/:**
-```csharp
-// application/CarRentalApp.cs
-public class CarRentalApp : ICarRentalApp
-{
-    public static void Main(string[] args) { ... }
-    
-    public ICarPool CarPool() 
-    {
-        // Compose decorators here
-    }
-}
-```
-
 This ensures framework independence and clean dependency flow.
 
 ---
@@ -607,12 +596,12 @@ carrental-service      ← service is something deployable or an artifact
 └── .../
 ```
 
-**Strategic note on decoupling:**
+#### Strategic Note on Decoupling
 
 Ideally, the shared module `carrental` should be completely eliminated by duplicating the necessary value objects, such as `CarId`, `CustomerId`, and `PaymentId`, in their respective contexts. This prevents a `common` or `shared kernal` module from becoming an uncontrolled dumping ground for everything and ensures that each bounded context remains autonomous. 
 * **"Better duplication than the wrong abstraction."** (Sandi Metz, see "The Wall of Coding Wisdom").
 
-**Detailed FLAT structure** 
+#### FLAT Project Structure
 
 ```
 carrental-app                 ← deployable module-composition of all projects, main setup & DI
@@ -661,6 +650,32 @@ carrental-payment
 
 carrental-user-client
 ...
+
+```
+
+#### HIERARCHICAL Project Structure 
+
+If the number of projects becomes too unwieldy, the technical aspects can be encapsulated within the context modules, instead of creating a separate top-level module for each aspect:
+
+```
+carrental-carpool-app       ← Root Module-Composition of all Projects
+
+carrental-carpool           → Module-Group - Parent Project
+├── carpool                 → Bounded Context Module
+├── carpool-endpoint
+├── carpool-resource
+├── carpool-storage
+└── carpool-messaging
+
+carrental-customer          → Module-Group - Parent Project
+├── customer                → Bounded Context Module
+├── customer-endpoint
+├── customer-resource
+├── customer-storage
+└── customer-mailing
+
+....
+
 
 ```
 
