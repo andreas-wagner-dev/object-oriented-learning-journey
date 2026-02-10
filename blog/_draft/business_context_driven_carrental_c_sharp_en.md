@@ -516,7 +516,7 @@ carrental-...                 ← other framework or library
 ```
 
 The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level.  
-E. g. when using ORMs like EF Core, isolate them in a `storage` project and then use EF-Classes in the `carpool/` package.  
+E. g. when using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF-Classes in the `carpool/` package behinde a 'Decorator' / 'Adapter'.  
 
 **Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical of projects.
 
@@ -659,7 +659,7 @@ carrental-user-client
 If the number of projects becomes too unwieldy, the technical aspects can be encapsulated within the context modules, instead of creating a separate top-level module for each aspect:
 
 ```
-carrental-carpool-app       ← Root Module-Composition of all Projects
+carrental-app               ← Root Module-Composition of all Projects
 
 carrental-carpool           → Module-Group - Parent Project
 ├── carpool                 → Bounded Context Module
