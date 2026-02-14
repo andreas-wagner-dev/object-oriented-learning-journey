@@ -638,22 +638,33 @@ Modular architectures are NOT an obvious next step, but a conscious decision to 
 * **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
 * **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
 
+#### Revised Structure & Strategic Note
+
+This step begins with a single monolithic artifact, which is successively decomposed into autonomous modules. The functional boundaries of Bounded Contexts serve as the primary guideline for this modularization.
 
 ```
-carrental-service      ← service is something deployable or an artifact
-├── carrental          ← Core module (all common or shared intefaces/classes)
-├── carrental-app      ← ASP.NET Core Main + DI
-├── carrental-carpool
-├── carrental-customer
-└── .../
+carrental-service              ← Deployable Unit
+├── [carrental]                ← OPTIONAL: To be eliminated (Shared Kernel)
+├── carrental-application      ← ASP.NET Core Entry Point & DI Configuration (Composition Root)
+├── carrental-carpool          ← Bounded Context: Fleet Management
+├── carrental-customer         ← Bounded Context: CRM / Identity
+├── carrental-payment          ← Bounded Context: Billing & Transactions
+└── carrental-user-client      ← Frontend / API Gateway Logic
 ```
 
-#### Strategic Note on Decoupling
+**Strategic Note on Decoupling**
 
-Ideally, the shared module `carrental` should be completely eliminated by duplicating the necessary value objects, such as `CarId`, `CustomerId`, and `PaymentId`, in their respective contexts. This prevents a `common` or `shared kernal` module from becoming an uncontrolled dumping ground for everything and ensures that each bounded context remains autonomous. 
-* **"Better duplication than the wrong abstraction."** (Sandi Metz, see "The Wall of Coding Wisdom").
+Ideally, the shared module `carrental` should be completely eliminated. This is achieved by duplicating necessary *Value Objects*, such as `CarId`, `CustomerId`, and `PaymentId`, directly within their respective contexts. 
 
-#### FLAT Project Structure
+Why avoid the Shared Kernel or common module?
+* **Autonomy:** Each *bounded context* remains truly independent and can evolve its data structures without side effects on others.
+* **Preventing Bloat:** It prevents a common module from becoming an uncontrolled *"dumping ground"* for unrelated logic.
+* **Semantic Precision:** A `CustomerId` in Payment might require different validation rules than in `Customer` Support.
+
+**"Better duplication than the wrong abstraction."** - Sandi Metz (The Wall of Coding Wisdom)
+
+
+#### FLAT Project Structure (WITHOUT Shared Kernel)
 
 ```
 carrental                     ← deployable module-composition of all projects, main setup & DI
@@ -705,7 +716,7 @@ carrental-user-client
 
 ```
 
-#### HIERARCHICAL Project Structure 
+#### HIERARCHICAL Project Structure (WITHOUT Shared Kernel)
 
 If the number of projects becomes too unwieldy, the technical aspects can be encapsulated within the context modules, instead of creating a separate top-level module for each aspect:
 
