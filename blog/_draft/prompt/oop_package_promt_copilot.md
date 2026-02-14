@@ -1,9 +1,9 @@
 # Universeller Prompt für KI: OOP-Paketstruktur nach axiomatischem, indexbasiertem Regelsystem
 
 ## DEFINITIONEN
-- **n[0]** = com.company.<app> = globaler Namespace (Ebene 0)
-- **a[n]** = Abstraktion auf Ebene n (Interface/abstrakte Klasse)
-- **aa[n.m]** = Aggregat-Abstraktion auf Ebene n, abgeleitet aus a[n] (z.B. Collection/Aggregate Interface)
+- **s[0]** = com.company.<app> = globaler Namespace (Ebene n = 0)
+- **a[n]** = Abstraktion single Entity auf Ebene n > 0 (Interface/abstrakte Klasse)
+- **aa[n.m]** = Abstraktion Collection Entity auf Ebene n, abgeleitet aus a[n] (z.B. Collection/Aggregate Interface)
 - **p[n]** = Package mit Implementierungen von a[n] und aa[n.m]
 
 ---
@@ -38,21 +38,21 @@
 ## Regeln (indexbasiert und rekursiv)
 
 **1. Namespace**
-- Der globale Namespace ist `n[0]` (z. B. `com.company.[name]`).
+- Der globale Namespace ist `n[0]` <=> p[k=0] (z. B. `com.company.[name]`).
 
 **2. Abstraktionen**
 - Jede Abstraktion wird als `a[k].java` bezeichnet und liegt direkt im Namespace der Ebene *k*.
 - Aggregat-Abstraktionen werden als `aa[k.n].java` bezeichnet und bekommen als Index die Herkunftsabstraktion *k.n*.
 
-**3. Packages für Implementierungen**
-- Für jede Abstraktion der Ebene *k* existiert ein (meist gleichnamiges) Package `p[k]/` auf derselben Ebene wie die Abstraktion.
-- Das Package `p[k]/` enthält nur Implementierungen/Spezialisierungen von `a[k]` sowie zugehörige Aggregate.
-
-**4. Implementierungen**
+**3. Implementierungen**
 - Implementierungen erhalten als Prefix die vollständige Indexkette ihrer Herkunftsabstraktion:
     - Einzelabstraktion: `ia[k.n.m].java`
     - Aggregat: `iaa[k.n.m.l].java`
 - Die Indizes werden rekursiv bei tieferen Ebenen erweitert.
+
+**4. Packages für Implementierungen**
+- Für jede Abstraktion der Ebene *k* existiert ein (meist gleichnamiges) Package `p[k]/` auf derselben Ebene wie die Abstraktion.
+- Das Package `p[k]/` mit k > 0 enthält nur Implementierungen von `a[k]` und Aggregate `aa[k.n]`.
 
 **5. Rekursion und Unterabstraktionen**
 - Weitere Abstraktionen (z. B. Unterabstraktionen) werden rekursiv nach dem gleichen Schema in Unterpackages (`p[k.n]/`) abgelegt.
@@ -66,17 +66,18 @@
 n[0]                                   # globaler Namespace, z.B. com.company.[name]
 ├── a[1].java                          # Abstraktion Ebene 1
 ├── aa[1.1].java                       # Aggregat-Abstraktion zu a[1]
-├── p1/                                # Package für Implementierungen von a[1] und aa[1.1]
+├── p[1]/                              # Package für Implementierungen von a[1] und aa[1.1]
 │   ├── ia[1.1.1].java                 # 1. Implementierung von a[1.1]
 │   ├── ia[1.1.2].java                 # 2. Implementierung von a[1.1]
 │   ├── iaa[1.1.1.1].java              # 1. Implementierung von aa[1.1]
 │   ├── iaa[1.1.1.2].java              # 2. Implementierung von aa[1.1]
 │   ├── a[1.2].java                    # Abstraktion Ebene 2 (Prefix 1)
 │   ├── aa[1.2].java                   # Aggregat-Abstraktion Ebene 2
-│   └── p1.2/                          # Package für Implementierungen von a[1.2] und aa[1.2]
+│   └── p[1.2]/                        # Package für Implementierungen von a[1.2] und aa[1.2]
 │       ├── ia[1.2.1].java             # 1. Implementierung von a[1.2]
 │       ├── iaa[1.2.1.1].java          # 1. Implementierung von aa[1.2]
 │       └── ...                        # weitere Tiefe analog
+├── p[2]/  
 ```
 
 ---
