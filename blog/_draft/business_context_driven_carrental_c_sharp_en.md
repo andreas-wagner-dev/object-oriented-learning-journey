@@ -501,6 +501,7 @@ The Composition Root is an application infrastructure component.
 > The Composition Root can be implemented with DI Pure DI, but is also the (only) appropriate place to use a DI Container.
 > A DI Container should only be referenced from the Composition Root. All other modules should have no reference to the container.
 
+```
 carrental/
 ├── application/
 │   └── CarRentalApp.cs    ← application's entry point.
