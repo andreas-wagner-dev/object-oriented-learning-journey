@@ -260,9 +260,18 @@ Avoid technical package names for grouping by architecture patterns.
 ---
 ## 5. Implementation Step by Step
 
-### Domain Interfaces
+### Domain Interfaces in Root Package
 
-Define the central concepts of the application in root package as interfaces, abstract classes, value objects or entities, without technical clutter.
+The most important concepts and ideas should be at the beginning—in the top-level package of the software. 
+This ensures conceptual integrity, preserving the abstract identity of the system before technical details distort it.
+
+```
+carrental/
+├── .../
+├── ICar.cs          ← Never knows about technical details
+├── ICarRental.cs
+├── ....cs
+```
 
 
 E.g. `ICar.cs` - Domain Interface (ROOT!)
@@ -295,8 +304,17 @@ public interface ICarPool
 ### Composition Root Pattern
 
 By placing the initial system class (as an interface/abstract class) at level "0" of the project structure, we clearly indicate the beginning of the story to the reader.
-This class `ICarRentalApp` enables access via the collection of **domain interfaces**.
-A package named "application/" (see below) can contain various implementations of the application's entry point.
+
+
+```
+carrental/
+├── .../
+├── ICar.cs          
+├── ICarRental.cs
+├── ICarRentalApp.cs  ← Composition Root
+```
+
+The class `ICarRentalApp.cs` enables access via the collection classes e.g. `ICarPool.cs` to single **domain interfaces** like `ICar.cs`. 
 
 ```csharp
 // ICarRentalApp.cs - Composition Root Interface (ROOT!)
@@ -311,7 +329,7 @@ public interface ICarRentalApp
 
 ---
 
-### ORM Layer (Integration) - exchange/storage/ 
+### Integration of ORM Layer - exchange/storage/ 
 
 ```csharp
 // exchange/storage/CarEntity.cs
@@ -483,6 +501,16 @@ The Composition Root is an application infrastructure component.
 > The Composition Root can be implemented with DI Pure DI, but is also the (only) appropriate place to use a DI Container.
 > A DI Container should only be referenced from the Composition Root. All other modules should have no reference to the container.
 
+carrental/
+├── application/
+│   └── CarRentalApp.cs    ← application's entry point.
+├── ICar.cs          
+├── ICarRental.cs
+├── ICarRentalApp.cs       ← Composition Root
+```
+
+The package "application/" can contain various implementations of the application's entry point.
+
 ```csharp
 using CarRental.CarPool;
 using CarRental.Exchange.Storage;
@@ -627,7 +655,7 @@ Ideally, the shared module `carrental` should be completely eliminated by duplic
 #### FLAT Project Structure
 
 ```
-carrental-app                 ← deployable module-composition of all projects, main setup & DI
+carrental                     ← deployable module-composition of all projects, main setup & DI
 ├── application/              → depends on: core carrental and carrental-carpool, carrental-customer 
 │   ├── CarRentalApp.cs       ← ASP.NET Core Main + DI
 │   └── KafkaQueueConfig.cs   ← Kafka Configuration
