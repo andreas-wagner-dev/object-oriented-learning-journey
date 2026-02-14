@@ -710,17 +710,21 @@ carrental-user-client
 If the number of projects becomes too unwieldy, the technical aspects can be encapsulated within the context modules, instead of creating a separate top-level module for each aspect:
 
 ```
-carrental-app               ← Root Module-Composition of all Projects
+carrental                     ← Root Module-Composition of all Projects
+├── application/              → depends on: core carrental and carrental-carpool, carrental-customer 
+│   ├── CarRentalApp.cs       ← ASP.NET Core Main + DI
+│   └── KafkaQueueConfig.cs   ← Kafka Configuration
+...
 
-carrental-carpool           → Module-Group - Parent Project
-├── carpool                 → Bounded Context Module
+carrental-carpool             → Module-Group - Parent Project
+├── carpool                   → Bounded Context Module
 ├── carpool-endpoint
 ├── carpool-resource
 ├── carpool-storage
 └── carpool-messaging
 
-carrental-customer          → Module-Group - Parent Project
-├── customer                → Bounded Context Module
+carrental-customer            → Module-Group - Parent Project
+├── customer                  → Bounded Context Module
 ├── customer-endpoint
 ├── customer-resource
 ├── customer-storage
