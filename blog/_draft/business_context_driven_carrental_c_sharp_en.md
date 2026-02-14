@@ -654,15 +654,14 @@ carrental-service              ← Deployable Unit
 
 **Strategic Note on Decoupling**
 
-Ideally, the shared module `carrental` should be completely eliminated. This is achieved by duplicating necessary *Value Objects*, such as `CarId`, `CustomerId`, and `PaymentId`, directly within their respective contexts. 
-
-Why avoid the Shared Kernel or common module?
-* **Autonomy:** Each *bounded context* remains truly independent and can evolve its data structures without side effects on others.
-* **Preventing Bloat:** It prevents a common module from becoming an uncontrolled *"dumping ground"* for unrelated logic.
-* **Semantic Precision:** A `CustomerId` in Payment might require different validation rules than in `Customer` Support.
-
 **"Better duplication than the wrong abstraction."** - Sandi Metz (The Wall of Coding Wisdom)
 
+Ideally, the shared module `carrental` should be completely eliminated. This is achieved by duplicating necessary *Value Objects*, such as `CarId`, `CustomerId`, and `PaymentId`, directly within their respective contexts. 
+
+**Why avoid the Shared Kernel or common module?**
+* **Autonomy:** Each *bounded context* remains truly independent and can evolve its data structures without side effects on others.
+* **Preventing Bloat:** It prevents a `common module` from becoming an uncontrolled *"dumping ground"* for unrelated logic.
+* **Semantic Precision:** A `CustomerId` in `Payment` might require different validation rules than in `Customer` Support.
 
 #### FLAT Project Structure (WITHOUT Shared Kernel)
 
