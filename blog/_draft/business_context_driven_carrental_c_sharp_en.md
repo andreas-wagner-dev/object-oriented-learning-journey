@@ -260,12 +260,14 @@ Avoid technical package names for grouping by architecture patterns.
 ---
 ## 5. Implementation Step by Step
 
-**Interface in Root:**
-
 ### Domain Interfaces
 
+Define the central concepts of the application in root package as interfaces, abstract classes, value objects or entities, without technical clutter.
+
+
+E.g. `ICar.cs` - Domain Interface (ROOT!)
 ```csharp
-// ICar.cs - Domain Interface (ROOT!)
+
 namespace CarRental;
 
 public interface ICar
@@ -277,9 +279,24 @@ public interface ICar
 }
 ```
 
+E.g. `ICarPool.cs` - Collection Domain Interface (ROOT!)
+
+```csharp
+namespace CarRental;
+
+public interface ICarPool
+{
+    ICar CarOf(CarId carId);
+
+    // other methods ...
+}
+```
+
 ### Composition Root Pattern
 
-Provide access for **Domain Interfaces**
+By placing the initial system class (as an interface/abstract class) at level "0" of the project structure, we clearly indicate the beginning of the story to the reader.
+This class `ICarRentalApp` enables access via the collection of **domain interfaces**.
+A package named "application/" (see below) can contain various implementations of the application's entry point.
 
 ```csharp
 // ICarRentalApp.cs - Composition Root Interface (ROOT!)
@@ -459,7 +476,12 @@ Each business requirement = one decorator. Clear. Traceable. Maintainable.
 
 ---
 
-### Implementation in application/
+### Implementation of `Composition Root` in application/
+
+The Composition Root is an application infrastructure component.
+> Only applications should have Composition Roots. Libraries and frameworks shouldn't.
+> The Composition Root can be implemented with DI Pure DI, but is also the (only) appropriate place to use a DI Container.
+> A DI Container should only be referenced from the Composition Root. All other modules should have no reference to the container.
 
 ```csharp
 using CarRental.CarPool;
