@@ -638,7 +638,7 @@ Modular architectures are NOT an obvious next step, but a conscious decision to 
 * **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
 * **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
 
-#### Revised Structure & Strategic Note
+#### Revised Structure & Strategic Decoupling
 
 This step begins with a single monolithic artifact, which is successively decomposed into autonomous modules. The functional boundaries of Bounded Contexts serve as the primary guideline for this modularization.
 
