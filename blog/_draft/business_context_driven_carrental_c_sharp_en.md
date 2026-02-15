@@ -221,7 +221,7 @@ The `application/` package provide main method + (DI) injections of technical in
 
 ### 3) Packages and Classes Reflect Business Concepts, Not Technical Roles
 
-✅ **Correct: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
+✅ **Recommended: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
 - `CachedCar`, `StoredCar`, `ValidCar`
 - `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
 - `customer/StoredCustomer`, `customer/ValidCustomer`
@@ -231,7 +231,7 @@ The `application/` package provide main method + (DI) injections of technical in
 
 Only what the business customer says - with result oriented prefixes.
 
-✅ **Correct: Package names from Context Diagram**
+✅ **Recommended: Package names from Context Diagram**
 - `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
 - `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
 - `exchange/` (everything that requires data exchange with external systems HTTP / REST / DB /...)
@@ -379,6 +379,17 @@ public class CarDbContext : DbContext
 
 ### Detail Implementations with Decorators - carpool/
 
+Business logic as code – the radical idea behind the Decorator pattern.  
+This means that your code structure should precisely reflect your business process.
+
+E.g. in a car rental business, when you rent a car, you:
+1. Validate the rental request
+2. Persist it to storage
+3. Cache it for performance
+4. Log it for audit
+5. Publish events for other systems
+
+
 ```csharp
 // carpool/StoredCar.cs - Database Decorator (using exchange/storage/)
 using CarRental.Exchange.Storage;
@@ -426,8 +437,6 @@ public sealed class StoredCar : ICar
 }
 ```
 
-
-
 ```csharp
 // carpool/InMemoryCar.cs - Core Implementation
 namespace CarRental.CarPool;
@@ -451,14 +460,16 @@ public sealed class InMemoryCar : ICar
     public bool IsAvailable() => !_isRented;
     public decimal CalculatePrice(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
 }
-```
 
+// other decorators...
+
+```
 
 **Decorator Composition:**
 
 ```
   → ValidCar (Validation)
-    → StoredCar (Persistence via exchange/storage/)
+    → StoredCar (Persistence)
       → CachedCar (Caching)
         → LoggedCar (Logging)
           → PublishedCar (Events)
@@ -644,7 +655,7 @@ This step begins with a single monolithic artifact, which is successively decomp
 
 ```
 carrental-service              ← Deployable Unit
-├── [carrental]                ← OPTIONAL: To be eliminated (Shared Kernel)
+├── [carrental]                ← RECOMMENDED: To be eliminated (Shared Kernel)
 ├── carrental-application      ← ASP.NET Core Entry Point & DI Configuration (Composition Root)
 ├── carrental-carpool          ← Bounded Context: Fleet Management
 ├── carrental-customer         ← Bounded Context: CRM / Identity
