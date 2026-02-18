@@ -143,6 +143,8 @@ carrental/
 
 ## 3. Car-Rental - Business Context-Driven - Project Structure
 
+The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
+
 ```
 carrental/
 ├── application/
