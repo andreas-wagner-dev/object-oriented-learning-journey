@@ -1,6 +1,6 @@
 # A solid System Composition *"injects less and leaves Nobody in blind..."*
 
-DE: **Eine solide System Komposition *"injeziert wenig und lässt Keinen blind..."***
+DE: **Eine solide System Komposition *"injiziert wenig und lässt Keinen blind..."***
 
 **(Draft!!!)**
 
@@ -10,13 +10,13 @@ DE: **Eine solide System Komposition *"injeziert wenig und lässt Keinen blind..
 
 ## 1. Einleitung
 
-In der modernen objektorientierten Softwareentwicklung ist **Dependency Injection** (DI) längst ein **etabliertes Konzept**. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks mittels sogennanter **DI-Container** das ursprüngliche Konzept in ein **Anti-Pattern** verwandelt.
+In der modernen objektorientierten Softwareentwicklung ist **Dependency Injection** (DI) längst ein **etabliertes Konzept**. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks mittels sogenannter **DI-Container** das ursprüngliche Konzept in ein **Anti-Pattern** verwandelt.
 
 Der Begriff "Container" beschreibt metaphorisch einen intelligenten, zentralen Behälter, der die Kontrolle über die Objekt-Erstellung und deren Abhängigkeiten invertiert und verwaltet, anstatt dies dem Anwendungscode selbst zu überlassen.
 
 ### 1.1 Probleme mit DI-Containern
 
-Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller` kann beisplielsweise das Framefork *Spring* automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.
+Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller` kann beispielsweise das Framework *Spring* automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.
 
 **Die Kontrolle über die Objekterzeugung wird den Entwicklern genommen.** Die DI-Container übernehmen dadurch die komplette Verantwortung für die Lebensdauer und die Konstruktion aller als Komponenten markierten Objekte.
 
@@ -24,9 +24,10 @@ Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller
 
 * **Der Fokus verschiebt sich:** Der Entwickler kümmert sich nicht mehr um die saubere Komposition seiner Objekte, sondern um die korrekte Platzierung von Annotations (wie `@Component`, `@Service`, `@Autowired)`. Die Konfiguration des Containers wird wichtiger als das Design der Objekthierarchie.
 
-* **Unsichbare Komposition on Objeken im Code:** Das gesamte System wird im Hintergrund des Frameworks magisch verdrahtet. Es gibt keine einzige, sichtbare Stelle im Code, die den kompletten Objektgraphen aufbaut. Der Entwickler verliert das Verständnis dafür, wann und wie seine Business-Objekte tatsächlich initialisiert werden.
+* **Unsichtbare Komposition von Objekten im Code:** Das gesamte System wird im Hintergrund des Frameworks magisch verdrahtet. Es gibt keine einzige, sichtbare Stelle im Code, die den kompletten Objektgraphen aufbaut. Der Entwickler verliert das Verständnis dafür, wann und wie seine Business-Objekte tatsächlich initialisiert werden.
 
 * **Verlust der OOP-Prinzipien:** In der reinen objektorientierten Programmierung (OOP) ist der `new`-Operator der Schlüssel zur Kontrolle. Durch das Verstecken der Objekterzeugung durch den Container wird die zentrale Rolle des Konstruktors in der Objekthierarchie geschwächt.
+
 
 Im folgenden betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
 
@@ -86,7 +87,7 @@ graph LR
 
 ```
 com.example.payment/
-├── bussines/  						// Bussines Logik-Layer
+├── business/  						// Nusiness Logik-Layer
 │   ├── InvoiceService.java  		// mit `@Service`-Annotation
 │   └── PaymentService.java  		// mit `@Service`-Annotation
 ├── data/  							// Daten-Layer
@@ -224,7 +225,7 @@ public class CustomerService {
 }
 ```
 
-**(Kein) Problem:** Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers verkompliziert lediglich die Beziehungen in diesem Modul.
+**(Kein) Problem:** Es ist noch kein Drama, aber hier beginnt die Schieflag: Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers verkompliziert lediglich die Beziehungen in diesem Modul.
 
 #### Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können.
 
@@ -439,6 +440,26 @@ Der Senior (Autor) steht dieser Interpretation des Single Responsibility Princip
 * entsteht eine **Kopplung an den Framework-Container**
 * wird **echte Objekt-Komposition** durch Service-Lokalisierung ersetzt
 
+
+### 1.4 Das Komposition-Prinzip
+
+Der Begriff **Komposition** beschreibt in der objektorientierten Programmierung die Praxis, komplexe Objekte aus einfacheren Objekten zusammenzusetzen — ausschließlich über den Konstruktor.
+
+Das klingt trivial, hat aber eine weitreichende Konsequenz: Jede Abhängigkeit eines Objekts ist sichtbar. Es gibt keine versteckten `@Autowired`-Felder, keinen Container, der im Hintergrund Proxies verdrahtet, und keine Annotationen, die dem Framework erklären, was eigentlich der Entwickler wissen sollte.
+
+Das Prinzip folgt einer einfachen Regel:
+> Ein Objekt bekommt alles, was es braucht, beim Erzeugen — oder es bekommt es gar nicht.
+
+Diese Regel hat drei direkte Auswirkungen auf das Design:
+
+**Konstruktoren werden ehrlich.** Die Signatur eines Konstruktors dokumentiert die tatsächlichen Abhängigkeiten eines Objekts vollständig. Wer `new InvoiceBook(invoices, tax, customerDirectory)` liest, weiß sofort: dieses Objekt braucht genau diese drei Dinge — nicht mehr, nicht weniger.
+
+**Zyklen werden unmöglich.** Zyklische Abhängigkeiten wie `InvoiceService` ⇄ `CustomerService` können bei expliziter Komposition gar nicht erst entstehen — denn `new A(new B(new A(...)))` lässt sich schlicht nicht kompilieren. Der Compiler übernimmt die Rolle des Architektur-Wächters.
+
+Die ***Composition Root*** wird zur einzigen Wahrheit. Alle Objekte des Systems werden an einem einzigen Ort erzeugt und verdrahtet — der Composition Root, typischerweise direkt in oder neben `main()`. Wer verstehen will, wie das System aufgebaut ist, liest genau diese eine Stelle.
+
+Was auf den ersten Blick wie eine Einschränkung wirkt — "ich muss alles selbst mit new bauen" — ist in der Praxis eine Befreiung: Das System bleibt lesbar, testbar und erweiterbar, ohne dass man das Framework verstehen muss, um die Anwendung zu verstehen.
+
 ## 2. Pure Komposition: Der objektorientierte Weg
 
 **Die Lösung ist überraschend einfach:** Verzichte auf DI-Container und komponiere deine Objekte explizit mit dem `new`-Operator.
@@ -546,14 +567,7 @@ org.example.payment/
 4. **Testbarkeit**: Test-Doubles können einfach injiziert werden, ohne Mock-Frameworks  
 5. **Keine Framework-Kopplung**: Der Code ist unabhängig von DI-Containern
 
-### Das Komposition-Prinzip
 
-Die Komposition sollte so nah wie möglich am Entry-Point der Applikation stattfinden. Diese **"Composition Root"** (Kompositions-Wurzel) ist verantwortlich für:
-* Das Erstellen des kompletten Object-Graphs
-* Die Konfiguration aller Abhängigkeiten
-* Die Übergabe der fertigen Objekte an die Applikationslogik
-
-Alle anderen Klassen nutzen ausschließlich **Constructor Injection** (Konstruktor-Injektion) und überlassen die Kontrolle für die Objekterstellung ihrem Consumer (bzw. den Entwicklern).
 
 ## 3. Framework-Anpassung: Trennung von Business und Infrastructure
 
@@ -1163,7 +1177,7 @@ public class SpringPaymentApp {
 
 Dies ist der Schlüssel, um die Vorteile der **Pure Composition** auch in sehr großen, monolithischen oder verteilten Systemen beizubehalten, ohne dass die **Composition Root** zu einem unübersichtlichen Monolithen wird.
 
-Ein **Real-World-Beispiel** als empirischer Beweis ist [Self-XDSD](https://github.com/self-xdsd). Es handelt sich um ein großes, produktives Business-System, welches genau diesen Ansatz verfolgt und seit 2019 in Production betrieben wird. Der Source Code enthält über 50.000 Zeilen Java-Code, 5 Module, Projectmanagement, Todos, echte Zahlungen (inkl. Crypto), Web-Dashboard und unterstützt mehrere Plattformen (GitHub, GitLab, Bitbucket). Auch Self-XDSD nutzt Spring Boot als Infrastruktur, wie es an dieser Start-Klasse: [SelfWebApplication.java](https://github.com/self-xdsd/self-web/blob/master/src/main/java/com/selfxdsd/selfweb/SelfWebApplication.java) erstichtlich ist.
+Ein **Real-World-Beispiel** als empirischer Beweis ist [Self-XDSD](https://github.com/self-xdsd). Es handelt sich um ein großes, produktives Business-System, welches genau diesen Ansatz verfolgt und seit 2019 in Production betrieben wird. Der Source Code enthält über 50.000 Zeilen Java-Code, 5 Module, Projectmanagement, Todos, echte Zahlungen (inkl. Crypto), Web-Dashboard und unterstützt mehrere Plattformen (GitHub, GitLab, Bitbucket). Auch Self-XDSD nutzt Spring Boot als Infrastruktur, wie es an dieser Start-Klasse: [SelfWebApplication.java](https://github.com/self-xdsd/self-web/blob/master/src/main/java/com/selfxdsd/selfweb/SelfWebApplication.java) ersichtlich ist.
 
 Um es herunterzuladen und im Test-Modus zu starten, können folgende Git- und Maven-Befehle verwendet werden, um sich selbst von der sauberen und schnellen Funktionsweise zu überzeugen:
 
@@ -1175,45 +1189,65 @@ git clone https://github.com/self-xdsd
 ./mvnw test
 ```
 
+## 5. Argumente gegen die Pure Komposition
 
+Kein Ansatz ist ohne Schwächen. Die folgenden Einwände gegen Pure Komposition sind legitim und verdienen eine ehrliche Antwort.
 
-## 5. Fazit
+**"Pure DI skaliert nicht — die Composition Root wird zum Monolithen."**
+Das ist der häufigste und stärkste Einwand. Bei hundert Klassen wird ein einzelner new-Baum tatsächlich unlesbar. Die Antwort darauf ist jedoch nicht der DI-Container, sondern die modulare Komposition (siehe Abschnitt 4): Modul-Assembler kapseln die Komplexität, ohne sie zu verstecken. Die Composition Root bleibt schlank, weil sie nur noch Assembler aufruft — nicht weil ein Framework die Verdrahtung übernimmt.
+
+**"DI-Container gehören zum Industriestandard — Teams kennen sie."**
+Das stimmt. Spring, Quarkus und CDI sind weit verbreitet, und viele Entwickler haben jahrelange Erfahrung damit. Einen bewährten Standard zugunsten eines unbekannten Ansatzes aufzugeben, ist ein reales Risiko für Teams und Projekte. Dieser Einwand ist besonders dann berechtigt, wenn ein Team neu zusammengesetzt wird oder Fluktuation hoch ist. Pure Komposition erfordert ein tieferes Verständnis von OOP-Prinzipien — und dieses Wissen muss erst aufgebaut werden.
+
+**"Frameworks wie Spring bieten mehr als nur DI — AOP, Transactions, Security."**
+Richtig. Spring ist kein reiner DI-Container, sondern ein vollständiges Ökosystem. `@Transactional`, Spring Security oder Spring Batch lösen echte, komplexe Probleme. Dieser Artikel kritisiert nicht Spring als Ganzes, sondern die Praxis, den DI-Container als primäres Designwerkzeug zu verwenden. Infrastruktur-Features eines Frameworks zu nutzen ist legitim — solange die Objekt-Komposition dadurch nicht dem Framework überlassen wird. Abschnitt 4 zeigt, wie beides koexistieren kann.
+
+**"Zyklische Abhängigkeiten sind selten — das ist ein konstruiertes Problem."**
+Zyklen sind in gut gepflegten Projekten selten. Aber sie sind ein Symptom, kein Sonderfall: Dieselbe Unklarheit über Abhängigkeiten, die Zyklen erzeugt, erzeugt auch horizontale Kopplungen, aufgeblähte Service-Klassen und schwer testbare Komponenten. Die Frage ist nicht, wie oft Zyklen auftreten — sondern ob das System so aufgebaut ist, dass sie strukturell unmöglich sind.
+
+**"Konstruktor-Injection ist auch mit DI-Containern möglich."**
+Das ist korrekt, und es ist sogar die empfohlene Praxis in modernem Spring-Code. Konstruktor-Injection mit einem DI-Container ist besser als Field-Injection — aber es löst das Grundproblem nicht: Der Objektgraph bleibt unsichtbar, die Kontrolle liegt beim Container, und die Composition Root existiert weiterhin nicht als lesbare Stelle im Code. Konstruktor-Injection ist eine notwendige, aber keine hinreichende Bedingung für saubere Komposition.
+
+## 6. Zusammenfassung und Fazit
+
+Die Geschichte des Teams — Junior, Mid und Senior — ist keine Ausnahme. Sie ist der Normalfall in Projekten, die auf DI-Container setzen. Der Junior lernt, wie man Annotationen setzt. Der Mid lernt, wie man `@Lazy` verwendet. Der Senior lernt, wie man Zyklen mit SRP-Argumenten wegdiskutiert. Keiner von ihnen lernt, wie man Objekte wirklich komponiert. Das ist kein Vorwurf an die Entwickler. Es ist ein strukturelles Problem: Wer einem Framework die Kontrolle über die Objekterzeugung übergibt, gibt auch die Gelegenheit auf, sauberes Design zu üben.
+
+**Pure Komposition kehrt diese Kontrolle zurück.** Nicht durch ein neues Framework, nicht durch neue Annotationen — sondern durch den konsequenten Verzicht darauf. Ein Konstruktor, der alle Abhängigkeiten offenlegt. Eine *Composition Root*, die den gesamten Objektgraphen sichtbar macht. Ein System, das jeder Entwickler verstehen kann, ohne das Framework zu kennen.
+
+*"injects less and leaves nobody behind"* heißt, wer weniger injiziert, lässt niemanden im Dunkeln stehen: nicht den Junior, der das System zum ersten Mal liest, nicht den Senior, der es Jahre später wartet und nicht den Compiler, der Zyklen schon zur Build-Zeit erkennt.
+
+**DI-Container haben ihren Platz** — als Infrastruktur-Werkzeug, das sparsam und bewusst eingesetzt werden sollte. Aber sie sollten niemals das Fundament sein, auf dem ein System aufgebaut wird. 
+
+> Das Fundament ist die Komposition. Alles andere ist Werkzeug.
 
 * **Die solide System-Komposition "injects less and leaves nobody behind..."** -> macht die Code-Struktur für alle Entwickler sofort verständlich und nachvollziehbar.
 * DI-Container mögen in bestimmten Situationen ihren Platz haben, aber sie sollten niemals das grundlegende Prinzip der expliziten Objekt-Komposition ersetzen.
 * Ein explizit komponiertes System ist ein verständliches System und Verständlichkeit ist die Grundlage für Wartbarkeit, Erweiterbarkeit und langfristigen Erfolg.
 
-## 6. Quellen
+## 7. Quellen
 
 **Primärquellen**
-
-* Bugayenko Yegor: (2014). ["Dependency Injection Containers are Code Polluters"](https://www.yegor256.com/2014/10/03/di-containers-are-evil.html)  
+* Mark Seemann (2011): [Composition Root Pattern](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
+  Definiton und Zweck von Wurzel-Komposition
+* Mark Seemann (2012): [When to use a DI Container](https://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/)
+  DI-Containern und Demonstration echter Objekt-Komposition
+* Martin Fowler (2006): [TestDouble](https://martinfowler.com/bliki/TestDouble.html)
+  Konzeptuelle Definition von **TestDouble**
+* Bugayenko Yegor (2014). ["Dependency Injection Containers are Code Polluters"](https://www.yegor256.com/2014/10/03/di-containers-are-evil.html)  
   Grundlegende Kritik an DI-Containern und Demonstration echter Objekt-Komposition
-* Bugayenko Yegor: (2016).  ["Java Annotations Are a Big Mistake"](https://www.yegor256.com/2016/04/12/java-annotations-are-evil.html)   
+* Bugayenko Yegor (2016): ["Java Annotations Are a Big Mistake"](https://www.yegor256.com/2016/04/12/java-annotations-are-evil.html)   
   Grundlegende Kritik an Annotations und Demonstration zur Vermeidung mit Decorator Pattern
-* Robert Bräutigam: (2016). [Evil Annotations](https://javadevguy.wordpress.com/2016/01/13/evil-annotations/)  
-  Kategorisierung von Annotations (***harmless vs. evil***)
-* Robert Bräutigam: (2017). ["Happy Packages"](https://www.google.com/search?q=https://javadevguy.wordpress.com/2017/12/18/happy-package/)  
-  Über die Ausrichtung von Package-Strukturen an Business-Konzepten statt technischen Layern.
-* Bugayenko Yegor: (2016). ["Who Is an Object?"](https://www.yegor256.com/2016/07/14/who-is-object.html  )  
+* Bugayenko Yegor (2016): ["Who Is an Object?"](https://www.yegor256.com/2016/07/14/who-is-object.html  )  
   Konzeptuelle Definition von Objekten als Repräsentanten von Daten
-* Bugayenko Yegor: (2015). ["Don't Create Objects That End With -ER"](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)  
+* Bugayenko Yegor (2015): ["Don't Create Objects That End With -ER"](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)  
   Über deklaratives vs. imperatives Design in OOP
+* Robert Bräutigam (2016): [Evil Annotations](https://javadevguy.wordpress.com/2016/01/13/evil-annotations/)  
+  Kategorisierung von Annotations (***harmless vs. evil***)
+* Robert Bräutigam (2017): ["Happy Packages"](https://www.google.com/search?q=https://javadevguy.wordpress.com/2017/12/18/happy-package/)  
+  Über die Ausrichtung von Package-Strukturen an Business-Konzepten statt technischen Layern.  
 * Robert C. Martin (Uncle Bob): "Component Principles"  
   The theoretical *foundations* and **metrics* for **coupling** (ADP, SDP, SAP) and **cohesion** (REP, CCP, CRP).  
   Source: Robert C. Martin, Agile Software Development, Principles, Patterns, and Practices. Prentice Hall, 2002
-
-**Sekundärquellen**
-
-* [Wikipedia](https://en.wikipedia.org/wiki/Test_double) and [Martin Fowler](https://martinfowler.com/bliki/TestDouble.html):  
-  Konzeptuelle Definition von **TestDouble**
-
-**Further Reading**
-
-Umfassende Darstellung moderner OOP-Prinzipien
-
-* Bugayenko Yegor: Elegant Objects, Volume 1 (2016)  
-* Bugayenko Yegor: Elegant Objects, Volume 2 (2017)
 
 **Projektbeispiele**
 
@@ -1222,7 +1256,7 @@ Umfassende Darstellung moderner OOP-Prinzipien
 * Robert Braeutigam (2016): [Magic-less Dependency Injection with JayWire](https://javadevguy.wordpress.com/2016/06/27/magic-less-dependency-injection-with-jaywire/)  
   **Source Code of *JayWire*** on [GitHub](https://github.com/vanillasource/jaywire) - Additional topics at [GitHub Wiki](https://github.com/vanillasource/jaywire/wiki)
 * Mihai A. 🇷🇴🇩🇪🇬🇧🇫🇷: [Self-XDSD](https://github.com/self-xdsd).  
-  **Real-World-Beispiel** (Open-Source-Projekt) mit einer Modulare Kompo
+  **Real-World-Beispiel** (Open-Source-Projekt) mit einer Modulare Komposition
 
 **Verwandte Konzepte**
 
