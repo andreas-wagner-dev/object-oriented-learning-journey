@@ -197,6 +197,9 @@ carrental/
 └── ...
 ```
 
+When business says “there’s a problem with car rentals”, you go to carpool/.
+When they say “payment processing is slow”, you go to payment/.
+
 ---
 
 ## 4. Key Principles and Naming Conventions
