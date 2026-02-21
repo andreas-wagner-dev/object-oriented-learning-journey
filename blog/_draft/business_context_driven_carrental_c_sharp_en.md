@@ -149,6 +149,7 @@ carrental/
 ├── carpool/
 │   ├── CachedCarPool.cs         ← Cache Decorator
 │   ├── LoggedCar.cs             ← Logging Decorator
+│   ├── SimpleCar.cs             ← Default Decorator (Factory of cars in DDD)
 │   ├── StoredCar.cs             ← Database Decorator (use DTO's from exchange/storage/)
 │   ├── StoredCarPool.cs         ← Database Decorator (use DTO's from exchange/storage/)
 │   ├── ServedCarPool.cs         ← REST service for cars (use DTO's from exchange/resource/)
@@ -442,14 +443,14 @@ public sealed class StoredCar : ICar
 // carpool/InMemoryCar.cs - Core Implementation
 namespace CarRental.CarPool;
 
-public sealed class InMemoryCar : ICar
+public sealed class SimpleCar : ICar
 {
     private readonly string _id;
     private readonly string _model;
     private readonly decimal _dailyRate;
     private bool _isRented;
 
-    public InMemoryCar(string id, string model, decimal dailyRate)
+    public SimpleCar(string id, string model, decimal dailyRate)
     {
         _id = id;
         _model = model;
