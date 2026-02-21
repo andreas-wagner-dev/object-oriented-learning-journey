@@ -393,6 +393,32 @@ E.g. in a car rental business, when you rent a car, you:
 
 
 ```csharp
+// carpool/SimpleCar.cs - Core Implementation
+namespace CarRental.CarPool;
+
+public sealed class SimpleCar : ICar
+{
+    private readonly string _id;
+    private readonly string _model;
+    private readonly decimal _dailyRate;
+    private bool _isRented;
+
+    public SimpleCar(string id, string model, decimal dailyRate)
+    {
+        _id = id;
+        _model = model;
+        _dailyRate = dailyRate;
+    }
+
+    public void Rent(ICustomer customer, DateTime from, DateTime to) => _isRented = true;
+    public void Return() => _isRented = false;
+    public bool IsAvailable() => !_isRented;
+    public decimal CalculatePrice(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
+}
+
+```
+
+```csharp
 // carpool/StoredCar.cs - Database Decorator (using exchange/storage/)
 using CarRental.Exchange.Storage;
 
@@ -437,35 +463,11 @@ public sealed class StoredCar : ICar
     public bool IsAvailable() => _origin.IsAvailable();
     public decimal CalculatePrice(DateTime from, DateTime to) => _origin.CalculatePrice(from, to);
 }
-```
 
-```csharp
-// carpool/InMemoryCar.cs - Core Implementation
-namespace CarRental.CarPool;
-
-public sealed class SimpleCar : ICar
-{
-    private readonly string _id;
-    private readonly string _model;
-    private readonly decimal _dailyRate;
-    private bool _isRented;
-
-    public SimpleCar(string id, string model, decimal dailyRate)
-    {
-        _id = id;
-        _model = model;
-        _dailyRate = dailyRate;
-    }
-
-    public void Rent(ICustomer customer, DateTime from, DateTime to) => _isRented = true;
-    public void Return() => _isRented = false;
-    public bool IsAvailable() => !_isRented;
-    public decimal CalculatePrice(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
-}
-
-// other decorators...
+// other decorators: ValidCar, CachedCar, LoggedCar, PublishedCar...
 
 ```
+
 
 **Decorator Composition:**
 
