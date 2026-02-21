@@ -197,8 +197,8 @@ carrental/
 └── ...
 ```
 
-When business says “there’s a problem with car rentals”, you go to carpool/.
-When they say “payment processing is slow”, you go to payment/.
+* When business says *“there’s a problem with car rentals”*, you go to **carpool/**
+* When they say *“payment processing is slow”*, you go to **payment/**
 
 ---
 
