@@ -10,15 +10,31 @@ Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze in Java: das **Se
 
 ### Zielsetzung
 
-Ziel ist es, SRP auf eine **pragmatische und objektive Weise zu verifizieren und im Entwickleralltag einzusetzen**, damit es direkt in unsere tägliche Programmplanung integriert werden kann. Die Definition selbst stammt von **Robert Bräutigam** (MATHEMA Software GmbH), der SRP nicht über subjektive Verantwortlichkeitsbegriffe, sondern über die messbaren Eigenschaften **Kohäsion** und **Kopplung** operationalisiert: `SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING`. Dieser Artikel übernimmt Bräutigams Formulierung als Grundlage und zeigt, wie sie mit konkreten Metriken nachweisbar und damit im Code-Review, im CI/CD-Prozess und beim Klassendesign unmittelbar anwendbar wird.
+Ziel ist es, SRP auf eine **pragmatische und objektive Weise zu verifizieren und im Entwickleralltag einzusetzen**, damit es direkt in unsere tägliche Programmplanung integriert werden kann. Die Definition selbst stammt von **Robert Bräutigam** (MATHEMA Software GmbH), der SRP nicht über subjektive Verantwortlichkeitsbegriffe, sondern über die messbaren Eigenschaften **Kohäsion** und **Kopplung** operationalisiert: 
+
+* `SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING`.
+
+Dieser Artikel übernimmt Bräutigams Formulierung als Grundlage und zeigt, wie sie mit konkreten Metriken nachweisbar und damit im Code-Review, im CI/CD-Prozess und beim Klassendesign unmittelbar anwendbar wird.
 
 ### Methodik und Messverfahren
 
 Um SRP objektiv bewertbar zu machen, werden zwei etablierte Metriken der objektorientierten Softwaremesstechnik eingesetzt:
 
-**LCOM4** (*Lack of Cohesion of Methods, Version 4*) misst die interne Kohäsion einer Klasse über Graphenanalyse: Methoden bilden Knoten, Zugriffe auf gemeinsame Felder oder gegenseitige Aufrufe bilden Kanten. Der LCOM4-Wert entspricht der Anzahl zusammenhängender Teilgraphen. Ein Wert von 1 zeigt maximale Kohäsion an; Werte größer 1 signalisieren, dass die Klasse in mehrere unabhängige Einheiten zerfällt.
+**LCOM4** (*Lack of Cohesion of Methods, Version 4*) misst die interne Kohäsion einer Klasse über Graphenanalyse: Methoden bilden Knoten, Zugriffe auf gemeinsame Felder oder gegenseitige Aufrufe bilden Kanten. Der LCOM4-Wert entspricht der Anzahl zusammenhängender Teilgraphen. Ein **Wert von 1 zeigt maximale Kohäsion** an; **Werte größer (>) 1** signalisieren, dass die Klasse in mehrere unabhängige Einheiten zerfällt.
 
-**CBO** (*Coupling Between Objects*, Chidamber & Kemerer 1994) zählt die Anzahl externer Klassen, zu denen eine Klasse eine direkte Abhängigkeit unterhält – über Feldtypen, Methodenparameter, Rückgabetypen oder direkte Aufrufe. Ein niedriger CBO-Wert steht für geringe Kopplung und hohe Austauschbarkeit.
+
+**CBO** als Metrik (*Kopplung zwischen Objektklassen*) gibt die Anzahl der mit einer gegebenen Klasse gekoppelten Klassen an. Diese Kopplung kann erfolgen durch:
+* Methodenaufruf
+* Die Klasse erweitert
+* Eigenschaften oder Parameter
+* Methodenargumente oder Rückgabetypen
+* Variablen in Methoden
+
+Eine Kopplung zwischen Klassen ist notwendig, damit ein System sinnvolle Arbeit leisten kann. Eine übermäßige Kopplung erschwert jedoch die Wartung und Wiederverwendung des Systems. Auf Projekt- oder Paketebene gibt diese Metrik die durchschnittliche Anzahl der pro Klasse verwendeten Klassen an. Ein niedriger CBO-Wert steht für geringe Kopplung und hohe Austauschbarkeit.
+
+* Ein Wert von 0 bedeutet, dass eine Klasse keine Beziehung zu anderen Klassen im System hat und daher nicht Teil des Systems sein sollte.
+* Ein Wert zwischen 1 und 4 ist gut, da er auf eine lose Kopplung der Klasse hinweist.
+* Ein höherer Wert kann darauf hindeuten, dass die Klasse zu eng mit anderen Klassen im Modell gekoppelt ist. Dies erschwert das Testen und Modifizieren und schränkt die Wiederverwendbarkeit ein. Erwägen Sie, diese Klasse von den verknüpften Klassen zu entkoppeln und sie durch einen größeren Satz von Operationen unabhängiger zu machen.
 
 Beide Metriken werden für jede Beispielklasse manuell hergeleitet und in Messtabellen dokumentiert. Die Ergebnisse werden abschließend in einer strukturierten Gegenüberstellung konsolidiert, die konzeptionelle SRP-Kriterien direkt mit den gemessenen Metrikwerten verknüpft.
 
