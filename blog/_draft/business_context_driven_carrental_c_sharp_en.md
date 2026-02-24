@@ -137,7 +137,7 @@ carrental/
 
 ---
 
-## 3. Car-Rental - Business Context-Driven - Project Structure
+## 3. Business Context-Driven Project Structure - Car-Rental
 
 The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
 
@@ -203,7 +203,7 @@ carrental/
 
 ---
 
-## 4. Key Principles and Naming Conventions
+## 4. Key Principles of Packaging and Naming Conventions
 
 ### 1) Packages Should Never Depend on Sub-Packages
 
@@ -260,12 +260,12 @@ Avoid meaning of technical things and suffixes of architecture patterns.
 Avoid technical package names for grouping by architecture patterns.
 
 ---
-## 5. Implementation Step by Step
+## 5. Step by Step - Implementation
 
 ### Domain Interfaces in Root Package
 
-The most important concepts and ideas should be at the beginning—in the top-level package of the software. 
-This ensures conceptual integrity, preserving the abstract identity of the system before technical details distort it.
+The **most important concepts and ideas** should be at the beginning - **in the top-level package** of the software. 
+This ensures *conceptual integrity*, preserving the *abstract identity* of the system before technical details distort it.
 
 ```
 carrental/
@@ -307,7 +307,6 @@ public interface ICarPool
 
 By placing the initial system class (as an interface/abstract class) at level "0" of the project structure, we clearly indicate the beginning of the story to the reader.
 
-
 ```
 carrental/
 ├── .../
@@ -331,7 +330,266 @@ public interface ICarRentalApp
 
 ---
 
-### Integration of ORM Layer - exchange/storage/ 
+### Detail Implementations with Decorators - `carpool/`
+
+Business logic as code – the radical idea behind the Decorator pattern.  
+This means that your code structure should precisely reflect your business process.
+
+E.g. in a car rental business, when you rent a car, you:
+1. Validate the rental request
+2. Persist it to storage
+3. Cache it for performance
+4. Log it for audit
+5. Publish events for other systems
+
+Example of default implementation of `carpool/SimpleCar.cs` - instead of Factory bulding block from DDD.
+
+```csharp
+
+namespace CarRental.CarPool;
+
+public class SimpleCar : ICar
+{
+    private readonly string _id;
+    private readonly string _model;
+    private readonly decimal _dailyRate;
+    private bool _isRented;
+
+    public SimpleCar(string id, string model, decimal dailyRate)
+    {
+        _id = id;
+        _model = model;
+        _dailyRate = dailyRate;
+    }
+
+    public void Rent(ICustomer customer, DateTime from, DateTime to) => _isRented = true;
+    public void Return() => _isRented = false;
+    public bool IsAvailable() => !_isRented;
+    public decimal CalculatePrice(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
+}
+
+```
+
+Example of `carpool/StoredCar.cs` as Database Decorator using EF-Core classes from `exchange/storage/` package.
+
+```csharp
+using CarRental.Exchange.Storage;
+
+namespace CarRental.CarPool;
+
+public class StoredCar : ICar
+{
+    private readonly ICar _origin;
+    private readonly CarDbContext _dbContext;
+    private readonly string _carId;
+
+    public StoredCar(ICar origin, CarDbContext dbContext, string carId)
+    {
+        _origin = origin;
+        _dbContext = dbContext;
+        _carId = carId;
+    }
+
+    public void Rent(ICustomer customer, DateTime from, DateTime to)
+    {
+        _origin.Rent(customer, from, to);
+        var entity = _dbContext.Cars.Find(_carId);
+        if (entity != null)
+        {
+            entity.IsRented = true;
+            entity.CurrentCustomerId = customer.Id();
+            _dbContext.SaveChanges();
+        }
+    }
+
+    public void Return()
+    {
+        _origin.Return();
+        var entity = _dbContext.Cars.Find(_carId);
+        if (entity != null)
+        {
+            entity.IsRented = false;
+            _dbContext.SaveChanges();
+        }
+    }
+
+    public bool IsAvailable() => _origin.IsAvailable();
+    public decimal CalculatePrice(DateTime from, DateTime to) => _origin.CalculatePrice(from, to);
+}
+
+```
+
+```
+...more other decorators: ValidCar, CachedCar, LoggedCar, PublishedCar...
+```
+
+**Decorator Composition:**
+
+```
+  → ValidCar (Validation)
+    → StoredCar (Persistence)
+      → CachedCar (Caching)
+        → LoggedCar (Logging)
+          → PublishedCar (Events)
+```
+
+**The Core Message: Decorators Are Your Business Logic**
+
+Here's the paradigm shift:
+
+* **Traditional thinking:** "Decorators are a technical pattern for adding functionality"
+* **Business-driven thinking:** "Decorators ARE the business process, made executable"
+
+Let's us look at this decorator chain again:
+
+```
+Validation → Events → Logging → Caching → Persistence
+    ↓          ↓        ↓         ↓          ↓
+ Business   Domain    Audit   Performance   Data
+  Rules     Events    Trail   Optimization  Storage
+```
+This isn't technical plumbing. This is our business.
+
+* When Product Owner says "we need to validate rental dates," you add **ValidCar**. 
+* When Compliance says "we need audit trails," you add **LoggedCar**. 
+* When Operations says "we need event-driven architecture," you add **PublishedCar**.
+
+Each business requirement = one decorator. *Clear*. *Traceable*. *Maintainable*.
+
+---
+
+### Implementation of Composition Root in `application/`
+
+The Composition Root is an application infrastructure component.
+> Only applications should have Composition Roots. Libraries and frameworks shouldn't.
+> The Composition Root can be implemented with DI Pure DI, but is also the (only) appropriate place to use a DI Container.
+> A DI Container should only be referenced from the Composition Root. All other modules should have no reference to the container.
+
+```
+carrental/
+├── application/
+│   └── CarRentalApp.cs    ← application's entry point.
+├── ICar.cs          
+├── ICarRental.cs
+├── ICarRentalApp.cs       ← Composition Root
+```
+
+The package `application/` can contain various implementations of the application's entry point.
+
+```csharp
+using CarRental.CarPool;
+using CarRental.Exchange.Storage;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CarRental.Application;
+
+public class CarRentalApp : ICarRentalApp
+{
+    private readonly IServiceProvider _services;
+
+    // Framework Integration
+    public CarRentalApp(IServiceProvider services) => _services = services;
+
+    public static void Main(string[] args) 
+    {
+        // ASP.NET Core Setup & DI Configuration
+    }
+    
+    public ICarPool CarPool() 
+    {
+        // Implementation of ICarPool using collection decorators
+        // Composition logic: CachedCarPool(StoredCarPool(InMemoryCars))
+        return new CachedCarPool(
+            new StoredCarPool(
+                _services.GetRequiredService<CarDbContext>()
+            ),
+            _services.GetRequiredService<IMemoryCache>()
+        );
+    }
+
+    public ICustomers Customers() 
+    {   // Composition logic: CachedCustomers(StoredCustomers(_services.GetRequiredService<CustomerDbContext>()))
+        // Returns the collection implementation for customers
+        return ...;
+    }
+}
+```
+
+---
+
+### Isolation of Frameworks and Libraries 
+
+**1) Ideally**, technical aspects implemented through frameworks or libraries should be outsourced to **separate projects** and integrated into the main project as dependencies.
+
+```
+carrental                     → depends on: -endpoint, -resource, -storage, -... 
+
+carrental-endpoint            → HTTP classes JSON/XML DTOs
+carrental-resource            → REST classes JSON/XML DTOs
+carrental-storage             ← EF Core ...DbContexts/Entities
+carrental-mailing             ← EMAIL sending by SMTPS/IMAPS/POP3S 
+carrental-messaging           ← QUEUES integration like Kafka with AVRO classes
+carrental-pdf                 ← PDF library with DTOs/helper classes
+carrental-text                ← Textformatting library with DTOs/helper classes
+carrental-...                 ← other framework or library
+```
+
+The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level.
+
+For example, if you are using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF classes in the package `carpool/` behind a class like `StoredCar.cs`, which is designed as a `Decorator`, `Bridge` or `Adapter` pattern.
+
+**Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical of projects.
+
+**2) Alternative:** suitable for projects with small codebases.
+
+Isolate all technical aspects (everything that requires data exchange with external systems)
+
+* into a dedicated package `exchange/`
+
+followed by further subpackages for each aspect, such as:
+
+* `endpoint/`   → HTTP classes for WEB access with helper classes
+* `resource/`   → HTTP classes for REST and JSON/XML DTOs with helper classes
+* `storage/`    → ORM classes for DB access with helper classes
+* `mailing/`    → SMTPS/IMAPS/POP3S for EMAIL sending and server integration with helper classes
+* `messaging/`  → AVRO classes for Kafka integration with helper classes
+* `text/`       → Textformatting library with helper classes
+* `pdf/`        → PDF library with helper classes
+* `other.../`   → ... library/classes ...
+
+The classes in these packages can then be used in the business packages starting at the first level.  
+E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` package.
+
+```
+carrental/
+├── application/ 
+├── carpool/            
+│   └── StoredCar.cs         ← Uses exchange/storage/ for persistence
+├── exchange/
+│   ├── endpoint/            → HTTP classes JSON/XML DTOs
+│   ├── resource/            → REST classes JSON/XML DTOs
+│   ├── storage/             ← EF Core Entity       
+│   │   ├── CarEntity.cs     ← EF Core Entity
+│   │   ├── CarDbContext.cs  ← EF Core DbContext
+│   │   ├── Db....cs         ← EF Core common Utils or Helper only for this package
+│   │   └── ...
+│   ├── mailing/             → Email: SMTPS, IMAPS or POP3S Protocol   
+│   ├── messaging/           → Queues Apache Avro or Protocol Buffers DTOs
+│   └── ...  
+├── .../    
+└── ICar.cs                  ← Never knows about EF Core
+```
+
+**Important:**
+The domain interfaces and classes in the root package should never depends on technical DTO classes.
+* All ORM classes (Entity, DbContext) live in `exchange/storage/` package
+* The package `exchange/storage/` can be used by `carpool/`, `payment/` not otherwise
+* Domain adapters (like `StoredCar` in `carpool/`) depends on DTOs of `exchange/storage/` package
+
+This ensures framework independence and clean dependency flow.
+
+**E.g. Integration of ORM Layer** -  `exchange/storage/ ` 
 
 ```csharp
 // exchange/storage/CarEntity.cs
@@ -376,258 +634,6 @@ public class CarDbContext : DbContext
     }
 }
 ```
-
----
-
-### Detail Implementations with Decorators - carpool/
-
-Business logic as code – the radical idea behind the Decorator pattern.  
-This means that your code structure should precisely reflect your business process.
-
-E.g. in a car rental business, when you rent a car, you:
-1. Validate the rental request
-2. Persist it to storage
-3. Cache it for performance
-4. Log it for audit
-5. Publish events for other systems
-
-
-```csharp
-// carpool/SimpleCar.cs - Core Implementation
-namespace CarRental.CarPool;
-
-public sealed class SimpleCar : ICar
-{
-    private readonly string _id;
-    private readonly string _model;
-    private readonly decimal _dailyRate;
-    private bool _isRented;
-
-    public SimpleCar(string id, string model, decimal dailyRate)
-    {
-        _id = id;
-        _model = model;
-        _dailyRate = dailyRate;
-    }
-
-    public void Rent(ICustomer customer, DateTime from, DateTime to) => _isRented = true;
-    public void Return() => _isRented = false;
-    public bool IsAvailable() => !_isRented;
-    public decimal CalculatePrice(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
-}
-
-```
-
-```csharp
-// carpool/StoredCar.cs - Database Decorator (using exchange/storage/)
-using CarRental.Exchange.Storage;
-
-namespace CarRental.CarPool;
-
-public sealed class StoredCar : ICar
-{
-    private readonly ICar _origin;
-    private readonly CarDbContext _dbContext;
-    private readonly string _carId;
-
-    public StoredCar(ICar origin, CarDbContext dbContext, string carId)
-    {
-        _origin = origin;
-        _dbContext = dbContext;
-        _carId = carId;
-    }
-
-    public void Rent(ICustomer customer, DateTime from, DateTime to)
-    {
-        _origin.Rent(customer, from, to);
-        var entity = _dbContext.Cars.Find(_carId);
-        if (entity != null)
-        {
-            entity.IsRented = true;
-            entity.CurrentCustomerId = customer.Id();
-            _dbContext.SaveChanges();
-        }
-    }
-
-    public void Return()
-    {
-        _origin.Return();
-        var entity = _dbContext.Cars.Find(_carId);
-        if (entity != null)
-        {
-            entity.IsRented = false;
-            _dbContext.SaveChanges();
-        }
-    }
-
-    public bool IsAvailable() => _origin.IsAvailable();
-    public decimal CalculatePrice(DateTime from, DateTime to) => _origin.CalculatePrice(from, to);
-}
-
-// other decorators: ValidCar, CachedCar, LoggedCar, PublishedCar...
-
-```
-
-
-**Decorator Composition:**
-
-```
-  → ValidCar (Validation)
-    → StoredCar (Persistence)
-      → CachedCar (Caching)
-        → LoggedCar (Logging)
-          → PublishedCar (Events)
-```
-
-**The Core Message: Decorators ARE Your Business Logic**
-
-Here's the paradigm shift:
-
-**Traditional thinking:**
-
-"Decorators are a technical pattern for adding functionality."
-
-**Business-driven thinking:**
-
-"Decorators ARE the business process, made executable."
-
-Look at this decorator chain again:
-
-```
-Validation → Events → Logging → Caching → Persistence
-    ↓          ↓        ↓         ↓          ↓
- Business   Domain    Audit   Performance   Data
-  Rules     Events    Trail   Optimization  Storage
-```
-This isn't technical plumbing. This is your business.
-
-* When Product Owner says "we need to validate rental dates," you add **ValidCar**. 
-* When Compliance says "we need audit trails," you add **LoggedCar**. 
-* When Operations says "we need event-driven architecture," you add **PublishedCar**.
-
-Each business requirement = one decorator. Clear. Traceable. Maintainable.
-
----
-
-### Implementation of `Composition Root` in application/
-
-The Composition Root is an application infrastructure component.
-> Only applications should have Composition Roots. Libraries and frameworks shouldn't.
-> The Composition Root can be implemented with DI Pure DI, but is also the (only) appropriate place to use a DI Container.
-> A DI Container should only be referenced from the Composition Root. All other modules should have no reference to the container.
-
-```
-carrental/
-├── application/
-│   └── CarRentalApp.cs    ← application's entry point.
-├── ICar.cs          
-├── ICarRental.cs
-├── ICarRentalApp.cs       ← Composition Root
-```
-
-The package "application/" can contain various implementations of the application's entry point.
-
-```csharp
-using CarRental.CarPool;
-using CarRental.Exchange.Storage;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace CarRental.Application;
-
-public class CarRentalApp : ICarRentalApp
-{
-    private readonly IServiceProvider _services;
-
-    // Framework Integration
-    public CarRentalApp(IServiceProvider services) => _services = services;
-
-    public static void Main(string[] args) 
-    {
-        // ASP.NET Core Setup & DI Configuration
-    }
-    
-    public ICarPool CarPool() 
-    {
-        // Implementation of ICarPool using collection decorators
-        // Composition logic: CachedCarPool(StoredCarPool(InMemoryCars))
-        return new CachedCarPool(
-            new StoredCarPool(
-                _services.GetRequiredService<CarDbContext>()
-            ),
-            _services.GetRequiredService<IMemoryCache>()
-        );
-    }
-
-    public ICustomers Customers() 
-    {   // Composition logic: CachedCustomers(StoredCustomers(_services.GetRequiredService<CustomerDbContext>()))
-        // Returns the collection implementation for customers
-        return ...;
-    }
-}
-```
-
-
-### Isolation of Frameworks and Libraries 
-
-Ideally, technical aspects implemented through frameworks or libraries should be outsourced to **separate projects** and integrated into the main project as dependencies.
-
-```
-carrental                     → depends on: -endpoint, -resource, -storage, -... 
-
-carrental-endpoint            → HTTP classes JSON/XML DTOs
-carrental-resource            → REST classes JSON/XML DTOs
-carrental-storage             ← EF Core ...DbContexts/Entities
-carrental-...                 ← other framework or library
-```
-
-The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level.  
-E. g. when using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF-Classes in the `carpool/` package behinde a 'Decorator' / 'Adapter'.  
-
-**Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical of projects.
-
-**Alternative:** suitable for projects with small codebases.
-
-Isolate all technical aspects (everything that requires data exchange with external systems) into a dedicated package `exchange/` followed by further subpackages for each aspect, such as:
-* `endpoint/`   → HTTP classes for WEB access with helper classes
-* `resource/`   → HTTP classes for REST and JSON/XML DTOs with helper classes
-* `storage/`    → ORM classes for DB access with helper classes
-* `mailing/`    → SMTPS/IMAPS/POP3S for EMAIL sending and server integration with helper classes
-* `messaging/`  → AVRO classes for Kafka integration with helper classes
-* `text/`       → Textformatting library with helper classes
-* `pdf/`        → PDF library with helper classes
-* `other.../`   → ... library/classes ...
-
-The classes in these packages can then be used in the business packages starting at the first level.  
-E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` package.
-
-```
-carrental/
-├── application/ 
-├── carpool/            
-│   └── StoredCar.cs         ← Uses exchange/storage/ for persistence
-├── exchange/
-│   ├── endpoint/            → HTTP classes JSON/XML DTOs
-│   ├── resource/            → REST classes JSON/XML DTOs
-│   ├── storage/             ← EF Core Entity       
-│   │   ├── CarEntity.cs     ← EF Core Entity
-│   │   ├── CarDbContext.cs  ← EF Core DbContext
-│   │   ├── Db....cs         ← EF Core common Utils or Helper only for this package
-│   │   └── ...
-│   ├── mailing/             → Email: SMTPS, IMAPS or POP3S Protocol   
-│   ├── messaging/           → Queues Apache Avro or Protocol Buffers DTOs
-│   └── ...  
-├── .../    
-└── ICar.cs                  ← Never knows about EF Core
-```
-
-**Important:**
-The domain interfaces and classes in the root package should never depends on technical DTO classes.
-* All ORM classes (Entity, DbContext) live in `exchange/storage/` package
-* The package `exchange/storage/` can be used by `carpool/`, `payment/` not otherwise
-* Domain adapters (like `StoredCar` in `carpool/`) depends on DTOs of `exchange/storage/` package
-
-This ensures framework independence and clean dependency flow.
 
 ---
 
