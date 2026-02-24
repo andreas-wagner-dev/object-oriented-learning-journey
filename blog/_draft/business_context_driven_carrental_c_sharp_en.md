@@ -711,8 +711,8 @@ carrental-carpool-messaging   ← AVRO Schema generation of DTOs
 
 carrental-customer             ← Business (Bounded) Context 
 ├── customer/                  → depends on: core carrental and -endpoint, -resource, -storage, -...
-│   ├── StoredCustomer.cs      ← Database Decorator (use SmtpsEmail from ...-customer-storage project)
-│   ├── StoredCustomers.cs     ← Database Decorator (use SmtpsEmail from ...-customer-storage project)
+│   ├── StoredCustomer.cs      ← Database Decorator (use EF-Core and -Entities from ...-customer-storage project)
+│   ├── StoredCustomers.cs     ← Database Decorator (use EF-Core and -Entities from ...-customer-storage project)
 │   ├── NotifiedCustomer.cs    ← Email Decorator (use SmtpsEmail from ...-customer-mailing project)
 │   └── ...cs
 ├── CarId.cs                   ← Value Object
