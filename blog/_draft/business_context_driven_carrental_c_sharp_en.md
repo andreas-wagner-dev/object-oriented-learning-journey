@@ -147,6 +147,7 @@ carrental/
 │   ├── CarRentalApp.cs          ← ASP.NET Core Main + DI
 │   └── KafkaQueueConfig.cs      ← Kafka Configuration
 ├── carpool/
+│   ├── CachedCar.cs             ← Cache Decorator
 │   ├── CachedCarPool.cs         ← Cache Decorator
 │   ├── LoggedCar.cs             ← Logging Decorator
 │   ├── SimpleCar.cs             ← Default Decorator (Factory of cars in DDD)
