@@ -342,7 +342,7 @@ E.g. in a car rental business, when you rent a car, you:
 4. Log it for audit
 5. Publish events for other systems
 
-Example of default implementation of `carpool/SimpleCar.cs` - instead of Factory bulding block from DDD.
+Example of default implementation of `carpool/SimpleCar.cs` - instead of Factory building block from DDD.
 
 ```csharp
 
