@@ -1,5 +1,12 @@
 # Das Single Responsibility Principle objektiv messen
 
+## Einleitung: Single Responsibility Principle (SRP) und seine Bedeutung
+Das Single Responsibility Principle ist das erste der fünf SOLID-Prinzipien, die Robert C. Martin (auch bekannt als „Uncle Bob") zu Beginn der 2000er Jahre formuliert hat. Die ursprüngliche Definition lautet:
+
+> „A class should have only one reason to change."
+
+Der Zweck des SRP ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die nur für eine Sache verantwortlich ist, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip – es ist ein Qualitätsmerkmal, das langfristig über die Gesundheit einer Codebasis entscheidet.
+
 ## Gegenstand der Betrachtung und Zielsetzung
 
 ### Gegenstand
