@@ -1,7 +1,6 @@
-# Das Single Responsibility Principle objektiv messen
+# Single Responsibility Principle objektiv messen
 
-## Einleitung: Single Responsibility Principle (SRP) und seine Bedeutung
-Das Single Responsibility Principle ist das erste der fünf SOLID-Prinzipien, die Robert C. Martin (auch bekannt als „Uncle Bob") zu Beginn der 2000er Jahre formuliert hat. Die ursprüngliche Definition lautet:
+Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, die Robert C. Martin (auch bekannt als „Uncle Bob") zu Beginn der 2000er Jahre formuliert hat. Die ursprüngliche Definition lautet:
 
 > „A class should have only one reason to change."
 
@@ -11,11 +10,11 @@ Der Zweck des SRP ist es, Software modular, wartbar und verständlich zu halten.
 
 ### Gegenstand
 
-Betrachtet wird das **Single Responsibility Principle (SRP)** als Entwurfsprinzip der objektorientierten Softwareentwicklung – insbesondere die Frage, *wie* sich SRP-Konformität einer Klasse objektiv feststellen lässt. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze in Java: das **Service-Pattern nach DDD** und das **Decorator-Pattern nach OOP**, beide anhand einer Bestellverwaltungsdomäne implementiert.
+Betrachtet wird das **Single Responsibility Principle (SRP)** als Entwurfsprinzip der objektorientierten Softwareentwicklung – insbesondere die Frage, *wie* sich SRP-Konformität einer Klasse objektiv feststellen lässt. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze in Java. Das moderne **Service-Pattern nach Domain Driven Design (DDD)** und das **Decorator-Pattern nach Object-Oriented-Design (OOD)**, welche anhand einer Bestellverwaltungsdomäne implementiert werden.
 
 ### Zielsetzung
 
-Ziel ist es, SRP auf eine **pragmatische und objektive Weise zu verifizieren und im Entwickleralltag einzusetzen**. Die Definition stammt von **Robert Bräutigam** (MATHEMA Software GmbH), der SRP nicht über subjektive Verantwortlichkeitsbegriffe, sondern über die messbaren Eigenschaften **Kohäsion** und **Kopplung** operationalisiert: `SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING`. Dieser Artikel übernimmt Bräutigams Formulierung als Grundlage und zeigt, wie sie mit konkreten Metriken im Code-Review, im CI/CD-Prozess und beim Klassendesign unmittelbar anwendbar wird.
+Das Ziel ist es, SRP auf eine **pragmatische und objektive Weise zu verifizieren und im Entwickleralltag einzusetzen**. Die Definition stammt von **Robert Bräutigam** (MATHEMA Software GmbH), der SRP nicht über subjektive Verantwortlichkeitsbegriffe, sondern über die messbaren Eigenschaften **Kohäsion** und **Kopplung** operationalisiert: `SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING`. Dieser Artikel übernimmt Bräutigams Formulierung als Grundlage und zeigt, wie sie mit konkreten Metriken im Code-Review, im CI/CD-Prozess und beim Klassendesign unmittelbar anwendbar wird.
 
 ### Methodik
 
@@ -27,31 +26,38 @@ Zwei etablierte Metriken werden eingesetzt: **LCOM4** misst interne Kohäsion ü
 
 Das SRP ist das erste der fünf SOLID-Prinzipien (Robert C. Martin, 2003). Im Laufe der Zeit haben sich mehrere Definitionen herausgebildet:
 
-> **(1)** „Jedes Softwaremodul sollte genau einen Grund für eine Änderung haben."
+> **(1)** „Jedes Softwaremodul sollte genau eine Aufgabe haben."
 
-> **(2)** „Sammelt die Dinge zusammen, die sich aus denselben Gründen verändern."
+> **(2)** „Jedes Softwaremodul sollte genau einen Grund für eine Änderung haben."
 
-> **(3)** „‚Derselbe Grund' bedeutet, dass er vom selben Geschäftsmann stammt."
+> **(3)** „Sammelt die Dinge zusammen, die sich aus denselben Gründen verändern."
 
-**Das Kernproblem:** Alle diese Definitionen sind subjektiv. Was ist „ein Grund"? Ist ein `OrderService`, der Bestellungen erstellt und persistiert, eine oder zwei Verantwortlichkeiten? Die Diskussion bleibt kontext-abhängig und wird in Code-Reviews oft zum Glaubenskrieg. Definition (3) – „derselbe Geschäftsmann" – mag in der Domänenmodellierung hilfreich sein, ist aber als tägliches Programmierkriterium unbrauchbar.
+> **(4)** „Derselbe Grund' bedeutet, dass er vom selben Geschäftsmann stammt."
 
-Das eigentliche Ziel hinter SRP ist **Wartungsfreundlichkeit**: kleine Klassen, hohe Wahrscheinlichkeit lokaler Änderungen, geringe Ausbreitung von Änderungen auf andere Klassen. Für diese Ziele brauchen wir einen objektiven Maßstab – keinen interpretationsbedürftigen Begriff.
+**Das Kernproblem:** Alle diese Definitionen sind auf Grund ihre subjektiven Formulierungen in der Praxis schwer anzuwenden.
+
+Denn was bedeutet eigentliche „eine Aufgabe"? Ist z.B. ein `OrderService`, der Bestellungen erstellt und persistiert, mit einer oder zwei Aufgaben behaftet? Solche eine Diskussion ist sieherlich kontext-abhängig und wird in Code-Reviews oft zum Glaubenskrieg. Ebenso unpraktikabel ist die Definition (4) „derselbe Geschäftsmann" dies mag vielleicht bei der Domänenmodellierung hilfreich sein, ist aber als Programmierkriterium unbrauchbar.
+
+Das Ziel hinter SRP ist **Wartungsfreundlichkeit**: kleine Klassen, hohe Wahrscheinlichkeit lokaler Änderungen, geringe Ausbreitung von Änderungen auf andere Klassen. Für diese Ziele brauchen wir einen objektiven Maßstab – keinen interpretationsbedürftigen Begriff.
 
 ---
 
 ## 2. Die Formel: Kohäsion und Kopplung
 
+Die ehre philosophischen und soziologischen Definitionen des SRP bieten aufgrund ihrer Subjektivität nur wenig klare Orientierung. Die Begriffe wie *Verantwortung*, *Änderungsgrund* oder *Akteursorientierun*g sind für die praktische Umsetzung zu vage und führen oft zu unnötiger Codefragmentierung. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
+
 ```
 SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING
 ```
+
+Durch die Gleichsetzung mit Kohäsion und Kopplung wandelt sich das SRP von einer Designphilosophie zu einer Strukturmetrik. Während „Verantwortlichkeit“ diskutabel sein mag, lassen sich Kohäsion (z. B. über den LCOM-Wert) und Kopplung (Abhängigkeitsgraph) im Code objektiv nachweisen. Diese Formel hat entscheidende Vorteile: Sie ist **messbar**, **designagnostisch** und die Berechnung kann **werkzeugunterstützt** (z.B. mit SonarQube der JDepend) erfolgen.
 
 **Kohäsion** beschreibt Abhängigkeiten *innerhalb* eines Objekts: Methoden und Felder beziehen sich aufeinander. Je stärker sie verbunden sind, desto kohäsiver ist die Klasse – und desto eher tut sie tatsächlich nur eine Sache.
 
 **Kopplung** beschreibt Abhängigkeiten *zwischen* Objekten. Je mehr externe Klassen eine Klasse kennen muss, desto höher ist das Risiko, dass eine Änderung anderswo auch hier Anpassungen erfordert.
 
-Es gibt zwei Arten von Abhängigkeiten: **physikalische** (direkte Methodenaufrufe, Feldtypen – durch statische Analyse messbar) und **semantische** (implizites Wissen über die Struktur eines anderen Objekts, meist über Getter). Semantische Kopplung ist gefährlicher, weil sie für den Compiler unsichtbar ist – Änderungen propagieren durch sie auf subtile Weise. Jeder Getter ist ein potenzieller Einstiegspunkt für semantische Kopplung.
+Es gibt zwei Arten von Abhängigkeiten: **physikalische** (direkte Methodenaufrufe, Feldtypen – durch statische Analyse messbar) und **semantische** (implizites Wissen über die Struktur eines anderen Objekts, meist über Getter). Semantische Kopplung ist tückischer, weil sie für den Compiler unsichtbar ist und Änderungen propagieren durch sie auf subtile Weise. Ruft beispielsweise eine Controller-Klasse die Sequenz `user.getAddress().getCity().getZipCode()` auf, ist sie semantisch an die Struktur des `User`-Objekts gekoppelt. Dies verstößt auch direkt gegen das Demeter-Gesetz (Prinzip des geringsten Wissens). Deshalb ist jeder `Read-/Getter`-Methode ein potenzieller Einstiegspunkt für semantische Kopplung.
 
-Diese Formel hat entscheidende Vorteile: Sie ist **messbar**, **werkzeugunterstützt** (SonarQube, JDepend) und **designagnostisch**.
 
 ---
 
