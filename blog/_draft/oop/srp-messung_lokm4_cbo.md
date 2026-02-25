@@ -134,7 +134,7 @@ public class ReportService {
 
 ---
 
-## 4. Beispiele: DDD-Service vs. Decorator
+## 4. Beispiele: DDD-Service vs. OOD-Decorator
 
 ### Anwendungsfall: Bestellverwaltung
 
@@ -158,7 +158,7 @@ Genau diese sieben Komponenten tauchen in beiden Implementierungen wieder auf �
 
 ---
 
-### 4.1 Service Pattern (DDD) – SRP-verletzend
+### 4.1 Service Pattern (DDD)
 
 ```java
 public class OrderService {
@@ -312,7 +312,7 @@ cancelSvc.cancelOrder(order);
 
 ---
 
-### 4.3 Decorator Pattern (OOP) – SRP-konform
+### 4.3 Vertikaler Decorator-Pattern (OOD)
 
 Das Decorator-Pattern separiert Verantwortlichkeiten über Komposition. Jede Klasse trägt genau eine Verantwortlichkeit; Querschnittsbelange entstehen durch Umhüllen, nicht durch Anhäufen von Feldern. Das Interface heißt `Order` – fachlicher Begriff, kein `*Service`-Suffix.
 
@@ -544,7 +544,7 @@ order.cancel();
 
 ---
 
-### 4.4 Horizontales Dekorieren (Bugayenko 2015) – SRP-konform
+### 4.4 Horizontaler Dekorator-Pattern (OOD)
 
 Vertikales Dekorieren – wie in 4.3 – verschachtelt Klassen ineinander: jede Klasse umhüllt die nächste. Das funktioniert gut bei wenigen Dekoratoren. Wächst die Zahl, wird die Kompositionskette tief und schwer überschaubar. Bugayenko beschreibt in *Vertical and Horizontal Decorating* (2015) eine Alternative: statt Verschachtelung trägt ein einziges Wrapper-Objekt eine **flache Liste** gleichrangiger Transformationen.
 
