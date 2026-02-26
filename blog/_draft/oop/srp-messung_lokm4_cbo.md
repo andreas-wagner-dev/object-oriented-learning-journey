@@ -8,17 +8,11 @@ Der Zweck des SRP ist es, Software modular, wartbar und verständlich zu halten.
 
 ## Gegenstand der Betrachtung und Zielsetzung
 
-### Gegenstand
-
 Betrachtet wird das **Single Responsibility Principle (SRP)** als Entwurfsprinzip der objektorientierten Softwareentwicklung – insbesondere die Frage, *wie* sich SRP-Konformität einer Klasse objektiv feststellen lässt. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze in Java. Das moderne **Service-Pattern nach Domain Driven Design (DDD)** und das **Decorator-Pattern nach Object-Oriented-Design (OOD)**, welche anhand einer Bestellverwaltungsdomäne implementiert werden.
 
-### Zielsetzung
+Das Ziel ist die objektive Verifizierung des Single Responsibility Principle (SRP) für den praktischen Entwickleralltag. Die Definition basiert auf dem Ansatz von Robert Bräutigam, der das Prinzip nicht über subjektive Verantwortlichkeiten, sondern über die messbaren Größen Kohäsion und Kopplung operationalisiert: `SRP ≡ max(COHESION) ∧ min(COUPLING)` In Anlehnung an diese Formalisierung betrachtet dieser Artikel, wie sich die theoretische Grundlage durch konkrete Metriken pragmatisch in das Klassendesign und in Code-Reviews integrieren lässt
 
-Das Ziel ist es, SRP auf eine **pragmatische und objektive Weise zu verifizieren und im Entwickleralltag einzusetzen**. Die Definition stammt von **Robert Bräutigam** (MATHEMA Software GmbH), der SRP nicht über subjektive Verantwortlichkeitsbegriffe, sondern über die messbaren Eigenschaften **Kohäsion** und **Kopplung** operationalisiert: `SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING`. Dieser Artikel übernimmt Bräutigams Formulierung als Grundlage und zeigt, wie sie mit konkreten Metriken im Code-Review, im CI/CD-Prozess und beim Klassendesign unmittelbar anwendbar wird.
-
-### Methodik
-
-Zwei etablierte Metriken werden eingesetzt: **LCOM4** misst interne Kohäsion über Graphenanalyse – Zielwert ist 1. **CBO** zählt externe Abhängigkeiten – Zielwert ist so niedrig wie möglich. Beide Metriken werden für jede Beispielklasse explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
+Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen: Die **Kohäsion** wird mittels *Lack of Cohesion of Methods* **(LCOM4)**  über eine Graphenanalyse ermittelt (idealer Zielwert: 1), während die **Kopplung** mithilfe von *Coupling Between Objects* **(CBO)** durch das Zählen externer Abhängigkeiten bestimmt wird (Zielwert: minimal). Beide Metriken werden anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
 
 ---
 
@@ -34,11 +28,17 @@ Das SRP ist das erste der fünf SOLID-Prinzipien (Robert C. Martin, 2003). Im La
 
 > **(4)** „Derselbe Grund' bedeutet, dass er vom selben Geschäftsmann stammt."
 
-**Das Kernproblem:** Alle diese Definitionen sind auf Grund ihre subjektiven Formulierungen in der Praxis schwer anzuwenden.
+**Das Kernproblem:** Alle diese Definitionen sind aufgrund ihrer subjektiven Formulierungen in der Praxis schwer greifbar.
 
-Denn was bedeutet eigentliche „eine Aufgabe"? Ist z.B. ein `OrderService`, der Bestellungen erstellt und persistiert, mit einer oder zwei Aufgaben behaftet? Solche eine Diskussion ist sieherlich kontext-abhängig und wird in Code-Reviews oft zum Glaubenskrieg. Ebenso unpraktikabel ist die Definition (4) „derselbe Geschäftsmann" dies mag vielleicht bei der Domänenmodellierung hilfreich sein, ist aber als Programmierkriterium unbrauchbar.
+Denn was bedeutet eigentlich „eine Aufgabe“? Ist beispielsweise ein OrderService, der Bestellungen sowohl validiert als auch persistiert, mit einer oder zwei Aufgaben behaftet? 
 
-Das Ziel hinter SRP ist **Wartungsfreundlichkeit**: kleine Klassen, hohe Wahrscheinlichkeit lokaler Änderungen, geringe Ausbreitung von Änderungen auf andere Klassen. Für diese Ziele brauchen wir einen objektiven Maßstab – keinen interpretationsbedürftigen Begriff.
+Ein „Grund“ wiederum ist retrospektiv leicht zu finden, lässt sich jedoch prospektiv kaum definieren; jede kleinste Anforderungsänderung könnte theoretisch als neuer Grund interpretiert werden.
+
+Auch die Definition (3) ist als Heuristik zwar theoretisch wertvoll, zum Zeitpunkt der Implementierung jedoch kaum prüfbar. Man müsste die zukünftige Entwicklung des Produkts antizipieren, um heute bereits zu wissen, welche Teile sich morgen gemeinsam ändern werden. 
+
+Ebenso unpraktikabel für den Code-Alltag ist der Verweis auf den „Geschäftsmann“ (4): Dieser mag bei der strategischen Domänenmodellierung hilfreich sein, ist jedoch als konkretes Programmierkriterium unbrauchbar.
+
+Solche Diskussionen bleiben stets kontextabhängig und arten in Code-Reviews regelmäßig in „Glaubenskriege“ aus.
 
 ---
 
@@ -47,7 +47,7 @@ Das Ziel hinter SRP ist **Wartungsfreundlichkeit**: kleine Klassen, hohe Wahrsch
 Die ehre philosophischen und soziologischen Definitionen des SRP bieten aufgrund ihrer Subjektivität nur wenig klare Orientierung. Die Begriffe wie *Verantwortung*, *Änderungsgrund* oder *Akteursorientierun*g sind für die praktische Umsetzung zu vage und führen oft zu unnötiger Codefragmentierung. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
 
 ```
-SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING
+SRP ≡ max(COHESION) ∧ min(COUPLING)
 ```
 
 Durch die Gleichsetzung mit Kohäsion und Kopplung wandelt sich das SRP von einer Designphilosophie zu einer Strukturmetrik. Während „Verantwortlichkeit“ diskutabel sein mag, lassen sich Kohäsion (z. B. über den LCOM-Wert) und Kopplung (Abhängigkeitsgraph) im Code objektiv nachweisen. Diese Formel hat entscheidende Vorteile: Sie ist **messbar**, **designagnostisch** und die Berechnung kann **werkzeugunterstützt** (z.B. mit SonarQube der JDepend) erfolgen.
@@ -56,7 +56,9 @@ Durch die Gleichsetzung mit Kohäsion und Kopplung wandelt sich das SRP von eine
 
 **Kopplung** beschreibt Abhängigkeiten *zwischen* Objekten. Je mehr externe Klassen eine Klasse kennen muss, desto höher ist das Risiko, dass eine Änderung anderswo auch hier Anpassungen erfordert.
 
-Es gibt zwei Arten von Abhängigkeiten: **physikalische** (direkte Methodenaufrufe, Feldtypen – durch statische Analyse messbar) und **semantische** (implizites Wissen über die Struktur eines anderen Objekts, meist über Getter). Semantische Kopplung ist tückischer, weil sie für den Compiler unsichtbar ist und Änderungen propagieren durch sie auf subtile Weise. Ruft beispielsweise eine Controller-Klasse die Sequenz `user.getAddress().getCity().getZipCode()` auf, ist sie semantisch an die Struktur des `User`-Objekts gekoppelt. Dies verstößt auch direkt gegen das Demeter-Gesetz (Prinzip des geringsten Wissens). Deshalb ist jeder `Read-/Getter`-Methode ein potenzieller Einstiegspunkt für semantische Kopplung.
+Es gibt zwei Arten von Abhängigkeiten: **physikalische** (direkte Methodenaufrufe, Feldtypen – durch statische Analyse messbar) und **semantische** (implizites Wissen über die Struktur eines anderen Objekts, meist über `Getter-`Methoden). 
+
+Die Semantische Kopplung ist tückischer, weil sie für den Compiler unsichtbar ist und die Änderungen propagieren durch sie auf subtile Weise. Ruft beispielsweise eine Klasse die Sequenz `user.getAddress().getCity().getZipCode()` auf, ist diese Klasse semantisch an die Struktur des `User`-Objekts gekoppelt. Deshalb ist jede `Read/Getter`-Methode ein potenzieller Einstiegspunkt für die semantische Kopplung.
 
 
 ---
@@ -64,6 +66,8 @@ Es gibt zwei Arten von Abhängigkeiten: **physikalische** (direkte Methodenaufru
 ## 3. Messverfahren: LCOM4 und CBO
 
 ### LCOM4 – Kohäsion messen
+
+Zur Berechnung von LCOM4 wird die interne Struktur einer Klasse als Graph modelliert. Hierbei stellt jede Methode einen Knoten dar; eine Verbindung zwischen ihnen entsteht immer dann, wenn sie auf dasselbe Instanzfeld zugreifen oder eine direkte Aufrufbeziehung besteht. Falls keine Verbindungen zwischen den Methoden existieren, entstehen Teilgraphen für jede einzelne Methode. Der **LCOM4-Wert entspricht** schließlich der **Anzahl der isolierten Teilgraphen** innerhalb dieser Struktur.
 
 LCOM4 modelliert eine Klasse als Graphen: Jede Methode ist ein Knoten, zwei Methoden sind verbunden, wenn sie auf dasselbe Instanzfeld zugreifen oder sich gegenseitig aufrufen. LCOM4 ist die **Anzahl der zusammenhängenden Teilgraphen**.
 
@@ -75,6 +79,7 @@ LCOM4 modelliert eine Klasse als Graphen: Jede Methode ist ein Knoten, zwei Meth
 ```java
 // LCOM4 = 2 — zwei unabhängige Teilgraphen ❌
 public class OrderData {
+
     private Cart cart;             // Feld A
     private Customer customer;     // Feld B
     private int paymentAmount;     // Feld C
@@ -91,6 +96,7 @@ public class OrderData {
         this.paymentStatus = "PAID";   // → D
     }
 }
+
 // summarize()      → Teilgraph {A, B}
 // recordPayment()  → Teilgraph {C, D}
 // Keine gemeinsamen Felder → LCOM4 = 2 ❌
@@ -98,6 +104,14 @@ public class OrderData {
 ```
 
 ### CBO – Kopplung messen
+
+Die *Coupling Between Objects*, Chidamber & Kemerer 1994) misst die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Erfasst werden dabei Referenzen in:
+* Feldtypen, 
+* Methodenparametern und 
+* Rückgabetypen sowie 
+* direkte Aufrufe. 
+
+*Primitive* und *Wrapper* Datentypen (wie int oder String) bleiben bei dieser Zählung unberücksichtigt, da sie als Basis-Software keine Kopplung im Sinne der Objektorientierung darstellen.
 
 CBO (*Coupling Between Objects*, Chidamber & Kemerer 1994) zählt die Anzahl externer Typen, zu denen eine Klasse eine direkte Abhängigkeit hat – über Feldtypen, Methodenparameter, Rückgabetypen oder direkte Aufrufe. Primitive Typen (`int`, `String`) zählen nicht.
 
@@ -772,7 +786,7 @@ SRP ist kein Dogma, sondern ein Werkzeug. Mit der richtigen Metrik wird es zu ei
 ### Hauptquelle
 
 - Bräutigam, R. *Single Responsibility Principle*. MATHEMA Software GmbH. SpeakerDeck. https://speakerdeck.com/robertbraeutigam/single-responsibility-principle
-
+- https://thevaluable.dev/single-responsibility-principle-revisited/
 ### Bücher
 
 - Martin, R. C. (2003). *Agile Software Development: Principles, Patterns, and Practices*. Prentice Hall.
