@@ -12,7 +12,7 @@ Betrachtet wird das **Single Responsibility Principle (SRP)** als Entwurfsprinzi
 
 Das Ziel ist die objektive Verifizierung des Single Responsibility Principle (SRP) für den praktischen Entwickleralltag. Die Definition basiert auf dem Ansatz von Robert Bräutigam, der das Prinzip nicht über subjektive Verantwortlichkeiten, sondern über die messbaren Größen Kohäsion und Kopplung operationalisiert: `SRP ≡ max(COHESION) ∧ min(COUPLING)` In Anlehnung an diese Formalisierung betrachtet dieser Artikel, wie sich die theoretische Grundlage durch konkrete Metriken pragmatisch in das Klassendesign und in Code-Reviews integrieren lässt
 
-Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen: Die **Kohäsion** wird mittels *Lack of Cohesion of Methods* **(LCOM4)**  über eine Graphenanalyse ermittelt (idealer Zielwert: 1), während die **Kopplung** mithilfe von *Coupling Between Objects* **(CBO)** durch das Zählen externer Abhängigkeiten bestimmt wird (Zielwert: minimal). Beide Metriken werden anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
+Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen: Die **Kohäsion** wird mittels *Lack of Cohesion of Methods - Version 4* **(LCOM4)**  über eine Graphenanalyse ermittelt (idealer Zielwert: 1), während die **Kopplung** mithilfe von *Coupling Between Objects* **(CBO)** durch das Zählen externer Abhängigkeiten bestimmt wird (Zielwert: minimal). Beide Metriken werden anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
 
 ---
 
@@ -67,9 +67,7 @@ Die Semantische Kopplung ist tückischer, weil sie für den Compiler unsichtbar 
 
 ### LCOM4 – Kohäsion messen
 
-Zur Berechnung von LCOM4 wird die interne Struktur einer Klasse als Graph modelliert. Hierbei stellt jede Methode einen Knoten dar; eine Verbindung zwischen ihnen entsteht immer dann, wenn sie auf dasselbe Instanzfeld zugreifen oder eine direkte Aufrufbeziehung besteht. Falls keine Verbindungen zwischen den Methoden existieren, entstehen Teilgraphen für jede einzelne Methode. Der **LCOM4-Wert entspricht** schließlich der **Anzahl der isolierten Teilgraphen** innerhalb dieser Struktur.
-
-LCOM4 modelliert eine Klasse als Graphen: Jede Methode ist ein Knoten, zwei Methoden sind verbunden, wenn sie auf dasselbe Instanzfeld zugreifen oder sich gegenseitig aufrufen. LCOM4 ist die **Anzahl der zusammenhängenden Teilgraphen**.
+Zur Berechnung von LCOM4 wird die interne Struktur einer Klasse als Graph modelliert. Hierbei stellt jede Methode einen Knoten dar. Eine Verbindung zwischen ihnen entsteht immer dann, wenn sie auf dasselbe Instanzfeld zugreifen oder eine direkte Aufrufbeziehung besteht. Falls keine Verbindungen zwischen den Methoden existieren, entstehen Teilgraphen für jede einzelne Methode. Der **LCOM4-Wert entspricht** schließlich der **Anzahl der isolierten Teilgraphen** innerhalb dieser Struktur.
 
 | LCOM4 | Interpretation |
 |---|---|
@@ -101,6 +99,37 @@ public class OrderData {
 // recordPayment()  → Teilgraph {C, D}
 // Keine gemeinsamen Felder → LCOM4 = 2 ❌
 // Lösung: aufteilen in OrderIdentity und OrderPayment
+```
+
+```mermaid
+graph LR
+
+    subgraph OrderData["OrderData"]
+
+        subgraph Teilgraph_1["Teilgraph 1"]
+            summarize["summarize()"]
+            A(["cart (Feld A)"])
+            B(["customer (Feld B)"])
+            summarize --- A
+            summarize --- B
+        end
+    
+        subgraph Teilgraph_2["Teilgraph 2"]
+            recordPayment["recordPayment()"]
+            C(["paymentAmount (Feld C)"])
+            D(["paymentStatus (Feld D)"])
+            recordPayment --- C
+            recordPayment --- D
+        end
+
+    end
+
+    style Teilgraph_1 fill:#ffeaea,stroke:#cc0000
+    style Teilgraph_2 fill:#ffeaea,stroke:#cc0000
+    style A fill:#C8E6C9
+    style B fill:#C8E6C9
+    style C fill:#C8E6C9
+    style D fill:#C8E6C9
 ```
 
 ### CBO – Kopplung messen
@@ -573,22 +602,22 @@ public interface OrderAct {
 public final class Orders implements Order {
     private final String id;                    // Feld 1
     private final Cart cart;                    // Feld 2
-    private final List<OrderAct> diffs;        // Feld 3
+    private final List<OrderAct> acts;        // Feld 3
 
-    public Orders(String id, Cart cart, List<OrderAct> diffs) {
-        this.id = id; this.cart = cart; this.diffs = diffs;
+    public Orders(String id, Cart cart, List<OrderAct> acts) {
+        this.id = id; this.cart = cart; this.acts = acts;
     }
 
     @Override public String getId() { return this.id; }
 
     @Override
     public void process() {
-        diffs.forEach(d -> d.process(this.id, this.cart)); // → Feld 3, 1, 2
+        acts.forEach(d -> d.process(this.id, this.cart)); // → Feld 3, 1, 2
     }
 
     @Override
     public void cancel() {
-        diffs.forEach(d -> d.cancel(this.id, this.cart));  // → Feld 3, 1, 2
+        acts.forEach(d -> d.cancel(this.id, this.cart));  // → Feld 3, 1, 2
     }
 }
 ```
@@ -650,10 +679,10 @@ public final class Invent implements OrderAct {
 
 ```java
 // Logging
-public final class AuditDiff implements OrderAct {
+public final class AuditAct implements OrderAct {
     private final Audit audit;              // Feld 1
 
-    public AuditDiff(Audit audit) { this.audit = audit; }
+    public AuditAct(Audit audit) { this.audit = audit; }
 
     @Override public void process(String id, Cart cart) {
         audit.log("Processed: " + id);      // → Feld 1
@@ -666,10 +695,10 @@ public final class AuditDiff implements OrderAct {
 
 ```java
 // Benachrichtigung
-public final class NotifyDiff implements OrderAct {
+public final class NotifyAct implements OrderAct {
     private final Email email;              // Feld 1
 
-    public NotifyDiff(Email email) { this.email = email; }
+    public NotifyAct(Email email) { this.email = email; }
 
     @Override public void process(String id, Cart cart) {
         email.sendConfirmation(id);         // → Feld 1
@@ -684,14 +713,14 @@ public final class NotifyDiff implements OrderAct {
 
 | Klasse | Verantwortlichkeit | Felder | CBO | LCOM4 |
 |---|---|---|---|---|
-| `Orders` | Wrapper | id, cart, diffs | **3** | **1** ✅ |
+| `Orders` | Wrapper | id, cart, acts | **3** | **1** ✅ |
 | `Persist` | Persistenz | repo | **1** | **1** ✅ |
 | `Pay` | Zahlung | paymentApi | **1** | **1** ✅ |
 | `Invent` | Lagerverwaltung | inventoryApi | **1** | **1** ✅ |
-| `AuditDiff` | Logging | audit | **1** | **1** ✅ |
-| `NotifyDiff` | Benachrichtigung | email | **1** | **1** ✅ |
+| `AuditAct` | Logging | audit | **1** | **1** ✅ |
+| `NotifyAct` | Benachrichtigung | email | **1** | **1** ✅ |
 
-**Analyse:** Die `Diff`-Klassen haben CBO = 1 – jede kennt ausschließlich ihr eigenes Werkzeug. Das ist eine weitere Reduktion gegenüber den vertikalen Dekoratoren (CBO = 2), weil kein `delegate`-Feld mehr nötig ist: Die Weitergabe an den nächsten Schritt übernimmt `Orders` durch die Iteration. `audit` und `orderRepository` erscheinen weiterhin in genau einer Klasse. Das Hinzufügen einer neuen Verantwortlichkeit – z. B. SMS-Benachrichtigung – ist ein neues `OrderAct`-Objekt und ein weiterer Listeneintrag: kein bestehender Code wird berührt (OCP).
+**Analyse:** Die `Act`-Klassen haben CBO = 1 – jede kennt ausschließlich ihr eigenes Werkzeug. Das ist eine weitere Reduktion gegenüber den vertikalen Dekoratoren (CBO = 2), weil kein `delegate`-Feld mehr nötig ist: Die Weitergabe an den nächsten Schritt übernimmt `Orders` durch die Iteration. `audit` und `orderRepository` erscheinen weiterhin in genau einer Klasse. Das Hinzufügen einer neuen Verantwortlichkeit – z. B. SMS-Benachrichtigung – ist ein neues `OrderAct`-Objekt und ein weiterer Listeneintrag: kein bestehender Code wird berührt (OCP).
 
 Der einzige strukturelle Schwachpunkt: `Pay.cancel()` und `Invent.process()` sind leere Methoden. Das ist ein schwaches LCOM4-Signal – `Pay` hat nur eine Methode mit echtem Verhalten und eine leere. Bugayenko akzeptiert dies als Preis des horizontalen Schnitts; alternativ könnte `OrderAct` in `OnProcess` und `OnCancel` aufgeteilt werden, was aber das Modell verkompliziert.
 
@@ -702,17 +731,17 @@ Order order = new Orders(id, cart, List.of(
     new Persist(repo),
     new Pay(paymentApi),
     new Invent(inventoryApi),
-    new AuditDiff(audit),
-    new NotifyDiff(email)
+    new AuditAct(audit),
+    new NotifyAct(email)
 ));
 
 order.process();
-// → Orders iteriert alle diffs: Persist, Pay, Audit, Notify aktiv
+// → Orders iteriert alle acts: Persist, Pay, Audit, Notify aktiv
 // Pay zieht Zahlung ein, Persist persistiert,
 // Audit loggt, Notify sendet Bestätigungs-E-Mail
 
 order.cancel();
-// → Orders iteriert alle diffs: Persist, Invent, Audit, Notify aktiv
+// → Orders iteriert alle acts: Persist, Invent, Audit, Notify aktiv
 // Invent gibt Lagerbestand frei, Persist persistiert,
 // Audit loggt, Notify sendet Stornierungs-E-Mail
 ```
@@ -727,7 +756,7 @@ Verglichen mit der vertikalen Kette ist die Komposition flach und gleichrangig �
 |---|---|---|---|---|---|
 | Kohäsion | LCOM4 | ⚠️ LCOM4 = **1** — Querschnittsfelder | ⚠️ LCOM4 = **1** — trivial (1 Methode) | ✅ LCOM4 = **1** — fachlich kohäsiv | ✅ LCOM4 = **1** — fachlich kohäsiv |
 | Kopplung | CBO | ❌ CBO = **5** | ⚠️ CBO = **3–4** je Klasse | ✅ CBO = **2** je Klasse | ✅ CBO = **1–3** je Klasse |
-| Lokale Änderbarkeit | LCOM4 / CBO | ❌ Logging betrifft alle 3 Methoden | ❌ Logging betrifft alle 3 Klassen | ✅ nur `AuditingOrder` | ✅ nur `AuditDiff` |
+| Lokale Änderbarkeit | LCOM4 / CBO | ❌ Logging betrifft alle 3 Methoden | ❌ Logging betrifft alle 3 Klassen | ✅ nur `AuditingOrder` | ✅ nur `AuditAct` |
 | Änderungsausbreitung | CBO | ❌ `PaymentApi` trifft gesamten Service | ⚠️ nur `OrderPaymentService` | ✅ nur `PaidOrder` | ✅ nur `Pay` |
 | Testbarkeit | Mocks pro Test | ❌ 5 Mocks pro Methode | ⚠️ 3–4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
 | Erweiterbarkeit (OCP) | neue Anforderung | ❌ bestehende Methoden ändern | ❌ neue Klasse + bestehende ändern | ✅ neuer Dekorator | ✅ neues `OrderAct` + Listeneintrag |
