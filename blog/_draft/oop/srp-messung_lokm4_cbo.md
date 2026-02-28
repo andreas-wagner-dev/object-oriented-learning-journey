@@ -8,9 +8,9 @@ Der Zweck des SRP ist es, Software modular, wartbar und verständlich zu halten.
 
 ## Gegenstand der Betrachtung und Zielsetzung
 
-Betrachtet wird das **Single Responsibility Principle (SRP)** als Entwurfsprinzip der objektorientierten Softwareentwicklung – insbesondere die Frage, *wie* sich SRP-Konformität einer Klasse objektiv feststellen lässt. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze in Java. Das moderne **Service-Pattern nach Domain Driven Design (DDD)** und das **Decorator-Pattern nach Object-Oriented-Design (OOD)**, welche anhand einer Bestellverwaltungsdomäne implementiert werden.
+Im Mittelpunkt dieser Betrachtung steht das **Single Responsibility Principle** (SRP) sowie die Herausforderung, dessen Einhaltung auf Klassenebene objektiv zu bewerten. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze: das moderne Service-Pattern nach Domain-Driven Design (DDD) und das Decorator-Pattern nach Object-Oriented-Design (OOD). Beide Konzepte werden zur Analyse innerhalb einer Bestellverwaltungsdomäne in Java implementiert.
 
-Das Ziel ist die objektive Verifizierung des Single Responsibility Principle (SRP) für den praktischen Entwickleralltag. Die Definition basiert auf dem Ansatz von Robert Bräutigam, der das Prinzip nicht über subjektive Verantwortlichkeiten, sondern über die messbaren Größen Kohäsion und Kopplung operationalisiert: `SRP ≡ max(COHESION) ∧ min(COUPLING)` In Anlehnung an diese Formalisierung betrachtet dieser Artikel, wie sich die theoretische Grundlage durch konkrete Metriken pragmatisch in das Klassendesign und in Code-Reviews integrieren lässt
+Das Ziel ist die objektive Verifizierung des Single Responsibility Principle für den praktischen Entwickleralltag. Die Definition basiert auf dem Ansatz von Robert Bräutigam, der das Prinzip nicht über subjektive Verantwortlichkeiten, sondern über die messbaren Größen Kohäsion und Kopplung operationalisiert: `SRP ≡ max(COHESION) ∧ min(COUPLING)` In Anlehnung an diese Formalisierung betrachtet dieser Artikel, wie sich die theoretische Grundlage durch konkrete Metriken pragmatisch in das Klassendesign und in Code-Reviews integrieren lässt
 
 Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen: Die **Kohäsion** wird mittels *Lack of Cohesion of Methods - Version 4* **(LCOM4)**  über eine Graphenanalyse ermittelt (idealer Zielwert: 1), während die **Kopplung** mithilfe von *Coupling Between Objects* **(CBO)** durch das Zählen externer Abhängigkeiten bestimmt wird (Zielwert: minimal). Beide Metriken werden anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
 
@@ -44,7 +44,7 @@ Solche Diskussionen bleiben stets kontextabhängig und arten in Code-Reviews reg
 
 ## 2. Die Formel: Kohäsion und Kopplung
 
-Die ehre philosophischen und soziologischen Definitionen des SRP bieten aufgrund ihrer Subjektivität nur wenig klare Orientierung. Die Begriffe wie *Verantwortung*, *Änderungsgrund* oder *Akteursorientierun*g sind für die praktische Umsetzung zu vage und führen oft zu unnötiger Codefragmentierung. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
+Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage für die Softwareentwicklung. Begriffe wie Verantwortung, Änderungsgrund oder Akteursorientierung erweisen sich für die praktische Umsetzung als zu vage und führen in der Konsequenz häufig zu einer unnötigen Codefragmentierung. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
 
 ```
 SRP ≡ max(COHESION) ∧ min(COUPLING)
@@ -74,6 +74,7 @@ Zur Berechnung von LCOM4 wird die interne Struktur einer Klasse als Graph modell
 | **1** | Maximale Kohäsion – alle Methoden sind verbunden |
 | **> 1** | Die Klasse zerfällt – sollte in *n* Klassen aufgeteilt werden |
 
+Wie die Graphenanalyse in der Praxis funktioniert, verdeutlicht die Klasse `OrderData`. 
 ```java
 // LCOM4 = 2 — zwei unabhängige Teilgraphen ❌
 public class OrderData {
@@ -132,6 +133,8 @@ graph LR
     style D fill:#C8E6C9
 ```
 
+Hier lassen sich die Methoden in zwei Gruppen unterteilen, die keinerlei gemeinsame Daten nutzen: Während `summarize()` auf Warenkorb und Kunde zugreift, verarbeitet `recordPayment()` ausschließlich zahlungsrelevante Felder. Die resultierende Disjunktion der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und in `OrderIdentity` sowie `OrderPayment` aufgeteilt werden sollte.
+
 ### CBO – Kopplung messen
 
 Die *Coupling Between Objects*, Chidamber & Kemerer 1994) misst die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Erfasst werden dabei Referenzen in:
@@ -140,9 +143,7 @@ Die *Coupling Between Objects*, Chidamber & Kemerer 1994) misst die Anzahl der e
 * Rückgabetypen sowie 
 * direkte Aufrufe. 
 
-*Primitive* und *Wrapper* Datentypen (wie int oder String) bleiben bei dieser Zählung unberücksichtigt, da sie als Basis-Software keine Kopplung im Sinne der Objektorientierung darstellen.
-
-CBO (*Coupling Between Objects*, Chidamber & Kemerer 1994) zählt die Anzahl externer Typen, zu denen eine Klasse eine direkte Abhängigkeit hat – über Feldtypen, Methodenparameter, Rückgabetypen oder direkte Aufrufe. Primitive Typen (`int`, `String`) zählen nicht.
+*Primitive* und *Wrapper* Datentypen (wie `int` oder `String`) bleiben bei dieser Zählung unberücksichtigt, da sie als Basis-Software keine Kopplung im Sinne der Objektorientierung darstellen.
 
 | CBO | Interpretation |
 |---|---|
@@ -162,7 +163,9 @@ public class ReportService {
     }
 }
 // Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow → CBO = 5
+```
 
+```java
 // CBO = 2 ✅ — Abhängigkeitsumkehr hinter stabile Interfaces
 public class ReportService {
     private final ReportRepository repository; // Interface → CBO +1
