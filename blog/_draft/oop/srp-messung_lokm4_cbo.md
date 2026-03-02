@@ -77,7 +77,8 @@ Zur Berechnung von LCOM4 wird die interne Struktur einer Klasse als Graph modell
 | **1** | Maximale Kohäsion – alle Methoden sind verbunden |
 | **> 1** | Die Klasse zerfällt – sollte in *n* Klassen aufgeteilt werden |
 
-Wie die Graphenanalyse in der Praxis funktioniert, verdeutlicht die Klasse `OrderData`. 
+Wie die Graphenanalyse in der Praxis funktioniert, verdeutlicht die Klasse `OrderData`.
+
 ```java
 // LCOM4 = 2 — zwei unabhängige Teilgraphen ❌
 public class OrderData {
@@ -135,8 +136,7 @@ graph LR
     style C fill:#C8E6C9
     style D fill:#C8E6C9
 ```
-
-Hier lassen sich die Methoden in zwei Gruppen unterteilen, die keinerlei gemeinsame Daten nutzen: Während `summarize()` auf Warenkorb und Kunde zugreift, verarbeitet `recordPayment()` ausschließlich zahlungsrelevante Felder. Die resultierende Disjunktion der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und in `OrderIdentity` sowie `OrderPayment` aufgeteilt werden sollte.
+Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während `summarize()` auf Warenkorb und Kunde zugreift, verarbeitet `recordPayment()` ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in `OrderIdentity` sowie `OrderPayment` aufgeteilt werden sollte.
 
 ### CBO – Kopplung messen
 
@@ -144,7 +144,7 @@ Die *Coupling Between Objects*, Chidamber & Kemerer 1994) misst die Anzahl der e
 * Feldtypen, 
 * Methodenparametern und 
 * Rückgabetypen sowie 
-* direkte Aufrufe. 
+* direkte Aufrufe der Methoden. 
 
 *Primitive* und *Wrapper* Datentypen (wie `int` oder `String`) bleiben bei dieser Zählung unberücksichtigt, da sie als Basis-Software keine Kopplung im Sinne der Objektorientierung darstellen.
 
@@ -168,6 +168,10 @@ public class ReportService {
 // Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow → CBO = 5
 ```
 
+Als Abhilfe zur CBO-Reduktion kann die Abhängigkeitsumkehr angewand werden. Statt auf konkrete Klassen zu zeigen, bindet sich eine Klasse an stabile Interfaces. 
+
+Das folgende Beispiel zeigt denselben ReportService einmal mit konkreten Typen (CBO = 5) und einmal hinter Interfaces (CBO = 2) – die Funktionalität bleibt identisch, die Kopplung halbiert sich:
+
 ```java
 // CBO = 2 ✅ — Abhängigkeitsumkehr hinter stabile Interfaces
 public class ReportService {
@@ -181,13 +185,17 @@ public class ReportService {
 // Konkrete Typen hinter Interfaces verborgen → CBO sinkt von 5 auf 2
 ```
 
+Durch die verwendung von Interfaces kann z.B. der CBO-Wert von 5 auf 2 gesenkt werden.
+
 ---
 
 ## 4. Beispiele: DDD-Service vs. OOD-Decorator
 
-### Anwendungsfall: Bestellverwaltung
+Mit LCOM4 und CBO als Werkzeugen wird in folgendem dieselbe Domäne mit vier verschiedenen Entwurfsansätzen gemässen um die Unterschiede zu verdeutlichen.
 
-Ein Online-Shop benötigt drei Kernoperationen für Bestellungen: **Anlegen**, **Bezahlen** und **Stornieren**.
+**Anwendungsfall**
+
+Als Anwendungsfall soll eine Bestellvorgang von einem Online-Shop dienen, welcher drei Kernoperationen : **Anlegen**, **Bezahlen** und **Stornieren** für Bestellungen benötigt.
 
 Beim **Anlegen** einer Bestellung reserviert das System die bestellten Artikel im Lager und legt die Bestellung persistent ab. Beim **Bezahlen** wird der Betrag über ein externes Zahlungssystem eingezogen und die Bestellung als bezahlt markiert; der Kunde erhält eine Bestätigungs-E-Mail. Beim **Stornieren** werden die reservierten Artikel wieder freigegeben und die Bestellung als storniert markiert; der Kunde erhält eine Stornierungs-E-Mail. Alle drei Operationen werden zusätzlich für Revisionszwecke in einem Audit-Log protokolliert.
 
