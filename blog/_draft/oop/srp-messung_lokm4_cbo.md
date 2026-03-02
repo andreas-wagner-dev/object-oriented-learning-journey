@@ -140,6 +140,75 @@ Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhäng
 
 ### CBO – Kopplung messen
 
+Die Metrik Coupling Between Objects (CBO) nach Chidamber & Kemerer (1994) misst die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Erfasst werden dabei Referenzen in:
+* Feldtypen (Instanzvariablen),
+* Methodenparametern und Rückgabetypen (Signatur-Kopplung),
+* direkte Methodenaufrufe oder Instanziierungen.
+
+*Primitive* Datentypen und Standard-*Wrapper* (wie int oder String) bleiben unberücksichtigt, da sie zur Basisinfrastruktur gehören und keine Kopplung im Sinne des objektorientierten Entwurfs darstellen.
+
+**Fallbeispiel: Direkte Abhängigkeit**
+
+Im ersten Szenario ist der `ReportService` direkt von konkreten Implementierungen abhängig. Jede Änderung an den beteiligten Klassen kann sich unmittelbar auf den Service auswirken.
+```java
+// CBO = 5 ❌ — Hohe Kopplung an konkrete Typen
+public class ReportService {
+    private final ReportRepository repository; // CBO +1
+    private final PdfExporter pdfExporter;     // CBO +1
+
+    public Report generateReport(DataQuery q) { // DataQuery +1, Report +1
+        List<DataRow> rows = repository.fetch(q); // DataRow +1 (Rückgabetyp von fetch)
+        return pdfExporter.export(rows);
+    }
+}
+// Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow
+```
+
+**Fallbeispiel: Dependency Inversion und Signatur-Optimierung**
+
+Um den CBO-Wert zu reduzieren, wird das Dependency Inversion Principle (DIP) angewandt. Anstatt auf konkrete Implementierungen zu verweisen, bindet sich der Service an stabile Schnittstellen. Zusätzlich senkt der Verzicht auf einen spezifischen Rückgabetyp (`void` statt `Report`) die Kopplung weiter:
+
+```java
+// CBO = 3 ✅ — Kopplung an stabile Schnittstellen
+public class ReportService {
+
+    private final Repository repository; // Interface (CBO +1)
+    private final Exporter exporter;     // Interface (CBO +1)
+
+    public void generateReport(Query q) { // Query (CBO +1)
+        List<DataRow> rows = repository.fetch(q);
+        exporter.export(rows);
+    }
+}
+// Gezählte Typen: Repository, Exporter, Query
+```
+Der CBO-Wert sinkt hier deutlich, da die Abhängigkeiten vom spezifischen `PdfExporter` und der `Report`-Klasse entfallen. Ein entscheidender Faktor ist dabei die Unterscheidung zwischen **Signatur-Kopplung** und **lokaler Kopplung**:
+
+Der Typ `DataRow` taucht im zweiten Beispiel nur noch als lokaler „Durchlaufwert“ auf. Da er weder Teil der Felder noch der Methodensignatur ist, wird er in der Metrik nicht als direkte Kopplung gewertet. Der Service reicht das Objekt lediglich zwischen `Repository` und `Exporter` weiter, ohne eine funktionale Abhängigkeit zur internen Struktur von DataRow zu besitzen (*Pass-Through-Effekt*).
+
+Der CBO-Wert würde sich auf 4 erhöhen, sobald eine explizite Abhängigkeit zu `DataRow` entstünde. Dies wäre der Fall, wenn `DataRow` als zusätzlicher Parameter in der Signatur aufträte oder der Service aktiv Methoden des Typs aufrufen würde (z. B. eine Validierung via `rows.get(0).validate())`. 
+
+Sobald der Service Methoden wie validate() auf DataRow aufruft, entsteht eine semantische Kopplung, weil der `ReportService` nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` besitzt (Verletzung des Law of Demeter). Der Service verlässt damit seine Rolle als reiner Koordinator und übernimmt Wissen über die inneren Geschäftsregeln von `DataRow`. Er spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte, was die Wartbarkeit erschwert.
+
+ Der Service ist nicht mehr nur technisch gekoppelt (kennt den Typ), sondern auch logisch (kennt den Prozess). Er spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte.
+
+Der Aufruf von `validate()` stellt eine **semantische Kopplung** dar, weil der `ReportService` nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` besitzt. Der Service ist nicht mehr nur technisch gekoppelt (kennt den Typ), sondern auch logisch (kennt den Prozess). Er spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte.
+
+
+
+
+
+
+* Der Typ `DataRow` taucht im zweiten Beispiel nur noch als lokaler "Durchlaufwert" auf.
+* Da `DataRow` weder Teil der Felder noch der Methodensignatur von ReportService ist und der Service selbst keine Methoden an DataRow aufruft, wird dieser Typ in der Metrik oft nicht mehr als direkte Kopplung gewertet.
+* Er wird lediglich zwischen repository und exporter weitergereicht (Pass-Through), ohne dass der Service eine funktionale Abhängigkeit zur internen Struktur von DataRow besitzt.
+
+Der CBO-Wert würde sich hingegen auf 4 erhöhen, sobald eine explizite Abhängigkeit zum Typ `DataRow` entstünde. Dies wäre der Fall, wenn `DataRow` als zusätzlicher Parameter in der Methodensignatur (`generateReport(Query q, DataRow metadata)`) aufträte oder der Service aktiv Methoden des Typs aufrufen würde – beispielsweise durch eine Validierung wie `rows.get(0).validate()`.
+
+**Generell gilt:** Ein niedriger CBO-Wert verbessert die Wartbarkeit und Testbarkeit (Loose Coupling) signifikant, da die Klasse gegenüber Änderungen in ihrer Umgebung isoliert wird.
+
+---
+
 Die *Coupling Between Objects*, Chidamber & Kemerer 1994) misst die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Erfasst werden dabei Referenzen in:
 * Feldtypen, 
 * Methodenparametern und 
@@ -154,38 +223,43 @@ Die *Coupling Between Objects*, Chidamber & Kemerer 1994) misst die Anzahl der e
 | **6–10** | Moderat – beobachtenswert |
 | **> 10** | Hoch – Redesign empfohlen |
 
+In ersten Fall ist ReportService direkt von den Implementierungen abhängig.
+
 ```java
 // CBO = 5 ❌ — konkrete Typen in Feldern und Signaturen
 public class ReportService {
     private final ReportRepository repository; // CBO +1
     private final PdfExporter pdfExporter;     // CBO +1
 
-    public Report generateReport(DataQuery q) { // DataQuery → CBO +1, Report → CBO +1
-        List<DataRow> rows = repository.fetch(q); // DataRow → CBO +1
+    public Report generateReport(DataQuery q) { // DataQuery → CBO +1
+        List<DataRow> rows = repository.fetch(q); // Report → CBO +1, DataRow → CBO +1
         return pdfExporter.export(rows);
     }
 }
 // Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow → CBO = 5
 ```
 
-Als Abhilfe zur CBO-Reduktion kann die Abhängigkeitsumkehr angewand werden. Statt auf konkrete Klassen zu zeigen, bindet sich eine Klasse an stabile Interfaces. 
+Als Abhilfe zur CBO-Reduktion kann die Abhängigkeitsumkehr (*Dependency Inversion Principle*) angewand werden. Statt auf konkrete Klassen zu zeigen, bindet sich eine Klasse an stabile Interfaces. Das folgende Beispiel zeigt denselben `ReportService` einmal mit konkreten Typen (CBO = 5) und einmal hinter `Interface`s (CBO = 3) – die Funktionalität bleibt identisch, die Kopplung sinkt deutlich:
 
-Das folgende Beispiel zeigt denselben ReportService einmal mit konkreten Typen (CBO = 5) und einmal hinter Interfaces (CBO = 2) – die Funktionalität bleibt identisch, die Kopplung halbiert sich:
 
 ```java
-// CBO = 2 ✅ — Abhängigkeitsumkehr hinter stabile Interfaces
+// CBO = 3 ✅ — Abhängigkeitsumkehr hinter stabile Interfaces
 public class ReportService {
     private final ReportRepository repository; // Interface → CBO +1
     private final Exporter exporter;           // Interface → CBO +1
 
-    public void generateReport(Query q) {      // Query ist dasselbe Interface
-        exporter.export(repository.fetch(q));
+    public void generateReport(Query q) {      // Query → CBO +1
+        List<DataRow> rows = repository.fetch(q);
+        exporter.export(rows);
     }
 }
-// Konkrete Typen hinter Interfaces verborgen → CBO sinkt von 5 auf 2
+// DataRow bleibt als Rückgabetyp von fetch() — Inlining versteckt sie, entfernt sie nicht
+// Gezählte Typen: ReportRepository, Exporter, Query → CBO = 3
 ```
+Da die Methode void zurückgibt, fällt die Kopplung an Report weg
 
-Durch die verwendung von Interfaces kann z.B. der CBO-Wert von 5 auf 2 gesenkt werden.
+Der CBO-Wert sinkt im zweiten Beispiel, da die Abhängigkeit von der spezifischen Report-Klasse und dem konkreten PdfExporter entfernt wurde. Generell gilt: Je niedriger der CBO, desto besser die Wartbarkeit und Testbarkeit (*Loose Coupling*).
+Durch die verwendung von Interfaces kann z.B. der CBO-Wert von 5 auf 4 gesenkt werden.
 
 ---
 
