@@ -12,7 +12,8 @@ Der Zweck des SRP ist es, Software modular, wartbar und verständlich zu halten.
 
 Im Mittelpunkt dieser Betrachtung steht das **Single Responsibility Principle** (SRP) sowie die Herausforderung, dessen Einhaltung auf Klassenebene objektiv zu bewerten. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze: das moderne Service-Pattern nach Domain-Driven Design (DDD) und das Decorator-Pattern nach Object-Oriented-Design (OOD). Beide Konzepte werden zur Analyse innerhalb einer Bestellverwaltungsdomäne in Java implementiert.
 
-Das Ziel ist die objektive Verifizierung des Single Responsibility Principle für den praktischen Entwickleralltag. Die Definition basiert auf dem Ansatz von Robert Bräutigam, der das Prinzip nicht über subjektive Verantwortlichkeiten, sondern über die messbaren Größen Kohäsion und Kopplung operationalisiert: `SRP ≡ max(COHESION) ∧ min(COUPLING)` In Anlehnung an diese Formalisierung betrachtet dieser Artikel, wie sich die theoretische Grundlage durch konkrete Metriken pragmatisch in das Klassendesign und in Code-Reviews integrieren lässt
+Durch eine objektive Überprüfung des SRP soll ein fundierteres Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Dabei folgt dieser Ansatz der Formalisierung von Robert Bräutigam, welcher das SRP über die messbaren Metriken Kohäsion und Kopplung messbar macht:
+`SRP ≡ max(COHESION) ∧ min(COUPLING)`
 
 Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen: Die **Kohäsion** wird mittels *Lack of Cohesion of Methods - Version 4* **(LCOM4)**  über eine Graphenanalyse ermittelt (idealer Zielwert: 1), während die **Kopplung** mithilfe von *Coupling Between Objects* **(CBO)** durch das Zählen externer Abhängigkeiten bestimmt wird (Zielwert: minimal). Beide Metriken werden anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
 
