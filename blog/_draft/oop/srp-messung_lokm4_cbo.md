@@ -822,6 +822,7 @@ SRP ist kein Dogma, sondern ein Werkzeug. Mit der richtigen Metrik wird es zu ei
 - Robert Martin [The Single Responsibility Principle (2007)](https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g)
 - Robert Martin [The Single Responsibility Principle (2014)](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
 - Robert Bräutigam [The Single Responsibility Principle (2014)](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
+- Bugayenko, Yegor [Vertical and Horizontal Decorating (2015)](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 
 - https://thevaluable.dev/single-responsibility-principle-revisited/
 ### Bücher
@@ -842,7 +843,4 @@ SRP ist kein Dogma, sondern ein Werkzeug. Mit der richtigen Metrik wird es zu ei
 ### Weiterführende Artikel
 
 - Žurauskas, V. (2018). *Maintaining model integrity in service orchestrating applications*. https://www.vzurauskas.com/2018/07/24/maintaining-model-integrity
-- Bugayenko, Y. (2015). *Vertical and Horizontal Decorating*. https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html
-- Bugayenko, Y. (2014). *ORM Is an Offensive Anti-Pattern*. https://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html
-- Bugayenko, Y. (2025). *remove(42) vs. find(42).remove()*. https://www.yegor256.com/2025/06/22/retrieve-or-remove.html
-- Martin, R. C. (2014). *The Single Responsibility Principle*. https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html
+
