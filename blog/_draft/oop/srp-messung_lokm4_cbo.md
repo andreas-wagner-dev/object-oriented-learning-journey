@@ -50,7 +50,7 @@ Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten a
 SRP ≡ max(COHESION) ∧ min(COUPLING)
 ```
 
-Durch die Gleichsetzung mit Kohäsion und Kopplung wandelt sich das SRP von einer Designphilosophie zu einer Strukturmetrik. Während „Verantwortlichkeit“ diskutabel sein mag, lassen sich Kohäsion (z. B. über den LCOM-Wert) und Kopplung (Abhängigkeitsgraph) im Code objektiv nachweisen. Diese Formel hat entscheidende Vorteile: Sie ist **messbar**, **designagnostisch** und die Berechnung kann **werkzeugunterstützt** (z.B. mit SonarQube der JDepend) erfolgen.
+Durch die Gleichsetzung mit Kohäsion und Kopplung wandelt sich das SRP von einer Designphilosophie zu einer Strukturmetrik. Während „Verantwortlichkeit“ diskutabel sein mag, lassen sich Kohäsion (z. B. über den LCOM-Wert) und Kopplung (Abhängigkeitsgraph) im Code objektiv nachweisen. Diese Formel hat entscheidende Vorteile: Sie ist **messbar**, **designagnostisch** und die Berechnung kann **werkzeugunterstützt** erfolgen.
 
 **Kohäsion** beschreibt Abhängigkeiten *innerhalb* eines Objekts: Methoden und Felder beziehen sich aufeinander. Je stärker sie verbunden sind, desto kohäsiver ist die Klasse – und desto eher tut sie tatsächlich nur eine Sache.
 
