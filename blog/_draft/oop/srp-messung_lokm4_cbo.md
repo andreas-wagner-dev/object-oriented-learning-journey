@@ -1,6 +1,6 @@
 # Single Responsibility Principle objektiv messen
 
-Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, die Robert C. Martin (auch bekannt als „Uncle Bob") zu Beginn der 2000er Jahre formuliert hat. Die ursprüngliche Definition lautet:
+Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, die Robert C. Martin (‚Uncle Bob‘) zu Beginn der 2000er-Jahre etablierte. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung. Die ursprüngliche Definition lautet:
 
 > „A class should have only one reason to change."
 
@@ -18,7 +18,7 @@ Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen: Die **Koh�
 
 ## 1. Das Problem: SRP ist nicht messbar
 
-Das SRP ist das erste der fünf SOLID-Prinzipien (Robert C. Martin, 2003). Im Laufe der Zeit haben sich mehrere Definitionen herausgebildet:
+Wegen der Unklarheiten rund um den Begriff ‚Grund‘ hat Robert C. Martin seine Ausführungen später weiter präzisiert. Daraus haben sich mit der Zeit mehrere Definitionen entwickelt:
 
 > **(1)** „Jedes Softwaremodul sollte genau eine Aufgabe haben."
 
@@ -801,6 +801,8 @@ Der `Orders`-Wrapper hat CBO = 3 statt 2 – `List` als Containertyp zählt als 
 
 ## 6. Fazit
 
+Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Es liegt in unserer Natur, Verantwortlichkeiten miteinander zu verknüpfen. Diese Verantwortlichkeiten jedoch zu identifizieren und voneinander zu trennen, macht einen Großteil dessen aus, worum es beim Softwareentwurf eigentlich geht. Die anderen SOLID Prinzipien führen auf die eine oder andere Weise auf diesen Kernpunkt zurück.
+
 Die gängigen SRP-Definitionen laden zu Interpretation ein und führen in Code-Reviews zu Debatten ohne objektiven Ausweg. Die Formel **SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung** nach Robert Bräutigam macht das Prinzip messbar: **LCOM4 = 1** signalisiert, dass eine Klasse intern zusammenhängend ist; **CBO so niedrig wie möglich** signalisiert, dass sie nach außen minimal exponiert ist.
 
 Der Vergleich der vier Designvarianten zeigt eine klare Progression. Der monolithische `OrderService` verbindet fünf Verantwortlichkeiten durch Querschnittsfelder – LCOM4 = 1 entsteht zufällig, nicht fachlich. Das Aufteilen in drei Services senkt CBO, verteilt aber die Querschnittsbelange nur, ohne sie zu isolieren. Der vertikale Decorator isoliert jede Verantwortlichkeit in einer eigenen Klasse mit CBO = 2. Der horizontale Decorator geht noch weiter: CBO = 1 je `OrderAct`-Klasse, flache Komposition, maximale Erweiterbarkeit – auf Kosten leerer Interface-Methoden bei partiellen Verantwortlichkeiten.
@@ -817,7 +819,10 @@ SRP ist kein Dogma, sondern ein Werkzeug. Mit der richtigen Metrik wird es zu ei
 
 ### Hauptquelle
 
-- Bräutigam, R. *Single Responsibility Principle*. MATHEMA Software GmbH. SpeakerDeck. https://speakerdeck.com/robertbraeutigam/single-responsibility-principle
+- Robert Martin [The Single Responsibility Principle (2007)](https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g)
+- Robert Martin [The Single Responsibility Principle (2014)](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
+- Robert Bräutigam [The Single Responsibility Principle (2014)](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
+
 - https://thevaluable.dev/single-responsibility-principle-revisited/
 ### Bücher
 
