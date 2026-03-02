@@ -12,7 +12,7 @@ Der Zweck des SRP ist es, Software modular, wartbar und verständlich zu halten.
 
 Im Mittelpunkt dieser Betrachtung steht das **Single Responsibility Principle** (SRP) sowie die Herausforderung, dessen Einhaltung auf Klassenebene objektiv zu bewerten. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze: das moderne Service-Pattern nach Domain-Driven Design (DDD) und das Decorator-Pattern nach Object-Oriented-Design (OOD). Beide Konzepte werden zur Analyse innerhalb einer Bestellverwaltungsdomäne in Java implementiert.
 
-Durch eine objektive Überprüfung des SRP soll ein fundierteres Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Dabei folgt dieser Ansatz der Formalisierung von Robert Bräutigam, welcher das SRP über die messbaren Metriken Kohäsion und Kopplung messbar macht:
+Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Dabei folgt dieser Ansatz der Formalisierung von Robert Bräutigam, welcher das SRP über die messbaren Metriken Kohäsion und Kopplung messbar macht:
 `SRP ≡ max(COHESION) ∧ min(COUPLING)`
 
 Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen: Die **Kohäsion** wird mittels *Lack of Cohesion of Methods - Version 4* **(LCOM4)**  über eine Graphenanalyse ermittelt (idealer Zielwert: 1), während die **Kopplung** mithilfe von *Coupling Between Objects* **(CBO)** durch das Zählen externer Abhängigkeiten bestimmt wird (Zielwert: minimal). Beide Metriken werden anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
@@ -45,7 +45,7 @@ Solche Diskussionen bleiben stets kontextabhängig und arten in Code-Reviews reg
 
 ---
 
-## 2. Die Formel: Kohäsion und Kopplung
+## 2. Die Formalisierung von Kohäsion und Kopplung
 
 Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage für die Softwareentwicklung. Begriffe wie Verantwortung, Änderungsgrund oder Akteursorientierung erweisen sich für die praktische Umsetzung als zu vage und führen in der Konsequenz häufig zu einer unnötigen Codefragmentierung. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
 
