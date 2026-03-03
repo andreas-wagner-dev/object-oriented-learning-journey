@@ -70,41 +70,43 @@ Die Semantische Kopplung ist tückischer, weil sie für den Compiler unsichtbar 
 
 ### LCOM4 – Kohäsion messen
 
-Zur Berechnung von LCOM4 wird die interne Struktur einer Klasse als Graph modelliert. Hierbei stellt jede Methode einen Knoten dar. Eine Verbindung zwischen ihnen entsteht immer dann, wenn sie auf dasselbe Instanzfeld zugreifen oder eine direkte Aufrufbeziehung besteht. Falls keine Verbindungen zwischen den Methoden existieren, entstehen Teilgraphen für jede einzelne Methode. Der **LCOM4-Wert entspricht** schließlich der **Anzahl der isolierten Teilgraphen** innerhalb dieser Struktur.
+Die Metrik Lack of Cohesion of Methods (LCOM4) nach Hitz und Montazeri (1995) bewertet die Kohäsion einer Klasse durch eine Graphenanalyse. Ein „Teilgraph“ entsteht, wenn Methoden entweder auf dieselben Instanzvariablen (Felder) zugreifen oder sich gegenseitig aufrufen.
+* LCOM4 = 1: Alle Methoden und Felder sind direkt oder indirekt miteinander verbunden. Die Klasse ist hochgradig kohäsiv (Idealzustand).
+* LCOM4 > 1: Die Klasse zerfällt in mehrere unabhängige Fragmente. Dies ist ein objektives Indiz für eine Verletzung des SRP.
+* LCOM4 = 0: Eine Klasse ohne Methoden (reiner Datencontainer), was in dieser Analyse neutral bewertet wird.
 
-| LCOM4 | Interpretation |
-|---|---|
-| **1** | Maximale Kohäsion – alle Methoden sind verbunden |
-| **> 1** | Die Klasse zerfällt – sollte in *n* Klassen aufgeteilt werden |
 
-Wie die Graphenanalyse in der Praxis funktioniert, verdeutlicht die Klasse `OrderData`.
+Fallbeispiel: Verletzung der Kohäsion (LCOM4 = 2)
+
+In diesem Szenario vermischt die Klasse OrderProcessor zwei logische Zuständigkeiten: die Kernlogik der Bestellung und die Zahlungsabwicklung.
 
 ```java
-// LCOM4 = 2 — zwei unabhängige Teilgraphen ❌
-public class OrderData {
-
+// LCOM4 = 2 ❌ — Die Klasse zerfällt in zwei isolierte Teilgraphen
+public class OrderProcessor {
     private Cart cart;             // Feld A
     private Customer customer;     // Feld B
     private int paymentAmount;     // Feld C
     private String paymentStatus;  // Feld D
 
-    // Gruppe 1: nutzt A und B
-    public String summarize() {
-        return customer.getName() + ": " + cart.itemCount() + " items"; // → A, B
+    // Teilgraph 1: Bestellungs-Logik (nutzt A und B)
+    public String summarizeOrder() {
+        return customer.getName() + ": " + cart.itemCount() + " items";
     }
 
-    // Gruppe 2: nutzt C und D — keine Verbindung zu Gruppe 1
+    // Teilgraph 2: Zahlungs-Logik (nutzt C und D)
     public void recordPayment(int amount) {
-        this.paymentAmount = amount;   // → C
-        this.paymentStatus = "PAID";   // → D
+        this.paymentAmount = amount;
+        this.paymentStatus = "PAID";
     }
 }
 
-// summarize()      → Teilgraph {A, B}
-// recordPayment()  → Teilgraph {C, D}
-// Keine gemeinsamen Felder → LCOM4 = 2 ❌
-// Lösung: aufteilen in OrderIdentity und OrderPayment
 ```
+
+**Analyse der Graphen:**
+1. Teilgraph 1: Die Methode summarizeOrder() verbindet die Felder cart und customer.
+2. Teilgraph 2: Die Methode recordPayment() verbindet paymentAmount und paymentStatus.
+
+Zwischen diesen beiden Gruppen existiert keine Verbindung (kein gemeinsames Feld, kein gegenseitiger Aufruf). Die Klasse hat zwei Verantwortlichkeiten und somit einen LCOM4-Wert von 2. 
 
 ```mermaid
 graph LR
@@ -136,7 +138,38 @@ graph LR
     style C fill:#C8E6C9
     style D fill:#C8E6C9
 ```
+
+
 Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während `summarize()` auf Warenkorb und Kunde zugreift, verarbeitet `recordPayment()` ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in `OrderIdentity` sowie `OrderPayment` aufgeteilt werden sollte.
+
+Fallbeispiel: Optimierung durch Aufteilung (LCOM4 = 1)
+
+Um die Kohäsion zu maximieren, wird die Klasse gemäß ihrer Verantwortlichkeiten in zwei spezialisierte Klassen aufgeteilt.
+
+```java
+// LCOM4 = 1 ✅ — Fokus auf Identität & Inhalt
+public class OrderIdentity {
+    private Cart cart;
+    private Customer customer;
+
+    public String summarize() {
+        return customer.getName() + ": " + cart.itemCount() + " items";
+    }
+}
+
+// LCOM4 = 1 ✅ — Fokus auf Transaktion
+public class PaymentTransaction {
+    private int amount;
+    private String status;
+
+    public void record(int amount) {
+        this.amount = amount;
+        this.status = "PAID";
+    }
+}
+```
+
+Durch die Aufteilung besitzen nun beide Klassen nur noch einen zusammenhängenden Graphen. Jede Methode arbeitet mit dem gesamten Zustand der Klasse oder einem Teil davon, der wiederum mit anderen Methoden verknüpft ist.
 
 ### CBO – Kopplung messen
 
@@ -149,10 +182,11 @@ Die Metrik Coupling Between Objects (CBO) nach Chidamber & Kemerer (1994) misst 
 
 **Fallbeispiel: Direkte Abhängigkeit**
 
-Im ersten Szenario ist der `ReportService` direkt von konkreten Implementierungen abhängig. Jede Änderung an den beteiligten Klassen kann sich unmittelbar auf den Service auswirken.
+Im ersten Szenario ist der `ReportService` direkt von konkreten Implementierungen abhängig. Jede Änderung an den beteiligten Klassen kann sich unmittelbar auf die Klasse auswirken.
 ```java
 // CBO = 5 ❌ — Hohe Kopplung an konkrete Typen
 public class ReportService {
+
     private final ReportRepository repository; // CBO +1
     private final PdfExporter pdfExporter;     // CBO +1
 
@@ -163,15 +197,32 @@ public class ReportService {
 }
 // Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow
 ```
+Der ReportService muss den Typ DataRow hier zwingend „kennen“, um das Ergebnis von repository.fetch(q) verarbeiten oder zurückgeben zu können. In der CBO-Metrik zählen Typen in Methodensignaturen (Parameter und Rückgabetypen) stets als Kopplung.
 
-**Fallbeispiel: Dependency Inversion und Signatur-Optimierung**
+**Fallbeispiel: Dependency Inversion**
 
-Um den CBO-Wert zu reduzieren, wird das Dependency Inversion Principle (DIP) angewandt. Anstatt auf konkrete Implementierungen zu verweisen, bindet sich der Service an stabile Schnittstellen. Zusätzlich senkt der Verzicht auf einen spezifischen Rückgabetyp (`void` statt `Report`) die Kopplung weiter:
+Um den CBO-Wert zu reduzieren, wird das Dependency Inversion Principle (DIP) angewandt. Anstatt auf konkrete Implementierungen zu verweisen, bindet sich der Service an stabile Schnittstellen.
+```java
+// CBO = 4 ✅ — Kopplung an stabile Schnittstellen
+public class ReportService {
+    private final Repository repository; // Interface (CBO +1)
+    private final Exporter exporter;     // Interface (CBO +1)
+
+    public Report generateReport(Query q) { // Query +1, Report +1
+        List<DataRow> rows = repository.fetch(q);
+        return exporter.export(rows);
+    }
+}
+// Gezählte Typen: Repository, Exporter, Report, Query
+```
+
+**Fallbeispiel: Signatur-Optimierung**
+
+Sofern auf einen spezifischen Rückgabetyp (void statt Report) verzichtet werden kann, lässt sich die Kopplung weiter senken. Ein entscheidender Faktor ist hierbei die Unterscheidung zwischen Signatur-Kopplung und lokaler Kopplung.
 
 ```java
-// CBO = 3 ✅ — Kopplung an stabile Schnittstellen
+// CBO = 3 — Kopplung an Schnittstellen ohne Rückgabetyp
 public class ReportService {
-
     private final Repository repository; // Interface (CBO +1)
     private final Exporter exporter;     // Interface (CBO +1)
 
@@ -182,84 +233,41 @@ public class ReportService {
 }
 // Gezählte Typen: Repository, Exporter, Query
 ```
-Der CBO-Wert sinkt hier deutlich, da die Abhängigkeiten vom spezifischen `PdfExporter` und der `Report`-Klasse entfallen. Ein entscheidender Faktor ist dabei die Unterscheidung zwischen **Signatur-Kopplung** und **lokaler Kopplung**:
 
-Der Typ `DataRow` taucht im zweiten Beispiel nur noch als lokaler „Durchlaufwert“ auf. Da er weder Teil der Felder noch der Methodensignatur ist, wird er in der Metrik nicht als direkte Kopplung gewertet. Der Service reicht das Objekt lediglich zwischen `Repository` und `Exporter` weiter, ohne eine funktionale Abhängigkeit zur internen Struktur von DataRow zu besitzen (*Pass-Through-Effekt*).
+Der Typ DataRow taucht hier nur noch als lokaler „Durchlaufwert“ auf. Da er weder Teil der Felder noch der Methodensignatur ist, wird er in der Metrik nicht als direkte Kopplung gewertet. Der Service reicht das Objekt lediglich zwischen Repository und Exporter weiter, ohne eine funktionale Abhängigkeit zur internen Struktur von DataRow zu besitzen (Pass-Through-Effekt).
 
-Der CBO-Wert würde sich auf 4 erhöhen, sobald eine explizite Abhängigkeit zu `DataRow` entstünde. Dies wäre der Fall, wenn `DataRow` als zusätzlicher Parameter in der Signatur aufträte oder der Service aktiv Methoden des Typs aufrufen würde (z. B. eine Validierung via `rows.get(0).validate())`. 
+**Fallbeispiel: Semantische Kopplung**
 
-Sobald der Service Methoden wie validate() auf DataRow aufruft, entsteht eine semantische Kopplung, weil der `ReportService` nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` besitzt (Verletzung des Law of Demeter). Der Service verlässt damit seine Rolle als reiner Koordinator und übernimmt Wissen über die inneren Geschäftsregeln von `DataRow`. Er spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte, was die Wartbarkeit erschwert.
-
- Der Service ist nicht mehr nur technisch gekoppelt (kennt den Typ), sondern auch logisch (kennt den Prozess). Er spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte.
-
-Der Aufruf von `validate()` stellt eine **semantische Kopplung** dar, weil der `ReportService` nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` besitzt. Der Service ist nicht mehr nur technisch gekoppelt (kennt den Typ), sondern auch logisch (kennt den Prozess). Er spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte.
-
-
-
-
-
-
-* Der Typ `DataRow` taucht im zweiten Beispiel nur noch als lokaler "Durchlaufwert" auf.
-* Da `DataRow` weder Teil der Felder noch der Methodensignatur von ReportService ist und der Service selbst keine Methoden an DataRow aufruft, wird dieser Typ in der Metrik oft nicht mehr als direkte Kopplung gewertet.
-* Er wird lediglich zwischen repository und exporter weitergereicht (Pass-Through), ohne dass der Service eine funktionale Abhängigkeit zur internen Struktur von DataRow besitzt.
-
-Der CBO-Wert würde sich hingegen auf 4 erhöhen, sobald eine explizite Abhängigkeit zum Typ `DataRow` entstünde. Dies wäre der Fall, wenn `DataRow` als zusätzlicher Parameter in der Methodensignatur (`generateReport(Query q, DataRow metadata)`) aufträte oder der Service aktiv Methoden des Typs aufrufen würde – beispielsweise durch eine Validierung wie `rows.get(0).validate()`.
-
-**Generell gilt:** Ein niedriger CBO-Wert verbessert die Wartbarkeit und Testbarkeit (Loose Coupling) signifikant, da die Klasse gegenüber Änderungen in ihrer Umgebung isoliert wird.
-
----
-
-Die *Coupling Between Objects*, Chidamber & Kemerer 1994) misst die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Erfasst werden dabei Referenzen in:
-* Feldtypen, 
-* Methodenparametern und 
-* Rückgabetypen sowie 
-* direkte Aufrufe der Methoden. 
-
-*Primitive* und *Wrapper* Datentypen (wie `int` oder `String`) bleiben bei dieser Zählung unberücksichtigt, da sie als Basis-Software keine Kopplung im Sinne der Objektorientierung darstellen.
-
-| CBO | Interpretation |
-|---|---|
-| **0–5** | Geringe Kopplung – wartungsfreundlich |
-| **6–10** | Moderat – beobachtenswert |
-| **> 10** | Hoch – Redesign empfohlen |
-
-In ersten Fall ist ReportService direkt von den Implementierungen abhängig.
+Der CBO-Wert erhöht sich wieder auf 4, sobald eine explizite Abhängigkeit zu DataRow entsteht. Dies ist der Fall, wenn der Service aktiv Methoden des Typs aufruft (z. B. eine Validierung via rows.get(0).validate()).
 
 ```java
-// CBO = 5 ❌ — konkrete Typen in Feldern und Signaturen
+// CBO = 4 — Kopplung an Semantik
 public class ReportService {
-    private final ReportRepository repository; // CBO +1
-    private final PdfExporter pdfExporter;     // CBO +1
+    private final Repository repository; // Interface (CBO +1)
+    private final Exporter exporter;     // Interface (CBO +1)
 
-    public Report generateReport(DataQuery q) { // DataQuery → CBO +1
-        List<DataRow> rows = repository.fetch(q); // Report → CBO +1, DataRow → CBO +1
-        return pdfExporter.export(rows);
-    }
-}
-// Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow → CBO = 5
-```
-
-Als Abhilfe zur CBO-Reduktion kann die Abhängigkeitsumkehr (*Dependency Inversion Principle*) angewand werden. Statt auf konkrete Klassen zu zeigen, bindet sich eine Klasse an stabile Interfaces. Das folgende Beispiel zeigt denselben `ReportService` einmal mit konkreten Typen (CBO = 5) und einmal hinter `Interface`s (CBO = 3) – die Funktionalität bleibt identisch, die Kopplung sinkt deutlich:
-
-
-```java
-// CBO = 3 ✅ — Abhängigkeitsumkehr hinter stabile Interfaces
-public class ReportService {
-    private final ReportRepository repository; // Interface → CBO +1
-    private final Exporter exporter;           // Interface → CBO +1
-
-    public void generateReport(Query q) {      // Query → CBO +1
+    public void generateReport(Query q) { // Query +1, DataRow +1
         List<DataRow> rows = repository.fetch(q);
+        rows.get(0).validate(); // Aktiver Aufruf an DataRow
         exporter.export(rows);
     }
 }
-// DataRow bleibt als Rückgabetyp von fetch() — Inlining versteckt sie, entfernt sie nicht
-// Gezählte Typen: ReportRepository, Exporter, Query → CBO = 3
+// Gezählte Typen: Repository, Exporter, Query, DataRow
 ```
-Da die Methode void zurückgibt, fällt die Kopplung an Report weg
 
-Der CBO-Wert sinkt im zweiten Beispiel, da die Abhängigkeit von der spezifischen Report-Klasse und dem konkreten PdfExporter entfernt wurde. Generell gilt: Je niedriger der CBO, desto besser die Wartbarkeit und Testbarkeit (*Loose Coupling*).
-Durch die verwendung von Interfaces kann z.B. der CBO-Wert von 5 auf 4 gesenkt werden.
+Sobald der Service Methoden wie validate() aufruft, entsteht eine semantische Kopplung. Der ReportService benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von DataRow (Verletzung des Law of Demeter). Er verlässt damit seine Rolle als reiner Koordinator und spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte. Dadurch ist der Service nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
+
+
+Generell gilt: Ein niedriger CBO-Wert verbessert die Wartbarkeit und Testbarkeit (Loose Coupling) signifikant, da die Klasse gegenüber Änderungen in ihrer Umgebung isoliert wird.
+
+Zusammenführung: LCOM4 und CBO im Wechselspiel
+
+Die Kombination beider Metriken liefert die objektive Hilfestellung für das Klassendesign:
+1. Hoher LCOM4: Signalisiert, dass eine Klasse zu viele Dinge gleichzeitig tut (Low Cohesion). Lösung: Aufspalten.
+2. Hoher CBO: Signalisiert, dass eine Klasse zu stark mit ihrer Umwelt verstrickt ist (High Coupling). Lösung: Dependency Inversion oder Schnittstellen-Abstraktion.
+
+Ein „sauberes“ Design nach Robert Bräutigams Formalisierung strebt eine Klasse an, die LCOM4 = 1 (maximale Kohäsion) und einen CBO im Bereich 0–5 (minimale Kopplung) aufweist.
+
 
 ---
 
@@ -451,9 +459,9 @@ Im neuen Interface entfällt `PaymentApi` als Methodenparameter: `process()` ist
 
 ```java
 public interface Order {
+    String id();
     void process();
     void cancel();
-    String getId();
 }
 ```
 
@@ -469,7 +477,7 @@ public final class StoredOrder implements Order {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return this.id;                              // → Feld 1
     }
 
@@ -507,8 +515,8 @@ public final class PaidOrder implements Order {
     }
 
     @Override
-    public String getId() {
-        return delegate.getId();             // → Feld 1
+    public String id() {
+        return delegate.id();             // → Feld 1
     }
 
     @Override
@@ -546,8 +554,8 @@ public final class InventedOrder implements Order {
     }
 
     @Override
-    public String getId() {
-        return delegate.getId();             // → Feld 1
+    public String id() {
+        return delegate.id();             // → Feld 1
     }
 
     @Override
@@ -585,20 +593,20 @@ public final class AuditingOrder implements Order {
     }
 
     @Override
-    public String getId() {
-        return delegate.getId();                           // → Feld 1
+    public String id() {
+        return delegate.id();                           // → Feld 1
     }
 
     @Override
     public void process() {
         delegate.process();                                // → Feld 1
-        auditLogger.log("Processed: " + delegate.getId()); // → Feld 2, 1
+        auditLogger.log("Processed: " + delegate.id()); // → Feld 2, 1
     }
 
     @Override
     public void cancel() {
         delegate.cancel();                                 // → Feld 1
-        auditLogger.log("Cancelled: " + delegate.getId()); // → Feld 2, 1
+        auditLogger.log("Cancelled: " + delegate.id()); // → Feld 2, 1
     }
 }
 ```
@@ -614,20 +622,20 @@ public final class NotifiedOrder implements Order {
     }
 
     @Override
-    public String getId() {
-        return delegate.getId();                                  // → Feld 1
+    public String id() {
+        return delegate.id();                                  // → Feld 1
     }
 
     @Override
     public void process() {
         delegate.process();                                       // → Feld 1
-        emailNotifier.sendConfirmation(delegate.getId());         // → Feld 2, 1
+        emailNotifier.sendConfirmation(delegate.id());         // → Feld 2, 1
     }
 
     @Override
     public void cancel() {
         delegate.cancel();                                        // → Feld 1
-        emailNotifier.sendCancellation(delegate.getId());         // → Feld 2, 1
+        emailNotifier.sendCancellation(delegate.id());         // → Feld 2, 1
     }
 }
 // Gleiche Struktur wie AuditingOrder → LCOM4 = 1, CBO = 2 ✅
