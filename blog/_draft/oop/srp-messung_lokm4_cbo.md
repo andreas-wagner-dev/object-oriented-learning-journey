@@ -273,6 +273,181 @@ Ein „sauberes“ Design nach Robert Bräutigams Formalisierung strebt eine Kla
 
 ## 4. Beispiele: DDD-Service vs. OOD-Decorator
 
+Um die praktische Anwendung von LCOM4 und CBO zu demonstrieren, wird im Folgenden dieselbe Domäne mit unterschiedlichen Entwurfsansätzen untersucht. Ziel ist es, die Unterschiede in der SRP-Konformität objektiv messbar zu machen.
+
+**Anwendungsfall: Bestellprozess**
+
+Als Szenario dient der Bestellvorgang eines Online-Shops mit drei Kernoperationen: Anlegen, Bezahlen und Stornieren.
+* Anlegen: Reserviert Artikel im Lager (InventoryApi), speichert die Bestellung (OrderRepository) und protokolliert den Vorgang (Audit).
+* Bezahlen: Zieht den Betrag ein (PaymentApi), markiert die Bestellung als bezahlt, versendet eine Bestätigung (Email) und protokolliert den Vorgang (Audit).
+* Stornieren: Gibt Artikel im Lager frei (InventoryApi), markiert die Bestellung als storniert, versendet eine Nachricht (Email) und protokolliert den Vorgang (Audit).
+
+Daraus ergeben sich sieben beteiligte Komponenten, deren Verantwortlichkeiten in den folgenden Implementierungen unterschiedlich verteilt werden: Cart, Customer, OrderRepository, InventoryApi, PaymentApi, Email und Audit.
+
+### 4.1 Service-Pattern (DDD)
+
+Im klassischen Service-Pattern werden alle fachlich zusammengehörigen Operationen in einer zentralen Service-Klasse gebündelt.
+
+```java
+public class OrderService {
+    private final OrderRepository orderRepository;   // Feld 1
+    private final InventoryApi inventoryApi;         // Feld 2
+    private final PaymentApi paymentApi;             // Feld 3
+    private final Email email;                       // Feld 4
+    private final Audit audit                        // Feld 5
+
+    public Order createOrder(Cart cart, Customer customer) {
+        inventoryApi.reserve(cart);                  // → Feld 2
+        Order order = new Order(cart, customer);
+        orderRepository.save(order);                 // → Feld 1
+        audit.log("Order created: " + order.getId()); // → Feld 5
+        return order;
+    }
+
+    public void processPayment(Order order) {
+        paymentApi.charge(order);                    // → Feld 3
+        order.markAsPaid();
+        orderRepository.save(order);                 // → Feld 1
+        email.sendConfirmation(order);               // → Feld 4
+        audit.log("Payment processed: " + order.getId()); // → Feld 5
+    }
+
+    public void cancelOrder(Order order) {
+        inventoryApi.release(order);                 // → Feld 2
+        order.cancel();
+        orderRepository.save(order);                 // → Feld 1
+        email.sendCancellation(order);               // → Feld 4
+        audit.log("Order cancelled: " + order.getId()); // → Feld 5
+    }
+}
+```
+
+**Verwendung:**
+
+```java
+OrderService service = new OrderService(
+    orderRepository,
+    inventoryApi,
+    paymentApi,
+    email,
+    audit);
+
+// Bestellung anlegen
+Order order = service.createOrder(cart, customer);
+
+// Bezahlen — service kennt alle 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
+service.processPayment(order);
+
+// Stornieren — service kennt alle 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
+service.cancelOrder(order);
+```
+
+**LCOM4-Herleitung:** 
+Welche Methode nutzt welche Felder?
+| Methode | Felder |
+|---|---|
+| `createOrder` | 1 (Repo), 2 (Inv), 5 (Audit) |
+| `processPayment` | 1 (Repo), 3 (Pay), 4 (Email), 5 (Audit) |
+| `cancelOrder` | 1 (Repo), 2 (Inv), 4 (Email), 5 (Audit) |
+
+**Analyse der Metriken:**
+
+* CBO = 5: Hohe Kopplung: Die Klasse ist von 5 externen Systemen abhängig.
+* LCOM4 = 1: Scheinbar hohe Kohäsion: Alle Methoden sind über Feld 1 und 5 verbunden.
+
+**Interpretation:**
+Der OrderService liefert ein vermeintlich ideales LCOM4-Ergebnis von 1. Bei genauerer Betrachtung entlarvt sich diese Kohäsion jedoch als erzwungen durch Querschnittsfelder (Persistenz und Logging). Die fachlichen Kernaufgaben (Lager, Zahlung, E-Mail) sind disjunkt, werden aber durch die gemeinsame Nutzung technischer Infrastruktur-Komponenten im Graphen zusammengehalten.
+
+Das eigentliche Problem verdeutlicht der CBO-Wert von 5: Jede einzelne Methode zieht alle fünf Abhängigkeiten mit sich. Für einen Unit-Test der Methode createOrder müssen beispielsweise alle fünf Abhängigkeiten gemockt werden, obwohl nur drei davon tatsächlich verwendet werden. Das SRP ist hier verletzt, da die Klasse mehrere fachlich unabhängige Änderungsgründe (Logikänderung bei Zahlung, Lager oder E-Mail) in sich vereint. LCOM4 allein reicht zur Diagnose dieser "Fat Service"-Problematik nicht aus.
+
+### 4.2 Service-Pattern (DDD) – Aufgespalten
+Ein naheliegender Refactoring-Schritt besteht darin, den „Fat Service“ in drei spezialisierte Klassen, pro Operation, aufzuteilen. Dadurch sinkt der CBO-Wert pro Klasse, da jede nur noch die Abhängigkeiten erhält, die sie für ihre spezifische Aufgabe benötigt.
+
+```java
+// Verantwortlichkeit: Bestellung anlegen
+public class OrderCreateService {
+    private final OrderRepository repository; // Feld 1
+    private final InventoryApi inventory;     // Feld 2
+    private final Audit audit;                // Feld 3
+
+    public Order create(Cart cart, Customer customer) {
+        inventory.reserve(cart);
+        Order order = new Order(cart, customer);
+        repository.save(order);
+        audit.log("Order created: " + order.getId());
+        return order;
+    }
+}
+
+// Verantwortlichkeit: Zahlung abwickeln
+public class OrderPaymentService {
+    private final OrderRepository repository; // Feld 1
+    private final PaymentApi payment;         // Feld 2
+    private final Email email;                // Feld 3
+    private final Audit audit;                // Feld 4
+
+    public void process(Order order) {
+        payment.charge(order);
+        order.markAsPaid();
+        repository.save(order);
+        email.sendConfirmation(order);
+        audit.log("Payment processed: " + order.getId());
+    }
+}
+
+// Verantwortlichkeit: Bestellung stornieren
+public class OrderCancelService {
+    private final OrderRepository repository; // Feld 1
+    private final InventoryApi inventory;     // Feld 2
+    private final Email email;                // Feld 3
+    private final Audit audit;                // Feld 4
+
+    public void cancel(Order order) {
+        inventory.release(order);
+        order.cancel();
+        repository.save(order);
+        email.sendCancellation(order);
+        audit.log("Order cancelled: " + order.getId());
+    }
+}
+```
+
+**Verwendung:**
+
+```java
+OrderService createSvc = new OrderService(orderRepository, inventoryApi, audit);
+OrderPaymentService paymentSvc = new OrderPaymentService(orderRepository, paymentApi, email, audit);
+OrderCancelService cancelSvc = new OrderCancelService(orderRepository, inventoryApi, email, audit);
+
+Order order = createSvc.createOrder(cart, customer);
+paymentSvc.processPayment(order);
+cancelSvc.cancelOrder(order);
+```
+
+**LCOM4-Herleitung:** Jeder Service hat genau eine Methode – LCOM4 = 1 per Definition. Das ist kein Zeichen von Kohäsion, sondern eine Trivialität: Eine Klasse mit einer einzigen Methode kann nicht zerfallen.
+
+| Klasse | Felder | CBO | LCOM4 |
+|---|---|---|---|
+| `OrderService` | repo, inventoryApi, audit | **3** | **1** – trivial |
+| `OrderPaymentService` | repo, paymentApi, email, audit | **4** | **1** – trivial |
+| `OrderCancelService` | repo, inventoryApi, email, audit | **4** | **1** – trivial |
+
+**Analyse:**
+Die Aufspaltung senkt den CBO-Wert von ursprünglich 5 auf nun 3 bis 4 pro Klasse. Jede Klasse ist kleiner und fokussierter, was die Testbarkeit verbessert.
+
+Dennoch bleibt ein grundlegendes Problem bestehen: Die Querschnittsbelange (Cross-Cutting Concerns) wie Audit (Logging) und OrderRepository (Persistenz) sind über alle drei Klassen verteilt. Eine Änderung an der Logging-Strategie oder am Repository-Interface erfordert weiterhin Anpassungen an allen drei Stellen. Die Verantwortlichkeiten sind zwar physisch getrennt, aber logisch noch immer in jede Operation "hineingeflochten".
+
+**Befund:** Das SRP ist hier besser adressiert, aber nicht vollständig erfüllt. Die Klassen haben zwar eine triviale Kohäsion (LCOM4 = 1), leiden aber unter einer hohen konzeptionellen Redundanz.
+
+
+### 4.3 Vertikales Decorator-Pattern (OOD)
+
+Um die verbleibende Redundanz der Querschnittsbelange aufzulösen, bietet sich das Decorator-Pattern an. Hierbei wird die Kernlogik in einer Basisklasse isoliert, während technische Aspekte wie Logging oder Persistenz in separate „Hüllen“ (Decoratoren) ausgelagert werden.
+
+
+
+---
+---
 Mit LCOM4 und CBO als Werkzeugen wird in folgendem dieselbe Domäne mit vier verschiedenen Entwurfsansätzen gemässen um die Unterschiede zu verdeutlichen.
 
 **Anwendungsfall**
@@ -332,6 +507,8 @@ public class OrderService {
     }
 }
 ```
+
+
 
 **LCOM4-Herleitung:** Welche Methode nutzt welche Felder?
 
