@@ -2,26 +2,23 @@
 
 **State: Draft!!!**
 
-Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, die Robert C. Martin (‚Uncle Bob‘) zu Beginn der 2000er-Jahre etablierte. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung. Die ursprüngliche Definition lautet:
+Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, das von Robert C. Martin (‚Uncle Bob‘) zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung. Eine der ursprüngliche Definitionen lautet:
 
 > „A class should have only one reason to change."
 
-Der Zweck des SRP ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die nur für eine Sache verantwortlich ist, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip – es ist ein Qualitätsmerkmal, das langfristig über die Gesundheit einer Codebasis entscheidet.
+Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die nur für eine Sache verantwortlich ist, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip, es ist ein Qualitätsmerkmal, das langfristig über die Gesundheit einer Codebasis entscheidet.
 
 ## Gegenstand der Betrachtung und Zielsetzung
 
-Im Mittelpunkt dieser Betrachtung steht das **Single Responsibility Principle** (SRP) sowie die Herausforderung, dessen Einhaltung auf Klassenebene objektiv zu bewerten. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze: das moderne Service-Pattern nach Domain-Driven Design (DDD) und das Decorator-Pattern nach Object-Oriented-Design (OOD). Beide Konzepte werden zur Analyse innerhalb einer Bestellverwaltungsdomäne in Java implementiert.
+Im Mittelpunkt dieser Betrachtung steht das **Single Responsibility Principle** sowie die Herausforderung dessen Einhaltung auf Klassenebene objektiv zu bewerten. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze, wie das moderne Service Muster nach *Domain Driven Design* (DDD) und das Decorator Muster nach *Object Oriented Design* (OOD). Diese Konzepte werden zur Analyse innerhalb einer Domäne zur Bestellverwaltung in Java implementiert.
 
-Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Dabei folgt dieser Ansatz der Formalisierung von Robert Bräutigam, welcher das SRP über die messbaren Metriken Kohäsion und Kopplung messbar macht:
-`SRP ≡ max(COHESION) ∧ min(COUPLING)`
+Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Der hier gewählte Ansatz stützt sich auf die Formalisierung von Robert Bräutigam, welcher das SRP über die Konjunktion (logisches UND) zweier messbarer Softwaremetriken definiert. Die daraus resultierende Formel lautet `SRP ≡ max(COHESION) ∧ min(COUPLING)`.
 
-Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen: Die **Kohäsion** wird mittels *Lack of Cohesion of Methods - Version 4* **(LCOM4)**  über eine Graphenanalyse ermittelt (idealer Zielwert: 1), während die **Kopplung** mithilfe von *Coupling Between Objects* **(CBO)** durch das Zählen externer Abhängigkeiten bestimmt wird (Zielwert: minimal). Beide Metriken werden anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
-
----
+Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen. Die **Kohäsion** wird mittels *Lack of Cohesion of Methods Version 4* (**LCOM4**) über eine Graphenanalyse ermittelt wobei der ideale Zielwert bei 1 liegt. Parallel dazu wird die **Kopplung** mithilfe von *Coupling Between Objects* (**CBO)** durch das Zählen externer Abhängigkeiten bestimmt mit dem Ziel eines minimalen Wertes. Beide Kennzahlen werden zunächst anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung evaluiert.
 
 ## 1. Das Problem: SRP ist nicht messbar
 
-Wegen der Unklarheiten rund um den Begriff ‚Grund‘ hat Robert C. Martin seine Ausführungen später weiter präzisiert. Daraus haben sich mit der Zeit mehrere Definitionen entwickelt:
+Wegen der Unklarheiten rund um den Begriff "Grund" hat Robert C. Martin seine Ausführungen später weiter präzisiert. Daraus haben sich mit der Zeit mehrere Definitionen entwickelt:
 
 > **(1)** „Jedes Softwaremodul sollte genau eine Aufgabe haben."
 
@@ -31,7 +28,7 @@ Wegen der Unklarheiten rund um den Begriff ‚Grund‘ hat Robert C. Martin sein
 
 > **(4)** „Derselbe Grund' bedeutet, dass er vom selben Geschäftsmann stammt."
 
-**Das Kernproblem:** Alle diese Definitionen sind aufgrund ihrer subjektiven Formulierungen in der Praxis schwer greifbar.
+Die Problematik dieser Definitionen liegt in den subjektiven Formulierungen welche in der Praxis schwer greifbar sind. Sie bieten damit keine konkreten Berwertungs- und Handlungsgrundlagen für den Entwurf von Klassen.
 
 Denn was bedeutet eigentlich „eine Aufgabe“? Ist beispielsweise ein OrderService, der Bestellungen sowohl validiert als auch persistiert, mit einer oder zwei Aufgaben behaftet? 
 
@@ -41,7 +38,7 @@ Auch die Definition (3) ist als Heuristik zwar theoretisch wertvoll, zum Zeitpun
 
 Ebenso unpraktikabel für den Code-Alltag ist der Verweis auf den „Geschäftsmann“ (4): Dieser mag bei der strategischen Domänenmodellierung hilfreich sein, ist jedoch als konkretes Programmierkriterium unbrauchbar.
 
-Solche Diskussionen bleiben stets kontextabhängig und arten in Code-Reviews regelmäßig in „Glaubenskriege“ aus.
+Solche Diskussionen bleiben stets kontextabhängig und können in Code-Reviews zu ergebnislosen Grundsatzdebatten führen. Ohne eine objektive Basis drohen diese fachlichen Auseinandersetzungen in subjektive Glaubenskriege auszuarten, welche die konstruktive Zusammenarbeit im Team erschweren.
 
 ---
 
@@ -76,9 +73,9 @@ Die Metrik Lack of Cohesion of Methods (LCOM4) nach Hitz und Montazeri (1995) be
 * **LCOM4 = 0**: Eine Klasse ohne Methoden (reiner Datencontainer), was in dieser Analyse neutral bewertet wird.
 
 
-**Fallbeispiel: Verletzung der Kohäsion** (LCOM4 = 2)
+**Fallbeispiel: Verletzung der Kohäsion (LCOM4 = 2)**
 
-In diesem Szenario vermischt die Klasse `OrderProcess` zwei logische Zuständigkeiten: die Kernlogik der **Bestellung** und die **Zahlungsabwicklung**.
+In diesem Szenario enthält die Klasse `OrderProcess` zwei logische Zuständigkeiten über die Kernlogik einer **Bestellung** und der **Zahlungsabwicklung**.
 
 ```java
 // LCOM4 = 2 — Die Klasse zerfällt in zwei isolierte Teilgraphen
@@ -142,7 +139,7 @@ graph LR
 
 Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während `summarize()` auf Warenkorb und Kunde zugreift, verarbeitet `recordPayment()` ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem **LCOM4 von 2**. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in `OrderIdentity` sowie `OrderPayment` aufgeteilt werden sollte.
 
-Fallbeispiel: Optimierung durch Aufteilung (LCOM4 = 1)
+**Fallbeispiel: Optimierung durch Aufteilung (LCOM4 = 1)**
 
 Um die Kohäsion zu maximieren, wird die Klasse gemäß ihrer Verantwortlichkeiten in zwei spezialisierte Klassen aufgeteilt.
 
