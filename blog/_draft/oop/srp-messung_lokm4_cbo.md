@@ -723,7 +723,7 @@ public final class Invent implements OrderProcess {
     @Override public void cancel(String id, Cart cart) { inv.release(cart); }
 }
 
-// Weitere Acts: 'Audit' (Logging) und 'Notify' (Email) folgen derselben Struktur.
+// Weitere Klassen wie 'Audit' (Logging) und 'Notify' (Email) folgen derselben Struktur.
 
 ```
 
@@ -752,15 +752,15 @@ Im Vergleich zur vertikalen Kette ist die Komposition hier flach und gleichrangi
 | Persist | Persistenz | repo | 2 | 1 |
 | Pay | Lagerverwaltung | paymentApi | 2 | 1 |
 | Invent | Lagerverwaltung | inventoryApi | 2 | 1 |
-| AuditAct | Logging | audit | 2 | 1 |
-| NotifyAct | Benachrichtigung | email | 2 | 1 |
+| Audit | Logging | audit | 2 | 1 |
+| Notify | Benachrichtigung | email | 2 | 1 |
 
 
 **Analyse:**
 
-Die `Act`-Klassen erreichen einen minimalen CBO von 1, da jede ausschließlich ihr eigenes Werkzeug kennt. Dies stellt eine weitere Reduktion gegenüber den vertikalen Dekoratoren (CBO = 2) dar, da kein `delegate`-Feld mehr benötigt wird – die Steuerung der Kette übernimmt der `Orders`-Wrapper. Querschnittsbelange wie Audit oder OrderRepository bleiben strikt in jeweils einer Klasse isoliert. Neue Anforderungen (z. B. SMS-Versand) werden einfach als neue `OrderProcess`-Implementierung hinzugefügt, ohne bestehenden Code zu berühren (Open-Closed-Prinzip).
+Die OrderProcess-Klassen erreichen einen minimalen CBO von 1, da jede ausschließlich ihr eigenes Werkzeug kennt. Dies stellt eine weitere Reduktion gegenüber den vertikalen Dekoratoren (CBO = 2) dar, da kein delegate-Feld mehr benötigt wird – die Steuerung der Kette übernimmt der Orders-Wrapper. Querschnittsbelange wie Audit oder OrderRepository bleiben strikt in jeweils einer Klasse isoliert. Neue Anforderungen (z. B. SMS-Versand) werden einfach als neue OrderProcess-Implementierung hinzugefügt, ohne bestehenden Code zu berühren (Open-Closed-Prinzip).
 
-Ein struktureller Nebeneffekt sind die leeren Methoden in Klassen wie `Pay` oder `Invent`. Bugayenko akzeptiert dies als notwendigen Preis für den horizontalen Schnitt. Alternativ könnte `OrderProcess` in spezialisierte Interfaces wie `OnProcess` und `OnCancel` aufgeteilt werden, was jedoch die Komplexität des Modells erhöhen würde.
+Ein struktureller Nebeneffekt sind die leeren Methoden in Klassen wie Pay oder Invent. Bugayenko akzeptiert dies als notwendigen Preis für den horizontalen Schnitt. Alternativ könnte OrderProcess in spezialisierte Interfaces wie OnProcess und OnCancel aufgeteilt werden, was jedoch die Komplexität des Modells erhöhen würde.
 
 ## 5. Gegenüberstellung
 
@@ -779,71 +779,39 @@ Die Wahl eines Software-Designs ist eine Abwägung zwischen initialer Entwicklun
 
 Der monolithische DDD-Service
 
-Der OrderService bündelt alle Belange der Bestellung in einer Klasse.
+Der klassische OrderService bündelt sämtliche Belange der Bestellung innerhalb einer einzigen Klasse. Ein wesentlicher Vorteil dieses Ansatzes ist die zentrale Anlaufstelle, da die gesamte Geschäftslogik einer Domäne an einem Ort als verlässliche Informationsquelle konzentriert bleibt. Zudem ermöglicht diese Struktur ein lineares Debugging, bei dem der Kontrollfluss innerhalb einer Datei leicht nachvollziehbar ist, ohne dass zwischen vielen kleinen Klassen gesprungen werden muss. Da dieses Muster als Industriestandard gilt, bietet es zudem eine geringe kognitive Einstiegshürde für neue Entwickler. 
 
-Vorteile:
-
-Zentrale Anlaufstelle: Die gesamte Geschäftslogik einer Domäne ist an einem Ort konzentriert ("Single Source of Truth").
-Lineares Debugging: Der Kontrollfluss ist innerhalb einer Datei leicht nachvollziehbar; es muss nicht zwischen vielen kleinen Klassen gesprungen werden.
-Geringe kognitive Einstiegshürde: Das Muster ist Industriestandard und für neue Entwickler sofort verständlich.
-
-Nachteile:
-
-Hohe Kopplung (CBO): Änderungen an technischen Komponenten (z. B. Logging) können unvorhersehbare Seiteneffekte auf die Fachlogik haben.
-Erschwerte Testbarkeit: Jede Methode benötigt eine hohe Anzahl an Mocks, was Unit-Tests schwerfällig und wartungsintensiv macht.
-Kognitive Last bei Änderungen: Man muss die gesamte Komplexität der Klasse durchdringen, nur um eine isolierte Stelle sicher anzupassen.
+Demgegenüber stehen jedoch signifikante Nachteile, da die hohe Kopplung dazu führen kann, dass Änderungen an technischen Komponenten wie dem Logging unvorhersehbare Seiteneffekte auf die Fachlogik haben. Auch die Testbarkeit wird erschwert, weil jede Methode eine hohe Anzahl an Mocks erfordert, was Unit-Tests schwerfällig und wartungsintensiv gestaltet. Schließlich entsteht bei Änderungen eine hohe kognitive Last, da stets die gesamte Komplexität der Klasse durchdrungen werden muss, um selbst isolierte Stellen sicher anzupassen.
 
 Spezialisierte Services (Aufspaltung)
 
-Die Zerlegung in OrderPaymentService etc. verteilt die Last auf mehrere Klassen.
+Die Zerlegung in spezialisierte Dienste wie den OrderPaymentService verteilt die fachliche Last auf mehrere Klassen. Ein wesentlicher Vorteil liegt in der verbesserten Übersicht, da die Klassen kleiner werden und sich auf spezifische Teilprozesse wie die Zahlung fokussieren. Zudem begünstigt dieser Ansatz die Parallelisierung, weil verschiedene Teams zeitgleich an unterschiedlichen Services arbeiten können. 
 
-Vorteile:
-Bessere Übersicht: Die Klassen werden kleiner und fokussierter auf spezifische Teilprozesse (z. B. nur Zahlung).
-Parallelisierung: Verschiedene Teams können leichter gleichzeitig an unterschiedlichen Services arbeiten.
-
-Nachteile:
-
-Redundanz: Technische Querschnittsbelange (Audit, Persistenz) müssen oft in jedem Service neu injiziert werden.
-Verteilte Wartung: Eine globale Änderung (z. B. am Logging-Format) muss an mehreren Stellen gleichzeitig nachgezogen werden.
-Keine echte Isolation: Die Vermischung von technischer Infrastruktur und Domänenlogik bleibt strukturell bestehen.
+Dem stehen jedoch Nachteile gegenüber, da technische Querschnittsbelange wie Audit oder Persistenz oft in jedem Service neu injiziert werden müssen. Dies führt zu einer verteilten Wartung, bei der globale Änderungen am Logging-Format an mehreren Stellen gleichzeitig nachgezogen werden müssen. Letztlich bleibt eine echte Isolation aus, da die strukturelle Vermischung von technischer Infrastruktur und Domänenlogik bestehen bleibt.
 
 Der Decorator-Schnitt (Vertikal)
 
-Dieser Ansatz schneidet die Domäne streng nach Verantwortlichkeiten (StoredOrder, PaidOrder).
+Dieser Ansatz schneidet die Domäne streng nach Verantwortlichkeiten in Klassen wie StoredOrder oder PaidOrder. Die Vorteile liegen in der strikten Einhaltung von SRP und OCP, da neue Anforderungen durch zusätzliche Dekoratoren gelöst werden, ohne stabilen Code zu gefährden. Dies ermöglicht ein gezieltes Debugging, da Fehler im Logging garantiert in der AuditingOrder zu finden sind, während die kognitive Last auf die jeweils aktuelle Zuständigkeit begrenzt bleibt. Zudem wird eine minimale Kopplung erreicht, da jede Klasse lediglich das Interface und ihre spezifische Abhängigkeit kennt. 
 
-Vorteile:
-Strikte Einhaltung von SRP & OCP: Neue Anforderungen werden durch neue Dekoratoren gelöst, ohne stabilen Code zu gefährden.
-Gezieltes Debugging: Fehler im Logging liegen garantiert in der AuditingOrder. Die kognitive Last bleibt auf die aktuelle Zuständigkeit begrenzt.
-Minimale Kopplung: Jede Klasse kennt nur das Interface und ihre spezifische Abhängigkeit.
+Nachteilig wirkt sich jedoch die Projekt-Explosion durch eine deutlich steigende Anzahl an Dateien und Konstruktoren aus. Auch die komplexe Komposition über tiefe Verschachtelungen wie new PaidOrder(new StoredOrder(...)) ist gewöhnungsbedürftig. Zudem zeigt sich eine Interface-Fragilität, bei der jede Änderung am zentralen Order-Interface Anpassungen in sämtlichen Dekoratoren erzwingt.
 
-Nachteile:
+Vertikal vs. Horizontal
 
-Projekt-Explosion: Die Anzahl der Dateien und Konstruktoren steigt deutlich an.
-Komplexe Komposition: Die Instanziierung über tiefe Verschachtelungen (new PaidOrder(new StoredOrder(...))) ist gewöhnungsbedürftig.
-Interface-Fragilität: Jede Änderung am Order-Interface erzwingt Anpassungen in allen Dekoratoren.
-
-Vertikal vs. Horizontal:
-
-Das horizontale Muster (4.4) optimiert die Lesbarkeit bei tiefen Ketten, erzwingt aber oft „strukturelle Lügen“ (leere Methoden). Ein Wechsel ist nur ratsam, wenn das Design keine leeren Methoden erzwingt und die Lesbarkeit verbessert werden kann.
+Das horizontale Muster optimiert zwar die Lesbarkeit bei tiefen Ketten, erzwingt jedoch oft strukturelle Lügen in Form von leeren Methoden. Ein Wechsel zu diesem Modell ist daher nur dann ratsam, wenn das Design keine leeren Implementierungen erfordert.
 
 
 ## 6. Zusammenfasung und Fazit
 
-Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Es liegt in unserer Natur, Verantwortlichkeiten miteinander zu verknüpfen. Diese Verantwortlichkeiten jedoch zu identifizieren und voneinander zu trennen, macht einen Großteil dessen aus, worum es beim Softwareentwurf eigentlich geht. Die anderen SOLID Prinzipien führen auf die eine oder andere Weise auf diesen Kernpunkt zurück.
 
-Um subjektive Debatten in Code-Reviews zu vermeiden, formalisiert Robert Bräutigam das Prinzip als: SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung. Diese Messbarkeit wird durch konkrete Metriken gestützt: Ein LCOM4 von 1 steht für maximale interne Kohäsion, während ein CBO unter 5 die externe Kopplung auf ein gesundes Maß begrenzt.
+Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Es liegt in unserer Natur, Verantwortlichkeiten miteinander zu verknüpfen. Diese zu identifizieren und zu trennen, macht den Kern hochwertigen Softwareentwurfs aus. Letztlich führen fast alle SOLID-Prinzipien auf diesen Kernpunkt zurück.
 
-Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. In der monolithischen Struktur des OrderService werden fünf Verantwortlichkeiten lediglich über technische Querschnittsfelder verknüpft. Hier entsteht ein LCOM4 Wert von 1 rein zufällig und ohne fachliche Basis. 
+Um subjektive Debatten in Code-Reviews zu vermeiden, formalisiert Robert Bräutigam das Prinzip als ein Gleichgewicht aus maximaler Kohäsion und minimaler Kopplung (SRP ≡ Maximale Kohäsion ∧ Minimale). Diese Messbarkeit wird durch konkrete Metriken untermauert, wobei ein LCOM4-Wert von 1 für maximale interne Kohäsion steht und ein CBO-Wert unter 5 die externe Kopplung auf ein gesundes Maß begrenzt.
 
-Die Aufspaltung in drei spezialisierte Services senkt zwar die Kopplung, verteilt jedoch die Querschnittsbelange lediglich, anstatt sie strukturell zu isolieren. 
+Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. In der monolithischen Struktur des OrderService werden fünf Verantwortlichkeiten lediglich über technische Querschnittsfelder lose verknüpft, wodurch ein LCOM4-Wert von 1 rein zufällig und ohne fachliche Basis entsteht. Die Aufspaltung in drei spezialisierte Services senkt zwar die Kopplung, verteilt jedoch die Querschnittsbelange lediglich, anstatt sie strukturell zu isolieren. Erst der vertikale Decorator erreicht eine echte Isolation jeder Verantwortlichkeit bei einem optimalen CBO von 2. Das horizontale Muster treibt diese Entkopplung mit einem CBO-Wert von 1 pro Prozessklasse schließlich auf die Spitze, muss jedoch gegen das Risiko leerer Methoden im Interface abgewogen werden.
 
-Der vertikale Decorator erreicht eine echte Isolation jeder Verantwortlichkeit bei einem optimalen CBO von 2. 
+Die bloßen Kennzahlen der Metriken reichen als Beweis für SRP-Konformität indes nicht aus. Wie der monolithische Service zeigt, kann ein LCOM4-Wert von 1 durch rein technische Infrastrukturfelder künstlich erzeugt werden, ohne dass eine fachliche Einheit vorliegt. Erst die kombinierte Betrachtung von LCOM4 und CBO ergibt zusammen mit der qualitativen Analyse der fachlichen Kohäsion (Frage: „Warum sind diese Methoden fachlich verbunden?“) ein vollständiges Bild.
 
-Das horizontale Muster treibt diese Entkopplung mit einem CBO von 1 pro Prozessklasse und einer flachen Komposition auf die Spitze, muss jedoch gegen das Risiko leerer Methoden im Interface bei partiellen Verantwortlichkeiten abgewogen werden.
-
-Für die tägliche Praxis lassen sich aus diesem Beitrag drei klare Leitlinien ableiten: Ein LCOM4 > 1 ist ein direkter Auftrag zum Refactoring. Die Kopplung (CBO) kann druch stabile Interfaces begrenzt werden. Zudem sollten Getter vermieden werden, da sie das Hauptmerkmal semantischer Kopplung darstellen, welche von strukturellen Metriken allein nicht erfasst wird. So betrachtet ist das SRP kein starres Dogma, sondern ein präzises Werkzeug, das durch objektive Metriken erst wirklich handhabbar wird.
-
-Trotz ihrer Präzision reichen Metriken allein als Beweis für eine echte SRP-Konformität nicht aus. Ein LCOM4 von 1 kann, wie der monolithische Service eindrucksvoll zeigt, durch rein technische Infrastrukturfelder künstlich erzeugt werden, ohne dass eine tatsächliche fachliche Einheit vorliegt. Erst die kombinierte Betrachtung von LCOM4 und CBO, ergänzt um die qualitative Analyse der Frage 'Warum sind diese Methoden fachlich verbunden?', ergibt ein vollständiges Bild der Designqualität.
+Für die tägliche Praxis lassen sich daraus drei klare Leitlinien ableiten. Ein LCOM4-Wert größer als 1 stellt einen direkten Auftrag zum Refactoring dar, während die Kopplung durch den Einsatz stabiler Interfaces wirksam begrenzt werden kann. Zudem sollten Aufrufe von Methoden an fremden Objekten vermieden werden, da sie das Hauptmerkmal semantischer Kopplung darstellen, das Law of Demeter verletzen und von rein strukturellen Metriken nicht erfasst werden. Unter Beachtung dieser Prämissen erweist sich das SRP nicht als starres Dogma, sondern als präzises Werkzeug, das durch objektive Metriken erst wirklich handhabbar wird.
 
 
 ---
