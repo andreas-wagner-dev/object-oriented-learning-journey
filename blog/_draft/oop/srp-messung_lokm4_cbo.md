@@ -2,19 +2,15 @@
 
 **State: Draft!!!**
 
-Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, das von Robert C. Martin (‚Uncle Bob‘) zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung. Eine der ursprüngliche Definitionen lautet:
+Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, das von Robert C. Martin (‚Uncle Bob‘) zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung.
 
-> „A class should have only one reason to change."
-
-Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die nur für eine Sache verantwortlich ist, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip, es ist ein Qualitätsmerkmal, das langfristig über die Gesundheit einer Codebasis entscheidet.
+Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die einen eindeutigen Verantwortungsbereich besitzt, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip, es ist ein Qualitätsmerkmal, das maßgeblich die langfristige Wartbarkeit beeinflusst und die Ansammlung technischer Schulden minimiert.
 
 ## Gegenstand der Betrachtung und Zielsetzung
 
-Im Mittelpunkt dieser Betrachtung steht das **Single Responsibility Principle** sowie die Herausforderung dessen Einhaltung auf Klassenebene objektiv zu bewerten. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze, wie das moderne Service Muster nach *Domain Driven Design* (DDD) und das Decorator Muster nach *Object Oriented Design* (OOD). Diese Konzepte werden zur Analyse innerhalb einer Domäne zur Bestellverwaltung in Java implementiert.
+Im Mittelpunkt dieser Betrachtung steht das Single Responsibility Principle sowie die Herausforderung dessen Einhaltung auf Klassenebene objektiv zu bewerten. Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Der hier gewählte Ansatz stützt sich auf die Formalisierung von Robert Bräutigam, welcher das SRP über die Konjunktion (logisches UND) zweier messbarer Softwaremetriken definiert. Die daraus resultierende Formel lautet SRP ≡ max(COHESION) ∧ min(COUPLING).
 
-Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Der hier gewählte Ansatz stützt sich auf die Formalisierung von Robert Bräutigam, welcher das SRP über die Konjunktion (logisches UND) zweier messbarer Softwaremetriken definiert. Die daraus resultierende Formel lautet `SRP ≡ max(COHESION) ∧ min(COUPLING)`.
-
-Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen. Die **Kohäsion** wird mittels *Lack of Cohesion of Methods Version 4* (**LCOM4**) über eine Graphenanalyse ermittelt wobei der ideale Zielwert bei 1 liegt. Parallel dazu wird die **Kopplung** mithilfe von *Coupling Between Objects* (**CBO)** durch das Zählen externer Abhängigkeiten bestimmt mit dem Ziel eines minimalen Wertes. Beide Kennzahlen werden zunächst anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung evaluiert.
+Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen. Die Kohäsion wird mittels Lack of Cohesion of Methods Version 4 (LCOM4) über eine Graphenanalyse ermittelt, wobei der ideale Zielwert bei 1 liegt. Parallel dazu wird die Kopplung mithilfe von Coupling Between Objects (CBO) durch das Zählen externer Abhängigkeiten bestimmt mit dem Ziel eines minimalen Wertes. Beide Kennzahlen werden zunächst anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung evaluiert. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze, wie das moderne Service Muster nach Domain Driven Design (DDD) und das Decorator Muster nach Object Oriented Design (OOD). Diese Konzepte werden zur Analyse innerhalb einer Domäne zur Bestellverwaltung in Java implementiert.
 
 ## 1. Das Problem: SRP ist nicht messbar
 
