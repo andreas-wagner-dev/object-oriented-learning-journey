@@ -1,44 +1,65 @@
-# Das Single Responsibility Principle objektiv messen
+# Single Responsibility Principle objektiv messen 
 
-## Gegenstand, Zielsetzung und Methodik
+**State: Draft!!!**
 
-Betrachtet wird das **Single Responsibility Principle (SRP)** als Entwurfsprinzip der objektorientierten Softwareentwicklung – insbesondere die Frage, *wie* sich SRP-Konformität einer Klasse objektiv feststellen lässt. Als Vergleichsobjekte dienen vier Entwurfsansätze in Java, alle anhand derselben Domäne – einer Bestellverwaltung – implementiert: ein monolithischer DDD-Service, derselbe Service aufgespalten in drei Klassen, ein vertikaler Decorator-Schnitt und ein horizontaler Decorator-Schnitt nach Bugayenko.
+Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, das von Robert C. Martin (‚Uncle Bob‘) zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung. Eine der ursprüngliche Definitionen lautet:
 
-Ziel ist es, SRP auf eine **pragmatische und objektive Weise zu verifizieren und im Entwickleralltag einzusetzen**. Die Definition stammt von **Robert Bräutigam** (MATHEMA Software GmbH), der SRP nicht über subjektive Verantwortlichkeitsbegriffe, sondern über die messbaren Eigenschaften **Kohäsion** und **Kopplung** operationalisiert: `SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING`. Dieser Artikel übernimmt Bräutigams Formulierung als Grundlage und zeigt, wie sie mit konkreten Metriken im Code-Review, im CI/CD-Prozess und beim Klassendesign unmittelbar anwendbar wird.
+> „A class should have only one reason to change."
 
-Dazu werden zwei etablierte Metriken eingesetzt: **LCOM4** misst interne Kohäsion über Graphenanalyse – Zielwert ist 1. **CBO** zählt externe Abhängigkeiten – Zielwert ist so niedrig wie möglich. Beide Metriken werden für jede Beispielklasse explizit hergeleitet und in einer abschließenden Gegenüberstellung konsolidiert.
+Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die nur für eine Sache verantwortlich ist, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip, es ist ein Qualitätsmerkmal, das langfristig über die Gesundheit einer Codebasis entscheidet.
 
----
+## Gegenstand der Betrachtung und Zielsetzung
+
+Im Mittelpunkt dieser Betrachtung steht das **Single Responsibility Principle** sowie die Herausforderung dessen Einhaltung auf Klassenebene objektiv zu bewerten. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze, wie das moderne Service Muster nach *Domain Driven Design* (DDD) und das Decorator Muster nach *Object Oriented Design* (OOD). Diese Konzepte werden zur Analyse innerhalb einer Domäne zur Bestellverwaltung in Java implementiert.
+
+Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Der hier gewählte Ansatz stützt sich auf die Formalisierung von Robert Bräutigam, welcher das SRP über die Konjunktion (logisches UND) zweier messbarer Softwaremetriken definiert. Die daraus resultierende Formel lautet `SRP ≡ max(COHESION) ∧ min(COUPLING)`.
+
+Die Operationalisierung erfolgt dabei über zwei zentrale Kennzahlen. Die **Kohäsion** wird mittels *Lack of Cohesion of Methods Version 4* (**LCOM4**) über eine Graphenanalyse ermittelt wobei der ideale Zielwert bei 1 liegt. Parallel dazu wird die **Kopplung** mithilfe von *Coupling Between Objects* (**CBO)** durch das Zählen externer Abhängigkeiten bestimmt mit dem Ziel eines minimalen Wertes. Beide Kennzahlen werden zunächst anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung evaluiert.
 
 ## 1. Das Problem: SRP ist nicht messbar
 
-Das SRP ist das erste der fünf SOLID-Prinzipien (Robert C. Martin, 2003). Im Laufe der Zeit haben sich mehrere Definitionen herausgebildet, die alle dieselbe Grundidee umkreisen:
+Wegen der Unklarheiten rund um den Begriff "Grund" hat Robert C. Martin seine Ausführungen später weiter präzisiert. Daraus haben sich mit der Zeit mehrere Definitionen entwickelt:
 
-> **(1)** „Jedes Softwaremodul sollte genau einen Grund für eine Änderung haben."
+> **(1)** „Jedes Softwaremodul sollte genau eine Aufgabe haben."
 
-> **(2)** „Sammelt die Dinge zusammen, die sich aus denselben Gründen verändern."
+> **(2)** „Jedes Softwaremodul sollte genau einen Grund für eine Änderung haben."
 
-> **(3)** „‚Derselbe Grund' bedeutet, dass er vom selben Geschäftsmann stammt."
+> **(3)** „Sammelt die Dinge zusammen, die sich aus denselben Gründen verändern."
 
-Alle drei Definitionen teilen dasselbe Grundproblem: Sie sind subjektiv. Was ist „ein Grund"? Ist ein `OrderService`, der Bestellungen erstellt und persistiert, eine oder zwei Verantwortlichkeiten? Die Diskussion bleibt kontext-abhängig und wird in Code-Reviews oft zum Glaubenskrieg. Definition (3) – „derselbe Geschäftsmann" – mag in der Domänenmodellierung hilfreich sein, ist aber als tägliches Programmierkriterium unbrauchbar.
+> **(4)** „Derselbe Grund' bedeutet, dass er vom selben Geschäftsmann stammt."
 
-Hinter SRP steckt ein konkretes Ziel: **Wartungsfreundlichkeit** – kleine Klassen, hohe Wahrscheinlichkeit lokaler Änderungen, geringe Ausbreitung von Änderungen auf andere Klassen. Für dieses Ziel brauchen wir einen objektiven Maßstab, keinen interpretationsbedürftigen Begriff.
+Die Problematik dieser Definitionen liegt in den subjektiven Formulierungen welche in der Praxis schwer greifbar sind. Sie bieten damit keine konkreten Berwertungs- und Handlungsgrundlagen für den Entwurf von Klassen.
+
+Denn was bedeutet eigentlich „eine Aufgabe“? Ist beispielsweise ein OrderService, der Bestellungen sowohl validiert als auch persistiert, mit einer oder zwei Aufgaben behaftet? 
+
+Ein „Grund“ wiederum ist retrospektiv leicht zu finden, lässt sich jedoch prospektiv kaum definieren; jede kleinste Anforderungsänderung könnte theoretisch als neuer Grund interpretiert werden.
+
+Auch die Definition (3) ist als Heuristik zwar theoretisch wertvoll, zum Zeitpunkt der Implementierung jedoch kaum prüfbar. Man müsste die zukünftige Entwicklung des Produkts antizipieren, um heute bereits zu wissen, welche Teile sich morgen gemeinsam ändern werden. 
+
+Ebenso unpraktikabel für den Code-Alltag ist der Verweis auf den „Geschäftsmann“ (4): Dieser mag bei der strategischen Domänenmodellierung hilfreich sein, ist jedoch als konkretes Programmierkriterium unbrauchbar.
+
+Solche Diskussionen bleiben stets kontextabhängig und können in Code-Reviews zu ergebnislosen Grundsatzdebatten führen. Ohne eine objektive Basis drohen diese fachlichen Auseinandersetzungen in subjektive Glaubenskriege auszuarten, welche die konstruktive Zusammenarbeit im Team erschweren.
 
 ---
 
-## 2. Die Formel: Kohäsion und Kopplung
+## 2. Die Formalisierung von Kohäsion und Kopplung
 
-Bräutigam fasst SRP in einer Formel zusammen, die beide Ziele benennt:
+Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage für die Softwareentwicklung. Begriffe wie Verantwortung, Änderungsgrund oder Akteursorientierung erweisen sich für die praktische Umsetzung als zu vage und führen in der Konsequenz häufig zu einer unnötigen Codefragmentierung. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
 
 ```
-SRP ≡ MAXIMIZE COHESION ∧ MINIMIZE COUPLING
+SRP ≡ max(COHESION) ∧ min(COUPLING)
 ```
 
-**Kohäsion** beschreibt Abhängigkeiten *innerhalb* eines Objekts: Methoden und Felder beziehen sich aufeinander. Je stärker sie verbunden sind, desto kohäsiver ist die Klasse – und desto eher tut sie tatsächlich nur eine Sache. **Kopplung** beschreibt das Gegenteil: Abhängigkeiten *zwischen* Objekten. Je mehr externe Klassen eine Klasse kennen muss, desto höher ist das Risiko, dass eine Änderung anderswo auch hier Anpassungen erfordert.
+Durch die Gleichsetzung mit Kohäsion und Kopplung wandelt sich das SRP von einer Designphilosophie zu einer Strukturmetrik. Während „Verantwortlichkeit“ diskutabel sein mag, lassen sich Kohäsion (z. B. über den LCOM-Wert) und Kopplung (Abhängigkeitsgraph) im Code objektiv nachweisen. Diese Formel hat entscheidende Vorteile: Sie ist **messbar**, **designagnostisch** und die Berechnung kann **werkzeugunterstützt** erfolgen.
 
-Beide Konzepte drehen sich um Abhängigkeiten, und Abhängigkeiten treten in zwei Formen auf. **Physikalische Abhängigkeiten** – direkte Methodenaufrufe, Feldtypen – sind durch statische Analyse messbar. **Semantische Abhängigkeiten** sind implizites Wissen über die Struktur eines anderen Objekts, das sich meist über Getter ausdrückt. Letztere sind gefährlicher, weil sie für den Compiler unsichtbar sind: Änderungen propagieren durch sie auf subtile Weise, die kein Werkzeug automatisch erkennt. Jeder Getter ist ein potenzieller Einstiegspunkt für semantische Kopplung.
+**Kohäsion** beschreibt Abhängigkeiten *innerhalb* eines Objekts: Methoden und Felder beziehen sich aufeinander. Je stärker sie verbunden sind, desto kohäsiver ist die Klasse – und desto eher tut sie tatsächlich nur eine Sache.
 
-Die Formel hat entscheidende Vorteile: Sie ist **messbar**, **werkzeugunterstützt** (SonarQube, JDepend) und **designagnostisch** – sie funktioniert unabhängig vom verwendeten Architekturmuster.
+**Kopplung** beschreibt Abhängigkeiten *zwischen* Objekten. Je mehr externe Klassen eine Klasse kennen muss, desto höher ist das Risiko, dass eine Änderung anderswo auch hier Anpassungen erfordert.
+
+Es gibt zwei Arten von Abhängigkeiten: **physikalische** (direkte Methodenaufrufe, Feldtypen – durch statische Analyse messbar) und **semantische** (implizites Wissen über die Struktur eines anderen Objekts, meist über `Getter-`Methoden). 
+
+Die Semantische Kopplung ist tückischer, weil sie für den Compiler unsichtbar ist und die Änderungen propagieren durch sie auf subtile Weise. Ruft beispielsweise eine Klasse die Sequenz `user.getAddress().getCity().getZipCode()` auf, ist diese Klasse semantisch an die Struktur des `User`-Objekts gekoppelt. Deshalb ist jede `Read-/Getter`-Methode ein potenzieller Einstiegspunkt für die semantische Kopplung.
+
 
 ---
 
@@ -46,90 +67,812 @@ Die Formel hat entscheidende Vorteile: Sie ist **messbar**, **werkzeugunterstüt
 
 ### LCOM4 – Kohäsion messen
 
-LCOM4 modelliert eine Klasse als Graphen: Jede Methode ist ein Knoten, zwei Methoden sind verbunden, wenn sie auf dasselbe Instanzfeld zugreifen oder sich gegenseitig aufrufen. LCOM4 ist die **Anzahl der zusammenhängenden Teilgraphen** dieses Graphen. Ein Wert von 1 bedeutet, dass alle Methoden miteinander verbunden sind – die Klasse ist eine kohäsive Einheit. Werte größer 1 zeigen an, dass die Klasse in unabhängige Teile zerfällt und aufgeteilt werden sollte:
+Die Metrik Lack of Cohesion of Methods (LCOM4) nach Hitz und Montazeri (1995) bewertet die Kohäsion einer Klasse durch eine Graphenanalyse. Ein „Teilgraph“ entsteht, wenn Methoden entweder auf dieselben Instanzvariablen (Felder) zugreifen oder sich gegenseitig aufrufen.
+* **LCOM4 = 1**: Alle Methoden und Felder sind direkt oder indirekt miteinander verbunden. Die Klasse ist hochgradig kohäsiv (Idealzustand).
+* **LCOM4 > 1**: Die Klasse zerfällt in mehrere unabhängige Fragmente. Dies ist ein objektives Indiz für eine Verletzung des SRP.
+* **LCOM4 = 0**: Eine Klasse ohne Methoden (reiner Datencontainer), was in dieser Analyse neutral bewertet wird.
 
-| LCOM4 | Interpretation |
-|---|---|
-| **1** | Maximale Kohäsion – alle Methoden sind verbunden |
-| **> 1** | Die Klasse zerfällt – sollte in *n* Klassen aufgeteilt werden |
 
-Das folgende Beispiel macht die Graphenanalyse konkret. Die Klasse `OrderData` hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen – keine gemeinsamen Felder, kein gemeinsamer Knoten, LCOM4 = 2:
+**Fallbeispiel: Verletzung der Kohäsion (LCOM4 = 2)**
+
+In diesem Szenario enthält die Klasse `OrderProcess` zwei logische Zuständigkeiten über die Kernlogik einer **Bestellung** und der **Zahlungsabwicklung**.
 
 ```java
-// LCOM4 = 2 — zwei unabhängige Teilgraphen ❌
-public class OrderData {
+// LCOM4 = 2 — Die Klasse zerfällt in zwei isolierte Teilgraphen
+public class OrderProcess {
     private Cart cart;             // Feld A
     private Customer customer;     // Feld B
     private int paymentAmount;     // Feld C
     private String paymentStatus;  // Feld D
 
-    // Gruppe 1: nutzt A und B
-    public String summarize() {
-        return customer.getName() + ": " + cart.itemCount() + " items"; // → A, B
+    // Teilgraph 1: Bestellungs-Logik (nutzt A und B)
+    public String summarizeOrder() {
+        return customer.getName() + ": " + cart.itemCount() + " items";
     }
 
-    // Gruppe 2: nutzt C und D — keine Verbindung zu Gruppe 1
+    // Teilgraph 2: Zahlungs-Logik (nutzt C und D)
     public void recordPayment(int amount) {
-        this.paymentAmount = amount;   // → C
-        this.paymentStatus = "PAID";   // → D
+        this.paymentAmount = amount;
+        this.paymentStatus = "PAID";
     }
 }
-// summarize()      → Teilgraph {A, B}
-// recordPayment()  → Teilgraph {C, D}
-// Keine gemeinsamen Felder → LCOM4 = 2 ❌
-// Lösung: aufteilen in OrderIdentity und OrderPayment
+
 ```
+
+**Analyse der Graphen:**
+1. Teilgraph 1: Die Methode `summarizeOrder()` verbindet die Felder `cart` und `customer`.
+2. Teilgraph 2: Die Methode `recordPayment()` verbindet `paymentAmount` und `paymentStatus`.
+
+Zwischen diesen beiden Gruppen existiert keine Verbindung (kein gemeinsames Feld, kein gegenseitiger Aufruf). Die Klasse hat zwei Verantwortlichkeiten und somit einen **LCOM4-Wert von 2**. 
+
+```mermaid
+graph LR
+
+    subgraph OrderData["OrderData"]
+
+        subgraph Teilgraph_1["Teilgraph 1"]
+            summarize["summarize()"]
+            A(["cart (Feld A)"])
+            B(["customer (Feld B)"])
+            summarize --- A
+            summarize --- B
+        end
+    
+        subgraph Teilgraph_2["Teilgraph 2"]
+            recordPayment["recordPayment()"]
+            C(["paymentAmount (Feld C)"])
+            D(["paymentStatus (Feld D)"])
+            recordPayment --- C
+            recordPayment --- D
+        end
+
+    end
+
+    style Teilgraph_1 fill:#ffeaea,stroke:#cc0000
+    style Teilgraph_2 fill:#ffeaea,stroke:#cc0000
+    style A fill:#C8E6C9
+    style B fill:#C8E6C9
+    style C fill:#C8E6C9
+    style D fill:#C8E6C9
+```
+
+
+Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während `summarize()` auf Warenkorb und Kunde zugreift, verarbeitet `recordPayment()` ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem **LCOM4 von 2**. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in `OrderIdentity` sowie `OrderPayment` aufgeteilt werden sollte.
+
+**Fallbeispiel: Optimierung durch Aufteilung (LCOM4 = 1)**
+
+Um die Kohäsion zu maximieren, wird die Klasse gemäß ihrer Verantwortlichkeiten in zwei spezialisierte Klassen aufgeteilt.
+
+```java
+// LCOM4 = 1 — Fokus auf Identität & Inhalt
+public class OrderIdentity {
+
+    private Cart cart;
+    private Customer customer;
+
+    public String summarize() {
+        return customer.getName() + ": " + cart.itemCount() + " items";
+    }
+}
+
+// LCOM4 = 1 — Fokus auf Transaktion
+public class PaymentTransaction {
+
+    private int amount;
+    private String status;
+
+    public void record(int amount) {
+        this.amount = amount;
+        this.status = "PAID";
+    }
+}
+```
+
+Durch die Aufteilung besitzen nun beide Klassen nur noch einen zusammenhängenden Graphen. Jede Methode arbeitet mit dem gesamten Zustand der Klasse oder einem Teil davon, der wiederum mit anderen Methoden verknüpft ist.
 
 ### CBO – Kopplung messen
 
-Während LCOM4 die interne Struktur einer Klasse bewertet, misst CBO (*Coupling Between Objects*, Chidamber & Kemerer 1994) ihre externe Verflechtung: Es zählt die Anzahl externer Typen, zu denen eine Klasse eine direkte Abhängigkeit hat – über Feldtypen, Methodenparameter, Rückgabetypen oder direkte Aufrufe. Primitive Typen (`int`, `String`) zählen dabei nicht.
+Die Metrik Coupling Between Objects (CBO) nach Chidamber & Kemerer (1994) misst die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Erfasst werden dabei Referenzen in:
+* Feldtypen (Instanzvariablen),
+* Methodenparametern und Rückgabetypen (Signatur-Kopplung),
+* direkte Methodenaufrufe oder Instanziierungen.
 
-| CBO | Interpretation |
-|---|---|
-| **0–5** | Geringe Kopplung – wartungsfreundlich |
-| **6–10** | Moderat – beobachtenswert |
-| **> 10** | Hoch – Redesign empfohlen |
+*Primitive* Datentypen und Standard-*Wrapper* (wie int oder String) bleiben unberücksichtigt, da sie zur Basisinfrastruktur gehören und keine Kopplung im Sinne des objektorientierten Entwurfs darstellen.
 
-Das wichtigste Werkzeug zur CBO-Reduktion ist die Abhängigkeitsumkehr: Statt auf konkrete Klassen zu zeigen, bindet sich eine Klasse an stabile Interfaces. Das folgende Beispiel zeigt denselben `ReportService` einmal mit konkreten Typen (CBO = 5) und einmal hinter Interfaces (CBO = 2) – die Funktionalität bleibt identisch, die Kopplung halbiert sich:
+**Fallbeispiel: Direkte Abhängigkeit**
 
+Im ersten Szenario ist der `ReportService` direkt von konkreten Implementierungen abhängig. Jede Änderung an den beteiligten Klassen kann sich unmittelbar auf die Klasse auswirken.
 ```java
-// CBO = 5 ❌ — konkrete Typen in Feldern und Signaturen
+// CBO = 5 ❌ — Hohe Kopplung an konkrete Typen
 public class ReportService {
+
     private final ReportRepository repository; // CBO +1
     private final PdfExporter pdfExporter;     // CBO +1
 
-    public Report generateReport(DataQuery q) { // DataQuery → CBO +1, Report → CBO +1
-        List<DataRow> rows = repository.fetch(q); // DataRow → CBO +1
+    public Report generateReport(DataQuery q) { // DataQuery +1, Report +1
+        List<DataRow> rows = repository.fetch(q); // DataRow +1 (Rückgabetyp von fetch)
         return pdfExporter.export(rows);
     }
 }
-// Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow → CBO = 5
+// Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow
+```
+Der ReportService muss den Typ DataRow hier zwingend „kennen“, um das Ergebnis von repository.fetch(q) verarbeiten oder zurückgeben zu können. In der CBO-Metrik zählen Typen in Methodensignaturen (Parameter und Rückgabetypen) stets als Kopplung.
 
-// CBO = 2 ✅ — Abhängigkeitsumkehr hinter stabile Interfaces
+**Fallbeispiel: Dependency Inversion**
+
+Um den CBO-Wert zu reduzieren, wird das Dependency Inversion Principle (DIP) angewandt. Anstatt auf konkrete Implementierungen zu verweisen, bindet sich der Service an stabile Schnittstellen.
+```java
+// CBO = 4 - Kopplung an stabile Schnittstellen
 public class ReportService {
-    private final ReportRepository repository; // Interface → CBO +1
-    private final Exporter exporter;           // Interface → CBO +1
 
-    public void generateReport(Query q) {
-        exporter.export(repository.fetch(q));
+    private final Repository repository; // Interface (CBO +1)
+    private final Exporter exporter;     // Interface (CBO +1)
+
+    public Report generateReport(Query q) { // Query +1, Report +1
+        List<DataRow> rows = repository.fetch(q);
+        return exporter.export(rows);
     }
 }
-// Konkrete Typen hinter Interfaces verborgen → CBO sinkt von 5 auf 2
+// Gezählte Typen: Repository, Exporter, Report, Query
 ```
+
+**Fallbeispiel: Signatur-Optimierung**
+
+Sofern auf einen spezifischen Rückgabetyp (void statt Report) verzichtet werden kann, lässt sich die Kopplung weiter senken. Ein entscheidender Faktor ist hierbei die Unterscheidung zwischen Signatur-Kopplung und lokaler Kopplung.
+
+```java
+// CBO = 3 - Kopplung an Schnittstellen ohne Rückgabetyp
+public class ReportService {
+
+    private final Repository repository; // Interface (CBO +1)
+    private final Exporter exporter;     // Interface (CBO +1)
+
+    public void generateReport(Query q) { // Query (CBO +1)
+        List<DataRow> rows = repository.fetch(q);
+        exporter.export(rows);
+    }
+}
+// Gezählte Typen: Repository, Exporter, Query
+```
+
+Der Typ DataRow taucht hier nur noch als lokaler „Durchlaufwert“ auf. Da er weder Teil der Felder noch der Methodensignatur ist, wird er in der Metrik nicht als direkte Kopplung gewertet. Der Service reicht das Objekt lediglich zwischen Repository und Exporter weiter, ohne eine funktionale Abhängigkeit zur internen Struktur von DataRow zu besitzen (Pass-Through-Effekt).
+
+**Fallbeispiel: Semantische Kopplung**
+
+Der **CBO-Wert** erhöht sich wieder auf **4**, sobald eine explizite Abhängigkeit zu DataRow entsteht. Dies ist der Fall, wenn der Service aktiv Methoden des Typs aufruft (z. B. eine Validierung via `rows.get(0).validate()`).
+
+```java
+// CBO = 4 - Kopplung an Semantik
+public class ReportService {
+
+    private final Repository repository; // Interface (CBO +1)
+    private final Exporter exporter;     // Interface (CBO +1)
+
+    public void generateReport(Query q) { // Query +1, DataRow +1
+        List<DataRow> rows = repository.fetch(q);
+        rows.get(0).validate(); // Aktiver Aufruf an DataRow
+        exporter.export(rows);
+    }
+}
+// Gezählte Typen: Repository, Exporter, Query, DataRow
+```
+
+Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische Kopplung. Der ReportService benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von DataRow *(Verletzung des Law of Demeter)*. Er verlässt damit seine Rolle als reiner Koordinator und spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte. Dadurch ist der Service nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
+
+
+Generell gilt: Ein niedriger CBO-Wert verbessert die Wartbarkeit und Testbarkeit *(Loose Coupling)* signifikant, da die Klasse gegenüber Änderungen in ihrer Umgebung isoliert wird.
+
+**Zusammenführung: LCOM4 und CBO im Wechselspiel**
+
+Die Kombination beider Metriken liefert die objektive Hilfestellung für das Klassendesign:
+1. **Hoher LCOM4**: Signalisiert, dass eine Klasse zu viele Dinge gleichzeitig tut *(Low Cohesion)*. Lösung: Aufspalten.
+2. **Hoher CBO**: Signalisiert, dass eine Klasse zu stark mit ihrer Umwelt verstrickt ist *(High Coupling)*. Lösung: Dependency Inversion oder Schnittstellen-Abstraktion.
+
+Ein „sauberes“ Design nach Robert Bräutigams Formalisierung strebt eine Klasse an, die **LCOM4 = 1** (maximale Kohäsion) und einen **CBO im Bereich 0–5** (minimale Kopplung) aufweist.
+
 
 ---
 
-## 4. Beispiele: DDD-Service vs. Decorator
+## 4. Beispiele: DDD-Service vs. OOD-Decorator
 
-Mit LCOM4 und CBO als Werkzeugen lässt sich nun dieselbe Domäne in vier verschiedenen Entwurfsansätzen analysieren – und die Unterschiede werden messbar.
+Um die praktische Anwendung von LCOM4 und CBO zu demonstrieren, wird im Folgenden dieselbe Domäne mit unterschiedlichen Entwurfsansätzen untersucht. Ziel ist es, die Unterschiede in der SRP-Konformität objektiv messbar zu machen.
 
-### Anwendungsfall: Bestellverwaltung
+**Anwendungsfall: Bestellprozess**
 
-Ein Online-Shop benötigt drei Kernoperationen für Bestellungen: **Anlegen**, **Bezahlen** und **Stornieren**.
+Als Szenario dient der Bestellvorgang eines *Online-Shops* mit drei Kernoperationen: Anlegen, Bezahlen und Stornieren.
+* Anlegen: Reserviert Artikel im Lager (`InventoryApi)`, speichert die Bestellung (`OrderRepository`) und protokolliert den Vorgang (`Audit`).
+* Bezahlen: Zieht den Betrag ein (`PaymentApi`), markiert die Bestellung als bezahlt, versendet eine Bestätigung (`Email`) und protokolliert den Vorgang (Audit).
+* Stornieren: Gibt Artikel im Lager frei (`InventoryApi`), markiert die Bestellung als storniert, versendet eine Nachricht (`Email`) und protokolliert den Vorgang (Audit).
+
+Daraus ergeben sich sieben beteiligte Komponenten, deren Verantwortlichkeiten in den folgenden Implementierungen unterschiedlich verteilt werden: `Cart`, `Customer`, `OrderRepository`, `InventoryApi`, `PaymentApi`, `Email` und `Audit`.
+
+### 4.1 Service-Pattern (DDD)
+
+Im klassischen Service-Pattern werden alle fachlich zusammengehörigen Operationen in einer zentralen Service-Klasse gebündelt.
+
+```java
+public class OrderService {
+
+    private final OrderRepository orderRepository;   // Feld 1
+    private final InventoryApi inventoryApi;         // Feld 2
+    private final PaymentApi paymentApi;             // Feld 3
+    private final Email email;                       // Feld 4
+    private final Audit audit                        // Feld 5
+
+    public Order createOrder(Cart cart, Customer customer) {
+        inventoryApi.reserve(cart);                  // → Feld 2
+        Order order = new Order(cart, customer);
+        orderRepository.save(order);                 // → Feld 1
+        audit.log("Order created: " + order.getId()); // → Feld 5
+        return order;
+    }
+
+    public void processPayment(Order order) {
+        paymentApi.charge(order);                    // → Feld 3
+        order.markAsPaid();
+        orderRepository.save(order);                 // → Feld 1
+        email.sendConfirmation(order);               // → Feld 4
+        audit.log("Payment processed: " + order.getId()); // → Feld 5
+    }
+
+    public void cancelOrder(Order order) {
+        inventoryApi.release(order);                 // → Feld 2
+        order.cancel();
+        orderRepository.save(order);                 // → Feld 1
+        email.sendCancellation(order);               // → Feld 4
+        audit.log("Order cancelled: " + order.getId()); // → Feld 5
+    }
+}
+```
+
+**Verwendung:**
+
+```java
+OrderService service = new OrderService(
+    orderRepository,
+    inventoryApi,
+    paymentApi,
+    email,
+    audit);
+
+// Bestellung anlegen
+Order order = service.createOrder(cart, customer);
+
+// Bezahlen — service kennt alle 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
+service.processPayment(order);
+
+// Stornieren — service kennt alle 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
+service.cancelOrder(order);
+```
+
+**LCOM4-Herleitung:** 
+Welche Methode nutzt welche Felder?
+| Methode | Felder |
+|---|---|
+| `createOrder` | 1 (Repo), 2 (Inv), 5 (Audit) |
+| `processPayment` | 1 (Repo), 3 (Pay), 4 (Email), 5 (Audit) |
+| `cancelOrder` | 1 (Repo), 2 (Inv), 4 (Email), 5 (Audit) |
+
+**Analyse der Metriken:**
+
+* **CBO = 5**: Hohe Kopplung: Die Klasse ist von 5 externen Systemen abhängig.
+* **LCOM4 = 1**: Scheinbar hohe Kohäsion: Alle Methoden sind über Feld 1 und 5 verbunden.
+
+**Interpretation:**
+Der `OrderService` liefert ein vermeintlich ideales LCOM4-Ergebnis von 1. Bei genauerer Betrachtung entlarvt sich diese Kohäsion jedoch als erzwungen durch Querschnittsfelder (Persistenz und Logging). Die fachlichen Kernaufgaben (Lager, Zahlung, E-Mail) sind disjunkt, werden aber durch die gemeinsame Nutzung technischer Infrastruktur-Komponenten im Graphen zusammengehalten.
+
+Das eigentliche Problematik verdeutlicht der CBO-Wert von 5: Jede einzelne Methode zieht alle fünf Abhängigkeiten mit sich. Für einen Unit-Test der Methode createOrder müssen beispielsweise alle fünf Abhängigkeiten gemockt werden, obwohl nur drei davon tatsächlich verwendet werden. Das SRP ist hier verletzt, da die Klasse mehrere fachlich unabhängige Änderungsgründe (Logikänderung bei Zahlung, Lager oder E-Mail) in sich vereint. LCOM4 allein reicht zur Diagnose dieser "Fat Service"-Problematik nicht aus.
+
+### 4.2 Service-Pattern (DDD) – Aufgespalten
+Ein naheliegender Refactoring-Schritt besteht darin, den „Fat Service“ in drei spezialisierte Klassen, pro Operation, aufzuteilen. Dadurch sinkt der CBO-Wert pro Klasse, da jede nur noch die Abhängigkeiten erhält, die sie für ihre spezifische Aufgabe benötigt.
+
+```java
+// Verantwortlichkeit: Bestellung anlegen
+public class OrderCreateService {
+
+    private final OrderRepository repository; // Feld 1
+    private final InventoryApi inventory;     // Feld 2
+    private final Audit audit;                // Feld 3
+
+    public Order create(Cart cart, Customer customer) {
+        inventory.reserve(cart);
+        Order order = new Order(cart, customer);
+        repository.save(order);
+        audit.log("Order created: " + order.getId());
+        return order;
+    }
+}
+
+// Verantwortlichkeit: Zahlung abwickeln
+public class OrderPaymentService {
+
+    private final OrderRepository repository; // Feld 1
+    private final PaymentApi payment;         // Feld 2
+    private final Email email;                // Feld 3
+    private final Audit audit;                // Feld 4
+
+    public void process(Order order) {
+        payment.charge(order);
+        order.markAsPaid();
+        repository.save(order);
+        email.sendConfirmation(order);
+        audit.log("Payment processed: " + order.getId());
+    }
+}
+
+// Verantwortlichkeit: Bestellung stornieren
+public class OrderCancelService {
+
+    private final OrderRepository repository; // Feld 1
+    private final InventoryApi inventory;     // Feld 2
+    private final Email email;                // Feld 3
+    private final Audit audit;                // Feld 4
+
+    public void cancel(Order order) {
+        inventory.release(order);
+        order.cancel();
+        repository.save(order);
+        email.sendCancellation(order);
+        audit.log("Order cancelled: " + order.getId());
+    }
+}
+```
+
+**Verwendung:**
+
+```java
+OrderService createSvc = new OrderService(orderRepository, inventoryApi, audit);
+OrderPaymentService paymentSvc = new OrderPaymentService(orderRepository, paymentApi, email, audit);
+OrderCancelService cancelSvc = new OrderCancelService(orderRepository, inventoryApi, email, audit);
+
+Order order = createSvc.createOrder(cart, customer);
+paymentSvc.processPayment(order);
+cancelSvc.cancelOrder(order);
+```
+
+**LCOM4-Herleitung:** Jeder `Service` hat genau eine Methode mit einem LCOM4-Wert von 1 per Definition. Das ist kein Zeichen von Kohäsion, sondern eine Trivialität, denn eine Klasse mit einer einzigen Methode kann nicht in zwei Graphen zerfallen.
+
+| Klasse | Felder | CBO | LCOM4 |
+|---|---|---|---|
+| `OrderService` | repo, inventoryApi, audit | **3** | **1** – trivial |
+| `OrderPaymentService` | repo, paymentApi, email, audit | **4** | **1** – trivial |
+| `OrderCancelService` | repo, inventoryApi, email, audit | **4** | **1** – trivial |
+
+**Analyse:**
+Die Aufspaltung senkt den CBO-Wert von ursprünglich 5 auf nun 3 bis 4 pro Klasse. Jede Klasse ist kleiner und fokussierter, was die Testbarkeit verbessert.
+
+Dennoch bleibt ein grundlegendes Problem bestehen: Die Querschnittsbelange (Cross-Cutting Concerns) wie Audit (Logging) und `OrderRepository` (Persistenz) sind über alle drei Klassen verteilt. Eine Änderung an der Logging-Strategie oder am `Repository`-Interface erfordert weiterhin Anpassungen an allen drei Stellen. Die Verantwortlichkeiten sind zwar physisch getrennt, aber logisch noch immer in jede Operation "hineingeflochten".
+
+Das SRP ist hier besser adressiert, aber nicht vollständig erfüllt. Die Klassen haben zwar eine triviale Kohäsion (LCOM4 = 1), leiden aber unter einer hohen konzeptionellen Redundanz.
+
+
+### 4.3 Vertikales Decorator-Pattern (OOD)
+
+Um die verbleibende Redundanz der Querschnittsbelange aufzulösen, bietet sich das Decorator-Pattern an. Hierbei wird die Kernlogik in einer Basisklasse isoliert, während technische Aspekte wie Logging oder Persistenz in separate „Hüllen“ (Decoratoren) ausgelagert werden.
+
+Das Pattern separiert Verantwortlichkeiten konsequent über Objektkomposition. Jede Klasse trägt genau eine Verantwortung. Die Querschnittsbelange entstehen hier durch das „Umhüllen“ von Objekten, nicht durch das Anhäufen von Feldern. Das Basis-*Interface* wird `Order` genannt - ein rein fachlicher Begriff ohne das technische Suffix *Service.
+
+Im neuen Interface entfällt die `PaymentApi` als Methodenparameter: `process()` wird zu einer reinen Verhaltensaufforderung an das Objekt. Die Abhängigkeit zur PaymentApi wird stattdessen direkt in die zuständige Klasse PaidOrder injiziert. So bleibt die Kopplung dort, wo sie fachlich hingehört, während die übrigen Dekoratoren davon unberührt bleiben.
+
+
+```java
+public interface Order {
+    String id();
+    void process();
+    void cancel();
+}
+```
+
+
+```java
+// Kern: Persistenz — Repository eingekapselt, ID im Konstruktor
+public final class StoredOrder implements Order {
+
+    private final String id;             // Feld 1
+    private final Cart cart;             // Feld 2
+    private final OrderRepository repo;  // Feld 3
+
+    public StoredOrder(String id, Cart cart, OrderRepository repo) {
+        this.id = id; this.cart = cart; this.repo = repo;
+    }
+
+    @Override
+    public String id() { return this.id; }           // → Feld 1
+                                    
+    @Override
+    public void process() {
+        repo.updateStatus(this.id, "PROCESSING");    // → Feld 3, 1
+    }
+
+    @Override
+    public void cancel() {
+        repo.updateStatus(this.id, "CANCELLED");     // → Feld 3, 1
+    }
+}
+```
+
+Alle Methoden teilen Feld 1 (id) - LCOM4 = 1 ✅
+CBO: Cart, OrderRepository - CBO = 2 ✅
+
+
+```java
+// Horizontaler Dekorator: Zahlung — injiziert PaymentApi, verwendet es in process()
+public final class PaidOrder implements Order {
+
+    private final Order delegate;        // Feld 1
+    private final PaymentApi gateway;    // Feld 2
+
+    public PaidOrder(Order delegate, PaymentApi gateway) {
+        this.delegate = delegate; this.gateway = gateway;
+    }
+
+    @Override
+    public String id() { return delegate.id(); }  // → Feld 1
+
+    @Override
+    public void process() {
+        gateway.charge(delegate);                 // → Feld 2, 1
+        delegate.process();                       // → Feld 1
+    }
+
+    @Override
+    public void cancel() { delegate.cancel(); }   // → Feld 1
+
+}
+
+```
+
+
+```java
+// Horizontaler Dekorator: Lagerverwaltung — injiziert InventoryApi, verwendet es in cancel()
+public final class InventedOrder implements Order {
+
+    private final Order delegate;        // Feld 1
+    private final InventoryApi inv;      // Feld 2
+
+    public InventedOrder(Order delegate, InventoryApi inv) {
+        this.delegate = delegate; this.inv = inv;
+    }
+
+    @Override
+    public String id() { return delegate.id(); }   // → Feld 1
+
+    @Override
+    public void process() { delegate.process(); }  // → Feld 1
+                              
+    @Override
+    public void cancel() {
+        inv.release(delegate);                    // → Feld 2, 1
+        delegate.cancel();                        // → Feld 1
+    }
+}
+
+
+```
+
+
+```java
+// Dekorator: Audit-Logging — beide Methoden betroffen
+public final class AuditingOrder implements Order {
+
+    private final Order delegate;        // Feld 1
+    private final Audit audit;           // Feld 2
+
+    public AuditingOrder(Order delegate, Audit auditLogger) {
+        this.delegate = delegate; this.audit = audit;
+    }
+
+    @Override
+    public String id() { return delegate.id(); }        // → Feld 1
+
+    @Override
+    public void process() {
+        delegate.process();                             // → Feld 1
+        audit.log("Processed: " + delegate.id()); // → Feld 2, 1
+    }
+
+    @Override
+    public void cancel() {
+        delegate.cancel();                              // → Feld 1
+        audit.log("Cancelled: " + delegate.id());       // → Feld 2, 1
+    }
+}
+```
+
+
+```java
+// Dekorator: E-Mail-Benachrichtigung — beide Methoden betroffen
+public final class NotifiedOrder implements Order {
+    private final Order delegate;          // Feld 1
+    private final Email email;             // Feld 2
+
+    public NotifiedOrder(Order delegate, Email email) {
+        this.delegate = delegate; this.email = email;
+    }
+
+    @Override
+    public String id() { return delegate.id(); }        // → Feld 1
+
+    @Override
+    public void process() {
+        delegate.process();                             // → Feld 1
+        email.sendConfirmation(delegate.id());          // → Feld 2, 1
+    }
+
+    @Override
+    public void cancel() {
+        delegate.cancel();                              // → Feld 1
+        email.sendCancellation(delegate.id());          // → Feld 2, 1
+    }
+}
+// Gleiche Struktur wie AuditingOrder → LCOM4 = 1, CBO = 2
+```
+
+**Verwendung:**
+
+```java
+Order order = new NotifiedOrder(
+    new AuditingOrder(
+        new InventedOrder(
+            new PaidOrder(
+                new StoredOrder(id, cart, repo),
+                paymentGateway),
+            inventoryService),
+        auditLogger),
+    emailNotifier);
+
+// Nutzung:
+order.process();
+// Ablauf: NotifiedOrder → AuditingOrder → InventedOrder → PaidOrder → StoredOrder
+// PaidOrder zieht Zahlung ein, StoredOrder persistiert,
+// AuditingOrder loggt, NotifiedOrder sendet Bestätigungs-E-Mail.
+
+order.cancel();
+// Ablauf: NotifiedOrder → AuditingOrder → InventedOrder → PaidOrder → StoredOrder
+// InventedOrder gibt Lagerbestand frei, StoredOrder persistiert,
+// AuditingOrder loggt, NotifiedOrder sendet Stornierungs-E-Mail.
+
+```
+
+**Messung gesamt:**
+
+| Klasse | Verantwortlichkeit | Felder | CBO | LCOM4 |
+|---|---|---|---|---|
+| StoredOrder | Persistenz | id, cart, repo | 2 | 1 |
+| PaidOrder | Zahlung | delegate, gateway | 2 | 1 |
+| InventedOrder | Lagerverwaltung | delegate, inv | 2 | 1 |
+| AuditingOrder | Logging | delegate, audit | 2 | 1 |
+| NotifiedOrder | Benachrichtigung | delegate, email | 2 | 1 |
+
+
+Jede Klasse weist einen CBO von 2 und einen LCOM4 von 1 auf. Diese Werte sind in diesem Entwurf fachlich begründet und nicht bloß trivial oder zufällig entstanden:
+
+* `StoredOrder` benötigt genau zwei Felder, da Persistenz zwei Dinge erfordert: die zu speichernde Entität (`id`, `cart`) und das Werkzeug dafür (`repo`).
+* `PaidOrder` benötigt ebenfalls genau zwei Felder: das zu bezahlende Objekt (`delegate`) und das dafür notwendige Werkzeug (`paymentApi`).
+
+Dasselbe Prinzip gilt für jede weitere Klasse. Im Gegensatz zu den aufgespaltenen Services erscheinen Audit und `OrderRepository` hier jeweils nur in **einer** einzigen Klasse. Eine Änderung an der Logging-Strategie erfordert lediglich die Anpassung der `AuditingOrder`. Eine Änderung am Repository-Interface betrifft ausschließlich die `StoredOrder`. Kein anderer Codeteil wird dadurch beeinflusst.
+
+Die Querschnittsbelange sind somit nicht über das System verteilt, sondern vollständig isoliert.
+
+
+### 4.4 Horizontaler Dekorator-Pattern (OOD)
+
+Während das vertikale Dekorieren (siehe 4.3) Klassen ineinander verschachtelt, stößt dieser Ansatz bei einer hohen Anzahl an Dekoratoren an seine Grenzen, da die Kompositionskette tief und schwer überschaubar wird. Yegor Bugayenko beschreibt in Vertical and Horizontal Decorating (2015) eine skalierbarere Alternative: Statt einer tiefen Verschachtelung nutzt ein zentrales Wrapper-Objekt eine flache Liste gleichrangiger Transformationen.
+
+Dieses Muster erfordert ein zweites Interface – hier OrderProcess –, welches die eigentliche Transformation kapselt. Der Wrapper Orders iteriert über eine Liste dieser OrderProcess-Objekte und führt sie nacheinander aus. Die Klassennamen verzichten dabei konsequent auf Suffixe und benennen die jeweilige Verantwortlichkeit direkt.
+
+```java
+public interface OrderProcess {
+    void process(String id, Cart cart);
+    void cancel(String id, Cart cart);
+}
+
+public final class Orders implements Order {
+    private final String id;                  // Feld 1
+    private final Cart cart;                  // Feld 2
+    private final List<OrderProcess> acts;        // Feld 3
+
+    public Orders(String id, Cart cart, List<OrderProcess> acts) {
+        this.id = id; this.cart = cart; this.acts = acts;
+    }
+
+    @Override
+    public String id() { return this.id; }
+
+    @Override
+    public void process() {
+        acts.forEach(a -> a.process(this.id, this.cart)); // → Feld 3, 1, 2
+    }
+
+    @Override
+    public void cancel() {
+        acts.forEach(a -> a.cancel(this.id, this.cart));  // → Feld 3, 1, 2
+    }
+}
+```
+
+**Die Implementierungen der Verantwortlichkeiten**
+
+Jede `OrderProcess`-Klasse isoliert eine spezifische technische oder fachliche Aufgabe:
+
+```java
+// Persistenz
+public final class Persist implements OrderProcess {
+    private final OrderRepository repo;
+    public Persist(OrderRepository repo) { this.repo = repo; }
+
+    @Override public void process(String id, Cart cart) { repo.updateStatus(id, "PAID"); }
+    @Override public void cancel(String id, Cart cart) { repo.updateStatus(id, "CANCELLED"); }
+}
+
+// Zahlung (nur process() relevant)
+public final class Pay implements OrderProcess {
+    private final PaymentApi gateway;
+    public Pay(PaymentApi gateway) { this.gateway = gateway; }
+
+    @Override public void process(String id, Cart cart) { gateway.charge(id); }
+    @Override public void cancel(String id, Cart cart) { /* leer */ }
+}
+
+// Lagerverwaltung (nur cancel() relevant)
+public final class Invent implements OrderProcess {
+    private final InventoryApi inv;
+    public Invent(InventoryApi inv) { this.inv = inv; }
+
+    @Override public void process(String id, Cart cart) { /* leer */ }
+    @Override public void cancel(String id, Cart cart) { inv.release(cart); }
+}
+
+// Weitere Acts: 'Audit' (Logging) und 'Notify' (Email) folgen derselben Struktur.
+
+```
+
+**Verwendung:**
+
+```java
+Order order = new Orders(id, cart, List.of(
+    new Persist(repo),
+    new Pay(paymentApi),
+    new Invent(inventoryApi),
+    new Audit(audit),
+    new Notify(email)
+));
+
+order.process(); 
+// Orders iteriert: Persist setzt Status, Pay zieht Zahlung ein, 
+// Audit protokolliert, Notify sendet Bestätigung.
+```
+Im Vergleich zur vertikalen Kette ist die Komposition hier flach und gleichrangig. Während vertikales Dekorieren oft der einfachere Einstieg ist, stellt horizontales Dekorieren die skalierbarere Form für komplexe Systeme dar.
+
+**Messung im Überblick:**
+
+| Klasse | Verantwortlichkeit | Felder | CBO | LCOM4 |
+|---|---|---|---|---|
+| Orders | Wrapper | id, cart, acts | 3 | 1 |
+| Persist | Persistenz | repo | 2 | 1 |
+| Pay | Lagerverwaltung | paymentApi | 2 | 1 |
+| Invent | Lagerverwaltung | inventoryApi | 2 | 1 |
+| AuditAct | Logging | audit | 2 | 1 |
+| NotifyAct | Benachrichtigung | email | 2 | 1 |
+
+
+**Analyse:**
+
+Die `Act`-Klassen erreichen einen minimalen CBO von 1, da jede ausschließlich ihr eigenes Werkzeug kennt. Dies stellt eine weitere Reduktion gegenüber den vertikalen Dekoratoren (CBO = 2) dar, da kein `delegate`-Feld mehr benötigt wird – die Steuerung der Kette übernimmt der `Orders`-Wrapper. Querschnittsbelange wie Audit oder OrderRepository bleiben strikt in jeweils einer Klasse isoliert. Neue Anforderungen (z. B. SMS-Versand) werden einfach als neue `OrderProcess`-Implementierung hinzugefügt, ohne bestehenden Code zu berühren (Open-Closed-Prinzip).
+
+Ein struktureller Nebeneffekt sind die leeren Methoden in Klassen wie `Pay` oder `Invent`. Bugayenko akzeptiert dies als notwendigen Preis für den horizontalen Schnitt. Alternativ könnte `OrderProcess` in spezialisierte Interfaces wie `OnProcess` und `OnCancel` aufgeteilt werden, was jedoch die Komplexität des Modells erhöhen würde.
+
+## 5. Gegenüberstellung
+
+Die Wahl eines Software-Designs ist eine Abwägung zwischen initialer Entwicklungsgeschwindigkeit und langfristigen Wartungskosten (TCO). Es verbindet die theoretische Fundierung des SRP mit der praktischen Messbarkeit durch Metriken und der notwendigen qualitativen Bewertung durch den Entwickler. Besonders die Offenlegung der „künstlichen Kohäsion“ durch Infrastrukturfelder ist ein starkes Argument gegen rein mechanisches Design.
+
+| Konzept | Metrik | OrderService (DDD) | Services aufgespalten | Vertikaler Decorator (4.3) | Horizontaler Decorator (4.4) |
+|---|---|---|---|---|---|
+| Kohäsion | LCOM4 | ⚠️ LCOM4 = **1** — Querschnittsfelder | ⚠️ LCOM4 = **1** — trivial (1 Methode) | ✅ LCOM4 = **1** — fachlich kohäsiv | ✅ LCOM4 = **1** — fachlich kohäsiv |
+| Kopplung | CBO | ❌ CBO = **5** | ⚠️ CBO = **3–4** je Klasse | ✅ CBO = **2** je Klasse | ✅ CBO = **1–3** je Klasse |
+| Lokale Änderbarkeit | LCOM4 / CBO | ❌ Logging betrifft alle 3 Methoden | ❌ Logging betrifft alle 3 Klassen | ✅ nur `AuditingOrder` | ✅ nur `AuditAct` |
+| Änderungsausbreitung | CBO | ❌ `PaymentApi` trifft gesamten Service | ⚠️ nur `OrderPaymentService` | ✅ nur `PaidOrder` | ✅ nur `Pay` |
+| Testbarkeit | Mocks pro Test | ❌ 5 Mocks pro Methode | ⚠️ 3–4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
+| Erweiterbarkeit (OCP) | neue Anforderung | ❌ bestehende Methoden ändern | ❌ neue Klasse + bestehende ändern | ✅ neuer Dekorator | ✅ neues `OrderProcess` + Listeneintrag |
+| Lesbarkeit Komposition | — | ✅ eine Klasse | ✅ drei Klassen | ⚠️ verschachtelte Kette | ✅ flache Liste |
+
+
+Der monolithische DDD-Service
+
+Der OrderService bündelt alle Belange der Bestellung in einer Klasse.
+
+Vorteile:
+
+Zentrale Anlaufstelle: Die gesamte Geschäftslogik einer Domäne ist an einem Ort konzentriert ("Single Source of Truth").
+Lineares Debugging: Der Kontrollfluss ist innerhalb einer Datei leicht nachvollziehbar; es muss nicht zwischen vielen kleinen Klassen gesprungen werden.
+Geringe kognitive Einstiegshürde: Das Muster ist Industriestandard und für neue Entwickler sofort verständlich.
+
+Nachteile:
+
+Hohe Kopplung (CBO): Änderungen an technischen Komponenten (z. B. Logging) können unvorhersehbare Seiteneffekte auf die Fachlogik haben.
+Erschwerte Testbarkeit: Jede Methode benötigt eine hohe Anzahl an Mocks, was Unit-Tests schwerfällig und wartungsintensiv macht.
+Kognitive Last bei Änderungen: Man muss die gesamte Komplexität der Klasse durchdringen, nur um eine isolierte Stelle sicher anzupassen.
+
+Spezialisierte Services (Aufspaltung)
+
+Die Zerlegung in OrderPaymentService etc. verteilt die Last auf mehrere Klassen.
+
+Vorteile:
+Bessere Übersicht: Die Klassen werden kleiner und fokussierter auf spezifische Teilprozesse (z. B. nur Zahlung).
+Parallelisierung: Verschiedene Teams können leichter gleichzeitig an unterschiedlichen Services arbeiten.
+
+Nachteile:
+
+Redundanz: Technische Querschnittsbelange (Audit, Persistenz) müssen oft in jedem Service neu injiziert werden.
+Verteilte Wartung: Eine globale Änderung (z. B. am Logging-Format) muss an mehreren Stellen gleichzeitig nachgezogen werden.
+Keine echte Isolation: Die Vermischung von technischer Infrastruktur und Domänenlogik bleibt strukturell bestehen.
+
+Der Decorator-Schnitt (Vertikal)
+
+Dieser Ansatz schneidet die Domäne streng nach Verantwortlichkeiten (StoredOrder, PaidOrder).
+
+Vorteile:
+Strikte Einhaltung von SRP & OCP: Neue Anforderungen werden durch neue Dekoratoren gelöst, ohne stabilen Code zu gefährden.
+Gezieltes Debugging: Fehler im Logging liegen garantiert in der AuditingOrder. Die kognitive Last bleibt auf die aktuelle Zuständigkeit begrenzt.
+Minimale Kopplung: Jede Klasse kennt nur das Interface und ihre spezifische Abhängigkeit.
+
+Nachteile:
+
+Projekt-Explosion: Die Anzahl der Dateien und Konstruktoren steigt deutlich an.
+Komplexe Komposition: Die Instanziierung über tiefe Verschachtelungen (new PaidOrder(new StoredOrder(...))) ist gewöhnungsbedürftig.
+Interface-Fragilität: Jede Änderung am Order-Interface erzwingt Anpassungen in allen Dekoratoren.
+
+Vertikal vs. Horizontal:
+
+Das horizontale Muster (4.4) optimiert die Lesbarkeit bei tiefen Ketten, erzwingt aber oft „strukturelle Lügen“ (leere Methoden). Ein Wechsel ist nur ratsam, wenn das Design keine leeren Methoden erzwingt und die Lesbarkeit verbessert werden kann.
+
+
+## 6. Zusammenfasung und Fazit
+
+Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Es liegt in unserer Natur, Verantwortlichkeiten miteinander zu verknüpfen. Diese zu identifizieren und zu trennen, macht den Kern hochwertigen Softwareentwurfs aus. Letztlich führen fast alle SOLID-Prinzipien auf diesen Kernpunkt zurück.
+
+Um subjektive Debatten in Code-Reviews zu vermeiden, formalisiert Robert Bräutigam das Prinzip als: SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung. Diese Messbarkeit wird durch konkrete Metriken gestützt: Ein LCOM4 von 1 steht für maximale interne Kohäsion, während ein CBO unter 5 die externe Kopplung auf ein gesundes Maß begrenzt.
+
+Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. In der monolithischen Struktur des OrderService werden fünf Verantwortlichkeiten lediglich über technische Querschnittsfelder verknüpft. Hier entsteht ein LCOM4-Wert von 1 rein zufällig und ohne fachliche Basis. Die Aufspaltung in drei spezialisierte Services senkt zwar die Kopplung, verteilt jedoch die Querschnittsbelange lediglich, anstatt sie strukturell zu isolieren. Erst der vertikale Decorator erreicht eine echte Isolation jeder Verantwortlichkeit bei einem optimalen CBO von 2. Das horizontale Muster treibt diese Entkopplung mit einem CBO von 1 pro Prozessklasse auf die Spitze, muss jedoch gegen das Risiko leerer Methoden im Interface abgewogen werden.
+
+Trotz ihrer Präzision reichen Metriken allein als Beweis für SRP-Konformität nicht aus. Ein LCOM4 von 1 kann, wie der monolithische Service zeigt, durch rein technische Infrastrukturfelder künstlich erzeugt werden, ohne dass eine fachliche Einheit vorliegt. Erst die kombinierte Betrachtung von LCOM4 und CBO, ergänzt um die qualitative Analyse der Frage „Warum sind diese Methoden fachlich verbunden?“, ergibt ein vollständiges Bild.
+
+Für die tägliche Praxis lassen sich drei klare Leitlinien ableiten: Ein LCOM4 > 1 ist ein direkter Auftrag zum Refactoring. Die Kopplung (CBO) kann durch stabile Interfaces begrenzt werden. Zudem sollten Getter vermieden werden, da sie das Hauptmerkmal semantischer Kopplung darstellen, welche von strukturellen Metriken allein nicht erfasst wird. So betrachtet ist das SRP kein starres Dogma, sondern ein präzises Werkzeug, das durch objektive Metriken erst wirklich handhabbar wird.
+
+---
+---
+
+
+Die Gegenüberstellung von Entwrufsmustern zeigt, dass der monolithische Domain-Driven Design (DDD) Service durch hohe Kopplung (CBO=5) und mangelnde Kohäsion (LCOM4=1 mit Querschnittsfeldern) eine geringe lokale Änderbarkeit aufweist. 
+
+Im Gegensatz dazu isolieren vertikale Dekoratoren (4.3) Verantwortlichkeiten, was zu optimalen Metriken (CBO=2, LCOM4=1) und besserer Testbarkeit führt, während der horizontale Decorator (4.4) die Komplexität bei hoher Anzahl an Dekoratoren durch eine flachere Struktur reduziert. Während der monolithische Ansatz bei Änderungen die Anpassung von fünf Mocks erfordert, ermöglichen Decorator-Schnitte die Einhaltung des Open/Closed Principle (OCP) und des Single Responsibility Principle (SRP).
+
+
+Das Problem bei den klassischen DDD-Services liegt in der Struktur, weil sie wie der OrderService oft horizontal nach Fachdomänen geschnitten werden. Das führt dazu, dass alles rund um die Bestellung in einer einzigen, aufgeblähten Klasse landet. Dort vermischen sich unterschiedliche Querschnittsbelange, von der Persistenz über die Zahlung bis hin zum Logging. Diese Belange werden nur durch technische Felder wie das orderRepository zusammengehalten, was eine rein zufällige und keine fachliche Kohäsion darstellt. Die Problematik zeigt sich bei der implementierung von Tests. Dabei wir werden fünf Mocks für jede Methode benötigt, obwohl sie inhaltlich kaum Berührungspunkte haben.
+
+Die Zerlegung in spezialisierte Services (OrderPaymentService etc.) ist lediglich Kosmetik. Zwar sinkt die Klassengröße, doch die mangelnde Isolation bleibt bestehen. Da Belange wie das Audit-Logging weiterhin über alle Klassen verteilt sind, betrifft eine Änderung der Logging-Strategie plötzlich drei Stellen statt einer. Echte Single Responsibility (SRP) lässt sich nicht durch mechanisches Aufteilen der Domäne erreichen, sondern nur durch einen radikal neuen architektonischen Schnitt.
+
+Zwar ist die kognitive Last beim ersten Lesen geringer, da der gesamte Code an einem Ort versammelt ist und das Debugging linear verläuft, doch dieser Vorteil verkehrt sich bei jeder Änderung ins Gegenteil: Man muss die gesamte Klasse verstehen, um eine kleine Stelle sicher anzupassen.
+
+
+Entscheidungskriterium: Vertikal vs. Horizontal
+
+Das horizontale Muster (4.4) treibt die Entkopplung weiter voran, führt aber oft zu einer „strukturellen Lüge“: Wenn das OrderAct-Interface Methoden für process und cancel vorschreibt, müssen Klassen wie Pay leere Rumpfmethoden implementieren. Das Objekt behauptet eine Fähigkeit, die es faktisch nicht besitzt – ein klarer Bruch mit der intuitiven Domänenmodellierung
+
+Fazit: Nutzen Sie die Vorteile von OOD, indem Sie primär auf vertikale Dekoratoren setzen. Ein Wechsel zum horizontalen Muster ist nur dann ratsam, wenn die Kompositionskette zu tief für die Lesbarkeit wird und das Design dabei keine „strukturellen Lügen“ (leere Methoden) erzwingt. Bleibt eine Klasse bei einer Interface-Methode ohne fachliche Antwort, ist der vertikale Decorator die ehrlichere und stabilere Wahl.
+
+
+---
+---
+Mit LCOM4 und CBO als Werkzeugen wird in folgendem dieselbe Domäne mit vier verschiedenen Entwurfsansätzen gemässen um die Unterschiede zu verdeutlichen.
+
+**Anwendungsfall**
+
+Als Anwendungsfall soll eine Bestellvorgang von einem Online-Shop dienen, welcher drei Kernoperationen : **Anlegen**, **Bezahlen** und **Stornieren** für Bestellungen benötigt.
 
 Beim **Anlegen** einer Bestellung reserviert das System die bestellten Artikel im Lager und legt die Bestellung persistent ab. Beim **Bezahlen** wird der Betrag über ein externes Zahlungssystem eingezogen und die Bestellung als bezahlt markiert; der Kunde erhält eine Bestätigungs-E-Mail. Beim **Stornieren** werden die reservierten Artikel wieder freigegeben und die Bestellung als storniert markiert; der Kunde erhält eine Stornierungs-E-Mail. Alle drei Operationen werden zusätzlich für Revisionszwecke in einem Audit-Log protokolliert.
 
-Daraus ergeben sich folgende beteiligte Komponenten:
+Daraus ergeben sich folgende **beteiligte Komponenten**:
 
 | Komponente | Rolle |
 |---|---|
@@ -141,21 +884,19 @@ Daraus ergeben sich folgende beteiligte Komponenten:
 | `Email` | Benachrichtigung: Bestätigung und Stornierung versenden |
 | `Audit` | Protokollierung: alle Operationen im Audit-Log festhalten |
 
-Genau diese sieben Komponenten tauchen in allen vier Implementierungen wieder auf. Die Frage ist allein, wie die Verantwortlichkeiten auf Klassen verteilt werden.
+Genau diese sieben Komponenten tauchen in beiden Implementierungen wieder auf – die Frage ist allein, wie die Verantwortlichkeiten auf Klassen verteilt werden.
 
 ---
 
-### 4.1 Service Pattern (DDD) – monolithisch
-
-Die intuitivste Umsetzung bündelt alle drei Operationen in einem einzigen `OrderService`:
+### 4.1 Service Pattern (DDD)
 
 ```java
 public class OrderService {
     private final OrderRepository orderRepository;   // Feld 1
-    private final InventoryApi inventoryService;     // Feld 2
-    private final PaymentApi paymentGateway;         // Feld 3
-    private final Email emailNotifier;               // Feld 4
-    private final Audit auditLogger;                 // Feld 5
+    private final InventoryApi inventoryService; // Feld 2
+    private final PaymentApi paymentGateway;     // Feld 3
+    private final Email emailNotifier;       // Feld 4
+    private final Audit auditLogger;           // Feld 5
 
     public Order createOrder(Cart cart, Customer customer) {
         inventoryService.reserve(cart);              // → Feld 2
@@ -183,7 +924,9 @@ public class OrderService {
 }
 ```
 
-Um LCOM4 herzuleiten, schauen wir, welche Methode welche Felder berührt:
+
+
+**LCOM4-Herleitung:** Welche Methode nutzt welche Felder?
 
 | Methode | Felder |
 |---|---|
@@ -191,21 +934,28 @@ Um LCOM4 herzuleiten, schauen wir, welche Methode welche Felder berührt:
 | `processPayment` | 1 (repo), 3 (gateway), 4 (notifier), 5 (logger) |
 | `cancelOrder` | 1 (repo), 2 (inv), 4 (notifier), 5 (logger) |
 
-Alle drei Methoden teilen Feld 1 (`orderRepository`) und Feld 5 (`auditLogger`) – der Graph hat damit einen einzigen Teilgraphen: LCOM4 = 1. Das klingt zunächst nach Kohäsion, ist es aber nicht. Die Verbindung entsteht ausschließlich durch technische Querschnittsfelder (Persistenz, Logging), nicht durch fachliche Zusammengehörigkeit. Jede Methode bedient einen völlig anderen Belang – sie sind zufällig in derselben Klasse gelandet, weil sie zur Domäne „Bestellung" gehören. Das eigentliche Ausmaß zeigt CBO: mit fünf externen Abhängigkeiten braucht jede einzelne Methode für einen Unit-Test alle 5 Mocks, obwohl `createOrder` weder `PaymentApi` noch `Email` jemals anfasst.
+Alle drei Methoden teilen Feld 1 (`orderRepository`) und Feld 5 (`auditLogger`) – sie sind damit über einen gemeinsamen Knoten verbunden. Der Graph hat **einen** Teilgraphen: LCOM4 = 1.
+
+Das klingt zunächst nach Kohäsion – ist es aber nicht. Die Verbindung entsteht nur durch technische Querschnittsfelder (Persistenz, Logging), nicht durch fachliche Zusammengehörigkeit. Jede Methode bedient einen völlig anderen Belang. LCOM4 entlarvt dies nicht direkt, aber CBO zeigt das Ausmaß:
 
 | Metrik | Wert | Befund |
 |---|---|---|
 | CBO | **5** | Alle 5 Felder sind externe Abhängigkeiten – jede Methode zieht andere |
 | LCOM4 | **1** | Technisch verbunden über repo und logger – nicht fachlich kohäsiv |
 
-Der `OrderService` ist damit kein Beispiel für Kohäsion, sondern für **erzwungene Verbindung durch Querschnittsfelder**. LCOM4 allein reicht nicht zur Diagnose – erst in Kombination mit CBO und der Frage *„Warum sind diese Methoden verbunden?"* wird das Problem sichtbar.
+**Analyse:** Der `OrderService` ist kein Beispiel für Kohäsion – er ist ein Beispiel für **erzwungene Verbindung durch Querschnittsfelder**. Die drei Methoden haben keine inhärente fachliche Zusammengehörigkeit; sie sind zufällig in derselben Klasse gelandet, weil sie zur Domäne „Bestellung" gehören. Das eigentliche Problem zeigt sich an CBO = 5 und daran, dass jede einzelne Methode für einen Test alle 5 Mocks benötigt. **SRP ist verletzt – LCOM4 allein reicht nicht zur Diagnose.**
 
-In der Verwendung zeigt sich das Symptom unmittelbar: Beim Instanziieren des Service müssen alle fünf Abhängigkeiten übergeben werden – auch dann, wenn nur eine einzelne Operation aufgerufen wird:
+**Verwendung:**
 
 ```java
 OrderService service = new OrderService(
-    orderRepository, inventoryApi, paymentApi, email, audit);
+    orderRepository,
+    inventoryApi,
+    paymentApi,
+    email,
+    audit);
 
+// Bestellung anlegen
 Order order = service.createOrder(cart, customer);
 
 // Bezahlen — service kennt alle 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
@@ -219,7 +969,7 @@ service.cancelOrder(order);
 
 ### 4.2 Service Pattern (DDD) – aufgespalten
 
-Der naheliegende Refactoring-Schritt besteht darin, den `OrderService` in drei kleinere Services aufzuteilen – einen pro Operation. Damit sinkt CBO pro Klasse, und jede Klasse enthält nur die Methode, die sie wirklich braucht:
+Der naheliegende Refactoring-Schritt: den `OrderService` in drei kleinere Services aufteilen – einen pro Operation. Damit sinkt CBO pro Klasse, und jede Klasse hat nur die Methode, die sie wirklich braucht.
 
 ```java
 // Verantwortlichkeit: Bestellung anlegen
@@ -270,7 +1020,7 @@ public class OrderCancelService {
 }
 ```
 
-Da jeder Service genau eine Methode hat, ist LCOM4 = 1 per Definition – eine Klasse mit einer einzigen Methode kann nicht zerfallen. Das ist keine Kohäsion, sondern eine Trivialität.
+**LCOM4-Herleitung:** Jeder Service hat genau eine Methode – LCOM4 = 1 per Definition. Das ist kein Zeichen von Kohäsion, sondern eine Trivialität: Eine Klasse mit einer einzigen Methode kann nicht zerfallen.
 
 | Klasse | Felder | CBO | LCOM4 |
 |---|---|---|---|
@@ -278,9 +1028,9 @@ Da jeder Service genau eine Methode hat, ist LCOM4 = 1 per Definition – eine K
 | `OrderPaymentService` | repo, paymentApi, email, audit | **4** | **1** – trivial |
 | `OrderCancelService` | repo, inventoryApi, email, audit | **4** | **1** – trivial |
 
-Die Aufspaltung senkt CBO von 5 auf 3–4 und macht jede Klasse kleiner – das ist eine echte Verbesserung. Das Grundproblem bleibt jedoch bestehen: `audit` und `orderRepository` erscheinen in allen drei Klassen. Eine Änderung an der Logging-Strategie betrifft nicht mehr eine Methode, sondern drei Klassen. Die Querschnittsbelange wurden nicht isoliert – sie wurden nur verteilt. SRP ist nicht durch mechanisches Aufteilen zu erreichen, sondern durch den richtigen Schnitt.
+**Analyse:** Die Aufspaltung senkt CBO von 5 auf 3–4 und macht jede Klasse kleiner – das ist eine Verbesserung. Aber das Grundproblem bleibt: `audit` und `orderRepository` erscheinen in allen drei Klassen. Jede Änderung an der Logging-Strategie oder am Repository-Interface betrifft weiterhin drei Klassen. Die Querschnittsbelange (Logging, Persistenz) sind nicht isoliert, sondern nur auf mehrere Klassen verteilt. **SRP ist besser, aber nicht erfüllt.**
 
-In der Verwendung ist der Unterschied zum Monolithen zwar sichtbar – drei separate Objekte statt einem – doch die doppelt vorhandenen Abhängigkeiten (`orderRepository`, `audit`) müssen weiterhin an jedes Objekt einzeln übergeben werden:
+**Verwendung:**
 
 ```java
 OrderService createSvc         = new OrderService(orderRepository, inventoryApi, audit);
@@ -294,19 +1044,19 @@ cancelSvc.cancelOrder(order);
 
 ---
 
-### 4.3 Vertikaler Decorator (OOP) – SRP-konform
+### 4.3 Vertikaler Decorator-Pattern (OOD)
 
-Der Decorator-Schnitt geht einen anderen Weg: Statt Methoden auf Klassen zu verteilen, werden Verantwortlichkeiten durch Umhüllen komponiert. Das Interface heißt `Order` – ein fachlicher Begriff, kein `*Service`-Suffix. `PaymentApi` entfällt als Methodenparameter, weil `process()` eine reine Verhaltensaufforderung an das Objekt sein soll; die Abhängigkeit wird stattdessen direkt in die zuständige Klasse injiziert.
+Das Decorator-Pattern separiert Verantwortlichkeiten über Komposition. Jede Klasse trägt genau eine Verantwortlichkeit; Querschnittsbelange entstehen durch Umhüllen, nicht durch Anhäufen von Feldern. Das Interface heißt `Order` – fachlicher Begriff, kein `*Service`-Suffix.
+
+Im neuen Interface entfällt `PaymentApi` als Methodenparameter: `process()` ist eine reine Verhaltensaufforderung an das Objekt. Das `PaymentApi` wird stattdessen in die zuständige Klasse `PaidOrder` injiziert – so bleibt die Abhängigkeit dort, wo sie hingehört, und die Dekoratoren bleiben davon unberührt.
 
 ```java
 public interface Order {
+    String id();
     void process();
     void cancel();
-    String getId();
 }
 ```
-
-`StoredOrder` bildet den Kern: Es kapselt `OrderRepository` als privates Implementierungsdetail ein (nach Žurauskas 2018) und erhält die ID bereits im Konstruktor – direkte Instantiierung genügt.
 
 ```java
 // Kern: Persistenz — Repository eingekapselt, ID im Konstruktor
@@ -320,7 +1070,7 @@ public final class StoredOrder implements Order {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return this.id;                              // → Feld 1
     }
 
@@ -336,29 +1086,30 @@ public final class StoredOrder implements Order {
 }
 ```
 
+**LCOM4-Herleitung `StoredOrder`:**
+
 | Methode | Felder |
 |---|---|
 | `getId` | 1 |
 | `process` | 1, 3 |
 | `cancel` | 1, 3 |
 
-Alle Methoden teilen Feld 1 (`id`) → **LCOM4 = 1** ✅ — **CBO:** Cart, OrderRepository → **CBO = 2** ✅
-
-Auf `StoredOrder` legen sich die horizontalen Dekoratoren: `PaidOrder` trägt ausschließlich die Zahlungsverantwortung und verwendet `PaymentApi` in `process()`, `InventedOrder` trägt ausschließlich die Lagerverwaltung und verwendet `InventoryApi` in `cancel()`:
+Alle Methoden teilen Feld 1 (`id`) → **LCOM4 = 1** ✅
+**CBO:** Cart, OrderRepository → **CBO = 2** ✅
 
 ```java
 // Horizontaler Dekorator: Zahlung — injiziert PaymentApi, verwendet es in process()
 public final class PaidOrder implements Order {
     private final Order delegate;            // Feld 1
-    private final PaymentApi gateway;        // Feld 2
+    private final PaymentApi gateway;    // Feld 2
 
     public PaidOrder(Order delegate, PaymentApi gateway) {
         this.delegate = delegate; this.gateway = gateway;
     }
 
     @Override
-    public String getId() {
-        return delegate.getId();             // → Feld 1
+    public String id() {
+        return delegate.id();             // → Feld 1
     }
 
     @Override
@@ -374,27 +1125,30 @@ public final class PaidOrder implements Order {
 }
 ```
 
+**LCOM4-Herleitung `PaidOrder`:**
+
 | Methode | Felder |
 |---|---|
 | `getId` | 1 |
 | `process` | 1, 2 |
 | `cancel` | 1 |
 
-Alle Methoden teilen Feld 1 (`delegate`) → **LCOM4 = 1** ✅ — **CBO:** Order, PaymentApi → **CBO = 2** ✅
+Alle Methoden teilen Feld 1 (`delegate`) → **LCOM4 = 1** ✅
+**CBO:** Order, PaymentApi → **CBO = 2** ✅
 
 ```java
 // Horizontaler Dekorator: Lagerverwaltung — injiziert InventoryApi, verwendet es in cancel()
 public final class InventedOrder implements Order {
     private final Order delegate;            // Feld 1
-    private final InventoryApi inv;          // Feld 2
+    private final InventoryApi inv;      // Feld 2
 
     public InventedOrder(Order delegate, InventoryApi inv) {
         this.delegate = delegate; this.inv = inv;
     }
 
     @Override
-    public String getId() {
-        return delegate.getId();             // → Feld 1
+    public String id() {
+        return delegate.id();             // → Feld 1
     }
 
     @Override
@@ -410,76 +1164,77 @@ public final class InventedOrder implements Order {
 }
 ```
 
+**LCOM4-Herleitung `InventedOrder`:**
+
 | Methode | Felder |
 |---|---|
 | `getId` | 1 |
 | `process` | 1 |
 | `cancel` | 1, 2 |
 
-Alle Methoden teilen Feld 1 (`delegate`) → **LCOM4 = 1** ✅ — **CBO:** Order, InventoryApi → **CBO = 2** ✅
-
-Die Querschnittsbelange Logging und Benachrichtigung folgen demselben Muster: Jeder Dekorator kennt nur seinen `delegate` und genau ein weiteres Werkzeug.
+Alle Methoden teilen Feld 1 (`delegate`) → **LCOM4 = 1** ✅
+**CBO:** Order, InventoryApi → **CBO = 2** ✅
 
 ```java
 // Dekorator: Audit-Logging — beide Methoden betroffen
 public final class AuditingOrder implements Order {
     private final Order delegate;          // Feld 1
-    private final Audit auditLogger;       // Feld 2
+    private final Audit auditLogger; // Feld 2
 
     public AuditingOrder(Order delegate, Audit auditLogger) {
         this.delegate = delegate; this.auditLogger = auditLogger;
     }
 
     @Override
-    public String getId() {
-        return delegate.getId();                           // → Feld 1
+    public String id() {
+        return delegate.id();                           // → Feld 1
     }
 
     @Override
     public void process() {
         delegate.process();                                // → Feld 1
-        auditLogger.log("Processed: " + delegate.getId()); // → Feld 2, 1
+        auditLogger.log("Processed: " + delegate.id()); // → Feld 2, 1
     }
 
     @Override
     public void cancel() {
         delegate.cancel();                                 // → Feld 1
-        auditLogger.log("Cancelled: " + delegate.getId()); // → Feld 2, 1
+        auditLogger.log("Cancelled: " + delegate.id()); // → Feld 2, 1
     }
 }
+```
 
+```java
 // Dekorator: E-Mail-Benachrichtigung — beide Methoden betroffen
 public final class NotifiedOrder implements Order {
     private final Order delegate;              // Feld 1
-    private final Email emailNotifier;         // Feld 2
+    private final Email emailNotifier; // Feld 2
 
     public NotifiedOrder(Order delegate, Email emailNotifier) {
         this.delegate = delegate; this.emailNotifier = emailNotifier;
     }
 
     @Override
-    public String getId() {
-        return delegate.getId();                                  // → Feld 1
+    public String id() {
+        return delegate.id();                                  // → Feld 1
     }
 
     @Override
     public void process() {
         delegate.process();                                       // → Feld 1
-        emailNotifier.sendConfirmation(delegate.getId());         // → Feld 2, 1
+        emailNotifier.sendConfirmation(delegate.id());         // → Feld 2, 1
     }
 
     @Override
     public void cancel() {
         delegate.cancel();                                        // → Feld 1
-        emailNotifier.sendCancellation(delegate.getId());         // → Feld 2, 1
+        emailNotifier.sendCancellation(delegate.id());         // → Feld 2, 1
     }
 }
 // Gleiche Struktur wie AuditingOrder → LCOM4 = 1, CBO = 2 ✅
 ```
 
-Jede Klasse hat CBO = 2 und LCOM4 = 1 – und beide Werte sind fachlich begründet, nicht trivial oder zufällig. `StoredOrder` hat genau zwei Felder, weil Persistenz genau zwei Dinge braucht: die Entität (`id`, `cart`) und das Werkzeug dafür (`repo`). Dasselbe gilt für jeden weiteren Dekorator. Im Gegensatz zu den aufgespaltenen Services erscheinen `audit` und `orderRepository` hier jeweils nur in einer einzigen Klasse. Die Querschnittsbelange sind nicht verteilt – sie sind isoliert.
-
-Die folgende Tabelle fasst die Messungen aller fünf Klassen zusammen:
+**Messung gesamt:**
 
 | Klasse | Verantwortlichkeit | Felder | CBO | LCOM4 |
 |---|---|---|---|---|
@@ -489,7 +1244,13 @@ Die folgende Tabelle fasst die Messungen aller fünf Klassen zusammen:
 | `AuditingOrder` | Logging | delegate, auditLogger | **2** | **1** ✅ |
 | `NotifiedOrder` | Benachrichtigung | delegate, emailNotifier | **2** | **1** ✅ |
 
-In der Komposition werden alle fünf Klassen ineinander verschachtelt – von außen nach innen, von Querschnitt zu Kern:
+**Analyse:** Jede Klasse hat CBO = 2 und LCOM4 = 1 – und beide Werte sind diesmal fachlich begründet, nicht trivial oder zufällig. `StoredOrder` hat genau zwei Felder weil Persistenz genau zwei Dinge braucht: die zu speichernde Entität (`id`, `cart`) und das Werkzeug dafür (`repo`). `PaidOrder` hat genau zwei Felder weil Zahlung genau zwei Dinge braucht: das Objekt das bezahlt wird (`delegate`) und das Werkzeug dafür (`paymentApi`). Dasselbe gilt für jede weitere Klasse.
+
+Im Gegensatz zu den aufgespaltenen Services erscheint `audit` und `orderRepository` hier jeweils nur in **einer** Klasse. Eine Änderung an der Logging-Strategie öffnet ausschließlich `AuditingOrder`. Eine Änderung am Repository-Interface öffnet ausschließlich `StoredOrder`. Kein anderer Code ist betroffen.
+
+Die Querschnittsbelange sind nicht verteilt – sie sind isoliert.
+
+**Komposition:**
 
 ```java
 Order order = new NotifiedOrder(
@@ -513,16 +1274,16 @@ order.cancel();
 // AuditingOrder loggt, NotifiedOrder sendet Stornierungs-E-Mail
 ```
 
-Der vertikale Decorator erfüllt SRP und OCP: Eine neue Anforderung – etwa SMS-Benachrichtigung – erfordert einen neuen Dekorator `SmsOrder` und keinen Eingriff in bestehenden Code. Der Preis ist eine verschachtelte Kompositionskette, deren Tiefe mit jeder neuen Verantwortlichkeit wächst. Genau hier setzt der horizontale Decorator an.
-
 ---
 
-### 4.4 Horizontaler Decorator (Bugayenko 2015) – SRP-konform
+### 4.4 Horizontaler Dekorator-Pattern (OOD)
 
-Bugayenko beschreibt in *Vertical and Horizontal Decorating* (2015) das Problem der wachsenden Tiefe: Statt Dekoratoren ineinander zu verschachteln, trägt ein einziges Wrapper-Objekt eine **flache Liste** gleichrangiger Aktionen. Das Muster verlangt ein zweites Interface – hier `OrderAct` – das die eigentliche Verantwortlichkeit kapselt. Der Wrapper `Orders` iteriert über alle `OrderAct`-Objekte und ruft sie der Reihe nach auf.
+Vertikales Dekorieren – wie in 4.3 – verschachtelt Klassen ineinander: jede Klasse umhüllt die nächste. Das funktioniert gut bei wenigen Dekoratoren. Wächst die Zahl, wird die Kompositionskette tief und schwer überschaubar. Bugayenko beschreibt in *Vertical and Horizontal Decorating* (2015) eine Alternative: statt Verschachtelung trägt ein einziges Wrapper-Objekt eine **flache Liste** gleichrangiger Transformationen.
+
+Das Muster verlangt ein zweites Interface – hier `OrderProcess` – das die eigentliche Transformation kapselt. Der Wrapper `Orders` iteriert über alle `OrderProcess`-Objekte und ruft sie der Reihe nach auf. Die Klassennamen tragen kein Suffix – sie benennen die Verantwortlichkeit direkt.
 
 ```java
-public interface OrderAct {
+public interface OrderProcess {
     void process(String id, Cart cart);
     void cancel(String id, Cart cart);
 }
@@ -530,9 +1291,9 @@ public interface OrderAct {
 public final class Orders implements Order {
     private final String id;                    // Feld 1
     private final Cart cart;                    // Feld 2
-    private final List<OrderAct> acts;          // Feld 3
+    private final List<OrderProcess> acts;        // Feld 3
 
-    public Orders(String id, Cart cart, List<OrderAct> acts) {
+    public Orders(String id, Cart cart, List<OrderProcess> acts) {
         this.id = id; this.cart = cart; this.acts = acts;
     }
 
@@ -540,15 +1301,17 @@ public final class Orders implements Order {
 
     @Override
     public void process() {
-        acts.forEach(a -> a.process(this.id, this.cart)); // → Feld 3, 1, 2
+        acts.forEach(d -> d.process(this.id, this.cart)); // → Feld 3, 1, 2
     }
 
     @Override
     public void cancel() {
-        acts.forEach(a -> a.cancel(this.id, this.cart));  // → Feld 3, 1, 2
+        acts.forEach(d -> d.cancel(this.id, this.cart));  // → Feld 3, 1, 2
     }
 }
 ```
+
+**LCOM4-Herleitung `Orders`:**
 
 | Methode | Felder |
 |---|---|
@@ -556,13 +1319,12 @@ public final class Orders implements Order {
 | `process` | 1, 2, 3 |
 | `cancel` | 1, 2, 3 |
 
-Alle Methoden teilen Feld 1 (`id`) → **LCOM4 = 1** ✅ — **CBO:** Cart, List, OrderAct → **CBO = 3** ✅
-
-Die einzelnen `OrderAct`-Implementierungen kennen jeweils nur ihr eigenes Werkzeug – kein `delegate`-Feld, kein Umhüllen:
+Alle Methoden teilen Feld 1 (`id`) → **LCOM4 = 1** ✅
+**CBO:** Cart, List, OrderProcess → **CBO = 3** ✅
 
 ```java
 // Persistenz
-public final class Persist implements OrderAct {
+public final class Persist implements OrderProcess {
     private final OrderRepository repo; // Feld 1
 
     public Persist(OrderRepository repo) { this.repo = repo; }
@@ -574,9 +1336,11 @@ public final class Persist implements OrderAct {
         repo.updateStatus(id, "CANCELLED");  // → Feld 1
     }
 }
+```
 
+```java
 // Zahlung — nur process() relevant, cancel() ist leer
-public final class Pay implements OrderAct {
+public final class Pay implements OrderProcess {
     private final PaymentApi paymentApi;    // Feld 1
 
     public Pay(PaymentApi paymentApi) { this.paymentApi = paymentApi; }
@@ -586,9 +1350,11 @@ public final class Pay implements OrderAct {
     }
     @Override public void cancel(String id, Cart cart) { }
 }
+```
 
+```java
 // Lagerverwaltung — nur cancel() relevant, process() ist leer
-public final class Invent implements OrderAct {
+public final class Invent implements OrderProcess {
     private final InventoryApi inventoryApi; // Feld 1
 
     public Invent(InventoryApi inventoryApi) { this.inventoryApi = inventoryApi; }
@@ -598,12 +1364,14 @@ public final class Invent implements OrderAct {
         inventoryApi.release(cart);          // → Feld 1
     }
 }
+```
 
+```java
 // Logging
-public final class AuditDiff implements OrderAct {
+public final class AuditAct implements OrderProcess {
     private final Audit audit;              // Feld 1
 
-    public AuditDiff(Audit audit) { this.audit = audit; }
+    public AuditAct(Audit audit) { this.audit = audit; }
 
     @Override public void process(String id, Cart cart) {
         audit.log("Processed: " + id);      // → Feld 1
@@ -612,12 +1380,14 @@ public final class AuditDiff implements OrderAct {
         audit.log("Cancelled: " + id);      // → Feld 1
     }
 }
+```
 
+```java
 // Benachrichtigung
-public final class NotifyDiff implements OrderAct {
+public final class NotifyAct implements OrderProcess {
     private final Email email;              // Feld 1
 
-    public NotifyDiff(Email email) { this.email = email; }
+    public NotifyAct(Email email) { this.email = email; }
 
     @Override public void process(String id, Cart cart) {
         email.sendConfirmation(id);         // → Feld 1
@@ -628,9 +1398,7 @@ public final class NotifyDiff implements OrderAct {
 }
 ```
 
-Die `OrderAct`-Klassen erreichen CBO = 1, weil kein `delegate`-Feld mehr nötig ist – die Weitergabe übernimmt `Orders` durch die Iteration. `audit` und `orderRepository` erscheinen weiterhin in genau einer Klasse. Eine neue Verantwortlichkeit ist ein neues `OrderAct`-Objekt und ein weiterer Listeneintrag, ohne dass bestehender Code berührt wird.
-
-Die Messungen im Überblick:
+**Messung gesamt:**
 
 | Klasse | Verantwortlichkeit | Felder | CBO | LCOM4 |
 |---|---|---|---|---|
@@ -638,68 +1406,122 @@ Die Messungen im Überblick:
 | `Persist` | Persistenz | repo | **1** | **1** ✅ |
 | `Pay` | Zahlung | paymentApi | **1** | **1** ✅ |
 | `Invent` | Lagerverwaltung | inventoryApi | **1** | **1** ✅ |
-| `AuditDiff` | Logging | audit | **1** | **1** ✅ |
-| `NotifyDiff` | Benachrichtigung | email | **1** | **1** ✅ |
+| `AuditAct` | Logging | audit | **1** | **1** ✅ |
+| `NotifyAct` | Benachrichtigung | email | **1** | **1** ✅ |
 
-Die Komposition ist flach – alle Verantwortlichkeiten stehen gleichrangig nebeneinander, keine Klasse umhüllt eine andere:
+**Analyse:** Die `Act`-Klassen haben CBO = 1 – jede kennt ausschließlich ihr eigenes Werkzeug. Das ist eine weitere Reduktion gegenüber den vertikalen Dekoratoren (CBO = 2), weil kein `delegate`-Feld mehr nötig ist: Die Weitergabe an den nächsten Schritt übernimmt `Orders` durch die Iteration. `audit` und `orderRepository` erscheinen weiterhin in genau einer Klasse. Das Hinzufügen einer neuen Verantwortlichkeit – z. B. SMS-Benachrichtigung – ist ein neues `OrderProcess`-Objekt und ein weiterer Listeneintrag: kein bestehender Code wird berührt (OCP).
+
+Der einzige strukturelle Schwachpunkt: `Pay.cancel()` und `Invent.process()` sind leere Methoden. Das ist ein schwaches LCOM4-Signal – `Pay` hat nur eine Methode mit echtem Verhalten und eine leere. Bugayenko akzeptiert dies als Preis des horizontalen Schnitts; alternativ könnte `OrderProcess` in `OnProcess` und `OnCancel` aufgeteilt werden, was aber das Modell verkompliziert.
+
+**Verwendung:**
 
 ```java
 Order order = new Orders(id, cart, List.of(
     new Persist(repo),
     new Pay(paymentApi),
     new Invent(inventoryApi),
-    new AuditDiff(audit),
-    new NotifyDiff(email)
+    new AuditAct(audit),
+    new NotifyAct(email)
 ));
 
 order.process();
-// → Orders iteriert alle acts: Persist, Pay, AuditDiff, NotifyDiff aktiv
+// → Orders iteriert alle acts: Persist, Pay, Audit, Notify aktiv
 // Pay zieht Zahlung ein, Persist persistiert,
-// AuditDiff loggt, NotifyDiff sendet Bestätigungs-E-Mail
+// Audit loggt, Notify sendet Bestätigungs-E-Mail
 
 order.cancel();
-// → Orders iteriert alle acts: Persist, Invent, AuditDiff, NotifyDiff aktiv
+// → Orders iteriert alle acts: Persist, Invent, Audit, Notify aktiv
 // Invent gibt Lagerbestand frei, Persist persistiert,
-// AuditDiff loggt, NotifyDiff sendet Stornierungs-E-Mail
+// Audit loggt, Notify sendet Stornierungs-E-Mail
 ```
 
-Verglichen mit der vertikalen Kette ist die Komposition flach und gleichrangig – jeder Eintrag in der Liste ist eine eigenständige Verantwortlichkeit, keine Umhüllung der nächsten. Nach Bugayenko ist vertikales Dekorieren der einfachere Einstieg; horizontales Dekorieren ist die skalierbarere Form, sobald die Kompositionskette tiefer wird als sie lesbar bleibt.
+Verglichen mit der vertikalen Kette ist die Komposition flach und gleichrangig – jeder Eintrag in der Liste ist eine eigenständige Verantwortlichkeit, keine Umhüllung der nächsten. Nach Bugayenko: vertikales Dekorieren ist der einfachere Einstieg; horizontales Dekorieren ist die skalierbarere Form, sobald die Zahl der Dekoratoren wächst.
 
 ---
 
 ## 5. Gegenüberstellung
 
-Die folgende Tabelle fasst die Messergebnisse aller vier Varianten zusammen und macht die Progression auf einen Blick sichtbar:
-
 | Konzept | Metrik | OrderService (DDD) | Services aufgespalten | Vertikaler Decorator (4.3) | Horizontaler Decorator (4.4) |
 |---|---|---|---|---|---|
 | Kohäsion | LCOM4 | ⚠️ LCOM4 = **1** — Querschnittsfelder | ⚠️ LCOM4 = **1** — trivial (1 Methode) | ✅ LCOM4 = **1** — fachlich kohäsiv | ✅ LCOM4 = **1** — fachlich kohäsiv |
 | Kopplung | CBO | ❌ CBO = **5** | ⚠️ CBO = **3–4** je Klasse | ✅ CBO = **2** je Klasse | ✅ CBO = **1–3** je Klasse |
-| Lokale Änderbarkeit | LCOM4 / CBO | ❌ Logging betrifft alle 3 Methoden | ❌ Logging betrifft alle 3 Klassen | ✅ nur `AuditingOrder` | ✅ nur `AuditDiff` |
+| Lokale Änderbarkeit | LCOM4 / CBO | ❌ Logging betrifft alle 3 Methoden | ❌ Logging betrifft alle 3 Klassen | ✅ nur `AuditingOrder` | ✅ nur `AuditAct` |
 | Änderungsausbreitung | CBO | ❌ `PaymentApi` trifft gesamten Service | ⚠️ nur `OrderPaymentService` | ✅ nur `PaidOrder` | ✅ nur `Pay` |
 | Testbarkeit | Mocks pro Test | ❌ 5 Mocks pro Methode | ⚠️ 3–4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
-| Erweiterbarkeit (OCP) | neue Anforderung | ❌ bestehende Methoden ändern | ❌ neue Klasse + bestehende ändern | ✅ neuer Dekorator | ✅ neues `OrderAct` + Listeneintrag |
+| Erweiterbarkeit (OCP) | neue Anforderung | ❌ bestehende Methoden ändern | ❌ neue Klasse + bestehende ändern | ✅ neuer Dekorator | ✅ neues `OrderProcess` + Listeneintrag |
 | Lesbarkeit Komposition | — | ✅ eine Klasse | ✅ drei Klassen | ⚠️ verschachtelte Kette | ✅ flache Liste |
 
-Die vier Varianten lassen sich als Progression lesen. Der monolithische `OrderService` schneidet *horizontal nach Fachdomäne* – alles rund um Bestellungen landet in einer Klasse und erzeugt Methoden mit völlig unterschiedlichen Querschnittsbelangen, die nur durch technische Felder wie `orderRepository` und `audit` zusammengehalten werden. Diese Verbindung ist zufällig, nicht fachlich: Jede Methode braucht für einen Unit-Test alle 5 Mocks, obwohl sie inhaltlich nichts miteinander zu tun haben. Das Aufteilen in drei Services senkt CBO und macht jede Klasse kleiner, löst das Problem jedoch nicht grundlegend, weil `audit` und `orderRepository` weiterhin in allen drei Klassen erscheinen – die Querschnittsbelange wurden nicht isoliert, sondern nur verteilt.
+**Warum versagt der monolithische DDD-Service?**
 
-Erst der vertikale Decorator durchbricht dieses Muster, indem er *vertikal nach Verantwortlichkeit* schneidet. Jede Klasse kennt ausschließlich ihren eigenen Belang und trägt genau die zwei Felder, die sie dafür braucht. Eine Änderung am Logging-Format betrifft ausschließlich `AuditingOrder`, eine Änderung an der Zahlungslogik ausschließlich `PaidOrder`. Dieser Schnitt ist nicht kostenlos: Fünf Klassen statt einer bedeuten mehr Dateien und eine verschachtelte Kompositionskette. Außerdem muss das Interface `Order` stabil bleiben – jede neue Methode zwingt alle Implementierungen zur Anpassung. Dieser Aufwand ist jedoch die direkte Einmalzahlung für SRP und OCP: Änderungen bleiben lokal, Erweiterungen berühren keinen bestehenden Code.
+Das Problem ist strukturell. Der `OrderService` schneidet *horizontal nach Fachdomäne* – alles rund um Bestellungen landet in einer Klasse. Das erzeugt Methoden mit völlig unterschiedlichen Querschnittsbelangen (Persistenz, Zahlung, Benachrichtigung, Logging), die nur durch technische Felder wie `orderRepository` und `audit` zusammengehalten werden. Diese Verbindung ist zufällig, nicht fachlich. Der Beweis: Jede einzelne Methode braucht für einen Unit-Test alle 5 Mocks – obwohl sie inhaltlich nichts miteinander zu tun haben.
 
-Das horizontale Muster geht in Richtung CBO und Testbarkeit noch einen Schritt weiter, führt aber eigene Schwächen ein. `OrderAct` erzwingt, dass jede Implementierung beide Methoden deklariert – auch wenn nur eine relevant ist. `Pay.cancel()` ist leer, `Invent.process()` ist leer. Das ist keine LCOM4-Verletzung, aber eine strukturelle Lüge: Das Interface behauptet eine Fähigkeit, die die Klasse nicht besitzt. In größeren Systemen häufen sich solche leeren Methoden, die still ignoriert werden und dennoch kompiliert und gepflegt werden müssen. Dazu kommt, dass die Ausführungsreihenfolge der `OrderAct`-Objekte implizit durch die Listenreihenfolge bestimmt wird – beim vertikalen Decorator ist sie durch die Verschachtelung explizit sichtbar, beim horizontalen liegt sie in der `List.of(...)`-Deklaration, die leicht übersehen wird. Bugayenkos Empfehlung lautet daher: mit vertikalem Dekorieren beginnen und zu horizontalem migrieren, wenn die Kompositionskette tiefer wird als sie lesbar bleibt.
+**Warum reicht das Aufteilen in drei Services nicht?**
+
+Die Aufspaltung in `OrderService`, `OrderPaymentService` und `OrderCancelService` ist eine Verbesserung – CBO sinkt, jede Klasse ist kleiner. Aber `audit` und `orderRepository` erscheinen weiterhin in allen drei Klassen. Eine Änderung an der Logging-Strategie betrifft nicht mehr eine Methode, sondern drei Klassen. Die Querschnittsbelange wurden nicht isoliert – sie wurden nur verteilt. SRP ist nicht durch mechanisches Aufteilen zu erreichen, sondern durch den richtigen Schnitt.
+
+**Warum funktioniert der Decorator-Schnitt?**
+
+Der Decorator schneidet *vertikal nach Verantwortlichkeit*: `StoredOrder` kennt ausschließlich Persistenz, `PaidOrder` ausschließlich Zahlung, `InventedOrder` ausschließlich Lagerverwaltung, `AuditingOrder` ausschließlich Logging, `NotifiedOrder` ausschließlich Benachrichtigung. Jede Klasse hat genau die zwei Felder ihrer Verantwortlichkeit. Eine Änderung am Logging-Format betrifft ausschließlich `AuditingOrder`. Eine Änderung an der Zahlungslogik betrifft ausschließlich `PaidOrder`. Die Metriken sind kein Selbstzweck – sie sind der objektive Nachweis, dass das Designziel lokale Änderbarkeit tatsächlich erreicht wurde.
+
+**Nachteile des Decorator-Schnitts und warum sie gerechtfertigt sind**
+
+Der Decorator-Schnitt ist nicht kostenlos. Fünf Klassen statt einer bedeuten mehr Dateien, mehr Konstruktoren, mehr Navigationspfade beim Lesen des Codes. Die Kompositionskette `new NotifiedOrder(new AuditingOrder(...))` ist für Entwickler ungewohnt, die Service-Klassen als selbstverständlich betrachten. Und das Interface `Order` muss stabil sein – jede Erweiterung um eine neue Methode zwingt alle fünf Implementierungen zur Anpassung.
+
+Dieser Aufwand ist jedoch der direkte Preis für zwei Prinzipien, die hier tatsächlich eingehalten werden:
+
+**SRP** ist erfüllt: Jede Klasse hat genau eine Verantwortlichkeit, die sich in CBO = 2 und fachlich begründetem LCOM4 = 1 niederschlägt. Der Mehraufwand beim Anlegen der Klassen ist eine Einmalzahlung. Die Einsparung entsteht bei jeder späteren Änderung – und Änderungen kommen häufiger als Neuerstellungen.
+
+**OCP** (*Open/Closed Principle*) ist erfüllt: Eine neue Anforderung – etwa SMS-Benachrichtigung zusätzlich zur E-Mail – erfordert keine Änderung an bestehenden Klassen. Es genügt, einen neuen Dekorator `SmsOrder` zu schreiben und ihn in die Kompositionskette einzuhängen. Bestehender Code bleibt unberührt und damit ungetestet-stabil. Beim `OrderService` dagegen würde dieselbe Anforderung eine Änderung in mindestens zwei Methoden und einen neuen Mock in allen bestehenden Tests erfordern.
+
+Die Mehrklassen sind also keine Komplexität – sie sind die strukturelle Abbildung tatsächlich vorhandener, getrennter Verantwortlichkeiten. Wer den Aufwand als zu hoch empfindet, zahlt ihn später versteckt: als Testaufwand, als Änderungsausbreitung, als Debugging in Klassen die zu viel wissen.
+
+**Nachteile des horizontalen Decorators**
+
+Das horizontale Muster (4.4) verbessert CBO und Testbarkeit weiter – aber führt eigene Schwächen ein. `OrderProcess` erzwingt, dass jede Implementierung beide Methoden `process()` und `cancel()` deklariert, auch wenn nur eine davon relevant ist. `Pay.cancel()` ist leer, `Invent.process()` ist leer. Das ist kein LCOM4-Problem – beide Klassen haben nur ein Feld und bleiben kohäsiv – aber es ist eine strukturelle Lüge: Das Interface behauptet eine Fähigkeit, die die Klasse nicht besitzt. In größeren Systemen mit vielen `OrderProcess`-Implementierungen entstehen so viele leere Methoden, die still ignoriert werden und dennoch kompiliert, getestet und gepflegt werden müssen.
+
+Der `Orders`-Wrapper hat CBO = 3 statt 2 – `List` als Containertyp zählt als zusätzliche Abhängigkeit. Und die Ausführungsreihenfolge der `OrderProcess`-Objekte ist implizit durch die Listenreihenfolge bestimmt. Beim vertikalen Decorator ist die Reihenfolge durch die Verschachtelung explizit sichtbar; beim horizontalen liegt sie in der `List.of(...)`-Deklaration, die leicht übersehen wird.
+
+**Wann welcher Ansatz?** Bugayenko selbst empfiehlt: mit vertikalem Dekorieren beginnen, zu horizontalem migrieren wenn die Zahl der Dekoratoren wächst. Der Schwellenwert liegt nicht bei einer fixen Zahl, sondern wenn die Kompositionskette tiefer wird als sie lesbar bleibt.
 
 ---
 
 ## 6. Fazit
 
-Die gängigen SRP-Definitionen laden zu Interpretation ein und führen in Code-Reviews zu Debatten ohne objektiven Ausweg. Die Formel **SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung** nach Robert Bräutigam macht das Prinzip messbar: **LCOM4 = 1** signalisiert, dass eine Klasse intern zusammenhängend ist; **CBO so niedrig wie möglich** signalisiert, dass sie nach außen minimal exponiert ist.
+Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Es liegt in unserer Natur, Verantwortlichkeiten miteinander zu verknüpfen. Diese Verantwortlichkeiten jedoch zu identifizieren und voneinander zu trennen, macht einen Großteil dessen aus, worum es beim Softwareentwurf eigentlich geht. Die anderen SOLID Prinzipien führen auf die eine oder andere Weise auf diesen Kernpunkt zurück.
 
-Der Vergleich der vier Designvarianten zeigt eine klare Progression – vom monolithischen `OrderService`, der fünf Verantwortlichkeiten durch Querschnittsfelder verbindet, über die aufgespaltenen Services, die CBO senken aber Querschnittsbelange nur verteilen, bis zum vertikalen Decorator mit CBO = 2 je Klasse und schließlich zum horizontalen Decorator mit CBO = 1 je `OrderAct`-Klasse, flacher Komposition und maximaler Erweiterbarkeit – auf Kosten leerer Interface-Methoden bei partiellen Verantwortlichkeiten.
+Um subjektive Debatten in Code-Reviews zu vermeiden, formalisiert Robert Bräutigam das Prinzip als: SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung. Diese Messbarkeit wird durch konkrete Metriken gestützt: Ein LCOM4 von 1 steht für maximale interne Kohäsion, während ein CBO unter 5 die externe Kopplung auf ein gesundes Maß begrenzt.
 
-Dabei ist LCOM4 = 1 allein kein Beweis für SRP-Konformität. Wie der `OrderService` zeigt, kann LCOM4 = 1 durch Querschnittsfelder entstehen, ohne echte fachliche Kohäsion. Erst die Kombination aus LCOM4 und CBO, zusammen mit der Frage *„Warum sind diese Methoden verbunden?"*, ergibt ein vollständiges Bild.
+Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. In der monolithischen Struktur des OrderService werden fünf Verantwortlichkeiten lediglich über technische Querschnittsfelder verknüpft. Hier entsteht ein LCOM4 Wert von 1 rein zufällig und ohne fachliche Basis. 
 
-Für die tägliche Praxis lassen sich daraus drei Leitlinien ableiten: LCOM4 > 1 ist ein direkter Refactoring-Auftrag, der keiner Interpretation bedarf. CBO sollte auf stabile Interfaces begrenzt werden – konkrete Typen in Feldern sind ein Warnsignal. Und Getter sollten vermieden werden, da sie der Hauptweg für semantische Kopplung sind, die keine Metrik automatisch erfasst.
+Die Aufspaltung in drei spezialisierte Services senkt zwar die Kopplung, verteilt jedoch die Querschnittsbelange lediglich, anstatt sie strukturell zu isolieren. 
+
+Der vertikale Decorator erreicht eine echte Isolation jeder Verantwortlichkeit bei einem optimalen CBO von 2. 
+
+Das horizontale Muster treibt diese Entkopplung mit einem CBO von 1 pro Prozessklasse und einer flachen Komposition auf die Spitze, muss jedoch gegen das Risiko leerer Methoden im Interface bei partiellen Verantwortlichkeiten abgewogen werden.
+
+Für die tägliche Praxis lassen sich aus diesem Beitrag drei klare Leitlinien ableiten: Ein LCOM4 > 1 ist ein direkter Auftrag zum Refactoring. Die Kopplung (CBO) kann druch stabile Interfaces begrenzt werden. Zudem sollten Getter vermieden werden, da sie das Hauptmerkmal semantischer Kopplung darstellen, welche von strukturellen Metriken allein nicht erfasst wird. So betrachtet ist das SRP kein starres Dogma, sondern ein präzises Werkzeug, das durch objektive Metriken erst wirklich handhabbar wird.
+
+Trotz ihrer Präzision reichen Metriken allein als Beweis für eine echte SRP-Konformität nicht aus. Ein LCOM4 von 1 kann, wie der monolithische Service eindrucksvoll zeigt, durch rein technische Infrastrukturfelder künstlich erzeugt werden, ohne dass eine tatsächliche fachliche Einheit vorliegt. Erst die kombinierte Betrachtung von LCOM4 und CBO, ergänzt um die qualitative Analyse der Frage 'Warum sind diese Methoden fachlich verbunden?', ergibt ein vollständiges Bild der Designqualität.
+
+
+---
+---
+
+Wichtig: LCOM4 = 1 allein ist kein Beweis für SRP-Konformität. Wie der `OrderService` zeigt, kann LCOM4 = 1 durch Querschnittsfelder entstehen, ohne echte fachliche Kohäsion. Erst die Kombination aus LCOM4 und CBO, zusammen mit der Frage *„Warum sind diese Methoden verbunden?"*, ergibt ein vollständiges Bild.
+
+---
+---
+
+Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. Der monolithische `OrderService` verbindet fünf Verantwortlichkeiten durch Querschnittsfelder – LCOM4 = 1 entsteht zufällig, nicht fachlich. Das Aufteilen in drei Services senkt CBO, verteilt aber die Querschnittsbelange nur, ohne sie zu isolieren. Der vertikale Decorator isoliert jede Verantwortlichkeit in einer eigenen Klasse mit CBO = 2. Der horizontale Decorator geht noch weiter: CBO = 1 je `OrderProcess`-Klasse, flache Komposition, maximale Erweiterbarkeit – auf Kosten leerer Interface-Methoden bei partiellen Verantwortlichkeiten.
+
+Wichtig: LCOM4 = 1 allein ist kein Beweis für SRP-Konformität. Wie der `OrderService` zeigt, kann LCOM4 = 1 durch Querschnittsfelder entstehen, ohne echte fachliche Kohäsion. Erst die Kombination aus LCOM4 und CBO, zusammen mit der Frage *„Warum sind diese Methoden verbunden?"*, ergibt ein vollständiges Bild.
+
+Drei Leitlinien für die Praxis: LCOM4 > 1 ist ein direkter Refactoring-Auftrag. CBO auf stabile Interfaces begrenzen. Getter vermeiden – sie sind der Hauptweg für semantische Kopplung, die keine Metrik misst.
 
 SRP ist kein Dogma, sondern ein Werkzeug. Mit der richtigen Metrik wird es zu einem, das man tatsächlich benutzen kann.
+
+
+
 
 ---
 
@@ -707,8 +1529,12 @@ SRP ist kein Dogma, sondern ein Werkzeug. Mit der richtigen Metrik wird es zu ei
 
 ### Hauptquelle
 
-- Bräutigam, R. *Single Responsibility Principle*. MATHEMA Software GmbH. SpeakerDeck. https://speakerdeck.com/robertbraeutigam/single-responsibility-principle
+- Robert Martin [The Single Responsibility Principle (2007)](https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g)
+- Robert Martin [The Single Responsibility Principle (2014)](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
+- Robert Bräutigam [The Single Responsibility Principle (2014)](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
+- Bugayenko, Yegor [Vertical and Horizontal Decorating (2015)](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 
+- https://thevaluable.dev/single-responsibility-principle-revisited/
 ### Bücher
 
 - Martin, R. C. (2003). *Agile Software Development: Principles, Patterns, and Practices*. Prentice Hall.
@@ -727,7 +1553,4 @@ SRP ist kein Dogma, sondern ein Werkzeug. Mit der richtigen Metrik wird es zu ei
 ### Weiterführende Artikel
 
 - Žurauskas, V. (2018). *Maintaining model integrity in service orchestrating applications*. https://www.vzurauskas.com/2018/07/24/maintaining-model-integrity
-- Bugayenko, Y. (2015). *Vertical and Horizontal Decorating*. https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html
-- Bugayenko, Y. (2014). *ORM Is an Offensive Anti-Pattern*. https://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html
-- Bugayenko, Y. (2025). *remove(42) vs. find(42).remove()*. https://www.yegor256.com/2025/06/22/retrieve-or-remove.html
-- Martin, R. C. (2014). *The Single Responsibility Principle*. https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html
+
