@@ -659,10 +659,6 @@ Alternativ ließe sich das OrderProcess-Interface im Sinne des **Interface Segre
 Die Wahl eines Software-Designs stellt stets eine Abwägung zwischen der initialen Entwicklungsgeschwindigkeit und den langfristigen Wartungskosten (Total Cost of Ownership) dar. Ein direkter Vergleich der vier Ansätze verdeutlicht die strukturelle Evolution von der monolithischen Bündelung hin zur granularen Entkopplung.
 
 
-
-
-Die Wahl eines Software-Designs ist eine Abwägung zwischen initialer Entwicklungsgeschwindigkeit und langfristigen Wartungskosten (TCO). Es verbindet die theoretische Fundierung des SRP mit der praktischen Messbarkeit durch Metriken und der notwendigen qualitativen Bewertung durch den Entwickler. Besonders die Offenlegung der „künstlichen Kohäsion“ durch Infrastrukturfelder ist ein starkes Argument gegen rein mechanisches Design.
-
 | Konzept | Metrik | Service (Monolith) | Services (aufgespalten) | Vertikaler Decorator | Horizontaler Decorator |
 |---|---|---|---|---|---|
 | Kohäsion | LCOM4 | ⚠️ LCOM4 = **1** — Querschnittsfelder | ⚠️ LCOM4 = **1** — trivial (1 Methode) | ✅ LCOM4 = **1** — fachlich kohäsiv | ✅ LCOM4 = **1** — fachlich kohäsiv |
