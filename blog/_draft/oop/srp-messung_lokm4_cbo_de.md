@@ -656,9 +656,9 @@ Alternativ ließe sich das OrderProcess-Interface im Sinne des **Interface Segre
 
 ## 6. Gegenüberstellung
 
-Die Wahl eines Software-Designs stellt stets eine Abwägung zwischen der initialen Entwicklungsgeschwindigkeit und den langfristigen Wartungskosten (Total Cost of Ownership) dar. Ein direkter Vergleich der vier Ansätze verdeutlicht die strukturelle Evolution von der monolithischen Bündelung hin zur granularen Entkopplung.
+Die Wahl eines Software-Designs stellt stets eine Abwägung zwischen der initialen Entwicklungsgeschwindigkeit und den langfristigen Wartungskosten (Total Cost of Ownership) dar. Ein direkter Vergleich der vier Ansätze verdeutlicht die strukturelle Evolution von der monolithischen Bündelung hin zur granularen Entkopplung. Die Tabelle verdeutlicht die systematische Verschiebung der Qualitätsparameter über die verschiedenen Entwurfsstufen hinweg.
 
-| Konzept | Service (Monolith) | Services (aufgespalten) | Vertikaler Decorator | Horizontaler Decorator |
+| Merkmal | Service (Monolith) | Services (aufgespalten) | Vertikaler Decorator | Horizontaler Decorator |
 |---|---|---|---|---|
 | Kohäsion (LCOM4) | LCOM4 = 1 (erzwungen) | LCOM4 = 1 (trivial) | ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) |
 | Kopplung (CBO) | ❌ CBO = 8 | ⚠️ CBO = 6 je Klasse | ✅ CBO = 2 je Klasse | ✅ CBO = 1 je Klasse |
@@ -668,8 +668,6 @@ Die Wahl eines Software-Designs stellt stets eine Abwägung zwischen der initial
 | Testbarkeit (Mocks) | ❌ 8 Mocks erforderlich | ⚠️ 6 Mocks erforderlich | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
 | Komposition | ✅ eine zentrale Klass | ✅ drei kleine Klassen | ⚠️ tiefe Verschachtelung | ✅ flache Liste |
 | Strukturelle Risiken | ⚠️ Fat Service / ⚠️ hohe Kopplung | ⚠️ Redundanz / hohe Streuung | ⚠️ Interface-Fragilität | ⚠️ LSP-Verletzung |
-
-Die Tabelle verdeutlicht die systematische Verschiebung der Qualitätsparameter über die verschiedenen Entwurfsstufen hinweg.
 
 **Der DDD Service-Schnitt**
 
