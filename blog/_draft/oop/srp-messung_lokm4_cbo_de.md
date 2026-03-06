@@ -23,29 +23,31 @@ Aufgrund der Unklarheiten rund um den Begriff des ‚Änderungsgrundes‘ präzi
 * "Gather together the things that change for the same reasons. Separate those things that change for different reasons"
 * "Same reason' means it originates from the same business person"
 
-In der praktischen Anwendung weisen diese Definitionen jedoch neue Fragen auf. So ist beispielsweise unklar, ob ein OrderService, der Bestellungen sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf eine einzelne Aufgabe verstößt.
+In der praktischen Anwendung weisen diese Definitionen jedoch neue Fragen auf. 
 
-Auch die praktische Faustregel (Heuristik), Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung (Antizipation) der künftigen Produktentwicklung erfordert.
-
-Ebenso erweist sich der Verweis auf den ‚Geschäftsmann‘ zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Code-Alltag unbrauchbar.
+* So ist beispielsweise unklar, ob ein OrderService, der Bestellungen sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf eine einzelne Aufgabe verstößt.
+* Auch die praktische Faustregel (Heuristik), Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung (Antizipation) der künftigen Produktentwicklung erfordert.
+* Ebenso erweist sich der Verweis auf den ‚Geschäftsmann‘ zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Code-Alltag unbrauchbar.
 
 Diese kontextabhängigen Interpretationen führen in Code-Reviews häufig zu zeitraubenden Grundsatzdebatten. Ohne objektive Bewertungskriterien drohen solche Diskussionen in subjektive Meinungsverschiedenheiten auszuarten, was die Effizienz und Konsistenz der Softwareentwicklung verhindert.
 
 ## 3. Die Formalisierung von Kohäsion und Kopplung
 
 Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage für die Softwareentwicklung. Begriffe wie Verantwortung, Änderungsgrund oder Akteursorientierung erweisen sich für die praktische Umsetzung als zu vage und können in der Konsequenz häufig zu einer unnötigen Codefragmentierung führen. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
-SRP ≡ max(COHESION) ∧ min(COUPLING)
+
+`SRP ≡ max(COHESION) ∧ min(COUPLING)`
 
 Durch die formale Gleichsetzung des SRP mit der Konjunktion aus maximaler Kohäsion und minimaler Kopplung wandelt sich das Prinzip von einer rein abstrakten Designphilosophie zu einer präzisen Strukturmetrik. Diese mathematische Definition ermöglicht es, die ehemals vagen Verantwortlichkeiten einer Klasse durch messbare strukturelle Eigenschaften objektiv zu bewerten.
 
 Die interne Qualität einer Klasse bemisst sich an ihrer Kohäsion, also dem Grad, in dem Methoden und Felder eine funktionale Einheit bilden und somit das Versprechen einlösen, nur eine Sache zu tun.
+
 Die externe Qualität wird hingegen durch die Kopplung bestimmt, welche die Abhängigkeiten zu fremden Objekten beschreibt. Je geringer diese externe Vernetzung ausfällt, desto isolierter und wartungsfreundlicher bleibt die Klasse gegenüber globalen Änderungen im System.
 
-Innerhalb der Kopplung wird zwischen physikalischen und semantischen Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Code-Änderungen. Sobald eine Klasse beispielsweise über Ketten wie user.getAddress().getCity() auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Read-Methode als möglicher Kanal für eine erhöhte semantische Kopplung.
+Innerhalb der Kopplung wird zwischen physikalischen und semantischen Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Code-Änderungen. Sobald eine Klasse beispielsweise über Ketten wie `user.getAddress().getCity()` auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Read-Methode als möglicher Kanal für eine erhöhte semantische Kopplung.
 
-Um die semantischen Abhängigkeiten zu minimieren, dient das Law of Demeter als zentrale Entwurfsrichtlinie, nach der ein Objekt nur mit seinen unmittelbaren Nachbarn kommunizieren darf. Ergänzt wird dies durch das Prinzip Tell, Don’t Ask, welches dazu auffordert, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen, um darauf basierend Entscheidungen zu treffen. Die konsequente Anwendung beider Prinzipien fungiert somit als effektiver Schutz gegen semantische Instabilität, indem sie die Kapselung wahrt und die Verantwortlichkeiten klar voneinander isoliert.
+Um die semantischen Abhängigkeiten zu minimieren, dient das **Law of Demeter** als zentrale Entwurfsrichtlinie, nach der ein Objekt nur mit seinen unmittelbaren Nachbarn kommunizieren darf. Ergänzt wird dies durch das Prinzip **Tell, Don’t Ask**, welches dazu auffordert, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen, um darauf basierend Entscheidungen zu treffen. Die konsequente Anwendung beider Prinzipien fungiert somit als effektiver Schutz gegen semantische Instabilität, indem sie die Kapselung wahrt und die Verantwortlichkeiten klar voneinander isoliert.
 
-## 3. Messverfahren für LCOM4 und CBO
+## 3. Messverfahren für Kohäsion (LCOM4) und Kopplung (CBO)
 
 ### 3.1 Lack of Cohesion of Methods
 
@@ -53,14 +55,13 @@ Eine der bekanntesten Metriken zur Messung der inneren Klassenstruktur ist die L
 
 Die konkreten Aussagen zur Bewertung der Klassenstruktur liefern die folgenden Kennzahlen: 
 
-Ein LCOM4-Wert von 1 bedeutet, dass sämtliche Methoden und Felder direkt oder indirekt miteinander verbunden sind, was einer hochgradig kohäsiven Klasse im Idealzustand entspricht.
-
-Bei einem LCOM4-Wert über 1, zerfällt die Klasse in mehrere unabhängige Teilgraphen, was als objektives Indiz für eine Verletzung des Single Responsibility Principles gewertet wird.
-
-Ein LCOM4-Wert von 0 kennzeichnet hingegen eine Klasse ohne Methoden, wie etwa einen reinen Datencontainer, was im Rahmen dieser Analyse neutral bewertet wird.
+* **LCOM4-Wert von 1** bedeutet, dass sämtliche Methoden und Felder direkt oder indirekt miteinander verbunden sind, was einer hochgradig kohäsiven Klasse im Idealzustand entspricht.
+* **LCOM4-Wert über 1**, zerfällt die Klasse in mehrere unabhängige Teilgraphen, was als objektives Indiz für eine Verletzung des Single Responsibility Principles gewertet wird.
+* **LCOM4-Wert von 0** kennzeichnet hingegen eine Klasse ohne Methoden, wie etwa einen reinen Datencontainer, was im Rahmen dieser Analyse neutral bewertet wird.
 
 **Fallbeispiel: Kohäsion (LCOM4 = 2)**
-In diesem Szenario enthält die Klasse OrderProcess zwei logische Zuständigkeiten über die Kernlogik einer Bestellung und der Zahlungsabwicklung.
+
+In diesem Szenario enthält die Klasse `OrderProcess` zwei logische Zuständigkeiten über die Kernlogik einer Bestellung und der Zahlungsabwicklung.
 
 ```java
 // LCOM4 = 2 — Die Klasse zerfällt in zwei isolierte Teilgraphen
@@ -130,17 +131,13 @@ Primitive Datentypen und Standard-Wrapper wie int oder String bleiben hierbei un
 
 Die Bewertung der Messergebnisse folgt einer klaren Skala:
 
-Ein CBO-Wert von 0 darauf hindeutet, dass eine Klasse isoliert ist und somit faktisch nicht am System teilnimmt.
-
-Die CBO-Werte zwischen 1 und 4 gilt als Idealbereich, da er eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
-
-Übersteigt der CBO-Wert hingegen die Grenze von 5, deutet dies auf eine zu enge Verflechtung mit anderen Klassen hin.
+* **CBO-Wert von 0** darauf hindeutet, dass eine Klasse isoliert ist und somit faktisch nicht am System teilnimmt.
+* **CBO-Werte zwischen 1 und 4** gilt als Idealbereich, da er eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
+* **CBO-Wert größer als 5**, deutet dies auf eine zu enge Verflechtung mit anderen Klassen hin.
 
 Grundsätzlich ist eine Kopplung zwischen Klassen für die Funktionsfähigkeit eines Systems zwar unumgänglich, doch erschwert ein übermäßiges Maß an Abhängigkeiten das Testen sowie die Modifikation und schränkt die Wiederverwendbarkeit der Komponenten erheblich ein.
 
-Um diese Abhängigkeiten auf ein gesundes Maß zu reduzieren, bietet das **Dependency Inversion Principle (DIP)** eine zentrale Lösung, indem es High-Level-Module von konkreten Implementierungen entkoppelt und stattdessen die Abhängigkeit von stabilen Abstraktionen erzwingt. Ergänzend dazu trägt das **Interface Segregation Principle (ISP)** zur Kopplungsminimierung bei, indem es Klassen nur gegen spezifisch benötigte Teil-Schnittstellen binden lässt. Zudem wirkt das **Law of Demeter** als strukturelle Schranke gegen semantische Kopplung, da es den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt. Schließlich unterstützt das Prinzip **Encapsulate what varies** die Entkopplung, indem es veränderliche 
-
-Logikanteile isoliert und so verhindert, dass sich lokale Anpassungen unkontrolliert durch das gesamte System propagieren.
+Um diese Abhängigkeiten auf ein gesundes Maß zu reduzieren, bietet das **Dependency Inversion Principle** eine zentrale Lösung, indem es High-Level-Module von konkreten Implementierungen entkoppelt und stattdessen die Abhängigkeit von stabilen Abstraktionen erzwingt. Ergänzend dazu trägt das **Interface Segregation Principle** zur Kopplungsminimierung bei, indem es Klassen nur gegen spezifisch benötigte Teil-Schnittstellen binden lässt. Zudem wirkt das **Law of Demeter** als strukturelle Schranke gegen semantische Kopplung, da es den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt. Schließlich unterstützt das Prinzip **Encapsulate what varies** die Entkopplung, indem es veränderliche Logikanteile isoliert und so verhindert, dass sich lokale Anpassungen unkontrolliert durch das gesamte System propagieren.
 
 **Fallbeispiel: Direkte Abhängigkeit**
 
@@ -239,12 +236,10 @@ Ein „sauberes“ Design nach Robert Bräutigams Formalisierung strebt eine Kla
 
 Um die praktische Anwendung von LCOM4 und CBO zu demonstrieren, wird im Folgenden dieselbe Domäne mit unterschiedlichen Entwurfsansätzen untersucht. Ziel ist es, die Unterschiede in der SRP-Konformität objektiv messbar zu machen.
 
-Als Szenario dient der Bestellvorgang eines Online-Shops mit drei Kernoperationen: Anlegen, Bezahlen und Stornieren.
+Als Szenario dient der Bestellvorgang eines Online-Shops mit drei Kernoperationen, wie Anlegen, Bezahlen und Stornieren.
 
-* **Anlegen:** Reserviert Artikel im Lager (InventoryApi), speichert die Bestellung (OrderRepository) und protokolliert den Vorgang (Audit).
-  
+* **Anlegen:** Reserviert Artikel im Lager (InventoryApi), speichert die Bestellung (OrderRepository), versendet eine Reservierung (Email) und protokolliert den Vorgang (Audit).
 * **Bezahlen:** Zieht den Betrag ein (PaymentApi), markiert die Bestellung als bezahlt, versendet eine Bestätigung (Email) und protokolliert den Vorgang (Audit).
-
 * **Stornieren:** Gibt Artikel im Lager frei (InventoryApi), markiert die Bestellung als storniert, versendet eine Nachricht (Email) und protokolliert den Vorgang (Audit).
 
 Daraus ergeben sich sieben beteiligte Komponenten, deren Verantwortlichkeiten in den folgenden Implementierungen unterschiedlich verteilt werden: `Cart`, `Customer`, `OrderRepository`, `InventoryApi`, `PaymentApi`, `Email` und `Audit`.
@@ -266,7 +261,7 @@ public class OrderService {
         inventoryApi.reserve(cart);
         Order order = new Order(cart, customer);
         orderRepository.save(order);
-        email.sendCreation(order);
+        email.sendReservation(order);
         audit.log("Order created: " + order.getId());
         return order;
     }
