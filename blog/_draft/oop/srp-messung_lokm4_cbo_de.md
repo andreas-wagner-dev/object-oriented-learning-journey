@@ -658,18 +658,6 @@ Alternativ ließe sich das OrderProcess-Interface im Sinne des **Interface Segre
 
 Die Wahl eines Software-Designs stellt stets eine Abwägung zwischen der initialen Entwicklungsgeschwindigkeit und den langfristigen Wartungskosten (Total Cost of Ownership) dar. Ein direkter Vergleich der vier Ansätze verdeutlicht die strukturelle Evolution von der monolithischen Bündelung hin zur granularen Entkopplung.
 
-
-| Konzept | Metrik | Service (Monolith) | Services (aufgespalten) | Vertikaler Decorator | Horizontaler Decorator |
-|---|---|---|---|---|---|
-| Kohäsion | LCOM4 | ⚠️ LCOM4 = **1** — Querschnittsfelder | ⚠️ LCOM4 = **1** — trivial (1 Methode) | ✅ LCOM4 = **1** — fachlich kohäsiv | ✅ LCOM4 = **1** — fachlich kohäsiv |
-| Kopplung | CBO | ❌ CBO = **5** | ⚠️ CBO = **3–4** je Klasse | ✅ CBO = **2** je Klasse | ✅ CBO = **1–3** je Klasse |
-| Lokale Änderbarkeit | LCOM4 / CBO | ❌ Logging betrifft alle 3 Methoden | ❌ Logging betrifft alle 3 Klassen | ✅ nur `AuditingOrder` | ✅ nur `AuditAct` |
-| Änderungsausbreitung | CBO | ❌ `PaymentApi` trifft gesamten Service | ⚠️ nur `OrderPaymentService` | ✅ nur `PaidOrder` | ✅ nur `Pay` |
-| Testbarkeit | Mocks pro Test | ❌ 5 Mocks pro Methode | ⚠️ 3–4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
-| Erweiterbarkeit (OCP) | neue Anforderung | ❌ bestehende Methoden ändern | ❌ neue Klasse + bestehende ändern | ✅ neuer Dekorator | ✅ neues `OrderProcess` + Listeneintrag |
-| Lesbarkeit Komposition | — | ✅ eine Klasse | ✅ drei Klassen | ⚠️ verschachtelte Kette | ✅ flache Liste |
-
-
 | Konzept | Service (Monolith) | Services (aufgespalten) | Vertikaler Decorator | Horizontaler Decorator |
 |---|---|---|---|---|
 | Kohäsion (LCOM4) | LCOM4 = 1 (erzwungen) | LCOM4 = 1 (trivial) | ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) |
