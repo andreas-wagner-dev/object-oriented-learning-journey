@@ -28,11 +28,8 @@ In der praktischen Anwendung weisen diese Definitionen jedoch neue Fragen auf. S
 Auch die praktische Faustregel (Heuristik), Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung (Antizipation) der künftigen Produktentwicklung erfordert.
 
 Ebenso erweist sich der Verweis auf den ‚Geschäftsmann‘ zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Code-Alltag unbrauchbar.
+
 Diese kontextabhängigen Interpretationen führen in Code-Reviews häufig zu zeitraubenden Grundsatzdebatten. Ohne objektive Bewertungskriterien drohen solche Diskussionen in subjektive Meinungsverschiedenheiten auszuarten, was die Effizienz und Konsistenz der Softwareentwicklung verhindert.
-
-nd) werden einfach als neue OrderProcess-Implementierung hinzugefügt, ohne bestehenden Code zu berühren (Open-Closed-Prinzip).
-
-Ein struktureller Nebeneffekt sind die leeren Methoden in Klassen wie Pay oder Invent. Bugayenko akzeptiert dies als notwendigen Preis für den horizontalen Schnitt. Alternativ könnte OrderProcess in spezialisierte Interfaces wie OnProcess und OnCancel aufgeteilt werden, was jedoch die Komplexität des Modells erhöhen würde.
 
 ## 3. Die Formalisierung von Kohäsion und Kopplung
 
