@@ -1,6 +1,4 @@
-# Single Responsibility Principle objektiv messen 
-
-**State: Draft!!!**
+# The Pragmatic Single Responsibility Principle: Beyond Myths to Metrics
 
 Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, das von Robert C. Martin zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung.
 
