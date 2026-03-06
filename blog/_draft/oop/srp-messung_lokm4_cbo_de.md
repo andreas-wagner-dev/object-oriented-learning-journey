@@ -12,7 +12,7 @@ Im Mittelpunkt dieser Betrachtung steht das Single Responsibility Principle sowi
 
 Die Operationalisierung der Formel erfolgt dabei über zwei zentrale Kennzahlen. Die Kohäsion wird mittels Lack of Cohesion of Methods Version 4 (LCOM4) über eine Graphenanalyse ermittelt, wobei der ideale Zielwert bei 1 liegt. Parallel dazu wird die Kopplung mithilfe von Coupling Between Objects (CBO) durch das Zählen externer Abhängigkeiten bestimmt mit dem Ziel eines minimalen Wertes. Beide Kennzahlen werden zunächst anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung evaluiert. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze, wie das moderne Service Muster nach Domain Driven Design (DDD) und das Decorator Muster nach Object Oriented Design (OOD). Diese Konzepte werden zur Analyse innerhalb einer Domäne zur Bestellverwaltung in Java implementiert.
 
-## 2. Das Problem: SRP ist nicht messbar
+## 2. Die Problematik von SRP
 
 Die Problematik des SRP liegt in seiner subjektiven Formulierung, die in der Praxis schwer greifbar bleibt und somit keine konkrete Bewertungs- oder Handlungsgrundlage für den Klassenentwurf bietet. Eine gängige Definition besagt, dass eine Klasse nur einen einzigen Grund für Änderungen haben sollte („only one reason to change").  Was jedoch konkret als Änderungsgrund gilt, offenbart sich meist erst im Moment der tatsächlichen Anpassung. Eine vorausschauende Trennung beruht daher oft auf reiner Spekulation, da theoretisch jede minimale Anforderungsänderung als neuer, eigenständiger Grund interpretiert werden könnte.
 
