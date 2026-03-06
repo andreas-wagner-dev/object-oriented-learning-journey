@@ -669,9 +669,19 @@ Die Wahl eines Software-Designs stellt stets eine Abwägung zwischen der initial
 | Erweiterbarkeit (OCP) | neue Anforderung | ❌ bestehende Methoden ändern | ❌ neue Klasse + bestehende ändern | ✅ neuer Dekorator | ✅ neues `OrderProcess` + Listeneintrag |
 | Lesbarkeit Komposition | — | ✅ eine Klasse | ✅ drei Klassen | ⚠️ verschachtelte Kette | ✅ flache Liste |
 
-```java
 
-```
+| Konzept | Service (Monolith) | Services (aufgespalten) | Vertikaler Decorator | Horizontaler Decorator |
+|---|---|---|---|---|
+| Kohäsion (LCOM4) | LCOM4 = 1 (erzwungen) | LCOM4 = 1 (trivial) | ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) |
+| Kopplung (CBO) | ❌ CBO = 8 | ⚠️ CBO = 6 je Klasse | ✅ CBO = 2 je Klasse | ✅ CBO = 1 je Klasse |
+| Lokale Änderbarkeit | ❌ betrifft alle Methoden | ❌ betrifft alle Klassen | ✅ nur AuditingOrder | ✅ nur Audit |
+| Änderungsausbreitung | ❌ trifft gesamten Service | ✅ nur OrderPaymentService | ✅ nur PaidOrder | ✅ nur Pay |
+| Erweiterbarkeit (OCP) | ❌ Methoden ändern | ❌ Methoden ändern | ✅ neuer Dekorator | ✅ neues `OrderProcess` + Listeneintrag |
+| Testbarkeit (Mocks) | ❌ 8 Mocks erforderlich | ⚠️ 6 Mocks erforderlich | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
+| Komposition | ✅ eine zentrale Klass | ✅ drei kleine Klassen | ⚠️ tiefe Verschachtelung | ✅ flache Liste |
+| Strukturelle Risiken | ⚠️ Fat Service / ⚠️ hohe Kopplung | ⚠️ Redundanz / hohe Streuung | ⚠️ Interface-Fragilität | ⚠️ LSP-Verletzung |
+
+Die Tabelle verdeutlicht die systematische Verschiebung der Qualitätsparameter über die verschiedenen Entwurfsstufen hinweg.
 
 **Der DDD Service-Schnitt**
 
