@@ -171,8 +171,8 @@ public class Report {
     private ReportRepository repository; // Class (CBO +1)
     private PdfExporter pdfExporter;     // Class (CBO +1)
 
-    public ReportData generate(DataQuery q) { // DataQuery (CBO +1), Report (CBO +1)
-        List<DataRow> rows = repository.fetch(q); // DataRow (CBO +1) (Rückgabetyp von fetch)
+    public ReportData generate(DataQuery q) { // DataQuery (CBO +1), ReportData (CBO +1)
+        List<DataRow> rows = repository.fetch(q); // DataRow (CBO +1) als Rückgabetyp von fetch
         return pdfExporter.export(rows);
     }
 }
@@ -205,7 +205,7 @@ Sofern auf einen spezifischen Rückgabetyp (`void` statt `Report`) verzichtet we
 
 ```java
 // Kopplung an Schnittstellen ohne Rückgabetyp (CBO = 3)
-public class ReportService {
+public class Report {
 
     private Repository repository; // Interface (CBO +1)
     private Exporter exporter;     // Interface (CBO +1)
@@ -218,11 +218,11 @@ public class ReportService {
 // Gezählte Typen: Repository, Exporter, Query
 ```
 
-Der Typ `DataRow` taucht hier nur noch als lokaler „Durchlaufwert“ auf. Da er weder Teil der Felder noch der Methodensignatur ist, wird er in der Metrik nicht als direkte Kopplung gewertet. Der Service reicht das Objekt lediglich zwischen `Repository` und `Exporter` weiter, ohne eine funktionale Abhängigkeit zur internen Struktur von `DataRow` zu besitzen (Pass-Through-Effekt).
+Der Typ `DataRow` taucht hier nur noch als lokaler „Durchlaufwert“ auf. Da er weder Teil der Felder noch der Methodensignatur ist, wird er in der Metrik nicht als direkte Kopplung gewertet. Die Klasse `Report` reicht das `DataRow` Objekt lediglich zwischen `Repository` und `Exporter` weiter, ohne eine funktionale Abhängigkeit zur internen Struktur von `DataRow` zu besitzen (Pass-Through-Effekt).
 
 **Fallbeispiel: Semantische Kopplung**
 
-Der CBO-Wert erhöht sich wieder auf 4, sobald eine explizite Abhängigkeit zu `DataRow` entsteht. Dies ist der Fall, wenn der Service aktiv Methoden des Typs aufruft (z. B. eine Validierung via `rows.get(0).validate()`).
+Der CBO-Wert erhöht sich wieder auf 4, sobald eine explizite Abhängigkeit zu `DataRow` entsteht. Dies ist der Fall, wenn der `Report` aktiv Methoden des Typs aufruft (z. B. eine Validierung via `rows.get(0).validate()`).
 
 ```java
 // Kopplung an Semantik (CBO = 4)
@@ -240,7 +240,7 @@ public class Report {
 // Gezählte Typen: Repository, Exporter, Query, DataRow
 ```
 
-Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische Kopplung. Der `Report` benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` (Verletzung des Law of Demeter). Er verlässt damit seine Rolle als reiner Koordinator und spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte. Dadurch ist der Klasse nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
+Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische Kopplung. Die Klasse `Report` benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` (Verletzung des Law of Demeter).  Die Klasse verlässt damit ihre Rolle als reiner Koordinator und spricht mit einem „Fremden“, den sie eigentlich nur durchreichen sollte. Dadurch ist der Klasse nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
 
 **Zusammenführung von LCOM4 und CBO**
 
