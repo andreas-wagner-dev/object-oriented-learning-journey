@@ -741,9 +741,11 @@ Nachteilig wirkt sich jedoch die Projekt-Explosion durch eine deutlich steigende
 
 Das horizontale Muster optimiert zwar die Lesbarkeit bei tiefen Ketten, erzwingt jedoch bei einer größeren Anzahl von Methoden strukturelle Kompromisse in Form von leeren Implementierungen. Ein Wechsel zu diesem Modell ist daher nur dann ratsam, wenn das Design keine leeren Implementierungen von Methoden erfordert, sodass möglichst das **Liskovsche Substitutionsprinzip** nicht verletzt wird.
 
-## 7. Zusammenfassung und Fazit
+## 7. Zusammenfassung und Handlungsempfehlung
 
 Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Es liegt in unserer Natur, Verantwortlichkeiten miteinander zu verknüpfen. Diese zu identifizieren und zu trennen, macht den Kern hochwertigen Softwareentwurfs aus. Letztlich führen fast alle SOLID-Prinzipien auf diesen Kernpunkt zurück.
+
+**Zusammenfassung**
 
 Um subjektive Debatten in Code-Reviews zu vermeiden, formalisiert Robert Bräutigam das Prinzip als ein Gleichgewicht aus maximaler Kohäsion und minimaler Kopplung (`SRP ≡ Maximale Kohäsion ∧ Minimale`). Diese Messbarkeit wird durch konkrete Metriken untermauert, wobei ein LCOM4-Wert von 1 für maximale interne Kohäsion steht und ein CBO-Wert unter 5 die externe Kopplung auf ein gesundes Maß begrenzt.
 
@@ -751,9 +753,15 @@ Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution
 
 Die bloßen Kennzahlen der Metriken reichen als Beweis für SRP-Konformität indes nicht aus. Wie der monolithische Service zeigt, kann ein LCOM4-Wert von 1 durch rein technische Infrastrukturfelder künstlich erzeugt werden, ohne dass eine fachliche Einheit vorliegt. Erst die kombinierte Betrachtung von LCOM4 und CBO ergibt zusammen mit der qualitativen Analyse der fachlichen Kohäsion (Frage: „Warum sind diese Methoden fachlich verbunden?“) ein vollständiges Bild.
 
-Für die tägliche Praxis lassen sich daraus drei klare Leitlinien ableiten. Ein LCOM4-Wert größer als 1 kann ein Indikator für eine notwendige Dekomposition sein, während die Kopplung durch die Anwendung des *Dependency Inversion Principle* und den Einsatz stabiler Interfaces wirksam begrenzt werden kann. Zudem sollten Aufrufe von Methoden an fremden Objekten vermieden werden, da sie das Hauptmerkmal semantischer Kopplung darstellen, das *Law of Demeter* verletzen und von rein strukturellen Metriken nicht erfasst werden. Unter Beachtung dieser Prämissen erweist sich das SRP nicht als starres Dogma, sondern als präzises Werkzeug, das durch objektive Metriken erst wirklich handhabbar wird.
+**Handlungsempfehlung**
 
-Letztlich dient das Prinzip dem Ziel der Wartbarkeit, weshalb die Lesbarkeit und Nachvollziehbarkeit des Gesamtsystems stets stärker gewichtet werden sollten als die Optimierung von einzelnen Metriken.
+Für die tägliche Praxis lassen sich daraus drei Leitlinien ableiten: 
+
+Ein LCOM4-Wert größer als 1 kann ein Indikator für eine notwendige Dekomposition sein. Existiert kein fachlicher Zusammenhang zwischen den Methoden einer Klasse, ist eine Aufteilung geboten. Eine künstliche Verbindung durch rein technische Infrastrukturbelange sollte vermieden werden, um die Transparenz über die tatsächliche Kohäsion nicht zu verzerren.
+
+Hingegen kann ein hoher CBO-Wert > 5 die Kopplung durch die Anwendung des *Dependency Inversion Principle* und den Einsatz stabiler Interfaces wirksam gesenkt werden. Zudem sollten Aufrufe von Methoden an fremden Objekten vermieden werden, da sie das Hauptmerkmal semantischer Kopplung darstellen und von rein strukturellen Metriken nicht erfasst werden.  
+
+Unter Beachtung dieser Prämissen erweist sich das SRP nicht als starres Dogma, sondern als präzises Werkzeug, das durch objektive Metriken erst wirklich handhabbar wird. Letztlich dient das Prinzip jedoch dem übergeordneten Ziel der Wartbarkeit, weshalb die Lesbarkeit und Nachvollziehbarkeit des Gesamtsystems stets stärker gewichtet werden sollten als die einseitige Optimierung einer einzelnen Metrik.
 
 ---
 
