@@ -94,10 +94,10 @@ Die Graphenanalyse zeigt, dass zwischen diesen beiden Gruppen keine Verbindung e
 Die Klasse besitzt zwei unabhängige Verantwortlichkeiten, was sich in zwei isolierten Teilgraphen und einem LCOM4-Wert von 2 widerspiegelt.
 
 
-**Fallbeispiel 2: Künstliche Kohäsion durch Zusammenhang (LCOM4 = 1)**
+**Fallbeispiel 2: Kohäsion durch Zusammenhang (LCOM4 = 1)**
 
 In diesem Szenario fungiert das Feld status (Feld 3) als Knotenpunkt, da es nun von beiden Methoden verwendet wird. 
-Rein strukturell erhöht sich die Kohäsion, wodurch der LCOM4-Wert auf 1 sinkt.
+Rein strukturell erhöht sich die Kohäsion, wodurch der LCOM4-Wert auf 1 sinkt. 
 
 ```java
 // Die Klasse zerfällt in zwei isolierte Teilgraphen (LCOM4 = 2)
@@ -169,9 +169,13 @@ Innerhalb der Klasse `Order` erzeugt die Methode `display()` eine direkte Verbin
 
 Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für SRP-Konformität. Er bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
 
-Wie Fallbeispiel 2 zeigt, kann ein idealer Metrik-Wert künstlich durch technische Querschnittsfelder (wie einen Status oder eine ID) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten zu lösen. Als Handlungsempfehlung lässt sich ableiten: Existiert kein fachlicher Zusammenhang zwischen Methoden einer Klasse, sollte eine Aufteilung erfolgen, anstatt eine künstliche Verbindung durch Infrastrukturbelange aufrechtzuerhalten.
+Wie Fallbeispiel 2 zeigt, kann ein idealer Metrik-Wert künstlich durch technische Querschnittsfelder (wie einen Status oder eine ID) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten zu lösen. 
 
+Während eine rein datenzentrierte Sichtweise die Aufspaltung der Order-Klasse in Anzeige- und Zahlungslogik fordert, um isolierte Teilgraphen zu vermeiden, plädieren Vertreter einer verhaltensorientierten Objektorientierung wie Allen Holub oder Robert Bräutigam für das Gegenteil.
 
+Aus dieser Perspektive ist die Einbettung der display()-Methode in das Order-Objekt keine „künstliche“ Verbindung, sondern der Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem status) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Ein Aufbrechen dieser Einheit würde den Einsatz von Gettern erzwingen, was wiederum die semantische Kopplung erhöht und das Prinzip Tell, Don’t Ask verletzt.
+
+Als Handlungsempfehlung lässt sich ableiten: Existiert kein fachlicher Zusammenhang zwischen Methoden einer Klasse, sollte eine Aufteilung erfolgen, anstatt eine künstliche Verbindung durch Infrastrukturbelange aufrechtzuerhalten.
 
 ### 3.2 Coupling Between Objects
 
