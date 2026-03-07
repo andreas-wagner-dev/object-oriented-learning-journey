@@ -60,9 +60,10 @@ Die konkreten Aussagen zur Bewertung der Klassenstruktur liefern die folgenden K
 * **LCOM4-Wert über 1**, zerfällt die Klasse in mehrere unabhängige Teilgraphen, was als objektives Indiz für eine Verletzung des Single Responsibility Principles gewertet wird.
 * **LCOM4-Wert von 0** kennzeichnet hingegen eine Klasse ohne Methoden, wie etwa einen reinen Datencontainer, was im Rahmen dieser Analyse neutral bewertet wird.
 
-**Fallbeispiel: Kohäsion (LCOM4 = 2)**
+**Fallbeispiel 1: Niedrige Kohäsion (LCOM4 = 2)**
 
-In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten über die Anzeige `display()` einer Bestellung und der Zahlungsabwicklung `pay(int many)`.
+In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten für die Anzeige `display()` einer Bestellung und Abwicklung `pay(int many)` einer Zahlung.
+
 
 ```java
 // Die Klasse zerfällt in zwei isolierte Teilgraphen (LCOM4 = 2)
@@ -70,7 +71,7 @@ public class Order {
 
     private Cart cart;                 // Feld 1
     private Customer customer;         // Feld 2
-    private int status = "PENDING";    // Feld 3
+    private int status;                // Feld 3
     private String amount;             // Feld 4
 
     // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
@@ -85,14 +86,18 @@ public class Order {
     }
 }
 ```
-In der Graphenanalyse zeigt sich, dass zwischen diesen beiden Gruppen  keine Verbindung existiert (kein gemeinsames Feld, kein gegenseitiger Aufruf). Die Klasse hat zwei Verantwortlichkeiten und somit zwei Teilgrapfen, was einen LCOM4-Wert von 2 entspricht.
+
+Die Graphenanalyse zeigt, dass zwischen diesen beiden Gruppen keine Verbindung existiert, da weder ein gemeinsames Feld genutzt noch ein gegenseitiger Methodenaufruf getätigt wird. 
+
+[Bild]
+
+Die Klasse besitzt zwei unabhängige Verantwortlichkeiten, was sich in zwei isolierten Teilgraphen und einem LCOM4-Wert von 2 widerspiegelt.
 
 
+**Fallbeispiel 2: Künstliche Kohäsion durch Zusammenhang (LCOM4 = 1)**
 
-**Fallbeispiel: Optimierung durch Zusammenhang (LCOM4 = 1)**
-
-In diesem Szenario dienen das Feld `status` (Feld 4) als Knotenpunkt, da es von beiden Methoden (M1 und M2) der Klasse verwendet wird. 
-Die Kohäsion erhöt sich, wobei der LCOM4-Wert auf 1 fällt.
+In diesem Szenario fungiert das Feld status (Feld 3) als Knotenpunkt, da es nun von beiden Methoden verwendet wird. 
+Rein strukturell erhöht sich die Kohäsion, wodurch der LCOM4-Wert auf 1 sinkt.
 
 ```java
 // Die Klasse zerfällt in zwei isolierte Teilgraphen (LCOM4 = 2)
@@ -100,50 +105,51 @@ public class Order {
 
     private Cart cart;                 // Feld 1
     private Customer customer;         // Feld 2
-    private int status = "PENDING";    // Feld 3
+    private int status;                // Feld 3
     private String amount;             // Feld 4
 
-    // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
     public String display() {
-        return customer.getName() + ": " + cart.itemCount() + " items + ", status: " + status;
+        // Nutzt Feld 1, 2 und 3
+        return customer.getName() + ": " + cart.itemCount() + ", Status: " + status;
     }
 
-    // M2: Zahlungs-Logik (nutzt Feld 3 und Feld 4)
     public void pay(int many) {
+        // Nutzt Feld 3 und 4
         this.amount = many;
         this.status = "PAID";
     }
 }
 ```
 
-Die Graphenanalyse der Klasse `Order` ergibt folgendes Bild:
+Die Graphenanalyse der Klasse `Order` verdeutlicht das folgende Bild.
+
+[Bild]
+
+Da beide Methoden auf das Feld `status` zugreifen, sind die ursprünglich isolierten Logikbereiche über diese Instanzvariable miteinander verbunden. Im Sinne der Graphentheorie entsteht ein einziger zusammenhängender Graph, da ein Pfad von M1 über Feld 3 zu M2 existiert. Das Ergebnis ist ein LCOM4-Wert von 1.
 
 
+**Fallbeispiel 3: Indeale Kohäsion durch Aufteilung (LCOM4 = 1)**
 
-**Fallbeispiel: Optimierung durch Aufteilung (LCOM4 = 1)**
-
-Um die Kohäsion zu maximieren, wird die Klasse gemäß ihrer Verantwortlichkeiten in zwei spezialisierte Klassen aufgeteilt.
+Um eine echte fachliche Kohäsion zu erreichen, wird die Klasse gemäß ihrer Verantwortlichkeiten in zwei spezialisierte Einheiten dekonstruiert.
 
 ```java
-// Fokus auf Inhalt/Anzeige (LCOM4 = 1)
+// Fokus auf Inhalt/Anzeige
 public class Order {
 
     private Cart cart;                 // Feld 1
     private Customer customer;         // Feld 2
 
-    // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
     public String display() {
         return customer.getName() + ": " + cart.itemCount();
     }
 }
 
-// Fokus auf Zahlung/Transaktion (LCOM4 = 1)
+// Fokus auf Zahlung/Transaktion
 public class Payment {
 
-    private int status = "PENDING";    // Feld 3
+    private int status;                // Feld 3
     private String amount;             // Feld 4
 
-    // M2: Zahlungs-Logik (nutzt Feld 3 und Feld 4)
     public void pay(int many) {
         this.amount = many;
         this.status = "PAID";
@@ -152,38 +158,18 @@ public class Payment {
 
 ```
 
-Innerhalb der Klasse `Order` besteht der Graph aus den Feldern `cart` (Feld 1) und `customer` (Feld 2) sowie der Methode `display()` (M1). Da die Methode display() für die Erzeugung des Anzeigetextes sowohl auf das Kundenobjekt als auch auf den Warenkorb zugreift, entsteht eine direkte Verbindung zwischen allen Elementen. Das Ergebnis ist ein einzelner, vollständig zusammenhängender Teilgraph, was einem LCOM4-Wert von 1 entspricht und die fachliche Kohäsion der Anzeige-Logik bestätigt.
 
-In der zweiten Klasse `Payment` bilden die Felder amount (Feld 3) und `status `(Feld 4) zusammen mit der Methode `pay()` (M2) die Knoten des Graphen. Die Methode `pay()` modifiziert bei ihrer Ausführung beide Instanzvariablen gleichzeitig, wodurch eine starke interne Bindung erzeugt wird. Auch hier ergibt die Graphenanalyse einen einzigen zusammenhängenden Teilgraph. Mit einem LCOM4-Wert von 1 ist somit auch die transaktionale Logik der Zahlung strukturell ideal isoliert.
+Durch die Aufteilung entstehen zwei unabhängige Graphen, die jeweils eine in sich geschlossene funktionale Einheit bilden. 
+
+[Bild]
+
+Innerhalb der Klasse `Order` erzeugt die Methode `display()` eine direkte Verbindung zwischen dem Kundenobjekt und dem Warenkorb. In der Klasse `Payment` modifiziert die Methode `pay()` beide Instanzvariablen gleichzeitig, was eine starke interne Bindung bewirkt. In beiden Fällen ergibt die Analyse einen einzelnen, vollständig zusammenhängenden Teilgraph mit einem LCOM4-Wert von 1, was die fachliche Isolation bestätigt.
 
 **Zwischenfazit**
 
-Dies geschlilderen Fallbeispeile und deren Graphenanalysen, verdeutlichen eine zentrale Erkenntnis für die Praxis. Ein LCOM4-Wert von 1 stellt eine notwendige, aber keine hinreichende Bedingung für die SRP-Konformität, dar. Er bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Felder und Methoden tatsächlich eine fachliche Einheit bilden.
+Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für SRP-Konformität. Er bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
 
-
-**Analyse der Graphen**
-
-* Teilgraph 1: Die Methode `display()` (M1) verbindet die Felder `cart` (F1) und `customer` (F2).
-* Teilgraph 2: Die Methode `pay(int many)` (M2) verbindet `amount` (F3) and `status` (F4).
-
-Zwischen diesen beiden Gruppen existiert keine Verbindung (kein gemeinsames Feld, kein gegenseitiger Aufruf). Die Klasse hat zwei Verantwortlichkeiten und somit einen LCOM4-Wert von 2.
-
-Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während `display()` auf Warenkorb und Kunde zugreift, verarbeitet `pay()` ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in `Order` sowie `Payment` aufgeteilt werden sollte.
-
-Durch die Aufteilung besitzen nun beide Klassen nur noch einen zusammenhängenden Graphen. Jede Methode arbeitet mit dem gesamten Zustand der Klasse oder einem Teil davon, der wiederum mit anderen Methoden verknüpft ist.
-
-Durch die Dekonstruktion der ursprünglichen Klasse in zwei spezialisierte Einheiten entstehen zwei unabhängige Graphen, die jeweils eine in sich geschlossene funktionale Einheit bilden.
-
-Klasse Order (Fokus auf Anzeige)
-Innerhalb der Klasse Order besteht der Graph aus den Feldern cart (Feld 1) und customer (Feld 2) sowie der Methode display() (M1). Da die Methode display() für die Erzeugung des Anzeigetextes sowohl auf das Kundenobjekt als auch auf den Warenkorb zugreift, entsteht eine direkte Verbindung zwischen allen Elementen. Das Ergebnis ist ein einzelner, vollständig zusammenhängender Teilgraph, was einem LCOM4-Wert von 1 entspricht und die fachliche Kohäsion der Anzeige-Logik bestätigt.
-
-Klasse Payment (Fokus auf Transaktion)
-
-In der Klasse Payment bilden die Felder amount (Feld 3) und status (Feld 4) zusammen mit der Methode pay() (M2) die Knoten des Graphen. Die Methode pay() modifiziert bei ihrer Ausführung beide Instanzvariablen gleichzeitig, wodurch eine starke interne Bindung erzeugt wird. Auch hier ergibt die Graphenanalyse einen einzigen zusammenhängenden Teilgraph. Mit einem LCOM4-Wert von 1 ist somit auch die transaktionale Logik der Zahlung strukturell ideal isoliert.
-Fazit der Aufteilung
-
-Diese Graphenanalyse verdeutlicht den Erfolg des Refactorings. Während die ursprüngliche Kombination beider Logiken in einer Klasse zu zwei isolierten Inselfunktionen (einem LCOM4 von 2) geführt hätte, dokumentieren die nun getrennten Graphen die strikte Einhaltung des Single Responsibility Principles. Jede Klasse operiert ausschließlich auf ihrem eigenen, eng vernetzten Datenbestand, ohne unbeteiligte Felder mitzuführen.
-
+Wie Fallbeispiel 2 zeigt, kann ein idealer Metrik-Wert künstlich durch technische Querschnittsfelder (wie einen Status oder eine ID) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten zu lösen. Als Handlungsempfehlung lässt sich ableiten: Existiert kein fachlicher Zusammenhang zwischen Methoden einer Klasse, sollte eine Aufteilung erfolgen, anstatt eine künstliche Verbindung durch Infrastrukturbelange aufrechtzuerhalten.
 
 
 
