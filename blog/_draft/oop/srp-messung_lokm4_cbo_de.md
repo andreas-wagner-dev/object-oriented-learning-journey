@@ -447,7 +447,7 @@ Das SRP wird hier zwar besser adressiert, ist aber nicht vollständig erfüllt, 
 
 ## 5.3 Vertikales Decorator-Pattern (OOD)
 
-Um die verbleibende Redundanz der Querschnittsbelange aufzulösen, bietet sich das Decorator-Pattern an. Hierbei wird die Kernlogik in einer Basisklasse isoliert, während technische Aspekte wie Logging oder Persistenz in separate Hüllen ausgelagert werden. Das Pattern separiert Verantwortlichkeiten konsequent über Objektkomposition, sodass jede Klasse genau eine Aufgabe übernimmt. Die Querschnittsbelange entstehen hier durch das Umhüllen von Objekten und nicht durch das Anhäufen von Feldern innerhalb einer Klasse.
+Um die verbleibende Redundanz der Querschnittsbelange aufzulösen, bietet sich das Decorator-Pattern an. Hierbei wird die Kernlogik in einer Basisklasse isoliert, während fachliche funktionserweiterungen und technische Aspekte wie Logging oder Persistenz in separate Hüllen ausgelagert werden. Das Pattern separiert Verantwortlichkeiten konsequent über Objektkomposition, sodass jede Klasse genau eine Aufgabe übernimmt. Die Querschnittsbelange entstehen hier durch das Umhüllen von Objekten und nicht durch das Anhäufen von Feldern innerhalb einer Klasse.
 
 Das Basis-Interface wird dabei schlicht als Order definiert, was einen rein fachlichen Begriff ohne das technische Suffix „Service“ darstellt. 
 
