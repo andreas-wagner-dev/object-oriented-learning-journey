@@ -134,7 +134,7 @@ Um eine echte fachliche Kohäsion zu erreichen, wird die Klasse gemäß ihrer Ve
 
 ```java
 // Fokus auf Inhalt/Anzeige
-public class Order {
+public class OrderView {
 
     private Cart cart;                 // Feld 1
     private Customer customer;         // Feld 2
@@ -145,7 +145,7 @@ public class Order {
 }
 
 // Fokus auf Zahlung/Transaktion
-public class Payment {
+public class OrderPayment {
 
     private int status;                // Feld 3
     private String amount;             // Feld 4
@@ -165,17 +165,15 @@ Durch die Aufteilung entstehen zwei unabhängige Graphen, die jeweils eine in si
 
 Innerhalb der Klasse `Order` erzeugt die Methode `display()` eine direkte Verbindung zwischen dem Kundenobjekt und dem Warenkorb. In der Klasse `Payment` modifiziert die Methode `pay()` beide Instanzvariablen gleichzeitig, was eine starke interne Bindung bewirkt. In beiden Fällen ergibt die Analyse einen einzelnen, vollständig zusammenhängenden Teilgraph mit einem LCOM4-Wert von 1, was die fachliche Isolation bestätigt.
 
-**Zwischenfazit**
+**Zwischenfazit zur Kohäsionsanalyse (LCOM4)**
 
-Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für SRP-Konformität. Er bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
+Wie das zweite Fallbeispiel verdeutlicht, kann ein idealer Metrik-Wert künstlich durch technische Querschnittsbelange – etwa eine ID, ein Status-Feld oder UI-spezifische Daten – erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten tatsächlich zu lösen.
 
-Wie Fallbeispiel 2 zeigt, kann ein idealer Metrik-Wert künstlich durch technische Querschnittsfelder (wie einen Status oder eine ID) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten zu lösen. 
+Aus der Sicht eines datenzentrierten Entwurfs mag die strikte Trennung von Zahlungs- und Präsentationslogik, wie in Fallbeispiel 3 gezeigt, sinnvoll erscheinen. Dabei wird jedoch die Kapselung aufgebrochen, was den Prinzipien einer verhaltensorientierten Objektorientierung widerspricht. Aus dieser Perspektive ist die Einbettung einer `display()`-Methode in das Order-Objekt keine künstliche Verbindung, sondern Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem `status`) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Ein Aufbrechen dieser Einheit würde den Einsatz von *Gettern*-Methoden erzwingen, was die semantische Kopplung erhöht und das Prinzip *Tell, Don’t Ask* verletzt.
 
-Während eine rein datenzentrierte Sichtweise die Aufspaltung der Order-Klasse in Anzeige- und Zahlungslogik fordert, um isolierte Teilgraphen zu vermeiden, plädieren Vertreter einer verhaltensorientierten Objektorientierung wie Allen Holub oder Robert Bräutigam für das Gegenteil.
+Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für die SRP-Konformität. Die Kennzahl bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
 
-Aus dieser Perspektive ist die Einbettung der display()-Methode in das Order-Objekt keine „künstliche“ Verbindung, sondern der Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem status) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Ein Aufbrechen dieser Einheit würde den Einsatz von Gettern erzwingen, was wiederum die semantische Kopplung erhöht und das Prinzip Tell, Don’t Ask verletzt.
-
-Als Handlungsempfehlung lässt sich ableiten: Existiert kein fachlicher Zusammenhang zwischen Methoden einer Klasse, sollte eine Aufteilung erfolgen, anstatt eine künstliche Verbindung durch Infrastrukturbelange aufrechtzuerhalten.
+Als Handlungsempfehlung lässt sich ableiten: Existiert kein fachlicher Zusammenhang zwischen den Methoden einer Klasse, ist eine Aufteilung geboten. Eine künstliche Verbindung durch rein technische Infrastrukturbelange sollte vermieden werden, um die Transparenz über die tatsächliche Kohäsion nicht zu verzerren.
 
 ### 3.2 Coupling Between Objects
 
@@ -277,29 +275,16 @@ public class Report {
 
 Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische Kopplung. Die Klasse `Report` benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` (Verletzung des Law of Demeter).  Die Klasse verlässt damit ihre Rolle als reiner Koordinator und spricht mit einem „Fremden“, den sie eigentlich nur durchreichen sollte. Dadurch ist der Klasse nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
 
-
-
 ### 3.3 Die Synergie von LCOM4 und CBO
 
 Wie die vorangegangenen Fallbeispiele zeigen, kann ein LCOM4-Wert von 1 trügerisch sein. Sobald eine Klasse technisch notwendige Querschnittsfelder wie eine id, ein status-Feld oder einen Logger nutzt, werden im Graphen Brücken zwischen eigentlich fremden fachlichen Verantwortlichkeiten geschlagen. Die strukturelle Analyse wertet dies als Kohäsion, obwohl das Single Responsibility Principle faktisch verletzt bleibt.
 
 An dieser Stelle entfaltet die Kombination mit der CBO-Metrik ihre volle Diagnosekraft. Während der LCOM4 in Fallbeispiel 2 eine ideale interne Bindung suggeriert, würde eine Messung der Kopplung (CBO) bei einem „Fat Service“ sofort Alarm schlagen. Ein hoher CBO-Wert offenbart, dass die Klasse trotz ihrer internen Verknüpfung über ein Status-Feld eine übermäßige Anzahl externer Abhängigkeiten bedienen muss. Ein Entwurf ist erst dann wirklich SRP-konform, wenn er beide Kriterien gleichzeitig erfüllt:
 
-* LCOM4 = 1, wobei die Verbindung auf fachlicher Logik basiert und nicht auf rein technischer Infrastruktur.
-* CBO ≤ 5, was sicherstellt, dass die Klasse nicht zu viele externe „Wissensbereiche“ in sich vereint.
+* **LCOM4 = 1**, wobei die Verbindung auf **fachlicher Logik** basiert und nicht auf rein technischer Infrastruktur.
+* **CBO ≤ 5**, was sicherstellt, dass die Klasse nicht zu viele externe „Wissensbereiche“ in sich vereint.
 
-Erst in der Gesamtschau beider Kennzahlen lässt sich objektiv feststellen, ob eine Klasse eine echte fachliche Einheit bildet oder lediglich eine Ansammlung lose gekoppelter Aufgaben darstellt, die durch technische Hilfsvariablen zusammengehalten werden. Ein „sauberes“ Design nach der Formalisierung von Robert Bräutigam strebt demnach eine Klasse an, die durch maximale Kohäsion bei minimaler Kopplung besticht, was sich in der Zielmarke eines LCOM4-Werts von 1 und eines CBO-Bereichs von 0 bis 5 widerspiegelt.
-
-
-
-**Zusammenführung von LCOM4 und CBO**
-
-Die Kombination beider Metriken liefert die objektive Hilfestellung für das Klassendesign:
-
-* **Hoher LCOM4-Wert:** Signalisiert, dass eine Klasse zu viele Dinge gleichzeitig tut (Low Cohesion). Lösung: Aufspalten.
-* **Hoher CBO-Wert:** Signalisiert, dass eine Klasse zu stark mit ihrer Umwelt verstrickt ist (High Coupling). Lösung: Dependency Inversion oder Schnittstellen-Abstraktion.
-
-Ein „sauberes“ Design nach Robert Bräutigams Formalisierung strebt eine Klasse an, einen **LCOM4-Wert von 1** (maximale Kohäsion) und einen **CBO-Wert im Bereich 0 bis 5** (minimale Kopplung) aufweist.
+Erst in der Gesamtbetrachtung beider Kennzahlen lässt sich objektiv feststellen, ob eine Klasse eine echte fachliche Einheit bildet oder lediglich eine Ansammlung lose gekoppelter Aufgaben darstellt, die durch technische Hilfsvariablen zusammengehalten werden. Ein „sauberes“ Design nach der Formalisierung von Robert Bräutigam strebt demnach eine Klasse an, die durch maximale Kohäsion bei minimaler Kopplung besticht, was sich in der Zielmarke eines **LCOM4-Werts von 1** und eines **CBO-Bereichs von 0 bis 5** widerspiegelt.
 
 ## 5. Beispiele: DDD-Service vs. OOD-Decorator
 
