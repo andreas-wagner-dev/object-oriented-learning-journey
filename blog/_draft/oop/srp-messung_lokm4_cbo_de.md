@@ -100,7 +100,6 @@ In diesem Szenario fungiert das Feld status (Feld 3) als Knotenpunkt, da es nun 
 Rein strukturell erhöht sich die Kohäsion, wodurch der LCOM4-Wert auf 1 sinkt. 
 
 ```java
-// Die Klasse zerfällt in zwei isolierte Teilgraphen (LCOM4 = 2)
 public class Order {
 
     private Cart cart;                 // Feld 1
@@ -163,13 +162,11 @@ Durch die Aufteilung entstehen zwei unabhängige Graphen, die jeweils eine in si
 
 [Bild]
 
-Innerhalb der Klasse `Order` erzeugt die Methode `display()` eine direkte Verbindung zwischen dem Kundenobjekt und dem Warenkorb. In der Klasse `Payment` modifiziert die Methode `pay()` beide Instanzvariablen gleichzeitig, was eine starke interne Bindung bewirkt. In beiden Fällen ergibt die Analyse einen einzelnen, vollständig zusammenhängenden Teilgraph mit einem LCOM4-Wert von 1, was die fachliche Isolation bestätigt.
+Innerhalb der Klasse `OrderView` erzeugt die Methode `display()` eine direkte Verbindung zwischen dem Kundenobjekt und dem Warenkorb. In der Klasse `OrderPayment` modifiziert die Methode `pay()` beide Instanzvariablen gleichzeitig, was eine starke interne Bindung bewirkt. In beiden Fällen ergibt die Analyse einen einzelnen, vollständig zusammenhängenden Teilgraph mit einem LCOM4-Wert von 1, was die fachliche Isolation bestätigt.
 
 **Zwischenfazit zur Kohäsionsanalyse (LCOM4)**
 
-Wie das zweite Fallbeispiel verdeutlicht, kann ein idealer Metrik-Wert künstlich durch technische Querschnittsbelange – etwa eine ID, ein Status-Feld oder UI-spezifische Daten – erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten tatsächlich zu lösen.
-
-Aus der Sicht eines datenzentrierten Entwurfs mag die strikte Trennung von Zahlungs- und Präsentationslogik, wie in Fallbeispiel 3 gezeigt, sinnvoll erscheinen. Dabei wird jedoch die Kapselung aufgebrochen, was den Prinzipien einer verhaltensorientierten Objektorientierung widerspricht. Aus dieser Perspektive ist die Einbettung einer `display()`-Methode in das Order-Objekt keine künstliche Verbindung, sondern Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem `status`) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Ein Aufbrechen dieser Einheit würde den Einsatz von *Gettern*-Methoden erzwingen, was die semantische Kopplung erhöht und das Prinzip *Tell, Don’t Ask* verletzt.
+Wie das zweite Fallbeispiel verdeutlicht, kann ein idealer Metrik-Wert künstlich durch technische Querschnittsbelange (wie etwa eine ID, ein Status-Feld oder UI-spezifische Daten) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten tatsächlich zu lösen. Aus der Sicht eines datenzentrierten Entwurfs mag die strikte Trennung von Zahlungs- und Präsentationslogik, wie in Fallbeispiel 3 gezeigt, sinnvoll erscheinen. Dabei wird jedoch die Kapselung aufgebrochen, was den Prinzipien einer verhaltensorientierten Objektorientierung widerspricht. Aus dieser Perspektive ist die Einbettung einer `display()`-Methode in das Order-Objekt keine künstliche Verbindung, sondern Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem `status`) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Ein Aufbrechen dieser Einheit würde den Einsatz von *Gettern*-Methoden erzwingen, was die semantische Kopplung erhöht und das Prinzip *Tell, Don’t Ask* verletzt.
 
 Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für die SRP-Konformität. Die Kennzahl bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
 
