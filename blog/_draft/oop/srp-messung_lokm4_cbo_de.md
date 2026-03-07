@@ -68,10 +68,10 @@ In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten ü
 // Die Klasse zerfällt in zwei isolierte Teilgraphen (LCOM4 = 2)
 public class Order {
 
-    private Cart cart;             // Feld 1
-    private Customer customer;     // Feld 2
-    private int status;            // Feld 3
-    private String amount;         // Feld 4
+    private Cart cart;                 // Feld 1
+    private Customer customer;         // Feld 2
+    private int status = "PENDING";    // Feld 3
+    private String amount;             // Feld 4
 
     // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
     public String display() {
@@ -85,6 +85,39 @@ public class Order {
     }
 }
 ```
+In der Graphenanalyse zeigt sich, dass zwischen diesen beiden Gruppen  keine Verbindung existiert (kein gemeinsames Feld, kein gegenseitiger Aufruf). Die Klasse hat zwei Verantwortlichkeiten und somit zwei Teilgrapfen, was einen LCOM4-Wert von 2 entspricht.
+
+
+
+**Fallbeispiel: Optimierung durch Zusammenhang (LCOM4 = 1)**
+
+In diesem Szenario dienen das Feld `status` (Feld 4) als Knotenpunkt, da es von beiden Methoden (M1 und M2) der Klasse verwendet wird. 
+Die Kohäsion erhöt sich, wobei der LCOM4-Wert auf 1 fällt.
+
+```java
+// Die Klasse zerfällt in zwei isolierte Teilgraphen (LCOM4 = 2)
+public class Order {
+
+    private Cart cart;                 // Feld 1
+    private Customer customer;         // Feld 2
+    private int status = "PENDING";    // Feld 3
+    private String amount;             // Feld 4
+
+    // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
+    public String display() {
+        return customer.getName() + ": " + cart.itemCount() + " items + ", status: " + status;
+    }
+
+    // M2: Zahlungs-Logik (nutzt Feld 3 und Feld 4)
+    public void pay(int many) {
+        this.amount = many;
+        this.status = "PAID";
+    }
+}
+```
+
+Die Graphenanalyse der Klasse `Order` ergibt folgendes Bild:
+
 
 
 **Fallbeispiel: Optimierung durch Aufteilung (LCOM4 = 1)**
@@ -95,20 +128,20 @@ Um die Kohäsion zu maximieren, wird die Klasse gemäß ihrer Verantwortlichkeit
 // Fokus auf Inhalt/Anzeige (LCOM4 = 1)
 public class Order {
 
-    private Cart cart;            // Feld 1
-    private Customer customer;    // Feld 2
+    private Cart cart;                 // Feld 1
+    private Customer customer;         // Feld 2
 
     // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
     public String display() {
-        return customer.getName() + ": " + cart.itemCount() + " items";
+        return customer.getName() + ": " + cart.itemCount();
     }
 }
 
 // Fokus auf Zahlung/Transaktion (LCOM4 = 1)
 public class Payment {
 
-    private int amount;        // Feld 3
-    private String status;     // Feld 4 
+    private int status = "PENDING";    // Feld 3
+    private String amount;             // Feld 4
 
     // M2: Zahlungs-Logik (nutzt Feld 3 und Feld 4)
     public void pay(int many) {
@@ -118,6 +151,15 @@ public class Payment {
 }
 
 ```
+
+Innerhalb der Klasse `Order` besteht der Graph aus den Feldern `cart` (Feld 1) und `customer` (Feld 2) sowie der Methode `display()` (M1). Da die Methode display() für die Erzeugung des Anzeigetextes sowohl auf das Kundenobjekt als auch auf den Warenkorb zugreift, entsteht eine direkte Verbindung zwischen allen Elementen. Das Ergebnis ist ein einzelner, vollständig zusammenhängender Teilgraph, was einem LCOM4-Wert von 1 entspricht und die fachliche Kohäsion der Anzeige-Logik bestätigt.
+
+In der zweiten Klasse `Payment` bilden die Felder amount (Feld 3) und `status `(Feld 4) zusammen mit der Methode `pay()` (M2) die Knoten des Graphen. Die Methode `pay()` modifiziert bei ihrer Ausführung beide Instanzvariablen gleichzeitig, wodurch eine starke interne Bindung erzeugt wird. Auch hier ergibt die Graphenanalyse einen einzigen zusammenhängenden Teilgraph. Mit einem LCOM4-Wert von 1 ist somit auch die transaktionale Logik der Zahlung strukturell ideal isoliert.
+
+**Zwischenfazit**
+
+Dies geschlilderen Fallbeispeile und deren Graphenanalysen, verdeutlichen eine zentrale Erkenntnis für die Praxis. Ein LCOM4-Wert von 1 stellt eine notwendige, aber keine hinreichende Bedingung für die SRP-Konformität, dar. Er bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Felder und Methoden tatsächlich eine fachliche Einheit bilden.
+
 
 **Analyse der Graphen**
 
@@ -134,12 +176,15 @@ Durch die Dekonstruktion der ursprünglichen Klasse in zwei spezialisierte Einhe
 
 Klasse Order (Fokus auf Anzeige)
 Innerhalb der Klasse Order besteht der Graph aus den Feldern cart (Feld 1) und customer (Feld 2) sowie der Methode display() (M1). Da die Methode display() für die Erzeugung des Anzeigetextes sowohl auf das Kundenobjekt als auch auf den Warenkorb zugreift, entsteht eine direkte Verbindung zwischen allen Elementen. Das Ergebnis ist ein einzelner, vollständig zusammenhängender Teilgraph, was einem LCOM4-Wert von 1 entspricht und die fachliche Kohäsion der Anzeige-Logik bestätigt.
+
 Klasse Payment (Fokus auf Transaktion)
 
 In der Klasse Payment bilden die Felder amount (Feld 3) und status (Feld 4) zusammen mit der Methode pay() (M2) die Knoten des Graphen. Die Methode pay() modifiziert bei ihrer Ausführung beide Instanzvariablen gleichzeitig, wodurch eine starke interne Bindung erzeugt wird. Auch hier ergibt die Graphenanalyse einen einzigen zusammenhängenden Teilgraph. Mit einem LCOM4-Wert von 1 ist somit auch die transaktionale Logik der Zahlung strukturell ideal isoliert.
 Fazit der Aufteilung
 
 Diese Graphenanalyse verdeutlicht den Erfolg des Refactorings. Während die ursprüngliche Kombination beider Logiken in einer Klasse zu zwei isolierten Inselfunktionen (einem LCOM4 von 2) geführt hätte, dokumentieren die nun getrennten Graphen die strikte Einhaltung des Single Responsibility Principles. Jede Klasse operiert ausschließlich auf ihrem eigenen, eng vernetzten Datenbestand, ohne unbeteiligte Felder mitzuführen.
+
+
 
 
 ### 3.2 Coupling Between Objects
