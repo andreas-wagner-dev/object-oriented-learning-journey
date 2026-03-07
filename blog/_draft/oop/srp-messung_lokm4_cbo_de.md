@@ -273,6 +273,21 @@ public class Report {
 
 Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische Kopplung. Die Klasse `Report` benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` (Verletzung des Law of Demeter).  Die Klasse verlässt damit ihre Rolle als reiner Koordinator und spricht mit einem „Fremden“, den sie eigentlich nur durchreichen sollte. Dadurch ist der Klasse nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
 
+
+
+### 3.3 Die Synergie von LCOM4 und CBO
+
+Wie die vorangegangenen Fallbeispiele zeigen, kann ein LCOM4-Wert von 1 trügerisch sein. Sobald eine Klasse technisch notwendige Querschnittsfelder wie eine id, ein status-Feld oder einen Logger nutzt, werden im Graphen Brücken zwischen eigentlich fremden fachlichen Verantwortlichkeiten geschlagen. Die strukturelle Analyse wertet dies als Kohäsion, obwohl das Single Responsibility Principle faktisch verletzt bleibt.
+
+An dieser Stelle entfaltet die Kombination mit der CBO-Metrik ihre volle Diagnosekraft. Während der LCOM4 in Fallbeispiel 2 eine ideale interne Bindung suggeriert, würde eine Messung der Kopplung (CBO) bei einem „Fat Service“ sofort Alarm schlagen. Ein hoher CBO-Wert offenbart, dass die Klasse trotz ihrer internen Verknüpfung über ein Status-Feld eine übermäßige Anzahl externer Abhängigkeiten bedienen muss. Ein Entwurf ist erst dann wirklich SRP-konform, wenn er beide Kriterien gleichzeitig erfüllt:
+
+* LCOM4 = 1, wobei die Verbindung auf fachlicher Logik basiert und nicht auf rein technischer Infrastruktur.
+* CBO ≤ 5, was sicherstellt, dass die Klasse nicht zu viele externe „Wissensbereiche“ in sich vereint.
+
+Erst in der Gesamtschau beider Kennzahlen lässt sich objektiv feststellen, ob eine Klasse eine echte fachliche Einheit bildet oder lediglich eine Ansammlung lose gekoppelter Aufgaben darstellt, die durch technische Hilfsvariablen zusammengehalten werden. Ein „sauberes“ Design nach der Formalisierung von Robert Bräutigam strebt demnach eine Klasse an, die durch maximale Kohäsion bei minimaler Kopplung besticht, was sich in der Zielmarke eines LCOM4-Werts von 1 und eines CBO-Bereichs von 0 bis 5 widerspiegelt.
+
+
+
 **Zusammenführung von LCOM4 und CBO**
 
 Die Kombination beider Metriken liefert die objektive Hilfestellung für das Klassendesign:
