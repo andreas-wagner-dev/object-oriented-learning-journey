@@ -59,61 +59,62 @@ Die konkreten Aussagen zur Bewertung der Klassenstruktur liefern die folgenden K
 
 **Fallbeispiel: Kohäsion (LCOM4 = 2)**
 
-In diesem Szenario enthält die Klasse `OrderProcess` zwei logische Zuständigkeiten über die Kernlogik einer Bestellung und der Zahlungsabwicklung.
+In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten über die Anzeige `display()` einer Bestellung und der Zahlungsabwicklung `pay(int many)`.
 
 ```java
 // LCOM4 = 2 — Die Klasse zerfällt in zwei isolierte Teilgraphen
-public class OrderProcess {
+public class Order {
+
     private Cart cart;             // Feld A
     private Customer customer;     // Feld B
-    private int paymentAmount;     // Feld C
-    private String paymentStatus;  // Feld D
+    private int status;            // Feld C
+    private String amount;         // Feld D
 
-    // Teilgraph 1: Bestellungs-Logik (nutzt A und B)
-    public String summarizeOrder() {
+    // Teilgraph 1: Anzeige-Logik (nutzt A und B)
+    public String display() {
         return customer.getName() + ": " + cart.itemCount() + " items";
     }
 
     // Teilgraph 2: Zahlungs-Logik (nutzt C und D)
-    public void recordPayment(int amount) {
-        this.paymentAmount = amount;
-        this.paymentStatus = "PAID";
+    public void pay(int many) {
+        this.amount = many;
+        this.status = "PAID";
     }
 }
 ```
 **Analyse der Graphen:**
 
-* Teilgraph 1: Die Methode summarizeOrder() verbindet die Felder cart und customer.
-* Teilgraph 2: Die Methode recordPayment() verbindet paymentAmount and paymentStatus.
+* Teilgraph 1: Die Methode `display()` verbindet die Felder `cart` und `customer`.
+* Teilgraph 2: Die Methode `pay(int many)` verbindet `amount` and `status`.
 
 Zwischen diesen beiden Gruppen existiert keine Verbindung (kein gemeinsames Feld, kein gegenseitiger Aufruf). Die Klasse hat zwei Verantwortlichkeiten und somit einen LCOM4-Wert von 2.
 
-Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während summarize() auf Warenkorb und Kunde zugreift, verarbeitet recordPayment() ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in OrderIdentity sowie OrderPayment aufgeteilt werden sollte.
+Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während `display()` auf Warenkorb und Kunde zugreift, verarbeitet `pay()` ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in `Order` sowie `Payment` aufgeteilt werden sollte.
 
 **Fallbeispiel: Optimierung durch Aufteilung (LCOM4 = 1)**
 
 Um die Kohäsion zu maximieren, wird die Klasse gemäß ihrer Verantwortlichkeiten in zwei spezialisierte Klassen aufgeteilt.
 
 ```java
-// LCOM4 = 1 — Fokus auf Identität & Inhalt
-public class OrderIdentity {
+// LCOM4 = 1 — Fokus auf Inhalt/Anzeige
+public class Order {
 
     private Cart cart;
     private Customer customer;
 
-    public String summarize() {
+    public String display() {
         return customer.getName() + ": " + cart.itemCount() + " items";
     }
 }
 
-// LCOM4 = 1 — Fokus auf Transaktion
-public class PaymentTransaction {
+// LCOM4 = 1 — Fokus auf Zahlung/Transaktion
+public class Payment {
 
     private int amount;
     private String status;
 
-    public void record(int amount) {
-        this.amount = amount;
+    public void pay(int many) {
+        this.amount = many;
         this.status = "PAID";
     }
 }
