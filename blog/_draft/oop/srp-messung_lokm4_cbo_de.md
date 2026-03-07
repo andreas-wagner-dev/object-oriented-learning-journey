@@ -769,23 +769,23 @@ Unter Beachtung dieser Prämissen erweist sich das SRP nicht als starres Dogma, 
 
 ### Hauptquelle
 
-* Robert Martin [The Single Responsibility Principle (2007)](https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g)
-* Robert Martin [The Single Responsibility Principle (2014)](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
-* Robert Bräutigam [The Single Responsibility Principle (2014)](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
-* Robert Bräutigam [The Genius of the Law of Demeter (2017)](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
-* Martin Fowler [Tell, Don’t Ask (2013)](https://martinfowler.com/bliki/TellDontAsk.html)
-* Matthieu Cneude [The Single Responsibility Principle Revisited (2020)](https://thevaluable.dev/single-responsibility-principle-revisited/)
-* Yegor Bugayenko [Vertical and Horizontal Decorating (2015)](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
+* Robert Martin (2007) [The Single Responsibility Principle](https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g)
+* Robert Martin (2014) [The Single Responsibility Principle](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
+* Robert Bräutigam (2014) [The Single Responsibility Principle](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
+* Robert Bräutigam (2017) [The Genius of the Law of Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
+* Martin Fowler (2013) [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html)
+* Matthieu Cneude (2020) [The Single Responsibility Principle Revisited](https://thevaluable.dev/single-responsibility-principle-revisited/)
+* Yegor Bugayenko (2015) [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 
 ### Weiterführende Artikel und Metriken
 
-* ObjectScript_Q [Lack of Cohesion in Methods (LCOM4) (2026)](https://objectscriptquality.com/docs/metrics/lack-cohesion-methods-lcom4)
-* ObjectScript_Q [Coupling Between Object classes (CBO) (2026)](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo)
-* Mihai A. RODEGBFR [My Take On Object Naming (2018)](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
-* Yegor Bugayenko [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
-* Yegor Bugayenko [Don't Create Objects That End With -ER](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
-* Yegor Bugayenko [Evil Suffix For Object Names](https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html)
-* Yegor Bugayenko [A Compound Name Is a Code Smell](https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html)
+* ObjectScript_Q (2026) [Lack of Cohesion in Methods (LCOM4)](https://objectscriptquality.com/docs/metrics/lack-cohesion-methods-lcom4)
+* ObjectScript_Q (2026) [Coupling Between Object classes (CBO)](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo)
+* Mihai A. RODEGBFR (2018) [My Take On Object Naming](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
+* Yegor Bugayenko (2020) [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
+* Yegor Bugayenko (2015) [Don't Create Objects That End With -ER](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
+* Yegor Bugayenko (2017) [Evil Suffix For Object Names](https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html)
+* Yegor Bugayenko (2015) [A Compound Name Is a Code Smell](https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html)
 
 ### Verwandt Bücher
 
