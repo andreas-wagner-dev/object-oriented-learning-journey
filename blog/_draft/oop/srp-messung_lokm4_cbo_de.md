@@ -26,9 +26,9 @@ Aufgrund der Unklarheiten rund um den Begriff des ‚Änderungsgrundes‘ präzi
 
 In der praktischen Anwendung weisen diese Definitionen jedoch neue Fragen auf. 
 
-* So ist beispielsweise unklar, ob ein OrderService, der Bestellungen sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf eine einzelne Aufgabe verstößt.
-* Auch die praktische Faustregel (Heuristik), Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung (Antizipation) der künftigen Produktentwicklung erfordert.
-* Ebenso erweist sich der Verweis auf den ‚Geschäftsmann‘ zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Code-Alltag unbrauchbar.
+* So ist beispielsweise unklar, ob eine Klasse 'Order*, eine Bestellung sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf *eine einzelne Aufgabe* verstößt.
+* Auch die praktische Faustregel, *Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln*, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung der künftigen Produktentwicklung erfordert.
+* Ebenso erweist sich der Verweis auf den *Geschäftsmann* zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Code-Alltag unbrauchbar.
 
 Diese kontextabhängigen Interpretationen führen in Code-Reviews häufig zu zeitraubenden Grundsatzdebatten. Ohne objektive Bewertungskriterien drohen solche Diskussionen in subjektive Meinungsverschiedenheiten auszuarten, was die Effizienz und Konsistenz der Softwareentwicklung verhindert.
 
