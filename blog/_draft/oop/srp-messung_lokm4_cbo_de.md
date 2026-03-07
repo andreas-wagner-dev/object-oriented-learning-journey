@@ -1,6 +1,6 @@
 # The Pragmatic Single Responsibility Principle: Beyond Myths to Metrics
 
-Das Single Responsibility Principle (SRP) ist das erste der fünf SOLID-Prinzipien, das von Robert C. Martin zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung.
+Das [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) (SRP) ist das erste der fünf [SOLID-Prinzipien](https://en.wikipedia.org/wiki/Package_principles), das von Robert C. Martin zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung.
 
 Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die einen eindeutigen Verantwortungsbereich besitzt, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip, es ist ein Qualitätsmerkmal, das maßgeblich die langfristige Wartbarkeit beeinflusst und die Ansammlung technischer Schulden minimiert.
 
@@ -16,10 +16,13 @@ Die Problematik des SRP liegt in seiner subjektiven Formulierung, die in der Pra
 
 Aufgrund der Unklarheiten rund um den Begriff des ‚Änderungsgrundes‘ präzisierte Robert C. Martin seine Ausführungen später, woraus sich im Laufe der Zeit verschiedene Definitionsebenen entwickelten. Diese reichen von der Forderung nach genau einer Aufgabe pro Modul über die Identifikation eines spezifischen Änderungsgrundes bis hin zur Empfehlung, Dinge mit identischen Änderungsursachen zusammenzufassen. In der konkreten Auslegung wird ein solcher Grund schließlich als Anforderung definiert, die von einem einzelnen Akteur oder Geschäftsmann stammt.
 
-* "Each software module should have one and only one responsibility"
-* "Each software module should have one and only one reason to change"
-* "Gather together the things that change for the same reasons. Separate those things that change for different reasons"
-* "Same reason' means it originates from the same business person"
+> "Each software module should have one and only one responsibility"
+
+> "Each software module should have one and only one reason to change"
+
+> "Gather together the things that change for the same reasons. Separate those things that change for different reasons"
+
+> "Same reason' means it originates from the same business person"  
 
 In der praktischen Anwendung weisen diese Definitionen jedoch neue Fragen auf. 
 
@@ -33,7 +36,7 @@ Diese kontextabhängigen Interpretationen führen in Code-Reviews häufig zu zei
 
 Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage für die Softwareentwicklung. Begriffe wie Verantwortung, Änderungsgrund oder Akteursorientierung erweisen sich für die praktische Umsetzung als zu vage und können in der Konsequenz häufig zu einer unnötigen Codefragmentierung führen. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
 
-`SRP ≡ max(COHESION) ∧ min(COUPLING)`
+> `SRP ≡ max(COHESION) ∧ min(COUPLING)`
 
 Durch die formale Gleichsetzung des SRP mit der Konjunktion aus maximaler Kohäsion und minimaler Kopplung wandelt sich das Prinzip von einer rein abstrakten Designphilosophie zu einer präzisen Strukturmetrik. Diese mathematische Definition ermöglicht es, die ehemals vagen Verantwortlichkeiten einer Klasse durch messbare strukturelle Eigenschaften objektiv zu bewerten.
 
@@ -714,6 +717,7 @@ Letztlich dient das Prinzip dem Ziel der Wartbarkeit, weshalb die Lesbarkeit und
 * Robert Martin [The Single Responsibility Principle (2007)](https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g)
 * Robert Martin [The Single Responsibility Principle (2014)](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
 * Robert Bräutigam [The Single Responsibility Principle (2014)](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
+* Robert Bräutigam [The Genius of the Law of Demeter (2017)](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
 * Matthieu Cneude [The Single Responsibility Principle Revisited (2020)](https://thevaluable.dev/single-responsibility-principle-revisited/)
 * Yegor Bugayenko [Vertical and Horizontal Decorating (2015)](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 
