@@ -130,6 +130,18 @@ Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhäng
 
 Durch die Aufteilung besitzen nun beide Klassen nur noch einen zusammenhängenden Graphen. Jede Methode arbeitet mit dem gesamten Zustand der Klasse oder einem Teil davon, der wiederum mit anderen Methoden verknüpft ist.
 
+Durch die Dekonstruktion der ursprünglichen Klasse in zwei spezialisierte Einheiten entstehen zwei unabhängige Graphen, die jeweils eine in sich geschlossene funktionale Einheit bilden.
+
+Klasse Order (Fokus auf Anzeige)
+Innerhalb der Klasse Order besteht der Graph aus den Feldern cart (Feld 1) und customer (Feld 2) sowie der Methode display() (M1). Da die Methode display() für die Erzeugung des Anzeigetextes sowohl auf das Kundenobjekt als auch auf den Warenkorb zugreift, entsteht eine direkte Verbindung zwischen allen Elementen. Das Ergebnis ist ein einzelner, vollständig zusammenhängender Teilgraph, was einem LCOM4-Wert von 1 entspricht und die fachliche Kohäsion der Anzeige-Logik bestätigt.
+Klasse Payment (Fokus auf Transaktion)
+
+In der Klasse Payment bilden die Felder amount (Feld 3) und status (Feld 4) zusammen mit der Methode pay() (M2) die Knoten des Graphen. Die Methode pay() modifiziert bei ihrer Ausführung beide Instanzvariablen gleichzeitig, wodurch eine starke interne Bindung erzeugt wird. Auch hier ergibt die Graphenanalyse einen einzigen zusammenhängenden Teilgraph. Mit einem LCOM4-Wert von 1 ist somit auch die transaktionale Logik der Zahlung strukturell ideal isoliert.
+Fazit der Aufteilung
+
+Diese Graphenanalyse verdeutlicht den Erfolg des Refactorings. Während die ursprüngliche Kombination beider Logiken in einer Klasse zu zwei isolierten Inselfunktionen (einem LCOM4 von 2) geführt hätte, dokumentieren die nun getrennten Graphen die strikte Einhaltung des Single Responsibility Principles. Jede Klasse operiert ausschließlich auf ihrem eigenen, eng vernetzten Datenbestand, ohne unbeteiligte Felder mitzuführen.
+
+
 ### 3.2 Coupling Between Objects
 
 Ergänzend zur Kohäsion misst die Metrik **Coupling Between Objects (CBO)** nach Chidamber & Kemerer (1994) die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Diese Kopplung manifestiert sich durch Klassenerweiterungen, Feldtypen, Methodenaufrufe sowie durch Argumente und Rückgabetypen innerhalb der Methodensignatur oder lokaler Variablen.
