@@ -62,57 +62,52 @@ Die konkreten Aussagen zur Bewertung der Klassenstruktur liefern die folgenden K
 In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten über die Anzeige `display()` einer Bestellung und der Zahlungsabwicklung `pay(int many)`.
 
 ```java
-// LCOM4 = 2 — Die Klasse zerfällt in zwei isolierte Teilgraphen
+// Die Klasse zerfällt in zwei isolierte Teilgraphen (LCOM4 = 2)
 public class Order {
 
-    private Cart cart;             // Feld A
-    private Customer customer;     // Feld B
-    private int status;            // Feld C
-    private String amount;         // Feld D
+    private Cart cart;             // Feld 1
+    private Customer customer;     // Feld 2
+    private int status;            // Feld 3
+    private String amount;         // Feld 4
 
-    // Teilgraph 1: Anzeige-Logik (nutzt A und B)
+    // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
     public String display() {
         return customer.getName() + ": " + cart.itemCount() + " items";
     }
 
-    // Teilgraph 2: Zahlungs-Logik (nutzt C und D)
+    // M2: Zahlungs-Logik (nutzt Feld 3 und Feld 4)
     public void pay(int many) {
         this.amount = many;
         this.status = "PAID";
     }
 }
 ```
-**Analyse der Graphen:**
 
-* Teilgraph 1: Die Methode `display()` verbindet die Felder `cart` und `customer`.
-* Teilgraph 2: Die Methode `pay(int many)` verbindet `amount` and `status`.
-
-Zwischen diesen beiden Gruppen existiert keine Verbindung (kein gemeinsames Feld, kein gegenseitiger Aufruf). Die Klasse hat zwei Verantwortlichkeiten und somit einen LCOM4-Wert von 2.
-
-Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während `display()` auf Warenkorb und Kunde zugreift, verarbeitet `pay()` ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in `Order` sowie `Payment` aufgeteilt werden sollte.
 
 **Fallbeispiel: Optimierung durch Aufteilung (LCOM4 = 1)**
 
 Um die Kohäsion zu maximieren, wird die Klasse gemäß ihrer Verantwortlichkeiten in zwei spezialisierte Klassen aufgeteilt.
 
 ```java
-// LCOM4 = 1 — Fokus auf Inhalt/Anzeige
+// Fokus auf Inhalt/Anzeige (LCOM4 = 1)
 public class Order {
 
-    private Cart cart;
-    private Customer customer;
+    private Cart cart;            // Feld 1
+    private Customer customer;    // Feld 2
 
+    // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
     public String display() {
         return customer.getName() + ": " + cart.itemCount() + " items";
     }
 }
 
-// LCOM4 = 1 — Fokus auf Zahlung/Transaktion
+// Fokus auf Zahlung/Transaktion (LCOM4 = 1)
 public class Payment {
 
-    private int amount;
-    private String status;
+    private int amount;        // Feld 3
+    private String status;     // Feld 4 
 
+    // M2: Zahlungs-Logik (nutzt Feld 3 und Feld 4)
     public void pay(int many) {
         this.amount = many;
         this.status = "PAID";
@@ -120,6 +115,16 @@ public class Payment {
 }
 
 ```
+
+**Analyse der Graphen**
+
+* Teilgraph 1: Die Methode `display()` (M1) verbindet die Felder `cart` (F1) und `customer` (F2).
+* Teilgraph 2: Die Methode `pay(int many)` (M2) verbindet `amount` (F3) and `status` (F4).
+
+Zwischen diesen beiden Gruppen existiert keine Verbindung (kein gemeinsames Feld, kein gegenseitiger Aufruf). Die Klasse hat zwei Verantwortlichkeiten und somit einen LCOM4-Wert von 2.
+
+Die Klasse hält vier Felder, deren Methoden sich in zwei vollständig unabhängige Gruppen teilen, weil sie keinerlei gemeinsame Daten nutzen. Während `display()` auf Warenkorb und Kunde zugreift, verarbeitet `pay()` ausschließlich zahlungsrelevante Felder. Die resultierende Zustand der Trennung (Disjunktion) der Teilgraphen führt zu einem LCOM4 von 2. Dieser Wert macht deutlich, dass die Klasse zwei unterschiedliche Verantwortlichkeiten vermischt und z.B. in `Order` sowie `Payment` aufgeteilt werden sollte.
+
 Durch die Aufteilung besitzen nun beide Klassen nur noch einen zusammenhängenden Graphen. Jede Methode arbeitet mit dem gesamten Zustand der Klasse oder einem Teil davon, der wiederum mit anderen Methoden verknüpft ist.
 
 ### 3.2 Coupling Between Objects
@@ -138,39 +143,39 @@ Grundsätzlich ist eine Kopplung zwischen Klassen für die Funktionsfähigkeit e
 
 Um diese Abhängigkeiten auf ein gesundes Maß zu reduzieren, bietet das **Dependency Inversion Principle** eine zentrale Lösung, indem es High-Level-Module von konkreten Implementierungen entkoppelt und stattdessen die Abhängigkeit von stabilen Abstraktionen erzwingt. Ergänzend dazu trägt das **Interface Segregation Principle** zur Kopplungsminimierung bei, indem es Klassen nur gegen spezifisch benötigte Teil-Schnittstellen binden lässt. Zudem wirkt das **Law of Demeter** als strukturelle Schranke gegen semantische Kopplung, da es den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt. Schließlich unterstützt das Prinzip **Encapsulate what varies** die Entkopplung, indem es veränderliche Logikanteile isoliert und so verhindert, dass sich lokale Anpassungen unkontrolliert durch das gesamte System propagieren.
 
-**Fallbeispiel: Direkte Abhängigkeit**
+**Fallbeispiel 1: Direkte Abhängigkeit**
 
-Im ersten Szenario ist der ReportService direkt von konkreten Implementierungen abhängig. Jede Änderung an den beteiligten Klassen kann sich unmittelbar auf die Klasse auswirken.
+Im ersten Szenario ist der `Report` direkt von konkreten Implementierungen abhängig. Jede Änderung an den beteiligten Klassen kann sich unmittelbar auf die Klasse auswirken.
 
 
 ```java
 // CBO = 5 - Hohe Kopplung an konkrete Typen
-public class ReportService {
+public class Report {
 
-    private final ReportRepository repository; // CBO +1
-    private final PdfExporter pdfExporter;     // CBO +1
+    private ReportRepository repository; // Class (CBO +1)
+    private PdfExporter pdfExporter;     // Class (CBO +1)
 
-    public Report generateReport(DataQuery q) { // DataQuery +1, Report +1
-        List<DataRow> rows = repository.fetch(q); // DataRow +1 (Rückgabetyp von fetch)
+    public ReportData generate(DataQuery q) { // DataQuery (CBO +1), Report (CBO +1)
+        List<DataRow> rows = repository.fetch(q); // DataRow (CBO +1) (Rückgabetyp von fetch)
         return pdfExporter.export(rows);
     }
 }
-// Gezählte Typen: ReportRepository, PdfExporter, DataQuery, Report, DataRow
+// Gezählte Typen: ReportRepository, PdfExporter, DataQuery, ReportData, DataRow
 ```
-Der `ReportService` muss den Typ `DataRow` here zwingend „kennen“, um das Ergebnis von `repository.fetch(q)` verarbeiten oder zurückgeben zu können. In der CBO-Metrik zählen Typen in Methodensignaturen (Parameter und Rückgabetypen) stets als Kopplung.
+Der `Report` muss den Typ `DataRow` here zwingend „kennen“, um das Ergebnis von `repository.fetch(q)` verarbeiten oder zurückgeben zu können. In der CBO-Metrik zählen Typen in Methodensignaturen (Parameter und Rückgabetypen) stets als Kopplung.
 
-**Fallbeispiel: Dependency Inversion**
+**Fallbeispiel 2: Dependency Inversion**
 
-Um den CBO-Wert zu reduzieren, wird das *Dependency Inversion Principle* angewandt. Anstatt auf konkrete Implementierungen zu verweisen, bindet sich der Service an stabile Schnittstellen.
+Um den CBO-Wert zu reduzieren, wird das *Dependency Inversion Principle* angewandt. Anstatt auf konkrete Implementierungen zu verweisen, bindet sich der `Report` an zwei stabile Schnittstellen `Repository` und `Exporter`.
 
 ```java
-// CBO = 4 - Kopplung an stabile Schnittstellen
-public class ReportService {
+// Kopplung an stabile Schnittstellen (CBO = 4)
+public class Report {
 
-    private final Repository repository; // Interface (CBO +1)
-    private final Exporter exporter;     // Interface (CBO +1)
+    private Repository repository; // Interface (CBO +1)
+    private Exporter exporter;     // Interface (CBO +1)
 
-    public Report generateReport(Query q) { // Query +1, Report +1
+    public Report generate(Query q) { // Query (CBO +1), ReportData (CBO +1)
         List<DataRow> rows = repository.fetch(q);
         return exporter.export(rows);
     }
@@ -183,11 +188,11 @@ public class ReportService {
 Sofern auf einen spezifischen Rückgabetyp (`void` statt `Report`) verzichtet werden kann, lässt sich die Kopplung weiter senken. Ein entscheidender Faktor ist hierbei die Unterscheidung zwischen Signatur-Kopplung und lokaler Kopplung.
 
 ```java
-// CBO = 3 - Kopplung an Schnittstellen ohne Rückgabetyp
+// Kopplung an Schnittstellen ohne Rückgabetyp (CBO = 3)
 public class ReportService {
 
-    private final Repository repository; // Interface (CBO +1)
-    private final Exporter exporter;     // Interface (CBO +1)
+    private Repository repository; // Interface (CBO +1)
+    private Exporter exporter;     // Interface (CBO +1)
 
     public void generateReport(Query q) { // Query (CBO +1)
         List<DataRow> rows = repository.fetch(q);
@@ -204,32 +209,31 @@ Der Typ `DataRow` taucht hier nur noch als lokaler „Durchlaufwert“ auf. Da e
 Der CBO-Wert erhöht sich wieder auf 4, sobald eine explizite Abhängigkeit zu `DataRow` entsteht. Dies ist der Fall, wenn der Service aktiv Methoden des Typs aufruft (z. B. eine Validierung via `rows.get(0).validate()`).
 
 ```java
-// CBO = 4 - Kopplung an Semantik
-public class ReportService {
+// Kopplung an Semantik (CBO = 4)
+public class Report {
 
-    private final Repository repository; // Interface (CBO +1)
-    private final Exporter exporter;     // Interface (CBO +1)
+    private Repository repository; // Interface (CBO +1)
+    private Exporter exporter;     // Interface (CBO +1)
 
-    public void generateReport(Query q) { // Query +1, DataRow +1
+    public void generateReport(Query q) { // Query (CBO +1)
         List<DataRow> rows = repository.fetch(q);
-        rows.get(0).validate(); // Aktiver Aufruf an DataRow
+        rows.get(0).validate(); // Aktiver Aufruf an DataRow (CBO +1)
         exporter.export(rows);
     }
 }
 // Gezählte Typen: Repository, Exporter, Query, DataRow
 ```
 
-Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische Kopplung. Der `ReportService` benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` (Verletzung des Law of Demeter). Er verlässt damit seine Rolle als reiner Koordinator und spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte. Dadurch ist der Service nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
+Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische Kopplung. Der `Report` benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` (Verletzung des Law of Demeter). Er verlässt damit seine Rolle als reiner Koordinator und spricht mit einem „Fremden“, den er eigentlich nur durchreichen sollte. Dadurch ist der Klasse nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
 
 **Zusammenführung von LCOM4 und CBO**
 
 Die Kombination beider Metriken liefert die objektive Hilfestellung für das Klassendesign:
 
-**Hoher LCOM4:** Signalisiert, dass eine Klasse zu viele Dinge gleichzeitig tut (Low Cohesion). Lösung: Aufspalten.
+* **Hoher LCOM4-Wert:** Signalisiert, dass eine Klasse zu viele Dinge gleichzeitig tut (Low Cohesion). Lösung: Aufspalten.
+* **Hoher CBO-Wert:** Signalisiert, dass eine Klasse zu stark mit ihrer Umwelt verstrickt ist (High Coupling). Lösung: Dependency Inversion oder Schnittstellen-Abstraktion.
 
-**Hoher CBO:** Signalisiert, dass eine Klasse zu stark mit ihrer Umwelt verstrickt ist (High Coupling). Lösung: Dependency Inversion oder Schnittstellen-Abstraktion.
-
-Ein „sauberes“ Design nach Robert Bräutigams Formalisierung strebt eine Klasse an, die **LCOM4 = 1** (maximale Kohäsion) und einen **CBO im Bereich 0–5** (minimale Kopplung) aufweist.
+Ein „sauberes“ Design nach Robert Bräutigams Formalisierung strebt eine Klasse an, einen **LCOM4-Wert von 1** (maximale Kohäsion) und einen **CBO-Wert im Bereich 0 bis 5** (minimale Kopplung) aufweist.
 
 ## 5. Beispiele: DDD-Service vs. OOD-Decorator
 
@@ -250,11 +254,12 @@ Im klassischen Service-Pattern werden alle fachlich zusammengehörigen Operation
 
 ```java
 public class OrderService {
-    private final OrderRepository orderRepository;   // Feld 1
-    private final InventoryApi inventoryApi;         // Feld 2
-    private final PaymentApi paymentApi;             // Feld 3
-    private final Email email;                       // Feld 4
-    private final Audit audit;                       // Feld 5
+
+    private OrderRepository orderRepository;   // Feld 1
+    private InventoryApi inventoryApi;         // Feld 2
+    private PaymentApi paymentApi;             // Feld 3
+    private Email email;                       // Feld 4
+    private Audit audit;                       // Feld 5
 
     public Order createOrder(Cart cart, Customer customer) { // Feld 6, 7, 8
         inventoryApi.reserve(cart);
@@ -319,11 +324,11 @@ Ein naheliegender Refactoring-Schritt besteht darin, den ursprünglichen „Fat 
 
 ```java
 // Verantwortlichkeit: Bestellung anlegen
-public class OrderCreateService {
+public class OrderService {
 
-    private final OrderRepository repository; // Feld 1
-    private final InventoryApi inventory;     // Feld 2
-    private final Audit audit;                // Feld 3
+    private OrderRepository repository; // Feld 1
+    private InventoryApi inventory;     // Feld 2
+    private Audit audit;                // Feld 3
 
     public Order create(Cart cart, Customer customer) {
         inventory.reserve(cart);
@@ -337,10 +342,10 @@ public class OrderCreateService {
 // Verantwortlichkeit: Zahlung abwickeln
 public class OrderPaymentService {
 
-    private final OrderRepository repository; // Feld 1
-    private final PaymentApi payment;         // Feld 2
-    private final Email email;                // Feld 3
-    private final Audit audit;                // Feld 4
+    private OrderRepository repository; // Feld 1
+    private PaymentApi payment;         // Feld 2
+    private Email email;                // Feld 3
+    private Audit audit;                // Feld 4
 
     public void process(Order order) {
         payment.charge(order);
@@ -354,10 +359,10 @@ public class OrderPaymentService {
 // Verantwortlichkeit: Bestellung stornieren
 public class OrderCancelService {
 
-    private final OrderRepository repository; // Feld 1
-    private final InventoryApi inventory;     // Feld 2
-    private final Email email;                // Feld 3
-    private final Audit audit;                // Feld 4
+    private OrderRepository repository; // Feld 1
+    private InventoryApi inventory;     // Feld 2
+    private Email email;                // Feld 3
+    private Audit audit;                // Feld 4
 
     public void cancel(Order order) {
         inventory.release(order);
@@ -409,11 +414,11 @@ Im neuen Entwurf entfällt die `PaymentApi` als Methodenparameter, da sich `proc
 
 ```java
 // Kern: Persistenz — Repository eingekapselt, ID im Konstruktor
-public final class StoredOrder implements Order {
+public class StoredOrder implements Order {
 
-    private final String id;             // Feld 1
-    private final Cart cart;             // Feld 2
-    private final OrderRepository repo;  // Feld 3
+    private String id;             // Feld 1
+    private Cart cart;             // Feld 2
+    private OrderRepository repo;  // Feld 3
 
     public StoredOrder(String id, Cart cart, OrderRepository repo) {
         this.id = id; this.cart = cart; this.repo = repo;
@@ -434,10 +439,10 @@ public final class StoredOrder implements Order {
 }
 
 // Horizontaler Dekorator: Zahlung — injiziert PaymentApi, verwendet es in process()
-public final class PaidOrder implements Order {
+public class PaidOrder implements Order {
 
-    private final Order delegate;        // Feld 1
-    private final PaymentApi gateway;    // Feld 2
+    private Order delegate;        // Feld 1
+    private PaymentApi gateway;    // Feld 2
 
     public PaidOrder(Order delegate, PaymentApi gateway) {
         this.delegate = delegate; this.gateway = gateway;
@@ -458,10 +463,10 @@ public final class PaidOrder implements Order {
 }
 
 // Horizontaler Dekorator: Lagerverwaltung — injiziert InventoryApi, verwendet es in cancel()
-public final class InventedOrder implements Order {
+public class InventedOrder implements Order {
 
-    private final Order delegate;        // Feld 1
-    private final InventoryApi inv;      // Feld 2
+    private Order delegate;        // Feld 1
+    private InventoryApi inv;      // Feld 2
 
     public InventedOrder(Order delegate, InventoryApi inv) {
         this.delegate = delegate; this.inv = inv;
@@ -481,10 +486,10 @@ public final class InventedOrder implements Order {
 }
 
 // Dekorator: Audit-Logging — beide Methoden betroffen
-public final class AuditingOrder implements Order {
+public class AuditingOrder implements Order {
 
-    private final Order delegate;        // Feld 1
-    private final Audit audit;           // Feld 2
+    private Order delegate;        // Feld 1
+    private Audit audit;           // Feld 2
 
     public AuditingOrder(Order delegate, Audit auditLogger) {
         this.delegate = delegate; this.audit = audit;
@@ -507,10 +512,10 @@ public final class AuditingOrder implements Order {
 }
 
 // Dekorator: E-Mail-Benachrichtigung — beide Methoden betroffen
-public final class NotifiedOrder implements Order {
+public class NotifiedOrder implements Order {
 
-    private final Order delegate;          // Feld 1
-    private final Email email;             // Feld 2
+    private Order delegate;          // Feld 1
+    private Email email;             // Feld 2
 
     public NotifiedOrder(Order delegate, Email email) {
         this.delegate = delegate; this.email = email;
@@ -574,10 +579,10 @@ public interface OrderProcess {
     void cancel(String id, Cart cart);
 }
 
-public final class Orders implements Order {
-    private final String id;                  // Feld 1
-    private final Cart cart;                  // Feld 2
-    private final List<OrderProcess> acts;        // Feld 3
+public class Orders implements Order {
+    private String id;                  // Feld 1
+    private Cart cart;                  // Feld 2
+    private List<OrderProcess> acts;        // Feld 3
 
     public Orders(String id, Cart cart, List<OrderProcess> acts) {
         this.id = id; this.cart = cart; this.acts = acts;
@@ -601,8 +606,8 @@ public final class Orders implements Order {
 // Jede OrderProcess-Klasse isoliert eine spezifische technische oder fachliche Aufgabe:
 
 // Persistenz
-public final class Persist implements OrderProcess {
-    private final OrderRepository repo;
+public class Persist implements OrderProcess {
+    private OrderRepository repo;
     public Persist(OrderRepository repo) { this.repo = repo; }
 
     @Override public void process(String id, Cart cart) { repo.updateStatus(id, "PAID"); }
@@ -610,8 +615,8 @@ public final class Persist implements OrderProcess {
 }
 
 // Zahlung (nur process() relevant)
-public final class Pay implements OrderProcess {
-    private final PaymentApi gateway;
+public class Pay implements OrderProcess {
+    private PaymentApi gateway;
     public Pay(PaymentApi gateway) { this.gateway = gateway; }
 
     @Override public void process(String id, Cart cart) { gateway.charge(id); }
@@ -619,8 +624,8 @@ public final class Pay implements OrderProcess {
 }
 
 // Lagerverwaltung (nur cancel() relevant)
-public final class Invent implements OrderProcess {
-    private final InventoryApi inv;
+public class Invent implements OrderProcess {
+    private InventoryApi inv;
     public Invent(InventoryApi inv) { this.inv = inv; }
 
     @Override public void process(String id, Cart cart) { /* leer */ }
