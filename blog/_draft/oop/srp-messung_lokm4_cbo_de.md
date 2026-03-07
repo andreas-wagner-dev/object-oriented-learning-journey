@@ -46,7 +46,7 @@ Die externe Qualität wird hingegen durch die Kopplung bestimmt, welche die Abh�
 
 Innerhalb der Kopplung wird zwischen physikalischen und semantischen Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Code-Änderungen. Sobald eine Klasse beispielsweise über Ketten wie `user.getAddress().getCity()` auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Read-Methode als möglicher Kanal für eine erhöhte semantische Kopplung.
 
-Um die semantischen Abhängigkeiten zu minimieren, dient das **Law of Demeter** als zentrale Entwurfsrichtlinie, nach der ein Objekt nur mit seinen unmittelbaren Nachbarn kommunizieren darf. Ergänzt wird dies durch das Prinzip **Tell, Don’t Ask**, welches dazu auffordert, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen, um darauf basierend Entscheidungen zu treffen. Die konsequente Anwendung beider Prinzipien fungiert somit als effektiver Schutz gegen semantische Instabilität, indem sie die Kapselung wahrt und die Verantwortlichkeiten klar voneinander isoliert.
+Um die semantischen Abhängigkeiten zu minimieren, dient das **Law of Demeter** als zentrale Entwurfsrichtlinie, nach der ein Objekt nur mit seinen unmittelbaren Nachbarn kommunizieren darf. Ergänzt wird dies durch das Prinzip [**Tell, Don’t Ask**](https://martinfowler.com/bliki/TellDontAsk.html), welches dazu auffordert, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen, um darauf basierend Entscheidungen zu treffen. Die konsequente Anwendung beider Prinzipien fungiert somit als effektiver Schutz gegen semantische Instabilität, indem sie die Kapselung wahrt und die Verantwortlichkeiten klar voneinander isoliert.
 
 ## 3. Messverfahren für Kohäsion (LCOM4) und Kopplung (CBO)
 
@@ -156,8 +156,9 @@ Die Bewertung der Messergebnisse folgt einer klaren Skala:
 
 Grundsätzlich ist eine Kopplung zwischen Klassen für die Funktionsfähigkeit eines Systems zwar unumgänglich, doch erschwert ein übermäßiges Maß an Abhängigkeiten das Testen sowie die Modifikation und schränkt die Wiederverwendbarkeit der Komponenten erheblich ein.
 
-Um diese Abhängigkeiten auf ein gesundes Maß zu reduzieren, bietet das **Dependency Inversion Principle** eine zentrale Lösung, indem es High-Level-Module von konkreten Implementierungen entkoppelt und stattdessen die Abhängigkeit von stabilen Abstraktionen erzwingt. Ergänzend dazu trägt das **Interface Segregation Principle** zur Kopplungsminimierung bei, indem es Klassen nur gegen spezifisch benötigte Teil-Schnittstellen binden lässt. Zudem wirkt das **Law of Demeter** als strukturelle Schranke gegen semantische Kopplung, da es den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt. Schließlich unterstützt das Prinzip **Encapsulate what varies** die Entkopplung, indem es veränderliche Logikanteile isoliert und so verhindert, dass sich lokale Anpassungen unkontrolliert durch das gesamte System propagieren.
+Um diese Abhängigkeiten auf ein gesundes Maß zu reduzieren, bietet das [**Dependency Inversion Principle**](https://en.wikipedia.org/wiki/Dependency_inversion_principle) eine zentrale Lösung, indem es High-Level-Module von konkreten Implementierungen entkoppelt und stattdessen die Abhängigkeit von stabilen Abstraktionen erzwingt. Analog unterstützt das Prinzip [**Encapsulate what varies**](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) die Entkopplung. Dabei sollten sich häufig ändern oder unterschiedlich sein können, isoliert und hinter einer stabilen Schnittstelle verborgen werden. Ergänzend dazu trägt das **Interface Segregation Principle** zur Kopplungsminimierung bei, indem es Klassen nur gegen spezifisch benötigte Teil-Schnittstellen binden lässt. Zudem wirkt das **Law of Demeter** als strukturelle Schranke gegen semantische Kopplung, da es den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt.  
 
+ 
 **Fallbeispiel 1: Direkte Abhängigkeit**
 
 Im ersten Szenario ist der `Report` direkt von konkreten Implementierungen abhängig. Jede Änderung an den beteiligten Klassen kann sich unmittelbar auf die Klasse auswirken.
@@ -730,6 +731,7 @@ Letztlich dient das Prinzip dem Ziel der Wartbarkeit, weshalb die Lesbarkeit und
 * Robert Martin [The Single Responsibility Principle (2014)](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
 * Robert Bräutigam [The Single Responsibility Principle (2014)](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
 * Robert Bräutigam [The Genius of the Law of Demeter (2017)](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
+* Martin Fowler [Tell, Don’t Ask (2013)](https://martinfowler.com/bliki/TellDontAsk.html)
 * Matthieu Cneude [The Single Responsibility Principle Revisited (2020)](https://thevaluable.dev/single-responsibility-principle-revisited/)
 * Yegor Bugayenko [Vertical and Horizontal Decorating (2015)](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 
