@@ -736,21 +736,17 @@ Dieser Ansatz schneidet die Domäne streng nach Verantwortlichkeiten in Klassen 
 
 Nachteilig wirkt sich jedoch die Projekt-Explosion durch eine deutlich steigende Anzahl an Dateien und Konstruktoren aus. Auch die komplexe Komposition über tiefe Verschachtelungen wie `new PaidOrder(new StoredOrder(...))` ist gewöhnungsbedürftig. Das Muster begünstigt zwar die funktionalen Erweiterungen (Open-Closed-Prinzip), macht aber die Interface-Struktur zu einem kritischen Punkt, der bei Änderungen hohe Aufwände verursacht, da jede Änderung am zentralen `Order`-Interface Anpassungen in sämtlichen Dekoratoren erzwingt.
 
-Das horizontale Muster optimiert zwar die Lesbarkeit bei tiefen Ketten, erzwingt jedoch bei einer größeren Anzahl von Methoden strukturelle Kompromisse in Form von leeren Implementierungen. Ein Wechsel zu diesem Modell ist daher nur dann ratsam, wenn das Design keine leeren Implementierungen von Methoden erfordert, sodass möglichst das **Liskovsche Substitutionsprinzip** nicht verletzt wird.
+Das horizontale Muster optimiert zwar die Lesbarkeit bei tiefen Ketten, erzwingt jedoch bei einer größeren Anzahl von Methoden strukturelle Kompromisse in Form von leeren Implementierungen. Ein Wechsel zu diesem Modell ist daher nur dann ratsam, wenn das Design keine leeren Implementierungen von Methoden erfordert, sodass möglichst das *Liskov Substitution Principle* nicht verletzt wird.
 
 ## 7. Zusammenfassung und Handlungsempfehlung
 
 Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Es liegt in unserer Natur, Verantwortlichkeiten miteinander zu verknüpfen. Diese zu identifizieren und zu trennen, macht den Kern hochwertigen Softwareentwurfs aus. Letztlich führen fast alle SOLID-Prinzipien auf diesen Kernpunkt zurück.
 
-**Zusammenfassung**
-
 Um subjektive Debatten in Code-Reviews zu vermeiden, formalisiert Robert Bräutigam das Prinzip als ein Gleichgewicht aus maximaler Kohäsion und minimaler Kopplung (`SRP ≡ Maximale Kohäsion ∧ Minimale`). Diese Messbarkeit wird durch konkrete Metriken untermauert, wobei ein LCOM4-Wert von 1 für maximale interne Kohäsion steht und ein CBO-Wert unter 5 die externe Kopplung auf ein gesundes Maß begrenzt.
 
-Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. In der monolithischen Struktur des OrderService werden fünf Verantwortlichkeiten lediglich über technische Querschnittsfelder lose verknüpät, wodurch ein LCOM4-Wert von 1 rein zufällig und ohne fachliche Basis entsteht. Die Aufspaltung in drei spezialisierte Services senkt zwar die Kopplung, verteilt jedoch die Querschnittsbelange lediglich, anstatt sie strukturell zu isolieren. Erst der vertikale Decorator erreicht eine echte Isolation jeder Verantwortlichkeit bei einem niedrigen CBO-Wert von 2. Das horizontale Muster treibt diese Entkopplung mit einem CBO-Wert von 1 pro Prozessklasse auf die Spitze, muss jedoch gegen das Risiko leerer Methoden im Interface abgewogen werden, da diese das **Liskovsche Substitutionsprinzip* verletzen.
+Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. In der monolithischen Struktur des OrderService werden fünf Verantwortlichkeiten lediglich über technische Querschnittsfelder lose verknüpät, wodurch ein LCOM4-Wert von 1 rein zufällig und ohne fachliche Basis entsteht. Die Aufspaltung in drei spezialisierte Services senkt zwar die Kopplung, verteilt jedoch die Querschnittsbelange lediglich, anstatt sie strukturell zu isolieren. Erst der vertikale Decorator erreicht eine echte Isolation jeder Verantwortlichkeit bei einem niedrigen CBO-Wert von 2. Das horizontale Muster treibt diese Entkopplung mit einem CBO-Wert von 1 pro Prozessklasse auf die Spitze, muss jedoch gegen das Risiko leerer Methoden im Interface abgewogen werden, da diese das *Liskov Substitution Principle* verletzen.
 
 Die bloßen Kennzahlen der Metriken reichen als Beweis für SRP-Konformität indes nicht aus. Wie der monolithische Service zeigt, kann ein LCOM4-Wert von 1 durch rein technische Infrastrukturfelder künstlich erzeugt werden, ohne dass eine fachliche Einheit vorliegt. Erst die kombinierte Betrachtung von LCOM4 und CBO ergibt zusammen mit der qualitativen Analyse der fachlichen Kohäsion (Frage: „Warum sind diese Methoden fachlich verbunden?“) ein vollständiges Bild.
-
-**Handlungsempfehlung**
 
 Für die tägliche Praxis lassen sich daraus drei Leitlinien ableiten: 
 
