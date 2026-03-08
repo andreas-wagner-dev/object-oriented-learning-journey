@@ -48,9 +48,9 @@ Innerhalb der Kopplung wird zwischen physikalischen und semantischen Abhängigke
 
 Um die semantischen Abhängigkeiten zu minimieren, dient das [Law of Demeter](https://en.wikipedia.org/wiki/Law_of_Demeter) als zentrale Entwurfsrichtlinie, nach der ein Objekt nur mit seinen unmittelbaren Nachbarn kommunizieren darf. Ergänzt wird dies durch das Prinzip [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html), welches dazu auffordert, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen, um darauf basierend Entscheidungen zu treffen. Die konsequente Anwendung beider Prinzipien fungiert somit als effektiver Schutz gegen semantische Instabilität, indem sie die Kapselung wahrt und die Verantwortlichkeiten klar voneinander isoliert.
 
-## 3. Messverfahren für Kohäsion (LCOM4) und Kopplung (CBO)
+## 4. Messverfahren für Kohäsion (LCOM4) und Kopplung (CBO)
 
-### 3.1 Lack of Cohesion of Methods
+### 4.1 Lack of Cohesion of Methods
 
 Eine der bekanntesten Metriken zur Messung der inneren Klassenstruktur ist die Lack of Cohesion of Methods (LCOM). Da in der Literatur verschiedene Versionen dieser Kohäsionsmetrik existieren, wird in diesem Beitrag gezielt die vierte Iteration (LCOM4) nach Hitz und Montazeri (1995) verwendet. Diese zeichnet sich durch eine hohe praktische Relevanz aus, da sie aufgrund ihrer einfachen Anwendung und klaren Interpretierbarkeit eine objektive Bewertung der SRP-Konformität ermöglicht. Die Metrik ermittelt die Anzahl verbundener Elementgruppen innerhalb einer Klasse, wobei die Kohäsion mittels einer Graphenanalyse veranschaulicht wird. Ein zusammenhängender Teilgraph entsteht dabei immer dann, wenn Methoden entweder auf dieselben Instanzvariablen zugreifen oder sich durch gegenseitige Aufrufe direkt beeinflussen.
 
@@ -172,7 +172,7 @@ Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein 
 
 Als Handlungsempfehlung lässt sich ableiten: Existiert kein fachlicher Zusammenhang zwischen den Methoden einer Klasse, ist eine Aufteilung geboten. Eine künstliche Verbindung durch rein technische Infrastrukturbelange sollte vermieden werden, um die Transparenz über die tatsächliche Kohäsion nicht zu verzerren.
 
-### 3.2 Coupling Between Objects
+### 4.2 Coupling Between Objects
 
 Ergänzend zur Kohäsion misst die Metrik **Coupling Between Objects (CBO)** nach Chidamber & Kemerer (1994) die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Diese Kopplung manifestiert sich durch Klassenerweiterungen, Feldtypen, Methodenaufrufe sowie durch Argumente und Rückgabetypen innerhalb der Methodensignatur oder lokaler Variablen.
 
@@ -229,7 +229,7 @@ public class Report {
 // Gezählte Typen: Repository, Exporter, Report, Query
 ```
 
-**Fallbeispiel: Signatur-Optimierung**
+**Fallbeispiel 3: Signatur-Optimierung**
 
 Sofern auf einen spezifischen Rückgabetyp (`void` statt `Report`) verzichtet werden kann, lässt sich die Kopplung weiter senken. Ein entscheidender Faktor ist hierbei die Unterscheidung zwischen Signatur-Kopplung und lokaler Kopplung.
 
@@ -250,7 +250,7 @@ public class Report {
 
 Der Typ `DataRow` taucht hier nur noch als lokaler „Durchlaufwert“ auf. Da er weder Teil der Felder noch der Methodensignatur ist, wird er in der Metrik nicht als direkte Kopplung gewertet. Die Klasse `Report` reicht das `DataRow` Objekt lediglich zwischen `Repository` und `Exporter` weiter, ohne eine funktionale Abhängigkeit zur internen Struktur von `DataRow` zu besitzen (Pass-Through-Effekt).
 
-**Fallbeispiel: Semantische Kopplung**
+**Fallbeispiel 4: Semantische Kopplung**
 
 Der CBO-Wert erhöht sich wieder auf 4, sobald eine explizite Abhängigkeit zu `DataRow` entsteht. Dies ist der Fall, wenn der `Report` aktiv Methoden des Typs aufruft (z. B. eine Validierung via `rows.get(0).validate()`).
 
@@ -272,7 +272,7 @@ public class Report {
 
 Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische Kopplung. Die Klasse `Report` benötigt nun „Wissen“ über das interne Verhalten und die Geschäftsregeln von `DataRow` (Verletzung des Law of Demeter).  Die Klasse verlässt damit ihre Rolle als reiner Koordinator und spricht mit einem „Fremden“, den sie eigentlich nur durchreichen sollte. Dadurch ist der Klasse nicht mehr nur technisch gekoppelt (Kenntnis des Typs), sondern auch logisch (Kenntnis des Prozesses), was die Wartbarkeit erschwert.
 
-### 3.3 Die Synergie von LCOM4 und CBO
+### 4.3 Die Synergie von LCOM4 und CBO
 
 Wie die vorangegangenen Fallbeispiele zeigen, kann ein LCOM4-Wert von 1 trügerisch sein. Sobald eine Klasse technisch notwendige Querschnittsfelder wie eine id, ein status-Feld oder einen Logger nutzt, werden im Graphen Brücken zwischen eigentlich fremden fachlichen Verantwortlichkeiten geschlagen. Die strukturelle Analyse wertet dies als Kohäsion, obwohl das Single Responsibility Principle faktisch verletzt bleibt.
 
