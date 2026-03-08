@@ -26,7 +26,7 @@ Aufgrund der Unklarheiten rund um den Begriff des ‚Änderungsgrundes‘ präzi
 
 In der praktischen Anwendung weisen diese Definitionen jedoch neue Fragen auf. 
 
-* So ist beispielsweise unklar, ob eine Klasse 'Order*, eine Bestellung sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf *eine einzelne Aufgabe* verstößt.
+* So ist beispielsweise unklar, ob eine Klasse `Order`, eine Bestellung sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf *eine einzelne Aufgabe* verstößt.
 * Auch die praktische Faustregel, *Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln*, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung der künftigen Produktentwicklung erfordert.
 * Ebenso erweist sich der Verweis auf den *Geschäftsmann* zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Code-Alltag unbrauchbar.
 
