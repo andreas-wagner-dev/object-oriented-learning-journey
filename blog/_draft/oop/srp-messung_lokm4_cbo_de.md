@@ -24,7 +24,7 @@ Aufgrund der Unklarheiten rund um den Begriff des ‚Änderungsgrundes‘ präzi
 
 > "Same reason' means it originates from the same business person"  
 
-In der praktischen Anwendung weisen diese Definitionen jedoch neue Fragen auf. 
+In der praktischen Anwendung werfen diese Definitionen jedoch neue Fragen auf:
 
 * So ist beispielsweise unklar, ob eine Klasse `Order`, eine Bestellung sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf *eine einzelne Aufgabe* verstößt.
 * Auch die praktische Faustregel, *Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln*, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung der künftigen Produktentwicklung erfordert.
@@ -69,10 +69,10 @@ In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten f�
 // Die Klasse zerfällt in zwei isolierte Teilgraphen (LCOM4 = 2)
 public class Order {
 
-    private Cart cart;                 // Feld 1
-    private Customer customer;         // Feld 2
-    private int status;                // Feld 3
-    private String amount;             // Feld 4
+    private Cart cart;                   // Feld 1
+    private Customer customer;           // Feld 2
+    private String status = "PANDING";   // Feld 3
+    private int amount;                  // Feld 4
 
     // M1: Anzeige-Logik (nutzt Feld 1 und Feld 2)
     public String display() {
@@ -102,10 +102,10 @@ Rein strukturell erhöht sich die Kohäsion, wodurch der LCOM4-Wert auf 1 sinkt.
 ```java
 public class Order {
 
-    private Cart cart;                 // Feld 1
-    private Customer customer;         // Feld 2
-    private int status;                // Feld 3
-    private String amount;             // Feld 4
+    private Cart cart;                   // Feld 1
+    private Customer customer;           // Feld 2
+    private String status = "PANDING";   // Feld 3
+    private int amount;                  // Feld 4
 
     public String display() {
         // Nutzt Feld 1, 2 und 3
@@ -127,7 +127,7 @@ Die Graphenanalyse der Klasse `Order` verdeutlicht das folgende Bild.
 Da beide Methoden auf das Feld `status` zugreifen, sind die ursprünglich isolierten Logikbereiche über diese Instanzvariable miteinander verbunden. Im Sinne der Graphentheorie entsteht ein einziger zusammenhängender Graph, da ein Pfad von M1 über Feld 3 zu M2 existiert. Das Ergebnis ist ein LCOM4-Wert von 1.
 
 
-**Fallbeispiel 3: Indeale Kohäsion durch Aufteilung (LCOM4 = 1)**
+**Fallbeispiel 3: Ideale Kohäsion durch Aufteilung (LCOM4 = 1)**
 
 Um eine echte fachliche Kohäsion zu erreichen, wird die Klasse gemäß ihrer Verantwortlichkeiten in zwei spezialisierte Einheiten dekonstruiert.
 
@@ -146,8 +146,8 @@ public class OrderView {
 // Fokus auf Zahlung/Transaktion
 public class OrderPayment {
 
-    private int status;                // Feld 3
-    private String amount;             // Feld 4
+    private String status = "PANDING";   // Feld 3
+    private int amount;                  // Feld 4
 
     public void pay(int many) {
         this.amount = many;
@@ -180,13 +180,13 @@ Primitive Datentypen und Standard-Wrapper wie int oder String bleiben hierbei un
 
 Die Bewertung der Messergebnisse folgt einer klaren Skala:
 
-* **CBO-Wert von 0** darauf hindeutet, dass eine Klasse isoliert ist und somit faktisch nicht am System teilnimmt.
-* **CBO-Werte zwischen 1 und 4** gilt als Idealbereich, da er eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
-* **CBO-Wert größer als 5**, deutet dies auf eine zu enge Verflechtung mit anderen Klassen hin.
+* **CBO-Wert von 0** deutet darauf hin, dass eine Klasse isoliert ist und somit faktisch nicht am System teilnimmt.
+* **CBO-Werte zwischen 1 und 4** gelten als Idealbereich, da er eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
+* **CBO-Wert größer als 5**, deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
 
 Grundsätzlich ist eine Kopplung zwischen Klassen für die Funktionsfähigkeit eines Systems zwar unumgänglich, doch erschwert ein übermäßiges Maß an Abhängigkeiten das Testen sowie die Modifikation und schränkt die Wiederverwendbarkeit der Komponenten erheblich ein.
 
-Um diese Abhängigkeiten auf ein gesundes Maß zu reduzieren, bietet das [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle) eine zentrale Lösung, indem es High-Level-Module von konkreten Implementierungen entkoppelt und stattdessen die Abhängigkeit von stabilen Abstraktionen erzwingt. Analog unterstützt das Prinzip [Encapsulate what varies](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) die Entkopplung. Dabei sollten sich häufig ändern oder unterschiedlich sein können, isoliert und hinter einer stabilen Schnittstelle verborgen werden. Ergänzend dazu trägt das [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle) zur Kopplungsminimierung bei, indem es Klassen nur gegen spezifisch benötigte Teil-Schnittstellen binden lässt. Zudem wirkt das **Law of Demeter** als strukturelle Schranke gegen semantische Kopplung, da es den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt.  
+Um diese Abhängigkeiten auf ein gesundes Maß zu reduzieren, bietet das [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle) eine zentrale Lösung, indem es High-Level-Module von konkreten Implementierungen entkoppelt und stattdessen die Abhängigkeit von stabilen Abstraktionen erzwingt. Analog unterstützt das Prinzip [Encapsulate what varies](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) die Entkopplung. Dabei sollte, was sich häufig ändern oder unterschiedlich sein kann, isoliert und hinter einer stabilen Schnittstelle verborgen werden. Ergänzend dazu trägt das [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle) zur Kopplungsminimierung bei, indem es Klassen nur gegen spezifisch benötigte Teil-Schnittstellen binden lässt. Zudem wirkt das **Law of Demeter** als strukturelle Schranke gegen semantische Kopplung, da es den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt.  
 
  
 **Fallbeispiel 1: Direkte Abhängigkeit**
@@ -208,7 +208,7 @@ public class Report {
 }
 // Gezählte Typen: ReportRepository, PdfExporter, DataQuery, ReportData, DataRow
 ```
-Der `Report` muss den Typ `DataRow` here zwingend „kennen“, um das Ergebnis von `repository.fetch(q)` verarbeiten oder zurückgeben zu können. In der CBO-Metrik zählen Typen in Methodensignaturen (Parameter und Rückgabetypen) stets als Kopplung.
+Der `Report` muss den Typ `DataRow` hier zwingend „kennen“, um das Ergebnis von `repository.fetch(q)` verarbeiten oder zurückgeben zu können. In der CBO-Metrik zählen Typen in Methodensignaturen (Parameter und Rückgabetypen) stets als Kopplung.
 
 **Fallbeispiel 2: Dependency Inversion**
 
@@ -365,7 +365,7 @@ Die eigentliche Problematik verdeutlicht der kritische **CBO-Wert von 8**, welch
 
 Das SRP ist hier verletzt, da die Klasse mehrere fachlich unabhängige Änderungsgründe wie Logikänderungen bei der Zahlung, im Lager oder beim E-Mail-Versand in sich vereint. Diese Analyse zeigt deutlich, dass LCOM4 allein zur Diagnose dieser Problematik nicht ausreicht und die strukturellen Defizite erst durch den CBO-Wert entlarvt werden.
 
-### 4.2 Service-Pattern (DDD) – Aufgespalten
+### 5.2 Service-Pattern (DDD) – Aufgespalten
 
 Ein naheliegender Refactoring-Schritt besteht darin, den ursprünglichen „Fat Service“ in drei spezialisierte Klassen aufzuteilen, die jeweils eine spezifische Operation abbilden.
 
@@ -428,9 +428,9 @@ OrderService createSvc = new OrderService(orderRepository, inventoryApi, audit);
 OrderPaymentService paymentSvc = new OrderPaymentService(orderRepository, paymentApi, email, audit);
 OrderCancelService cancelSvc = new OrderCancelService(orderRepository, inventoryApi, email, audit);
 
-Order order = createSvc.createOrder(cart, customer);
-paymentSvc.processPayment(order);
-cancelSvc.cancelOrder(order);
+Order order = createSvc.create(cart, customer);
+paymentSvc.process(order);
+cancelSvc.cancel(order);
 ```
 Durch diese Dekonstruktion sinkt der CBO-Wert pro Klasse spürbar, da jede Einheit nur noch die Abhängigkeiten erhält, die sie für ihre dezidierte Aufgabe zwingend benötigt.
 
@@ -444,7 +444,7 @@ Das SRP wird hier zwar besser adressiert, ist aber nicht vollständig erfüllt, 
 
 ## 5.3 Vertikales Decorator-Pattern (OOD)
 
-Um die verbleibende Redundanz der Querschnittsbelange aufzulösen, bietet sich das Decorator-Pattern an. Hierbei wird die Kernlogik in einer Basisklasse isoliert, während fachliche funktionserweiterungen und technische Aspekte wie Logging oder Persistenz in separate Hüllen ausgelagert werden. Das Pattern separiert Verantwortlichkeiten konsequent über Objektkomposition, sodass jede Klasse genau eine Aufgabe übernimmt. Die Querschnittsbelange entstehen hier durch das Umhüllen von Objekten und nicht durch das Anhäufen von Feldern innerhalb einer Klasse.
+Um die verbleibende Redundanz der Querschnittsbelange aufzulösen, bietet sich das Decorator-Pattern an. Hierbei wird die Kernlogik in einer Basisklasse isoliert, während fachliche Funktionserweiterungen und technische Aspekte wie Logging oder Persistenz in separate Hüllen ausgelagert werden. Das Pattern separiert Verantwortlichkeiten konsequent über Objektkomposition, sodass jede Klasse genau eine Aufgabe übernimmt. Die Querschnittsbelange entstehen hier durch das Umhüllen von Objekten und nicht durch das Anhäufen von Feldern innerhalb einer Klasse.
 
 Das Basis-Interface wird dabei schlicht als Order definiert, was einen rein fachlichen Begriff ohne das technische Suffix „Service“ darstellt. 
 
@@ -742,9 +742,9 @@ Das horizontale Muster optimiert zwar die Lesbarkeit bei tiefen Ketten, erzwingt
 
 Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Es liegt in unserer Natur, Verantwortlichkeiten miteinander zu verknüpfen. Diese zu identifizieren und zu trennen, macht den Kern hochwertigen Softwareentwurfs aus. Letztlich führen fast alle SOLID-Prinzipien auf diesen Kernpunkt zurück.
 
-Um subjektive Debatten in Code-Reviews zu vermeiden, formalisiert Robert Bräutigam das Prinzip als ein Gleichgewicht aus maximaler Kohäsion und minimaler Kopplung (`SRP ≡ Maximale Kohäsion ∧ Minimale`). Diese Messbarkeit wird durch konkrete Metriken untermauert, wobei ein LCOM4-Wert von 1 für maximale interne Kohäsion steht und ein CBO-Wert unter 5 die externe Kopplung auf ein gesundes Maß begrenzt.
+Um subjektive Debatten in Code-Reviews zu vermeiden, formalisiert Robert Bräutigam das Prinzip als ein Gleichgewicht aus maximaler Kohäsion und minimaler Kopplung (`SRP ≡ Maximale Kohäsion ∧ Minimale Kopplung`). Diese Messbarkeit wird durch konkrete Metriken untermauert, wobei ein LCOM4-Wert von 1 für maximale interne Kohäsion steht und ein CBO-Wert unter 5 die externe Kopplung auf ein gesundes Maß begrenzt.
 
-Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. In der monolithischen Struktur des OrderService werden fünf Verantwortlichkeiten lediglich über technische Querschnittsfelder lose verknüpät, wodurch ein LCOM4-Wert von 1 rein zufällig und ohne fachliche Basis entsteht. Die Aufspaltung in drei spezialisierte Services senkt zwar die Kopplung, verteilt jedoch die Querschnittsbelange lediglich, anstatt sie strukturell zu isolieren. Erst der vertikale Decorator erreicht eine echte Isolation jeder Verantwortlichkeit bei einem niedrigen CBO-Wert von 2. Das horizontale Muster treibt diese Entkopplung mit einem CBO-Wert von 1 pro Prozessklasse auf die Spitze, muss jedoch gegen das Risiko leerer Methoden im Interface abgewogen werden, da diese das *Liskov Substitution Principle* verletzen.
+Der Vergleich der vier Designvarianten verdeutlicht eine systematische Evolution des Softwareentwurfs. In der monolithischen Struktur des `OrderService` werden fünf Verantwortlichkeiten lediglich über technische Querschnittsfelder lose verknüpft, wodurch ein LCOM4-Wert von 1 rein zufällig und ohne fachliche Basis entsteht. Die Aufspaltung in drei spezialisierte Services senkt zwar die Kopplung, verteilt jedoch die Querschnittsbelange lediglich, anstatt sie strukturell zu isolieren. Erst der vertikale Decorator erreicht eine echte Isolation jeder Verantwortlichkeit bei einem niedrigen CBO-Wert von 2. Das horizontale Muster treibt diese Entkopplung mit einem CBO-Wert von 1 pro Prozessklasse auf die Spitze, muss jedoch gegen das Risiko leerer Methoden im Interface abgewogen werden, da diese das *Liskov Substitution Principle* verletzen.
 
 Die bloßen Kennzahlen der Metriken reichen als Beweis für SRP-Konformität indes nicht aus. Wie der monolithische Service zeigt, kann ein LCOM4-Wert von 1 durch rein technische Infrastrukturfelder künstlich erzeugt werden, ohne dass eine fachliche Einheit vorliegt. Erst die kombinierte Betrachtung von LCOM4 und CBO ergibt zusammen mit der qualitativen Analyse der fachlichen Kohäsion (Frage: „Warum sind diese Methoden fachlich verbunden?“) ein vollständiges Bild.
 
@@ -752,7 +752,7 @@ Für die tägliche Praxis lassen sich daraus drei Leitlinien ableiten:
 
 Ein LCOM4-Wert größer als 1 kann ein Indikator für eine notwendige Dekomposition sein. Existiert kein fachlicher Zusammenhang zwischen den Methoden einer Klasse, ist eine Aufteilung geboten. Eine künstliche Verbindung durch rein technische Infrastrukturbelange sollte vermieden werden, um die Transparenz über die tatsächliche Kohäsion nicht zu verzerren.
 
-Hingegen kann ein hoher CBO-Wert > 5 die Kopplung durch die Anwendung des *Dependency Inversion Principle* und den Einsatz stabiler Interfaces wirksam gesenkt werden. Zudem sollten Aufrufe von Methoden an fremden Objekten vermieden werden, da sie das Hauptmerkmal semantischer Kopplung darstellen und von rein strukturellen Metriken nicht erfasst werden.  
+Bei einem hohen CBO-Wert > 5 kann die Kopplung durch die Anwendung des *Dependency Inversion Principle* und den Einsatz stabiler Interfaces wirksam gesenkt werden. Zudem sollten Aufrufe von Methoden an fremden Objekten vermieden werden, da sie das Hauptmerkmal semantischer Kopplung darstellen und von rein strukturellen Metriken nicht erfasst werden.  
 
 Unter Beachtung dieser Prämissen erweist sich das SRP nicht als starres Dogma, sondern als präzises Werkzeug, das durch objektive Metriken erst wirklich handhabbar wird. Letztlich dient das Prinzip jedoch dem übergeordneten Ziel der Wartbarkeit, weshalb die Lesbarkeit und Nachvollziehbarkeit des Gesamtsystems stets stärker gewichtet werden sollten als die einseitige Optimierung einer einzelnen Metrik.
 
@@ -780,7 +780,7 @@ Unter Beachtung dieser Prämissen erweist sich das SRP nicht als starres Dogma, 
 * Yegor Bugayenko (2017) [Evil Suffix For Object Names](https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html)
 * Yegor Bugayenko (2015) [A Compound Name Is a Code Smell](https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html)
 
-### Verwandt Bücher
+### Verwandte Bücher
 
 - Martin, R. C. (2003). *Agile Software Development: Principles, Patterns, and Practices*. Prentice Hall.
 - Martin, R. C. (2008). *Clean Code*. Prentice Hall.
