@@ -9,7 +9,7 @@ Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu ha
 
 Im Mittelpunkt dieser Betrachtung steht das Single Responsibility Principle sowie die Herausforderung, dessen Einhaltung auf Klassenebene objektiv zu bewerten. Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Der hier gewählte Ansatz stützt sich auf die Formalisierung von Robert Bräutigam, welcher das SRP über die Konjunktion (logisches UND) zweier messbarer Softwaremetriken definiert. Die daraus resultierende Formel lautet SRP ≡ max(COHESION) ∧ min(COUPLING).
 
-Die Operationalisierung der Formel erfolgt dabei über zwei zentrale Kennzahlen. Die Kohäsion wird mittels *Lack of Cohesion of Methods Version 4* (LCOM4) über eine Graphenanalyse ermittelt, wobei der ideale Zielwert bei 1 liegt. Parallel dazu wird die Kopplung mithilfe von *Coupling Between Objects* (CBO) durch das Zählen externer Abhängigkeiten bestimmt mit dem Ziel eines minimalen Wertes. Beide Kennzahlen werden zunächst anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung evaluiert. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze, wie das moderne Service Muster nach Domain Driven Design (DDD) und das Decorator Muster nach Object Oriented Design (OOD). Diese Konzepte werden zur Analyse innerhalb einer Domäne zur Bestellverwaltung in Java implementiert.
+Die Operationalisierung der Formel erfolgt dabei über zwei zentrale Kennzahlen. Die Kohäsion wird mittels *Lack of Cohesion of Methods Version 4* (LCOM4) über eine Graphenanalyse ermittelt, wobei der ideale Zielwert bei 1 liegt. Parallel dazu wird die Kopplung mithilfe von *Coupling Between Objects* (CBO) durch das Zählen externer Abhängigkeiten bestimmt mit dem Ziel eines minimalen Wertes. Beide Kennzahlen werden zunächst anhand von Beispielklassen explizit hergeleitet und in einer abschließenden Gegenüberstellung evaluiert. Als Vergleichsobjekte dienen zwei verbreitete Entwurfsansätze, wie das weitverbreitete Service Muster nach Daten Oriented Design (DOD) und das Decorator Muster nach Object Oriented Design (OOD). Diese Konzepte werden zur Analyse innerhalb einer Domäne zur Bestellverwaltung in Java implementiert.
 
 ## 2. Die Problematik von SRP
 
@@ -284,7 +284,7 @@ An dieser Stelle entfaltet die Kombination mit der CBO-Metrik ihre volle Diagnos
 
 Erst in der Gesamtbetrachtung beider Kennzahlen lässt sich objektiv feststellen, ob eine Klasse eine echte fachliche Einheit bildet oder lediglich eine Ansammlung lose gekoppelter Aufgaben darstellt, die durch technische Hilfsvariablen zusammengehalten werden. Ein „sauberes“ Design nach der Formalisierung von Robert Bräutigam strebt demnach eine Klasse an, die durch maximale Kohäsion bei minimaler Kopplung besticht, was sich in der Zielmarke eines **LCOM4-Werts von 1** und eines **CBO-Bereichs von 0 bis 5** widerspiegelt.
 
-## 5. Beispiele: DDD-Service vs. OOD-Decorator
+## 5. Beispiele: DOD-Service vs. OOD-Decorator
 
 Um die praktische Anwendung von LCOM4 und CBO zu demonstrieren, wird im Folgenden dieselbe Domäne mit unterschiedlichen Entwurfsansätzen untersucht. Ziel ist es, die Unterschiede in der SRP-Konformität objektiv messbar zu machen.
 
@@ -296,7 +296,7 @@ Als Szenario dient der Bestellvorgang eines Online-Shops mit drei Kernoperatione
 
 Daraus ergeben sich sieben beteiligte Komponenten, deren Verantwortlichkeiten in den folgenden Implementierungen unterschiedlich verteilt werden: `Cart`, `Customer`, `OrderRepository`, `InventoryApi`, `PaymentApi`, `Email` und `Audit`.
 
-### 5.1 Service-Pattern (DDD)
+### 5.1 Service-Pattern (DOD)
 
 Im klassischen Service-Pattern werden alle fachlich zusammengehörigen Operationen in einer zentralen Klasse gebündelt.
 
@@ -366,7 +366,7 @@ Die eigentliche Problematik verdeutlicht der kritische **CBO-Wert von 8**, welch
 
 Das SRP ist hier verletzt, da die Klasse mehrere fachlich unabhängige Änderungsgründe wie Logikänderungen bei der Zahlung, im Lager oder beim E-Mail-Versand in sich vereint. Diese Analyse zeigt deutlich, dass LCOM4 allein zur Diagnose dieser Problematik nicht ausreicht und die strukturellen Defizite erst durch den CBO-Wert entlarvt werden.
 
-### 5.2 Service-Pattern (DDD) – Aufgespalten
+### 5.2 Service-Pattern (DOD) – Aufgespalten
 
 Ein naheliegender Refactoring-Schritt besteht darin, den ursprünglichen „Fat Service“ in drei spezialisierte Klassen aufzuteilen, die jeweils eine spezifische Operation abbilden.
 
@@ -405,7 +405,7 @@ public class OrderPaymentService {
 }
 
 // Verantwortlichkeit: Bestellung stornieren
-public class OrderCancelService {
+public class OrderInventoryService {
 
     private OrderRepository repository; // Feld 1
     private InventoryApi inventory;     // Feld 2
@@ -422,12 +422,12 @@ public class OrderCancelService {
 }
 
 ```
-In der praktischen Verwendung werden nun der `OrderService`, der `OrderPaymentService` und der `OrderCancelService` als eigenständige Komponenten instanziiert.
+In der praktischen Verwendung werden nun der `OrderService`, der `OrderPaymentService` und der `OrderInventoryService` als eigenständige Komponenten instanziiert.
 
 ```java
 OrderService createSvc = new OrderService(orderRepository, inventoryApi, audit);
 OrderPaymentService paymentSvc = new OrderPaymentService(orderRepository, paymentApi, email, audit);
-OrderCancelService cancelSvc = new OrderCancelService(orderRepository, inventoryApi, email, audit);
+OrderCancelService cancelSvc = new OrderInventoryService(orderRepository, inventoryApi, email, audit);
 
 Order order = createSvc.create(cart, customer);
 paymentSvc.process(order);
@@ -445,7 +445,7 @@ Das SRP wird hier zwar besser adressiert, ist aber nicht vollständig erfüllt, 
 
 ### 5.3 Vertikales Decorator-Pattern (OOD)
 
-Um die verbleibende Redundanz der Querschnittsbelange aufzulösen, bietet sich das Dekorator-Pattern an. Hierbei wird die Kernlogik in einer Basisklasse isoliert, während fachliche Funktionserweiterungen und technische Aspekte wie Logging oder Persistenz in separate Hüllen ausgelagert werden. Das Muster separiert Verantwortlichkeiten konsequent über Objektkomposition, sodass jede Klasse genau eine Aufgabe übernimmt. Die Querschnittsbelange entstehen hier durch das Umhüllen von Objekten und nicht durch das Anhäufen von Feldern innerhalb einer Klasse.
+Im Object Oriented Design gibt verschiedene strukturelle (Adapter, Bridge, Dekorator...) und verhaltens (Strategy) Patterns, wobei der das Dekorator-Pattern mit der kompbination mit anderen Patterns, besonders für den Entwurf zur Einhaltung von SRP geeignet ist. Hierbei wird die Kernlogik in einer Basisklasse isoliert, während fachliche Funktionserweiterungen und technische Aspekte wie Logging oder Persistenz in separate Hüllen ausgelagert werden. Das Muster separiert Verantwortlichkeiten konsequent über Objektkomposition, sodass jede Klasse genau eine Aufgabe übernimmt. Die Querschnittsbelange entstehen hier durch das Umhüllen von Objekten und nicht durch das Anhäufen von Feldern innerhalb einer Klasse.
 
 Das Basis-Interface wird dabei schlicht als Order definiert, was einen rein fachlichen Begriff ohne das technische Suffix „Service“ darstellt. 
 
