@@ -298,7 +298,7 @@ Daraus ergeben sich sieben beteiligte Komponenten, deren Verantwortlichkeiten in
 
 ### 5.1 Service-Pattern (DOD)
 
-Im klassischen Service-Pattern werden alle fachlich zusammengehörigen Operationen in einer zentralen Klasse gebündelt.
+Im klassischen (dantenzentrischen) Service-Pattern werden alle fachlich zusammengehörigen Operationen in einer zentralen Klasse gebündelt.
 
 ```java
 public class OrderService {
