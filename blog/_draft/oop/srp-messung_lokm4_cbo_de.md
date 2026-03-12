@@ -298,7 +298,14 @@ Daraus ergeben sich sieben beteiligte Komponenten, deren Verantwortlichkeiten in
 
 ### 5.1 Service-Pattern (DOD)
 
-Im klassischen (dantenzentrischen) Service-Pattern werden alle fachlich zusammengehörigen Operationen in einer zentralen Klasse gebündelt.
+Im klassischen (dantenzentrische) Service-Pattern arbeitet mit Daten einer Bestellung und bündelt alle dafür benötigten (fachlich zusammengehörigen) Operationen in einer zentralen Klasse.
+
+// Anemic Domain Model
+public class OrderData {
+    public String id;
+    public String status;
+    // Getter und Setter...
+}
 
 ```java
 public class OrderService {
@@ -309,7 +316,7 @@ public class OrderService {
     private Email email;                       // Feld 4
     private Audit audit;                       // Feld 5
 
-    public Order createOrder(Cart cart, Customer customer) { // Parameter: Cart (CBO +1), Customer (CBO +1), Rückgabe: Order (CBO +1)
+    public Order reserve(Cart cart, Customer customer) { // Parameter: Cart (CBO +1), Customer (CBO +1), Rückgabe: Order (CBO +1)
         inventoryApi.reserve(cart);
         Order order = new Order(cart, customer);
         orderRepository.save(order);
@@ -318,7 +325,7 @@ public class OrderService {
         return order;
     }
 
-    public void processPayment(Order order) {
+    public void pay(Order order) {
         paymentApi.charge(order);
         order.markAsPaid();
         orderRepository.save(order);
@@ -326,9 +333,9 @@ public class OrderService {
         audit.log("Payment processed: " + order.getId());
     }
 
-    public void cancelOrder(Order order) {
+    public void release(Order order) {
         inventoryApi.release(order);
-        order.cancel();
+        order.markAsReleased();
         orderRepository.save(order);
         email.sendCancellation(order);
         audit.log("Order cancelled: " + order.getId());
@@ -347,16 +354,16 @@ OrderService service = new OrderService(
     audit);
 
 // Bestellung anlegen kennt 5 Abhängigkeiten
-Order order = service.createOrder(cart, customer);
+Order order = service.reserve(cart, customer);
 
 // Bezahlen kennt 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
-service.processPayment(order);
+service.pay(order);
 
 // Stornieren — service kennt 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
-service.cancelOrder(order);
+service.release(order);
 ```
 
-Eine Untersuchung nach LCOM4 zeigt, dass die Methode `createOrder` auf die Felder 1, 2, 4 und 5 zugreift, während `processPayment` die Felder 1, 3, 4 und 5 sowie `cancelOrder` die Felder 1, 2, 4 und 5 beansprucht. Folglich weist die Klasse einen **LCOM4-Wert von 1** auf, was auf eine hohe Kohäsion hindeutet, da alle Methoden über das `Repository` und das `Audit`-Logging miteinander verknüpft sind.
+Eine Untersuchung nach LCOM4 zeigt, dass die Methode `createOrder` auf die Felder 1, 2, 4 und 5 zugreift, während `pay` die Felder 1, 3, 4 und 5 sowie `release` die Felder 1, 2, 4 und 5 beansprucht. Folglich weist die Klasse einen **LCOM4-Wert von 1** auf, was auf eine hohe Kohäsion hindeutet, da alle Methoden über das `Repository` und das `Audit`-Logging miteinander verknüpft sind.
 
 Die Ermittlung der Metriken ergibt für den **CBO einen Wert von 8**, was nach der strikten Definition von Chidamber & Kemerer (1994) einer sehr hohen Kopplung entspricht. Hierbei werden sämtliche externen Typen gezählt, die entweder als Felder wie `OrderRepository`, `InventoryApi`, `PaymentApi`, `Email` und `Audit` oder als Parameter und Rückgabetypen wie `Order`, `Cart` und `Customer` auftreten.
 
@@ -371,12 +378,15 @@ Das SRP ist hier verletzt, da die Klasse mehrere fachlich unabhängige Änderung
 Ein naheliegender Refactoring-Schritt besteht darin, den ursprünglichen „Fat Service“ in drei spezialisierte Klassen aufzuteilen, die jeweils eine spezifische Operation abbilden.
 
 ```java
-// Verantwortlichkeit: Bestellung anlegen
-public class OrderService {
+
+
+// Verantwortlichkeit: Bestellung anlegen und stornieren
+public class OrderStockService {
 
     private OrderRepository repository; // Feld 1
     private InventoryApi inventory;     // Feld 2
-    private Audit audit;                // Feld 3
+    private Email email;                // Feld 3
+    private Audit audit;                // Feld 4
 
     public Order create(Cart cart, Customer customer) {
         inventory.reserve(cart);
@@ -384,6 +394,14 @@ public class OrderService {
         repository.save(order);
         audit.log("Order created: " + order.getId());
         return order;
+    }
+
+    public void release(Order order) {
+        inventory.release(order);
+        order.markAsReleased();
+        repository.save(order);
+        email.sendCancellation(order);
+        audit.log("Order cancelled: " + order.getId());
     }
 }
 
@@ -404,40 +422,23 @@ public class OrderPaymentService {
     }
 }
 
-// Verantwortlichkeit: Bestellung stornieren
-public class OrderInventoryService {
-
-    private OrderRepository repository; // Feld 1
-    private InventoryApi inventory;     // Feld 2
-    private Email email;                // Feld 3
-    private Audit audit;                // Feld 4
-
-    public void cancel(Order order) {
-        inventory.release(order);
-        order.cancel();
-        repository.save(order);
-        email.sendCancellation(order);
-        audit.log("Order cancelled: " + order.getId());
-    }
-}
-
 ```
-In der praktischen Verwendung werden nun der `OrderService`, der `OrderPaymentService` und der `OrderInventoryService` als eigenständige Komponenten instanziiert.
+In der praktischen Verwendung werden nun der `OrderStockService` und der `OrderPaymentService` als eigenständige Komponenten instanziiert.
 
 ```java
-OrderService createSvc = new OrderService(orderRepository, inventoryApi, audit);
+OrderStockService stockSvc = new OrderStockService(orderRepository, inventoryApi, email, audit);
 OrderPaymentService paymentSvc = new OrderPaymentService(orderRepository, paymentApi, email, audit);
-OrderCancelService cancelSvc = new OrderInventoryService(orderRepository, inventoryApi, email, audit);
 
-Order order = createSvc.create(cart, customer);
+// usage
+Order order = stockSvc.reserve(cart, customer);
 paymentSvc.process(order);
-cancelSvc.cancel(order);
+stockSvc.release(order);
 ```
 Durch diese Dekonstruktion sinkt der CBO-Wert pro Klasse spürbar, da jede Einheit nur noch die Abhängigkeiten erhält, die sie für ihre dezidierte Aufgabe zwingend benötigt.
 
 Die LCOM4-Herleitung ergibt für alle drei Klassen per Definition einen Wert von 1. Dies ist jedoch weniger ein Zeichen für echte fachliche Kohäsion als vielmehr eine strukturelle Trivialität, da eine Klasse mit nur einer einzigen Methode mathematisch nicht in mehrere Graphen zerfallen kann.
 
-Die Analyse der Metriken zeigt eine deutliche Verbesserung der Kopplungswerte. Während der `OrderService` mit den Feldern für `Repository`, `Inventory` und `Audit` einen **CBO-Wert von 6** aufweist (Typen: Service-Felder plus `Order`, `Cart`, `Customer`), erreichen der Zahlungs- und der `OrderCancelService` jeweils einen **CBO-Wert von 6** (Typen: Service-Felder plus `Order`, `Email`). Obwohl die Klassen dadurch kleiner und im Unit-Test leichter zu handhaben sind, bleibt ein grundlegendes Problem bestehen.
+Die Analyse der Metriken zeigt eine deutliche Verbesserung der Kopplungswerte. Während der `OrderService` mit den Feldern für `Repository`, `Inventory` und `Audit` einen **CBO-Wert von 6** aufweist (Typen: Service-Felder plus `Order`, `Cart`, `Customer`), erreichen der Zahlungs- und der `OrderStockService` jeweils einen **CBO-Wert von 6** (Typen: Service-Felder plus `Order`, `Email`). Obwohl die Klassen dadurch kleiner und im Unit-Test leichter zu handhaben sind, bleibt ein grundlegendes Problem bestehen.
 
 In der Interpretation wird deutlich, dass technische Querschnittsbelange wie das Logging via `Audit` oder die Persistenz über das `OrderRepository` weiterhin über alle drei Klassen verteilt sind. Eine Änderung der Logging-Strategie oder eine Anpassung des `Repository`-Interface erfordert somit nach wie vor Modifikationen an drei verschiedenen Stellen im System. Die Verantwortlichkeiten sind zwar physisch auf separate Dateien verteilt, bleiben jedoch logisch in jede einzelne Operation „hineingeflochten“.
 
@@ -454,7 +455,7 @@ Das Basis-Interface wird dabei schlicht als Order definiert, was einen rein fach
 public interface Order {
     String id();
     void process();
-    void cancel();
+    void release();
 }
 ```
 
@@ -481,7 +482,7 @@ public class StoredOrder implements Order {
     }
 
     @Override
-    public void cancel() {
+    public void release() {
         repo.updateStatus(this.id, "CANCELLED");     // → Feld 3, 1
     }
 }
@@ -506,17 +507,17 @@ public class PaidOrder implements Order {
     }
 
     @Override
-    public void cancel() { delegate.cancel(); }   // → Feld 1
+    public void release() { delegate.cancel(); }   // → Feld 1
 
 }
 
 // Vertikaler Dekorator: Lagerverwaltung — injiziert InventoryApi, verwendet es in cancel()
-public class InventedOrder implements Order {
+public class StockedOrder implements Order {
 
     private Order delegate;        // Feld 1
     private InventoryApi inv;      // Feld 2
 
-    public InventedOrder(Order delegate, InventoryApi inv) {
+    public StockedOrder(Order delegate, InventoryApi inv) {
         this.delegate = delegate; this.inv = inv;
     }
 
@@ -527,9 +528,9 @@ public class InventedOrder implements Order {
     public void process() { delegate.process(); }  // → Feld 1
                               
     @Override
-    public void cancel() {
+    public void release() {
         inv.release(delegate);                    // → Feld 2, 1
-        delegate.cancel();                        // → Feld 1
+        delegate.release();                        // → Feld 1
     }
 }
 
@@ -553,8 +554,8 @@ public class AuditingOrder implements Order {
     }
 
     @Override
-    public void cancel() {
-        delegate.cancel();                              // → Feld 1
+    public void release() {
+        delegate.release();                              // → Feld 1
         audit.log("Cancelled: " + delegate.id());       // → Feld 2, 1
     }
 }
@@ -579,8 +580,8 @@ public class NotifiedOrder implements Order {
     }
 
     @Override
-    public void cancel() {
-        delegate.cancel();                              // → Feld 1
+    public void release() {
+        delegate.release();                              // → Feld 1
         email.sendCancellation(delegate.id());          // → Feld 2, 1
     }
 }
@@ -592,7 +593,7 @@ In der praktischen Verwendung wird die gewünschte Funktionalität durch eine ti
 ```java
 Order order = new NotifiedOrder(
     new AuditingOrder(
-        new InventedOrder(
+        new StockedOrder(
             new PaidOrder(
                 new StoredOrder(id, cart, repo),
                 paymentApi),
@@ -606,7 +607,7 @@ order.process();
 // PaidOrder zieht Zahlung ein, StoredOrder persistiert,
 // AuditingOrder loggt, NotifiedOrder sendet Bestätigungs-E-Mail.
 
-order.cancel();
+order.release();
 // Ablauf: NotifiedOrder → AuditingOrder → InventedOrder → PaidOrder → StoredOrder
 // InventedOrder gibt Lagerbestand frei, StoredOrder persistiert,
 // AuditingOrder loggt, NotifiedOrder sendet Stornierungs-E-Mail.
@@ -624,7 +625,7 @@ Weil der vertikale Dekorator-Entwurf mit zunehmender Anzahl an Komponenten an Ü
 
 public interface OrderProcess {
     void process(String id, Cart cart);
-    void cancel(String id, Cart cart);
+    void release(String id, Cart cart);
 }
 
 public class Orders implements Order {
@@ -645,8 +646,8 @@ public class Orders implements Order {
     }
 
     @Override
-    public void cancel() {
-        acts.forEach(a -> a.cancel(this.id, this.cart));  // → Feld 3, 1, 2
+    public void release() {
+        acts.forEach(a -> a.release(this.id, this.cart));  // → Feld 3, 1, 2
     }
 }
 
@@ -659,7 +660,7 @@ public class Persist implements OrderProcess {
     public Persist(OrderRepository repo) { this.repo = repo; }
 
     @Override public void process(String id, Cart cart) { repo.updateStatus(id, "PAID"); }
-    @Override public void cancel(String id, Cart cart) { repo.updateStatus(id, "CANCELLED"); }
+    @Override public void release(String id, Cart cart) { repo.updateStatus(id, "CANCELLED"); }
 }
 
 // Zahlung (nur process() relevant)
@@ -668,16 +669,16 @@ public class Pay implements OrderProcess {
     public Pay(PaymentApi gateway) { this.gateway = gateway; }
 
     @Override public void process(String id, Cart cart) { gateway.charge(id); }
-    @Override public void cancel(String id, Cart cart) { /* leer */ }
+    @Override public void release(String id, Cart cart) { /* leer */ }
 }
 
-// Lagerverwaltung (nur cancel() relevant)
+// Lagerverwaltung (nur release() relevant)
 public class Invent implements OrderProcess {
     private InventoryApi inv;
     public Invent(InventoryApi inv) { this.inv = inv; }
 
     @Override public void process(String id, Cart cart) { /* leer */ }
-    @Override public void cancel(String id, Cart cart) { inv.release(cart); }
+    @Override public void release(String id, Cart cart) { inv.release(cart); }
 }
 
 // Weitere Klassen wie 'Audit' (Logging) und 'Notify' (Email) folgen derselben Struktur.
@@ -690,7 +691,7 @@ In der praktischen Verwendung zeigt sich die Komposition im Vergleich zur vertik
 Order order = new Orders(id, cart, List.of(
     new Persist(repo),
     new Pay(paymentApi),
-    new Invent(inventoryApi),
+    new Schock(inventoryApi),
     new Audit(audit),
     new Notify(email)
 ));
@@ -704,7 +705,7 @@ Die Analyse der Metriken verdeutlicht die strukturellen Vorteile dieses Modells.
 
 Ein struktureller Nebeneffekt dieser Architektur sind die leeren Methoden in Klassen wie `Pay` oder `Invent`, da nicht jeder Prozessschritt zwangsläufig auf jede Aktion reagieren muss. Das Akzeptieren dieser leeren Implementierungen stellt den notwendigen Preis für den sauberen horizontalen Schnitt dar, bedeutet jedoch gleichzeitig einen Verstoß gegen das [Liskov substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle). Nach diesem Prinzip sollte eine Unterklasse so konzipiert sein, dass sie ihre Basisklasse vollständig ersetzen kann, ohne das Programmverhalten durch unerwartete Leerschritte oder eingeschränktes Verhalten zu verfälschen.
 
-Alternativ ließe sich das OrderProcess-Interface im Sinne des **Interface Segregation Principle (ISP)** in spezialisierte Schnittstellen wie `OnProcess` und `OnCancel` aufteilen. Dies würde zwar die Konformität zum LSP wiederherstellen, jedoch die Komplexität des Gesamtsystems durch eine deutlich höhere Anzahl an Abstraktionen und notwendigen Typ-Prüfungen steigern. So zeigt sich an dieser Stelle ein klassischer Zielkonflikt zwischen einer flachen, skalierbaren Struktur und der strikten Einhaltung aller SOLID-Prinzipien.
+Alternativ ließe sich das OrderProcess-Interface im Sinne des **Interface Segregation Principle (ISP)** in spezialisierte Schnittstellen wie `OnProcess` und `OnRelease` aufteilen. Dies würde zwar die Konformität zum LSP wiederherstellen, jedoch die Komplexität des Gesamtsystems durch eine deutlich höhere Anzahl an Abstraktionen und notwendigen Typ-Prüfungen steigern. So zeigt sich an dieser Stelle ein klassischer Zielkonflikt zwischen einer flachen, skalierbaren Struktur und der strikten Einhaltung aller SOLID-Prinzipien.
 
 ## 6. Gegenüberstellung
 
