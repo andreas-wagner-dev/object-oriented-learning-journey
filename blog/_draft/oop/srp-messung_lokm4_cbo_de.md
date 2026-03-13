@@ -875,11 +875,11 @@ Unter Beachtung dieser Leitlinien erweist sich das **SRP** nicht als starres Dog
 
 ## 8. Abschließende Betrachtung
 
-Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt einer möglichen Softwarearchitektur dar. In der akademischen Literatur existieren zweifellos präzisere und mathematisch tiefergehende Modelle zur Messung von Kohäsion und Kopplung, welche weitere Nuancen der Softwarekomplexität erfassen.
+Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt des **objektorientierten Designs** dar. In der akademischen Literatur existieren zweifellos präzisere und mathematisch tiefergehende Modelle zur Messung von Kohäsion und Kopplung, welche weitere Nuancen der Softwarekomplexität erfassen.
 
-Im Vordergrund dieses Beitrags stand jedoch das Ziel, eine einfache und pragmatische Betrachtung zu entwickeln. Da komplexe Formeln im Berufsalltag oft nur schwer anwendbar sind, ist ein greifbares Instrumentarium entscheidend, das schnelle und fundierte Designentscheidungen unterstützt. Durch die Kombination von **LCOM4** und **CBO** mit bewährten **Design-Patterns** wurde ein Weg aufgezeigt, der das abstrakte **Single Responsibility Principle** in eine handhabbare Praxis überführt.
+Im Vordergrund dieses Beitrags stand jedoch das **Ziel**, einen **einfachen und pragmatischen Ansatz aufzuzeigen**. Da komplexe Formeln im **Praxisalltag** oft nur schwer anwendbar sind, ist ein **einfach bedienbares Instrument entscheidend**, das schnelle und fundierte Designentscheidungen unterstützt. Durch die Kombination der **LCOM4- und CBO-Metriken** mit bewährten **Design-Patterns** wurde ein Weg aufgezeigt, der das abstrakte **Single Responsibility Principle** in eine handhabbare Praxis überführt.
 
-Letztlich bleibt Softwareentwicklung ein Handwerk, bei dem Metriken als Kompass dienen können, die Erfahrung und das Urteilsvermögen des Entwicklers jedoch das entscheidende Element für nachhaltige Codequalität bilden.
+Letztlich ist Softwareentwicklung ein Handwerk, bei dem Metriken lediglich als Kompass dienen. Die Erfahrung und das Urteilsvermögen des Entwicklungsteams bilden dabei das entscheidende Element für nachhaltige Codequalität.
 
 ---
 
