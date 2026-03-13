@@ -106,8 +106,46 @@ Die Graphenanalyse zeigt, dass zwischen diesen beiden Gruppen keine Verbindung e
 
 Die Klasse besitzt zwei unabhängige Verantwortlichkeiten, was sich in zwei isolierten Teilgraphen und einem LCOM4-Wert von 2 widerspiegelt.
 
+**Fallbeispiel 2: Ideale Kohäsion durch Aufteilung (LCOM4 = 1)**
 
-**Fallbeispiel 2: Kohäsion durch Zusammenhang (LCOM4 = 1)**
+Um eine echte fachliche Kohäsion zu erreichen, zerlegen wir die Klasse anhand ihrer Verantwortlichkeiten in zwei spezialisierte Einheiten.
+
+```java
+// Fokus auf Inhalt/Anzeige
+public class OrderView {
+
+    private Cart cart;                 // Feld 1
+    private Customer customer;         // Feld 2
+
+    public String display() {
+        // Nutzt Feld 1 und 2
+        return customer.getName() + ": " + cart.itemCount();
+    }
+}
+
+// Fokus auf Zahlung/Transaktion
+public class OrderPayment {
+
+    private String status = "PENDING";   // Feld 3
+    private int amount;                  // Feld 4
+
+    public void pay(int many) {
+        // Nutzt Feld 3 und 4
+        this.amount = many;
+        this.status = "PAID";
+    }
+}
+
+```
+
+
+Durch die Aufteilung entstehen zwei unabhängige Graphen, die jeweils eine in sich geschlossene funktionale Einheit bilden. 
+
+[Bild]
+
+Innerhalb der Klasse `OrderView` erzeugt die Methode `display()` eine direkte Verbindung zwischen dem Kundenobjekt und dem Warenkorb. In der Klasse `OrderPayment` modifiziert die Methode `pay()` beide Instanzvariablen gleichzeitig, was eine starke interne Bindung bewirkt. In beiden Fällen ergibt die Analyse einen einzelnen, vollständig zusammenhängenden Teilgraph mit einem LCOM4-Wert von 1, was die fachliche Isolation bestätigt.
+
+**Fallbeispiel 3: Kohäsion durch Zusammenhang (LCOM4 = 1)**
 
 In diesem Szenario fungiert das Feld status (Feld 3) als Knotenpunkt, da es nun von beiden Methoden verwendet wird. 
 Rein strukturell erhöht sich die Kohäsion, wodurch der LCOM4-Wert auf 1 sinkt. 
@@ -139,62 +177,29 @@ Die Graphenanalyse der Klasse `Order` verdeutlicht das folgende Bild.
 
 Da beide Methoden auf das Feld `status` zugreifen, sind die ursprünglich isolierten Logikbereiche über diese Instanzvariable miteinander verbunden. Im Sinne der Graphentheorie entsteht ein einziger zusammenhängender Graph, da ein Pfad von M1 über Feld 3 zu M2 existiert. Das Ergebnis ist ein LCOM4-Wert von 1.
 
+**Qualitative Kohäsionsanalyse**
 
-**Fallbeispiel 3: Ideale Kohäsion durch Aufteilung (LCOM4 = 1)**
+Wie im Fallbeispiel 3 verdeutlicht, kann ein idealer Metrikwert künstlich durch technische Querschnittsbelange (wie etwa eine ID, ein Statusfeld oder UI-spezifische Daten) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten tatsächlich zu lösen. Aus der Sicht eines datenzentrierten Entwurfs mag die strikte Trennung von Zahlungs- und Präsentationslogik, wie in Fallbeispiel 2 gezeigt, sinnvoll erscheinen. Diese widerspricht jedoch einer verhaltensorientierten Sichtweise, weil dabei die Kapselung im Sinne von Objektorientierung aufgebrochen wird. Aus der verhaltensorientierten Perspektive ist die Einbettung einer `display()`-Methode in das `Order`-Objekt keine künstliche Verbindung, sondern Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem `status`) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Eine Aufspaltung dieser Einheit würde den Einsatz von *Getter*-Methoden erzwingen, was das  *Tell, Don’t Ask* Prinzip missachtet und damit eine semantische Kopplung verursacht.
 
-Um eine echte fachliche Kohäsion zu erreichen, zerlegen wir die Klasse anhand ihrer Verantwortlichkeiten in zwei spezialisierte Einheiten.
+Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis. Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für die SRP-Konformität. Die LCOM4-Kennzahl bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
 
-```java
-// Fokus auf Inhalt/Anzeige
-public class OrderView {
-
-    private Cart cart;                 // Feld 1
-    private Customer customer;         // Feld 2
-
-    public String display() {
-        return customer.getName() + ": " + cart.itemCount();
-    }
-}
-
-// Fokus auf Zahlung/Transaktion
-public class OrderPayment {
-
-    private String status = "PENDING";   // Feld 3
-    private int amount;                  // Feld 4
-
-    public void pay(int many) {
-        this.amount = many;
-        this.status = "PAID";
-    }
-}
-
-```
-
-
-Durch die Aufteilung entstehen zwei unabhängige Graphen, die jeweils eine in sich geschlossene funktionale Einheit bilden. 
-
-[Bild]
-
-Innerhalb der Klasse `OrderView` erzeugt die Methode `display()` eine direkte Verbindung zwischen dem Kundenobjekt und dem Warenkorb. In der Klasse `OrderPayment` modifiziert die Methode `pay()` beide Instanzvariablen gleichzeitig, was eine starke interne Bindung bewirkt. In beiden Fällen ergibt die Analyse einen einzelnen, vollständig zusammenhängenden Teilgraph mit einem LCOM4-Wert von 1, was die fachliche Isolation bestätigt.
-
-**Zwischenfazit zur Kohäsionsanalyse (LCOM4)**
-
-Wie das zweite Fallbeispiel verdeutlicht, kann ein idealer Metrikwert künstlich durch technische Querschnittsbelange (wie etwa eine ID, ein Statusfeld oder UI-spezifische Daten) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten tatsächlich zu lösen. Aus der Sicht eines datenzentrierten Entwurfs mag die strikte Trennung von Zahlungs- und Präsentationslogik, wie in Fallbeispiel 3 gezeigt, sinnvoll erscheinen. Dabei wird jedoch die Kapselung aufgebrochen, was den Prinzipien einer verhaltensorientierten Objektorientierung widerspricht. Aus dieser Perspektive ist die Einbettung einer `display()`-Methode in das Order-Objekt keine künstliche Verbindung, sondern Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem `status`) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Ein Aufbrechen dieser Einheit würde den Einsatz von *Getter*-Methoden erzwingen, was die semantische Kopplung erhöht und das Prinzip *Tell, Don’t Ask* verletzt.
-
-Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für die SRP-Konformität. Die Kennzahl bestätigt lediglich die strukturelle Verbundenheit, ersetzt jedoch nicht die qualitative Prüfung, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
-
-Als Handlungsempfehlung lässt sich ableiten: Existiert kein fachlicher Zusammenhang zwischen den Methoden einer Klasse, ist eine Aufteilung geboten. Eine künstliche Verbindung durch rein technische Infrastrukturbelange sollte vermieden werden, um die Transparenz über die tatsächliche Kohäsion nicht zu verzerren.
+Als Handlungsempfehlung lässt sich daraus folgendes ableiten. Existiert kein fachlicher Zusammenhang zwischen den Methoden einer Klasse, ist eine Aufteilung geboten. Eine künstliche Verbindung durch rein technische Infrastrukturbelange sollte vermieden werden, um die Transparenz über die tatsächliche Kohäsion nicht zu verzerren. 
 
 ### 4.2 Coupling Between Objects
 
-Ergänzend zur Kohäsion misst die Metrik **Coupling Between Objects (CBO)** nach Chidamber & Kemerer (1994) die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Diese Kopplung manifestiert sich durch Klassenerweiterungen, Feldtypen, Methodenaufrufe sowie durch Argumente und Rückgabetypen innerhalb der Methodensignatur oder lokaler Variablen.
+Ergänzend zur Kohäsion misst die Metrik **Coupling Between Objects (CBO)** nach Chidamber & Kemerer (1994) die **Anzahl der externen Typen**, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Die Ermittlung der CBO-Metrik erfolgen durch Zählung von:
+* Klassenerweiterungen, 
+* Feldtypen, 
+* Methodenaufrufe sowie durch 
+* Argumente und Rückgabetypen innerhalb der Methodensignatur oder 
+* lokale Variablen innerhalb von Methoden
 
-Primitive Datentypen und Standardwrapper wie int oder String bleiben hierbei unberücksichtigt, da sie zur Basisinfrastruktur der Programmiersprache gehören und keine Kopplung im Sinne des spezifischen objektorientierten Entwurfs darstellen.
+*Primitive* Datentypen und *Standardwrapper* wie `int` oder `String` bleiben hierbei unberücksichtigt, da sie zu den Basiselementen einer Programmiersprache gehören.
 
 Die Bewertung der Messergebnisse folgt einer klaren Skala:
 
 * **CBO-Wert von 0** deutet darauf hin, dass eine Klasse isoliert ist und somit faktisch nicht am System teilnimmt.
-* **CBO-Werte zwischen 1 und 4** gelten als Idealbereich, da dieser eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
+* **CBO-Werte zwischen 1 und 5** gelten als Idealbereich, da dieser eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
 * **CBO-Wert größer als 5** deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
 
 
