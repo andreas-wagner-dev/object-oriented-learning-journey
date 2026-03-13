@@ -49,6 +49,21 @@ Innerhalb der Kopplung wird zwischen physikalischen und semantischen Abhängigke
 
 Um die semantischen Abhängigkeiten zu minimieren, dient das [Law of Demeter](https://en.wikipedia.org/wiki/Law_of_Demeter) als zentrale Entwurfsrichtlinie, nach der ein Objekt nur mit seinen unmittelbaren Nachbarn kommunizieren darf. Ergänzt wird dies durch das Prinzip [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html), welches dazu auffordert, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen, um darauf basierend Entscheidungen zu treffen. Die konsequente Anwendung beider Prinzipien fungiert somit als effektiver Schutz gegen semantische Instabilität, indem sie die Kapselung wahrt und die Verantwortlichkeiten klar voneinander isoliert.
 
+---
+
+Um die externe und interne Kopplung von Klassen sowie Methoden auf ein gesundes Maß zu reduzieren, ist die Anwendung der weiteren SOLID-Prinzipien und grundlegender OOP-Entwurfsrichtlinien sowei -Mustern essenziell.
+
+Eine zentrale Lösung bietet das Dependency Inversion Principle, indem es hochstufige Module durch stabile Abstraktionen von konkreten Implementierungen entkoppelt. Das Prinzip Encapsulate what varies unterstützt dies durch die Isolation änderungsanfälliger Logik hinter Schnittstellen. Ergänzend stellt das Interface Segregation Principle sicher, dass Klassen lediglich an spezifisch benötigte Teilschnittstellen gebunden werden, anstatt unnötig breite Abhängigkeiten zu erzeugen. Eine korrekte Segregation wird dabei maßgeblich durch die Einhaltung des Liskovschen Substitutionsprinzips (LSP) gewährleistet. Nach diesem Prinzip sollte eine Unterklasse so konzipiert sein, dass sie ihre Basisklasse vollständig ersetzen kann, ohne das Programmverhalten durch unerwartete Leerschritte oder eingeschränktes Verhalten zu verfälschen.
+
+Gegen semantische Abhängigkeiten dienen das Law of Demeter und das Prinzip Tell, Don’t Ask als strukturelle Schranken. Während das Law of Demeter den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt, fordert Tell, Don’t Ask dazu auf, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen. Die konsequente Anwendung beider Prinzipien wahrt die Kapselung und schützt effektiv vor semantischer Instabilität, indem sie die Verantwortlichkeiten klar isoliert.
+
+Des Weiteren helfen verschiedene Strukturmuster (wie Adapter, Bridge oder Dekorator) und Verhaltensmuster (wie Strategy oder Visitor), das Open-Closed-Prinzip umzusetzen. Demnach sollte eine Funktionserweiterung idealerweise ohne die Entstehung neuer, direkter Kopplungen innerhalb der bestehenden Klasse realisiert werden.
+
+Grundsätzlich ist eine Kopplung für die Funktionsfähigkeit eines Systems unumgänglich. Ein übermäßiges Maß an Abhängigkeiten erschwert jedoch die Modifikation sowie das Testen und schränkt somit die Wiederverwendbarkeit der Komponenten erheblich ein.
+
+[Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle)
+---
+
 ## 4. Messverfahren für Kohäsion (LCOM4) und Kopplung (CBO)
 
 ### 4.1 Lack of Cohesion of Methods
@@ -866,7 +881,7 @@ Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt 
 
 Im Vordergrund dieses Beitrags stand jedoch das Ziel, eine einfache und pragmatische Betrachtung zu entwickeln. Da komplexe Formeln im Berufsalltag oft nur schwer anwendbar sind, ist ein greifbares Instrumentarium entscheidend, das schnelle und fundierte Designentscheidungen unterstützt. Durch die Kombination von **LCOM4** und **CBO** mit bewährten **Design-Patterns** wurde ein Weg aufgezeigt, der das abstrakte **Single Responsibility Principle** in eine handhabbare Praxis überführt.
 
-Letztlich bleibt Softwareentwicklung ein Handwerk, bei dem Metriken als Kompass dienen, die Erfahrung und das Urteilsvermögen des Entwicklers jedoch das entscheidende Element für nachhaltige Codequalität bilden.
+Letztlich bleibt Softwareentwicklung ein Handwerk, bei dem Metriken als Kompass dienen können, die Erfahrung und das Urteilsvermögen des Entwicklers jedoch das entscheidende Element für nachhaltige Codequalität bilden.
 
 ---
 
