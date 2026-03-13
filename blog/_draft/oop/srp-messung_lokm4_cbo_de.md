@@ -860,7 +860,7 @@ Unter Beachtung dieser Leitlinien erweist sich das **SRP** nicht als starres Dog
 
 ---
 
-## 8. Abschließende Betrachtung**
+## 8. Abschließende Betrachtung
 
 Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt einer möglichen Softwarearchitektur dar. In der akademischen Literatur existieren zweifellos präzisere und mathematisch tiefergehende Modelle zur Messung von Kohäsion und Kopplung, welche weitere Nuancen der Softwarekomplexität erfassen.
 
