@@ -843,24 +843,35 @@ Der **horizontale Decorator** treibt die Entkopplung mit einem CBO-Wert von 1 pr
 
 Die Erkenntnisse aus Theorie und Designvergleich lassen sich in vier konkreten Leitlinien zusammenfassen.
 
-**Metriken gemeinsam betrachten, nie isoliert.** Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für SRP-Konformität. Erst die Kombination beider Kennzahlen liefert ein verlässliches Bild. Die diagnostische Leitfrage lautet daher stets: „Warum sind diese Methoden fachlich verbunden: durch echte Domänenlogik oder durch technische Infrastruktur?" Ein niedriger LCOM4 bei hohem CBO ist ein zuverlässiges Warnsignal für einen „Fat Service".
+**Metriken gemeinsam betrachten, nie isoliert.** Ein LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung für SRP-Konformität. Erst die Kombination beider Kennzahlen liefert ein verlässliches Bild. Die diagnostische Leitfrage lautet daher stets: „Warum sind diese Methoden fachlich verbunden: durch echte Domänenlogik oder durch technische Infrastruktur?" Ein **niedriger LCOM4 bei hohem CBO** ist ein zuverlässiges **Warnsignal** für einen „Fat Service".
 
 **Kohäsion: Technische Brücken identifizieren und fachlich bewerten.** Felder wie ein `Logger`, eine `id` oder ein `Statusfeld` können im Kohäsionsgraphen Brücken zwischen fachlich fremden Verantwortlichkeiten schlagen. Fungieren solche Querschnittsfelder als einzige Verbindung zwischen Methodengruppen, deutet dies auf eine versteckte Verletzung des SRP hin. Die qualitative Bewertung dieser Verbindung hängt jedoch maßgeblich vom gewählten Entwurfsparadigma ab. 
 
-* Aus der Sicht eines datenzentrierten Entwurfs, bei dem die Klasse als Datenbehälter fungiert, erscheint die Trennung nach technischen Änderungsgründen – wie die Auslagerung einer display()-Methode in eine UI-bezogene Klasse als die strukturell geeignete Lösung. 
-* Im Gegensatz dazu versteht der verhaltensorientierte Entwurf ein Objekt als autonome Einheit, die ihren Zustand vollständig kapselt. In dieser Perspektive gehört die Darstellung untrennbar zum Kern der Entität, da eine Auslagerung den Einsatz von Getter-Methoden erzwingen und das Prinzip Tell, Don’t Ask missachten würde.
+* Aus der Sicht eines datenzentrierten Entwurfs, bei dem die Klasse als Datenbehälter fungiert, erscheint die Trennung nach technischen Änderungsgründen, wie die Auslagerung einer `display()`-Methode in eine UI-bezogene Klasse, als die strukturell geeignete Lösung. 
+* Im Gegensatz dazu versteht der verhaltensorientierte Entwurf ein Objekt als autonome Einheit, die ihren Zustand vollständig kapselt. In dieser Perspektive gehört die Darstellung untrennbar zum Kern der Entität, da eine Auslagerung den Einsatz von Getter-Methoden erzwingen und das Prinzip **Tell, Don’t Ask** missachten würde.
 
 Da die LCOM4-Metrik lediglich die Existenz einer Verbindung im Graphen bewertet und keine fachliche Einordnung vornimmt, bleibt es die Aufgabe des Entwicklers zu entscheiden, ob ein Zusammenhang eine technisch künstliche Brücke oder eine legitime fachliche Kapselung darstellt.
 
-**Kopplung: Physikalische und semantische Abhängigkeiten trennen.** Ein CBO-Wert größer als 5 signalisiert übermäßige Vernetzung. Als erste Maßnahme empfiehlt sich die Anwendung des Dependency Inversion Principle: Abhängigkeiten von konkreten Implementierungen werden durch stabile Interfaces ersetzt, was den CBO unmittelbar senkt. Zusätzlich sollte semantische Kopplung durch die konsequente Einhaltung des Law of Demeter und des Tell-Don't-Ask-Prinzips verhindert werden. Jede Methode, die auf den internen Zustand eines fremden Objekts zugreift, etwa über Aufrufketten wie `order.getCustomer().getAddress()`, erzeugt eine Abhängigkeit, die kein statisches Analysewerkzeug erfasst, aber bei Änderungen zu unerwarteten Fehlerfortpflanzungen führt.
+**Kopplung: Physikalische und semantische Abhängigkeiten trennen.** Ein **CBO-Wert größer als 5** signalisiert übermäßige Vernetzung. Als erste Maßnahme empfiehlt sich die Anwendung des **Dependency Inversion Principle**: Abhängigkeiten von konkreten Implementierungen werden durch stabile Interfaces ersetzt, was den CBO unmittelbar senkt. Zusätzlich sollte semantische Kopplung durch die konsequente Einhaltung des **Law of Demeter** und des **Tell-Don't-Ask-Prinzips** verhindert werden. Jede Methode, die auf den internen Zustand eines fremden Objekts zugreift, etwa über Aufrufketten wie `order.getCustomer().getAddress()`, erzeugt eine Abhängigkeit, die kein statisches Analysewerkzeug erfasst, aber bei Änderungen zu unerwarteten Fehlerfortpflanzungen führt.
 
-**Entwurfsmuster wählen, nicht dogmatisch anwenden.** Das Dekoratormuster löst das Problem der verteilten Querschnittsbelange strukturell sauber und ist dem Service-Pattern in puncto SRP-Konformität klar überlegen. Es ist jedoch kein universelles Allheilmittel. Tiefe Dekoratorketten erhöhen die Komplexität der Objektkomposition und machen den Systemüberblick schwerer, während horizontale Varianten das LSP unter Druck setzen. Der Service-Schnitt bleibt ein pragmatischer Standard für einfache [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) Anwendungen oder Teams, deren Fähigkeiten noch nicht auf kompositionsbasierte OOD Entwurfsmuster ausgerichtet ist, da die geringe kognitive Einstiegshürde und die zentrale Übersicht in diesen Kontexten überwiegen. Die Entscheidung für einen Entwurfsansatz sollte sich daher an den konkreten Kompetenz der Entwickler und Wartungskosten orientieren.
+**Entwurfsmuster wählen, nicht dogmatisch anwenden.** Das **Dekoratormuster** löst das Problem der verteilten Querschnittsbelange strukturell sauber und ist dem Service-Pattern in puncto SRP-Konformität deutlich überlegen. Es ist jedoch **kein universelles Allheilmittel**. Tiefe Dekoratorketten erhöhen die Komplexität der Objektkomposition und machen den Systemüberblick schwerer, während horizontale Varianten das **LSP** unter Druck setzen. Der **Service-Schnitt** bleibt ein **pragmatischer Standard** für einfache [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) Anwendungen oder Teams, deren Fähigkeiten noch nicht auf kompositionsbasierte OOD Entwurfsmuster ausgerichtet ist, da die geringe kognitive Einstiegshürde und die zentrale Übersicht in diesen Kontexten überwiegen. Die Entscheidung für einen Entwurfsansatz sollte sich daher an den konkreten **Kompetenz des Entwicklungsteams** und **Wartungskosten** orientieren.
 
 Unter Beachtung dieser Leitlinien erweist sich das **SRP** nicht als starres Dogma, sondern als **pragmatisches Werkzeug**, das erst durch messbare Metriken konkrete Handlungsoptionen bietet. Nichtsdestotrotz sollten die **Lesbarkeit und Nachvollziehbarkeit** des Gesamtsystems stets stärker gewichtet werden als die einseitige Optimierung einer einzelnen Kennzahl, denn das übergeordnete Ziel bleibt die **langfristige Wartbarkeit** der Software.
 
 ---
 
-## Quellen und Referenzen
+## 8. Abschließende Betrachtung**
+
+Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt einer möglichen Softwarearchitektur dar. In der akademischen Literatur existieren zweifellos präzisere und mathematisch tiefergehende Modelle zur Messung von Kohäsion und Kopplung, welche weitere Nuancen der Softwarekomplexität erfassen.
+
+Im Vordergrund dieses Beitrags stand jedoch das Ziel, eine einfache und pragmatische Betrachtung zu entwickeln. Da komplexe Formeln im Berufsalltag oft nur schwer anwendbar sind, ist ein greifbares Instrumentarium entscheidend, das schnelle und fundierte Designentscheidungen unterstützt. Durch die Kombination von **LCOM4** und **CBO** mit bewährten **Design-Patterns** wurde ein Weg aufgezeigt, der das abstrakte **Single Responsibility Principle** in eine handhabbare Praxis überführt.
+
+Letztlich bleibt Softwareentwicklung ein Handwerk, bei dem Metriken als Kompass dienen, die Erfahrung und das Urteilsvermögen des Entwicklers jedoch das entscheidende Element für nachhaltige Codequalität bilden.
+
+---
+
+
+## 9. Quellen und Referenzen
 
 ### Hauptquelle
 
