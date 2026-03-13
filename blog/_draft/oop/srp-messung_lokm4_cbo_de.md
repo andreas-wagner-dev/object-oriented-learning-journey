@@ -5,7 +5,7 @@ Das [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-respo
 
 Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die einen eindeutigen Verantwortungsbereich besitzt, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip, es ist ein Qualitätsmerkmal, das maßgeblich die langfristige Wartbarkeit beeinflusst und die Ansammlung technischer Schulden minimiert.
 
-## 1. Gegenstand der Betrachtung und Zielsetzung
+## 1. Gegenstand und Zielsetzung
 
 Im Mittelpunkt dieser Betrachtung steht das Single Responsibility Principle sowie die Herausforderung, dessen Einhaltung auf Klassenebene objektiv zu bewerten. Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Der hier gewählte Ansatz stützt sich auf die Formalisierung von Robert Bräutigam, welcher das SRP über die Konjunktion (logisches UND) zweier messbarer Softwaremetriken definiert. Die daraus resultierende Formel lautet SRP ≡ max(COHESION) ∧ min(COUPLING).
 
@@ -35,34 +35,31 @@ Diese kontextabhängigen Interpretationen führen in Codereviews häufig zu zeit
 
 ## 3. Die Formalisierung von Kohäsion und Kopplung
 
+### 3.1 Formale Definition von SRP 
+
 Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten aufgrund ihrer Subjektivität kaum eine klare Handlungsgrundlage für die Softwareentwicklung. Begriffe wie Verantwortung, Änderungsgrund oder Akteursorientierung erweisen sich für die praktische Umsetzung als zu vage und können in der Konsequenz häufig zu einer unnötigen Codefragmentierung führen. Robert Bräutigam schlägt stattdessen eine pragmatische Definition vor:
 
 > `SRP ≡ max(COHESION) ∧ min(COUPLING)`
 
 Durch die formale Gleichsetzung des SRP mit der Konjunktion aus maximaler [Kohäsion](https://en.wikipedia.org/wiki/Cohesion_(computer_science)) und minimaler [Kopplung](https://en.wikipedia.org/wiki/Coupling_(computer_programming)) wandelt sich das Prinzip von einer rein abstrakten Designphilosophie zu einer präzisen Strukturmetrik. Diese mathematische Definition ermöglicht es, die ehemals vagen Verantwortlichkeiten einer Klasse durch messbare strukturelle Eigenschaften objektiv zu bewerten.
 
-Die interne Qualität einer Klasse bemisst sich an ihrer Kohäsion, also dem Grad, in dem Methoden und Felder eine funktionale Einheit bilden und somit das Versprechen einlösen, nur eine Sache zu tun.
+Die interne Qualität einer Klasse bemisst sich an ihrer **Kohäsion**, also dem **Grad des Zusammenhangs**, in dem Methoden und Felder eine funktionale Einheit bilden und somit das Versprechen einlösen, nur eine Sache zu tun.
 
-Die externe Qualität wird hingegen durch die Kopplung bestimmt, welche die Abhängigkeiten zu fremden Objekten beschreibt. Je geringer diese externe Vernetzung ausfällt, desto isolierter und wartungsfreundlicher bleibt die Klasse gegenüber globalen Änderungen im System.
+Die externe Qualität wird hingegen durch die **Kopplung** bestimmt, welche die **Abhängigkeiten** zu fremden Objekten beschreibt. Je geringer diese externe Vernetzung ausfällt, desto isolierter und wartungsfreundlicher bleibt die Klasse gegenüber globalen Änderungen im System.
 
-Innerhalb der Kopplung wird zwischen physikalischen und semantischen Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Codeänderungen. Sobald eine Klasse beispielsweise über Ketten wie `user.getAddress().getCity()` auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Lesemethode als möglicher Kanal für eine erhöhte semantische Kopplung.
+### 3.2 Arten und Massnahmen zur Minimierung von Kopplungen
 
-Um die semantischen Abhängigkeiten zu minimieren, dient das [Law of Demeter](https://en.wikipedia.org/wiki/Law_of_Demeter) als zentrale Entwurfsrichtlinie, nach der ein Objekt nur mit seinen unmittelbaren Nachbarn kommunizieren darf. Ergänzt wird dies durch das Prinzip [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html), welches dazu auffordert, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen, um darauf basierend Entscheidungen zu treffen. Die konsequente Anwendung beider Prinzipien fungiert somit als effektiver Schutz gegen semantische Instabilität, indem sie die Kapselung wahrt und die Verantwortlichkeiten klar voneinander isoliert.
+Innerhalb der Kopplung wird zwischen **physikalischen** und **semantischen** Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Codeänderungen. Sobald eine Klasse beispielsweise über Ketten wie `user.getAddress().getCity()` auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Lesemethode als möglicher Kanal für eine erhöhte semantische Kopplung.
 
----
+Um die externe und interne Kopplung von Klassen sowie Methoden auf ein gesundes Maß zu reduzieren, ist die Anwendung der weiteren SOLID-Prinzipien und grundlegender OOP-Entwurfsrichtlinien sowie Entwurfsmustern essenziell.
 
-Um die externe und interne Kopplung von Klassen sowie Methoden auf ein gesundes Maß zu reduzieren, ist die Anwendung der weiteren SOLID-Prinzipien und grundlegender OOP-Entwurfsrichtlinien sowei -Mustern essenziell.
+Eine zentrale Lösung bietet das [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle), indem es hochstufige Module durch stabile Abstraktionen von konkreten Implementierungen entkoppelt. Das Prinzip [Encapsulate what varies](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) unterstützt dies durch die Isolation änderungsanfälliger Logik hinter Schnittstellen. Ergänzend stellt das [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle) sicher, dass Klassen lediglich an spezifisch benötigte Teilschnittstellen gebunden werden, anstatt unnötig breite Abhängigkeiten zu erzeugen. Eine korrekte Segregation wird dabei maßgeblich durch die Einhaltung des [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) (LSP) gewährleistet. Nach diesem Prinzip sollte eine Unterklasse so konzipiert sein, dass sie ihre Basisklasse vollständig ersetzen kann, ohne das Programmverhalten durch unerwartete Leerschritte oder eingeschränktes Verhalten zu verfälschen.
 
-Eine zentrale Lösung bietet das Dependency Inversion Principle, indem es hochstufige Module durch stabile Abstraktionen von konkreten Implementierungen entkoppelt. Das Prinzip Encapsulate what varies unterstützt dies durch die Isolation änderungsanfälliger Logik hinter Schnittstellen. Ergänzend stellt das Interface Segregation Principle sicher, dass Klassen lediglich an spezifisch benötigte Teilschnittstellen gebunden werden, anstatt unnötig breite Abhängigkeiten zu erzeugen. Eine korrekte Segregation wird dabei maßgeblich durch die Einhaltung des Liskovschen Substitutionsprinzips (LSP) gewährleistet. Nach diesem Prinzip sollte eine Unterklasse so konzipiert sein, dass sie ihre Basisklasse vollständig ersetzen kann, ohne das Programmverhalten durch unerwartete Leerschritte oder eingeschränktes Verhalten zu verfälschen.
+Gegen semantische Abhängigkeiten dienen das [Law of Demeter](https://en.wikipedia.org/wiki/Law_of_Demeter) und das Prinzip [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html) als strukturelle Schranken. Während das Law of Demeter den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt, fordert Tell, Don’t Ask dazu auf, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen. Die konsequente Anwendung beider Prinzipien wahrt die Kapselung und schützt effektiv vor semantischer Instabilität, indem sie die Verantwortlichkeiten klar isoliert.
 
-Gegen semantische Abhängigkeiten dienen das Law of Demeter und das Prinzip Tell, Don’t Ask als strukturelle Schranken. Während das Law of Demeter den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt, fordert Tell, Don’t Ask dazu auf, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen. Die konsequente Anwendung beider Prinzipien wahrt die Kapselung und schützt effektiv vor semantischer Instabilität, indem sie die Verantwortlichkeiten klar isoliert.
-
-Des Weiteren helfen verschiedene Strukturmuster (wie Adapter, Bridge oder Dekorator) und Verhaltensmuster (wie Strategy oder Visitor), das Open-Closed-Prinzip umzusetzen. Demnach sollte eine Funktionserweiterung idealerweise ohne die Entstehung neuer, direkter Kopplungen innerhalb der bestehenden Klasse realisiert werden.
+Des Weiteren helfen verschiedene Strukturmuster (wie Adapter, Bridge oder Dekorator) und Verhaltensmuster (wie Strategy oder Visitor), das [Open-Closed-Prinzip](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) umzusetzen. Demnach sollten Funktionserweiterung idealerweise ohne die Entstehung neuer, direkter Kopplungen innerhalb der bestehenden Klasse realisiert werden.
 
 Grundsätzlich ist eine Kopplung für die Funktionsfähigkeit eines Systems unumgänglich. Ein übermäßiges Maß an Abhängigkeiten erschwert jedoch die Modifikation sowie das Testen und schränkt somit die Wiederverwendbarkeit der Komponenten erheblich ein.
-
-[Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle)
----
 
 ## 4. Messverfahren für Kohäsion (LCOM4) und Kopplung (CBO)
 
