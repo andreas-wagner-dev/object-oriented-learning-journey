@@ -51,7 +51,7 @@ Die externe Qualität wird hingegen durch die **Kopplung** bestimmt, welche die 
 
 Innerhalb der Kopplung wird zwischen **physikalischen** und **semantischen** Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Codeänderungen. Sobald eine Klasse beispielsweise über Ketten wie `user.getAddress().getCity()` auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Lesemethode als möglicher Kanal für eine erhöhte semantische Kopplung.
 
-Um die externe und interne Kopplung von Klassen sowie Methoden auf ein gesundes Maß zu reduzieren, ist die Anwendung der weiteren SOLID-Prinzipien und grundlegender OOP-Entwurfsrichtlinien sowie Entwurfsmustern essenziell.
+Grundsätzlich ist eine Kopplung für die Funktionsfähigkeit eines Systems unumgänglich. Ein übermäßiges Maß an Abhängigkeiten erschwert jedoch die Modifikation sowie das Testen und schränkt somit die Wiederverwendbarkeit der Komponenten erheblich ein. Um die externe und interne Kopplung von Klassen sowie Methoden auf ein gesundes Maß zu reduzieren, ist die Anwendung der weiteren SOLID-Prinzipien und grundlegender OOP-Entwurfsrichtlinien sowie Entwurfsmustern essenziell.
 
 Eine zentrale Lösung bietet das [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle), indem es hochstufige Module durch stabile Abstraktionen von konkreten Implementierungen entkoppelt. Das Prinzip [Encapsulate what varies](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) unterstützt dies durch die Isolation änderungsanfälliger Logik hinter Schnittstellen. Ergänzend stellt das [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle) sicher, dass Klassen lediglich an spezifisch benötigte Teilschnittstellen gebunden werden, anstatt unnötig breite Abhängigkeiten zu erzeugen. Eine korrekte Segregation wird dabei maßgeblich durch die Einhaltung des [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) (LSP) gewährleistet. Nach diesem Prinzip sollte eine Unterklasse so konzipiert sein, dass sie ihre Basisklasse vollständig ersetzen kann, ohne das Programmverhalten durch unerwartete Leerschritte oder eingeschränktes Verhalten zu verfälschen.
 
@@ -59,18 +59,18 @@ Gegen semantische Abhängigkeiten dienen das [Law of Demeter](https://en.wikiped
 
 Des Weiteren helfen verschiedene Strukturmuster (wie Adapter, Bridge oder Dekorator) und Verhaltensmuster (wie Strategy oder Visitor), das [Open-Closed-Prinzip](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) umzusetzen. Demnach sollten Funktionserweiterung idealerweise ohne die Entstehung neuer, direkter Kopplungen innerhalb der bestehenden Klasse realisiert werden.
 
-Grundsätzlich ist eine Kopplung für die Funktionsfähigkeit eines Systems unumgänglich. Ein übermäßiges Maß an Abhängigkeiten erschwert jedoch die Modifikation sowie das Testen und schränkt somit die Wiederverwendbarkeit der Komponenten erheblich ein.
-
 ## 4. Messverfahren für Kohäsion (LCOM4) und Kopplung (CBO)
 
 ### 4.1 Lack of Cohesion of Methods
 
-Eine der bekanntesten Metriken zur Messung der inneren Klassenstruktur ist die Lack of Cohesion of Methods (LCOM). Da in der Literatur verschiedene Versionen dieser Kohäsionsmetrik existieren, wird in diesem Beitrag gezielt die vierte Iteration (LCOM4) nach Hitz und Montazeri (1995) verwendet. Diese zeichnet sich durch eine hohe praktische Relevanz aus, da sie aufgrund ihrer einfachen Anwendung und klaren Interpretierbarkeit eine objektive Bewertung der SRP-Konformität ermöglicht. Die Metrik ermittelt die Anzahl verbundener Elementgruppen innerhalb einer Klasse, wobei die Kohäsion mittels einer Graphenanalyse veranschaulicht wird. Ein zusammenhängender Teilgraph entsteht dabei immer dann, wenn Methoden entweder auf dieselben Instanzvariablen zugreifen oder sich durch gegenseitige Aufrufe direkt beeinflussen.
+Eine der bekanntesten Metriken zur Messung der inneren Klassenstruktur ist die Lack of Cohesion of Methods (LCOM). Da in der Literatur verschiedene Versionen dieser Kohäsionsmetrik existieren, wird in diesem Beitrag gezielt die vierte Iteration (LCOM4) nach Hitz und Montazeri (1995) verwendet. Diese zeichnet sich durch eine hohe praktische Relevanz aus, da sie aufgrund ihrer einfachen Anwendung und klaren Interpretierbarkeit eine objektive Bewertung der SRP-Konformität ermöglicht. 
+
+Die **LCOM4 Metrik** ermittelt die **Anzahl** verbundener Elementgruppen innerhalb einer Klasse, wobei die Kohäsion mittels einer Graphenanalyse veranschaulicht wird. Ein zusammenhängender Teilgraph entsteht dabei immer dann, wenn **Methoden** entweder auf dieselben **Instanzvariablen** zugreifen oder sich durch gegenseitige Aufrufe direkt beeinflussen.
 
 Die konkreten Aussagen zur Bewertung der Klassenstruktur liefern die folgenden Kennzahlen: 
 
 * **LCOM4-Wert von 1** bedeutet, dass sämtliche Methoden und Felder direkt oder indirekt miteinander verbunden sind, was einer hochgradig kohäsiven Klasse im Idealzustand entspricht.
-* Ein **LCOM4-Wert über 1** bedeutet, dass die Klasse in mehrere unabhängige Teilgraphen zerfällt, was als objektives Indiz für eine Verletzung des Single Responsibility Principles gewertet wird.
+* **LCOM4-Wert über 1** bedeutet, dass die Klasse in mehrere unabhängige Teilgraphen zerfällt, was als objektives Indiz für eine Verletzung des Single Responsibility Principles gewertet wird.
 * **LCOM4-Wert von 0** kennzeichnet hingegen eine Klasse ohne Methoden, wie etwa einen reinen Datencontainer, was im Rahmen dieser Analyse neutral bewertet wird.
 
 **Fallbeispiel 1: Niedrige Kohäsion (LCOM4 = 2)**
@@ -195,13 +195,9 @@ Die Bewertung der Messergebnisse folgt einer klaren Skala:
 
 * **CBO-Wert von 0** deutet darauf hin, dass eine Klasse isoliert ist und somit faktisch nicht am System teilnimmt.
 * **CBO-Werte zwischen 1 und 4** gelten als Idealbereich, da dieser eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
-* Ein **CBO-Wert größer als 5** deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
+* **CBO-Wert größer als 5** deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
 
-Grundsätzlich ist eine Kopplung zwischen Klassen für die Funktionsfähigkeit eines Systems zwar unumgänglich, doch erschwert ein übermäßiges Maß an Abhängigkeiten das Testen sowie die Modifikation und schränkt die Wiederverwendbarkeit der Komponenten erheblich ein.
 
-Um diese Abhängigkeiten auf ein gesundes Maß zu reduzieren, bietet das [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle) eine zentrale Lösung, indem es Hochstufige Module von konkreten Implementierungen entkoppelt und stattdessen die Abhängigkeit von stabilen Abstraktionen erzwingt. Analog unterstützt das Prinzip [Encapsulate what varies](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) die Entkopplung. Dabei sollte, was sich häufig ändern oder unterschiedlich sein kann, isoliert und hinter einer stabilen Schnittstelle verborgen werden. Ergänzend dazu trägt das [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle) zur Kopplungsminimierung bei, indem es Klassen nur gegen spezifisch benötigte Teilschnittstellen binden lässt. Zudem wirkt das **Law of Demeter** als strukturelle Schranke gegen semantische Kopplung, da es den Zugriffspfad auf unmittelbare Nachbarobjekte beschränkt.  
-
- 
 **Fallbeispiel 1: Direkte Abhängigkeit**
 
 Im ersten Szenario ist der `Report` direkt von konkreten Implementierungen abhängig. Jede Änderung an den beteiligten Klassen kann sich unmittelbar auf die Klasse auswirken.
