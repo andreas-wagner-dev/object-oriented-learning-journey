@@ -7,7 +7,7 @@ Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu ha
 
 ## 1. Gegenstand und Zielsetzung
 
-Im Mittelpunkt dieser Betrachtung steht das Single Responsibility Principle sowie die Herausforderung, dessen Einhaltung auf Klassenebene objektiv zu bewerten. Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Der hier gewählte Ansatz stützt sich auf die Formalisierung von Robert Bräutigam, welcher das [Single Responsibility Principle](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle) über die Konjunktion (logisches UND) zweier messbarer [Softwaremetriken](https://en.wikipedia.org/wiki/Software_metric) definiert. Die daraus resultierende Formel lautet:
+Im Mittelpunkt dieser Betrachtung steht das **Single Responsibility Principle** sowie die Herausforderung, dessen **Einhaltung auf Klassenebene objektiv zu bewerten**. Durch eine objektive Untersuchung des SRP soll ein tieferes Verständnis für dessen Anwendung im Entwickleralltag vermittelt werden. Der hier gewählte Ansatz stützt sich auf die Formalisierung von Robert Bräutigam, welcher das [Single Responsibility Principle](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle) über die Konjunktion (logisches UND) zweier messbarer [Softwaremetriken](https://en.wikipedia.org/wiki/Software_metric) definiert. Die daraus resultierende Formel lautet:
 
 > `SRP ≡ max(COHESION) ∧ min(COUPLING)`
 
