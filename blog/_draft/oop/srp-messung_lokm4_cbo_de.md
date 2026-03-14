@@ -1,4 +1,7 @@
 # The Pragmatic Single Responsibility Principle: Beyond Myths to Metrics
+
+[!](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_blog_post_min.png)
+
 > Das pragmatische SRP: Von subjektiven Debatten zu objektiven Metriken
 
 Das [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) (SRP) ist das erste der fünf [SOLID-Prinzipien](https://en.wikipedia.org/wiki/Package_principles), das von Robert C. Martin zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung.
@@ -48,6 +51,8 @@ Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten a
 > `SRP ≡ max(COHESION) ∧ min(COUPLING)`
 
 Durch die formale Gleichsetzung des SRP mit der Konjunktion aus maximaler [Kohäsion](https://en.wikipedia.org/wiki/Cohesion_(computer_science)) und minimaler [Kopplung](https://en.wikipedia.org/wiki/Coupling_(computer_programming)) wandelt sich das Prinzip von einer rein abstrakten Designphilosophie zu einer präzisen Strukturmetrik. Diese mathematische Definition ermöglicht es, die ehemals vagen Verantwortlichkeiten einer Klasse durch messbare strukturelle Eigenschaften objektiv zu bewerten.
+
+[!](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_coupling_cohesion_min.png)
 
 Die interne Qualität einer Klasse bemisst sich an ihrer **Kohäsion**, also dem **Grad des Zusammenhangs**, in dem Methoden und Felder eine funktionale Einheit bilden und somit das Versprechen einlösen, nur eine Sache zu tun.
 
