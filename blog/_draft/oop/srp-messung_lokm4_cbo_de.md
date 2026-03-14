@@ -51,9 +51,9 @@ Durch die formale Gleichsetzung des SRP mit der Konjunktion aus maximaler [Kohä
 
 Die interne Qualität einer Klasse bemisst sich an ihrer **Kohäsion**, also dem **Grad des Zusammenhangs**, in dem Methoden und Felder eine funktionale Einheit bilden und somit das Versprechen einlösen, nur eine Sache zu tun.
 
-Die externe Qualität wird hingegen durch die **Kopplung** bestimmt, welche die **Abhängigkeiten** zu fremden Objekten beschreibt. Je geringer diese externe Vernetzung ausfällt, desto isolierter und wartungsfreundlicher bleibt die Klasse gegenüber globalen Änderungen im System.
+Die externe Qualität wird hingegen durch die **Kopplung** bestimmt, welche die **Abhängigkeiten zu fremden Objekten** beschreibt. Je geringer diese externe Vernetzung ausfällt, desto isolierter und wartungsfreundlicher bleibt die Klasse gegenüber globalen Änderungen im System.
 
-### 3.2 Arten und Maßnahmen zur Minimierung von Kopplungen
+### 3.2 Arten von Kopplungen und Maßnahmen zur Minimierung 
 
 Innerhalb der Kopplung wird zwischen **physikalischen** und **semantischen** Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Codeänderungen. Sobald eine Klasse beispielsweise über Ketten wie `user.getAddress().getCity()` auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Lesemethode als möglicher Kanal für eine erhöhte semantische Kopplung.
 
