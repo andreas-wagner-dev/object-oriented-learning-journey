@@ -5,7 +5,7 @@
 
 ## 1. **The Problem:** The Translation Gap
 
-*Why your code structure ahould be your Business-Context Diagram?*
+*Why your code structure should be your Business-Context Diagram?*
 
 **Imagine:** 
 
