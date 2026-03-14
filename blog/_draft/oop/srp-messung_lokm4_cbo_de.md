@@ -20,24 +20,24 @@ Die Problematik des SRP liegt in seiner subjektiven Formulierung, die in der Pra
 Aufgrund der Unklarheiten rund um den Begriff des ‚Änderungsgrundes‘ präzisierte Robert C. Martin seine Ausführungen später, woraus sich im Laufe der Zeit verschiedene Definitionsebenen entwickelten. Diese reichen von der Forderung nach genau einer Aufgabe pro Modul über die Identifikation eines spezifischen Änderungsgrundes bis hin zur Empfehlung, Dinge mit identischen Änderungsursachen zusammenzufassen. In der konkreten Auslegung wird ein solcher Grund schließlich als Anforderung definiert, die von einem einzelnen Akteur oder Geschäftsmann stammt.
 
 > "Each software module should have one and only one responsibility"
-> — Robert C. Martin (2003)
+> - Robert C. Martin (2003)
 
 > "Each software module should have one and only one reason to change"
-> — Robert C. Martin (2007)
+> - Robert C. Martin (2007)
 
 > "Gather together the things that change for the same reasons. Separate those things that change for different reasons"
-> — Robert C. Martin (2014)
+> - Robert C. Martin (2014)
 
 > "'Same reason' means it originates from the same business person"
-> — Robert C. Martin (2014)
+> - Robert C. Martin (2014)
 
 In der praktischen Anwendung werfen diese Definitionen jedoch neue Fragen auf:
 
-* So ist beispielsweise unklar, ob eine Klasse `Order`, die eine Bestellung sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf *eine einzelne Aufgabe* verstößt.
-* Auch die praktische Faustregel, *Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln*, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung der künftigen Produktentwicklung erfordert.
-* Ebenso erweist sich der Verweis auf den *Geschäftsmann* zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Codealltag unbrauchbar.
+* So ist beispielsweise unklar, ob eine Klasse `Order`, die eine Bestellung sowohl validiert als auch persistiert, bereits gegen die Beschränkung auf ***eine einzelne Aufgabe*** verstößt.
+* Auch die praktische Faustregel, ***Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln***, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung der künftigen Produktentwicklung erfordert.
+* Ebenso erweist sich der Verweis auf den ***Geschäftsmann*** zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Codealltag unbrauchbar.
 
-Diese kontextabhängigen Interpretationen führen in Codereviews häufig zu zeitraubenden Grundsatzdebatten. Ohne objektive Bewertungskriterien drohen solche Diskussionen in subjektive Meinungsverschiedenheiten auszuarten, was die Effizienz und Konsistenz der Softwareentwicklung verhindert.
+Diese kontextabhängigen Interpretationen führen in Codereviews häufig zu zeitraubenden Grundsatzdebatten. Ohne objektive Bewertungskriterien können solche Diskussionen in subjektive Meinungsverschiedenheiten auszuarten, was die Effizienz und Konsistenz der Softwareentwicklung verhindert.
 
 ## 3. Die Formalisierung von Kohäsion und Kopplung
 
