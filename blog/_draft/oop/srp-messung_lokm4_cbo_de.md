@@ -1012,22 +1012,23 @@ Letztlich ist Softwareentwicklung ein Handwerk, bei dem Metriken lediglich als K
 ## 9. Quellen und Referenzen
 
 ### Hauptquelle
-
+* ACM Digital Library (2026) [Applying the Single Responsibility Principle in Industry: Modularity
+Benefits and Trade-offs](https://scispace.com/pdf/applying-the-single-responsibility-principle-in-industry-rewdq52at2.pdf)
 * Robert Martin (2007) [The Single Responsibility Principle](https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g)
 * Robert Martin (2014) [The Single Responsibility Principle](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
 * Robert Bräutigam (2014) [The Single Responsibility Principle](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
 * Robert Bräutigam (2017) [The Genius of the Law of Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
 * Martin Fowler (2013) [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html)
 * Matthieu Cneude (2020) [The Single Responsibility Principle Revisited](https://thevaluable.dev/single-responsibility-principle-revisited/)
-* Yegor Bugayenko (2015) [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 * ObjectScript_Q (2026) [Lack of Cohesion in Methods (LCOM4)](https://objectscriptquality.com/docs/metrics/lack-cohesion-methods-lcom4)
 * ObjectScript_Q (2026) [Coupling Between Object classes (CBO)](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo)
+* Yegor Bugayenko (2015) [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
   
 ### Weiterführende Artikel und Metriken
 
-* European Southern Observatory (2026) [OOMetrics](https://www.eso.org/~tcsmgr/oowg-forum/TechMeetings/Articles/OOMetrics.pdf)
+* European Southern Observatory (2026) [A METRICS SUITE FOR OBJECT ORIENTED DESIGN](https://www.eso.org/~tcsmgr/oowg-forum/TechMeetings/Articles/OOMetrics.pdf)
 * Universität Turku (2016) [Design Principles And Patterns](https://staff.cs.utu.fi/~jounsmed/doos_06/material/DesignPrinciplesAndPatterns.pdf)
-* Aivosto Oy Helsinki, Finland (1994–2021 ) [Chidamber & Kemerer object-oriented metrics suite](https://www.aivosto.com/project/help/pm-oo-ck.html)
+* Aivosto Oy Helsinki, Finland (1994–2021) [Chidamber & Kemerer Object-Oriented Metrics Suite](https://www.aivosto.com/project/help/pm-oo-ck.html)
 * Mihai A. RODEGBFR (2018) [My Take On Object Naming](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
 * Yegor Bugayenko (2020) [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
 
