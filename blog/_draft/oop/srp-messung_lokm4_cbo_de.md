@@ -318,6 +318,16 @@ An dieser Stelle entfaltet die Kombination mit der CBO-Metrik ihre volle Diagnos
 
 Erst in der Gesamtbetrachtung beider Kennzahlen lässt sich objektiv feststellen, ob eine Klasse eine echte fachliche Einheit bildet oder lediglich eine Ansammlung lose gekoppelter Aufgaben darstellt, die durch technische Hilfsvariablen zusammengehalten werden. Ein „sauberes“ Design nach der Formalisierung von Robert Bräutigam strebt demnach eine Klasse an, die durch maximale Kohäsion bei minimaler Kopplung besticht, was sich in der Zielmarke eines **LCOM4-Werts von 1** und eines **CBO-Bereichs von 0 bis 5** widerspiegelt.
 
+### 4.4 Der Zielkonflikt: Das Pareto-Optimum zwischen LCOM und CBO
+
+Die isolierte Optimierung einer der beiden Kennzahlen führt unweigerlich in eine architektonische Sackgasse. In der Praxis stehen LCOM und CBO in einer inhärenten umgekehrten Beziehung, die ein klassisches Pareto-Optimum beschreibt:
+
+* **Extreme Kohäsion (LCOM4 = 1 durch Atomisierung):** Versucht man, den LCOM-Wert durch das Aufspalten einer Klasse in kleinste Einheiten zu perfektionieren, steigt die Kopplung (CBO) im Gesamtsystem drastisch an. Viele hochspezialisierte Klassen müssen nun über komplexe Schnittstellen miteinander kommunizieren, um eine fachliche Aufgabe zu lösen. Die Komplexität verschiebt sich von der Inneren Logik (Intra-Modul) hin zur Interaktion (Inter-Modul).
+* **Minimale Kopplung (CBO → 0 durch Zentralisierung):** Reduziert man hingegen die externe Kopplung radikal, landet man bei massiven „Gott-Klassen“. Diese benötigen zwar kaum externe Partner, vereinen aber so viele unterschiedliche Zuständigkeiten in sich, dass die interne Kohäsion (LCOM) wegbricht.
+
+Ein SRP-konformer Entwurf befindet sich daher auf der Pareto-Front: Er sucht den Punkt, an dem die Klasse fachlich „fokussiert genug“ ist (LCOM4 = 1), ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten (CBO > 5) zu stürzen. Die Verbesserung des einen Wertes darf nicht durch eine überproportionale Verschlechterung des anderen erkauft werden. Wahre Designqualität zeigt sich dort, wo eine Klasse eine klare fachliche Identität besitzt, ohne zum logischen „Nadelöhr“ für zu viele Nachbarsysteme zu werden.
+
+
 ## 5. Beispiele: Datenzentrierter Service vs. Objektorientierter Dekorator
 
 Um die praktische Anwendung von LCOM4 und CBO zu demonstrieren, wird im Folgenden dieselbe Domäne mit unterschiedlichen Entwurfsansätzen untersucht. Ziel ist es, die Unterschiede in der SRP-Konformität objektiv messbar zu machen.
