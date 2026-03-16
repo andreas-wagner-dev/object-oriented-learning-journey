@@ -52,7 +52,7 @@ Die eher philosophisch und soziologisch geprägten Definitionen des SRP bieten a
 
 Durch die formale Gleichsetzung des SRP mit der Konjunktion aus maximaler [Kohäsion](https://en.wikipedia.org/wiki/Cohesion_(computer_science)) und minimaler [Kopplung](https://en.wikipedia.org/wiki/Coupling_(computer_programming)) wandelt sich das Prinzip von einer rein abstrakten Designphilosophie zu einer präzisen Strukturmetrik. Diese mathematische Definition ermöglicht es, die ehemals vagen Verantwortlichkeiten einer Klasse durch messbare strukturelle Eigenschaften objektiv zu bewerten.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_min.png)
 
 Die interne Qualität einer Klasse bemisst sich an ihrer **Kohäsion**, also dem **Grad des Zusammenhangs**, in dem Methoden und Felder eine funktionale Einheit bilden und somit das Versprechen einlösen, nur eine Sache zu tun.
 
