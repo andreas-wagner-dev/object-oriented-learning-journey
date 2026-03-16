@@ -215,13 +215,6 @@ Die Bewertung der Messergebnisse folgt einer klaren Skala:
 * **CBO-Werte zwischen 1 und 5** gelten als Idealbereich, da dieser eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
 * **CBO-Wert größer als 5** deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
 
-**CBO Schwellenwert**
-
-Der in diesem Beitrag verwendete Schwellenwert von **CBO > 5** ist kein universeller Standard. Je nach Quelle variiert der empfohlene Grenzwert erheblich: Während [ObjectScript Quality](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo) einen Maximalwert von **4** empfiehlt, legt Martin (vgl. [Design Principles and Patterns](https://staff.cs.utu.fi/~jounsmed/doos_06/material/DesignPrinciplesAndPatterns.pdf)) den Schwellenwert deutlich höher bei **14** an.
-
-Die Wahl des Schwellenwerts beeinflusst mindestens zwei gegenläufige Qualitätsziele. Ein niedriger Grenzwert fördert kleine, fokussierte Klassen, erhöht jedoch gleichzeitig die Fragmentierung des Systems und damit die Anzahl der zu verwaltenden Abstraktionen. Ein höherer Grenzwert erlaubt kompaktere Klassen, erschwert aber das Testen, da pro Klasse mehr Abhängigkeiten als Mocks bereitgestellt werden müssen. Der optimale Schwellenwert ergibt sich daher aus einer Abwägung dieser beiden Pole und sollte gemäß dem Ermessen der jeweiligen Organisation oder des Teams festgelegt werden. Im Rahmen dieses Beitrags wird einheitlich ein Schwellenwert von **maximal 5** verwendet.
-
-
 Die Ermittlung der CBO-Metrik und die Nuancen von Kopplungstypen veranschaulichen die folgenden Fallbeispiele.
 
 **Fallbeispiel 1: Direkte Abhängigkeit**
@@ -325,10 +318,16 @@ Die isolierte Optimierung einer der beiden Kennzahlen führt unweigerlich in ein
 * **Extreme Kohäsion (LCOM4 = 1 durch Atomisierung):** Versucht man, den LCOM-Wert durch das Aufspalten einer Klasse in kleinste Einheiten zu perfektionieren, steigt die Kopplung (CBO) im Gesamtsystem drastisch an. Viele hochspezialisierte Klassen müssen nun über komplexe Schnittstellen miteinander kommunizieren, um eine fachliche Aufgabe zu lösen. Die Komplexität verschiebt sich von der Inneren Logik (Intra-Modul) hin zur Interaktion (Inter-Modul).
 * **Minimale Kopplung (CBO → 0 durch Zentralisierung):** Reduziert man hingegen die externe Kopplung radikal, landet man bei massiven „Gott-Klassen“. Diese benötigen zwar kaum externe Partner, vereinen aber so viele unterschiedliche Zuständigkeiten in sich, dass die interne Kohäsion (LCOM) wegbricht.
 
+[Bild]
+
 Ein SRP-konformer Entwurf befindet sich daher auf der Pareto-Front: Er sucht den Punkt, an dem die Klasse fachlich „fokussiert genug“ ist (LCOM4 = 1), ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten (CBO > 5) zu stürzen. Die Verbesserung des einen Wertes darf nicht durch eine überproportionale Verschlechterung des anderen erkauft werden.
 
 Die optimale Designqualität zeigt sich dort, wo eine Klasse eine eindeutige fachliche Identität besitzt, ohne zu viele andere Klassen für die Realisierung der Anforderungen zu verwenden. Dies beschreibt das Gleichgewicht zwischen hoher Kohäsion (Identität) und niedriger Kopplung (Abhängigkeit). Dieses Gleichgewicht verhindert die Entstehung von ‚Spaghetti-Code‘ (unkontrollierte Querverbindungen) ebenso wie ‚Lasagne-Code‘ (zu viele kleinteilige Schichten), wodurch die Wartbarkeit und Erweiterbarkeit des Systems langfristig gesichert wird.
 
+Der in diesem Beitrag verwendete Schwellenwert von **CBO > 5** ist kein universeller Standard. Je nach Quelle variiert der empfohlene Grenzwert erheblich: 
+Während [Sahraoui, Godin & Miceli](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf))  in ihren Artikel einen Maximalwert von **14** festlegen, empfiehlt [ObjectScript Quality](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo) einen  deutlich niedrigeren Schwellenwert von **4**.
+
+Die Wahl des Schwellenwerts beeinflusst mindestens zwei gegenläufige Qualitätsziele. Ein niedriger Grenzwert fördert kleine, fokussierte Klassen, erhöht jedoch gleichzeitig die Fragmentierung des Systems und damit die Anzahl der zu verwaltenden Abstraktionen. Ein höherer Grenzwert erlaubt kompaktere Klassen, erschwert aber das Testen, da pro Klasse mehr Abhängigkeiten als Mocks bereitgestellt werden müssen. Der optimale Schwellenwert ergibt sich daher aus einer Abwägung dieser beiden Pole und sollte gemäß dem Ermessen der jeweiligen Organisation oder des Teams festgelegt werden. Im Rahmen dieses Beitrags wird einheitlich ein Schwellenwert von **maximal 5** verwendet.
 
 ## 5. Beispiele: Datenzentrierter Service vs. Objektorientierter Dekorator
 
@@ -1020,6 +1019,7 @@ Benefits and Trade-offs](https://scispace.com/pdf/applying-the-single-responsibi
 * Robert Martin (2014) [The Single Responsibility Principle](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
 * Robert Bräutigam (2014) [The Single Responsibility Principle](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
 * Robert Bräutigam (2017) [The Genius of the Law of Demeter](https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/)
+* Sahraoui, Godin & Miceli (2000) [Can Metrics Help Bridging the Gap Between the Improvement of OO Design Quality and Its Automation?](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf)
 * Martin Fowler (2013) [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html)
 * Matthieu Cneude (2020) [The Single Responsibility Principle Revisited](https://thevaluable.dev/single-responsibility-principle-revisited/)
 * ObjectScript_Q (2026) [Lack of Cohesion in Methods (LCOM4)](https://objectscriptquality.com/docs/metrics/lack-cohesion-methods-lcom4)
