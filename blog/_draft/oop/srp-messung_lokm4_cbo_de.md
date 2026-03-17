@@ -60,7 +60,7 @@ Die externe Qualität wird hingegen durch die **Kopplung** bestimmt, welche die 
 
 Innerhalb der Kopplung wird zwischen **physikalischen** und **semantischen** Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Codeänderungen. Sobald eine Klasse beispielsweise über Ketten wie `user.getAddress().getCity()` auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Lesemethode als möglicher Kanal für eine erhöhte semantische Kopplung.
 
-### 3.2 Maßnahmen zur Minimierung Kopplungen und Maximierung von Kohäsion
+### 3.2 Minimierung von Kopplungen und Maximierung von Kohäsion
 
 Grundsätzlich ist eine Kopplung für die Funktionsfähigkeit eines Systems unumgänglich. Ein übermäßiges Maß an Abhängigkeiten erschwert jedoch die Modifikation sowie das Testen und schränkt somit die Wiederverwendbarkeit der Komponenten erheblich ein. Um die externe und interne Kopplung von Klassen sowie Methoden auf ein gesundes Maß zu reduzieren, ist die Anwendung der weiteren SOLID-Prinzipien und grundlegender OOP-Entwurfsrichtlinien sowie Entwurfsmustern essenziell.
 
