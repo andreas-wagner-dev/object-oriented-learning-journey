@@ -28,7 +28,8 @@ A Business Analyst shows you a System Context Diagram of a **Car Rental System**
                 │  (Inventory)  │
                 └───────────────┘
 ```
-Then you open the code and find:
+
+Then you open the code and find one of the following structures:
 
 **Example 1:** Classic Layered Architecture
 ```
