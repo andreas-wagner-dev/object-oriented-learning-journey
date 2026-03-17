@@ -89,7 +89,7 @@ Die Herleitung der LCOM4-Metrik verdeutlichen die folgenden Fallbeispiele anhand
 
 **Fallbeispiel 1: Niedrige Kohäsion (LCOM4 = 2)**
 
-In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten für die Anzeige `display()` einer Bestellung und Abwicklung `pay(int many)` einer Zahlung.
+In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten für die Anzeige `display()` einer Bestellung und Abwicklung `pay(int amount)` einer Zahlung.
 
 
 ```java
@@ -107,8 +107,8 @@ public class Order {
     }
 
     // M2: Zahlungs-Logik (nutzt Feld 3 und Feld 4)
-    public void pay(int many) {
-        this.amount = many;
+    public void pay(int amount) {
+        this.amount = amount;
         this.status = "PAID";
     }
 }
@@ -143,9 +143,9 @@ public class OrderPayment {
     private String status = "PENDING";   // Feld 3
     private int amount;                  // Feld 4
 
-    public void pay(int many) {
+    public void pay(int amount) {
         // Nutzt Feld 3 und 4
-        this.amount = many;
+        this.amount = amount;
         this.status = "PAID";
     }
 }
@@ -177,9 +177,9 @@ public class Order {
         return customer.getName() + ": " + cart.itemCount() + ", Status: " + status;
     }
 
-    public void pay(int many) {
+    public void pay(int amount) {
         // Nutzt Feld 3 und 4
-        this.amount = many;
+        this.amount = amount;
         this.status = "PAID";
     }
 }
