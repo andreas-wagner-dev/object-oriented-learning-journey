@@ -242,14 +242,16 @@ Als Handlungsempfehlung lässt sich daraus Folgendes ableiten: Existiert kein fa
 
 ### 4.2 Coupling Between Objects
 
-Ergänzend zur Kohäsion misst die Metrik **Coupling Between Objects (CBO)** nach Chidamber & Kemerer (1994) die **Anzahl der externen Typen**, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Die Ermittlung der CBO-Metrik erfolgt durch Zählung von:
-* Klassenerweiterungen (Vererbung), 
-* Feldtypen (globale Klassen-Variablen),
-* Methodenaufrufe sowie durch 
-* Argumente und Rückgabetypen (in Signaturen der Methoden) oder 
-* lokaler Variablen (innerhalb von Methoden)
+Ergänzend zur Kohäsion misst die Metrik **Coupling Between Objects** (CBO) nach Chidamber & Kemerer (1994) die Anzahl der externen Typen, zu denen eine Klasse eine direkte Abhängigkeit unterhält. Die Ermittlung des CBO-Werts erfolgt durch die Zählung aller gekoppelten Klassen innerhalb folgender Strukturen:
+* **Klassenerweiterungen** (Vererbung und Implementierung),
+* **Feldtypen** (Instanzvariablen der Klasse),
+* **Methodenaufrufe** (Referenzen auf fremde Logik),
+* **Methodensignaturen** (Typen von Argumenten und Rückgabewerten),
+* **Lokale Variablen** (Instanziierungen oder Referenzen innerhalb von Methoden).
 
 *Primitive* Datentypen und *Standardwrapper* wie `int` oder `String` bleiben hierbei unberücksichtigt, da sie zu den Basiselementen einer Programmiersprache gehören.
+
+Die Metrik-CBO dient als Indikator für die Wartbarkeit und Testbarkeit, da ein hoher CBO-Wert bedeutet, dass die Klasse bei Änderungen an ihren Partnerklassen überproportional oft mitangepasst werden muss.
 
 Die Bewertung der Messergebnisse folgt einer klaren Skala:
 
@@ -257,7 +259,7 @@ Die Bewertung der Messergebnisse folgt einer klaren Skala:
 * **CBO-Werte zwischen 1 und 5** gelten als Idealbereich, da dieser eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
 * **CBO-Wert größer als 5** deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
 
-Die Ermittlung der CBO-Metrik und die Nuancen von Kopplungstypen veranschaulichen die folgenden Fallbeispiele.
+Die Ermittlung der CBO-Werte und die Nuancen von Kopplungstypen veranschaulichen die folgenden Fallbeispiele.
 
 **Fallbeispiel 1: Direkte Abhängigkeit**
 
