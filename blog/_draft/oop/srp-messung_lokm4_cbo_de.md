@@ -808,11 +808,11 @@ Dieser Entwurf erfüllt zugleich das *Open-Closed-Prinzip*: Soll eine neue Anfor
 
 ### 5.5 Horizontales Dekorator-Pattern (objektorientiert)
 
-Weil der vertikale Dekoratorentwurf mit zunehmender Anzahl an Komponenten an Übersichtlichkeit verliert, schlägt Yegor Bugayenko (2015) einen horizontalen Ansatz vor. Hierbei verwaltet ein zentrales `Wrapper`-Objekt namens `Orders` eine flache Liste von Transformationen, die in einem separaten Interface als `OrderProcess` definiert sind. Anstatt einer tiefen Verschachtelung erfolgt die Ausführung durch eine einfache Iteration über alle registrierten Prozessschritte, wobei jede `OrderProcess`-Klasse eine spezifische technische oder fachliche Aufgabe isoliert.
+Weil der vertikale Dekoratorentwurf mit zunehmender Anzahl an Komponenten an Übersichtlichkeit verliert, schlägt Yegor Bugayenko (2015) einen horizontalen Ansatz vor. Hierbei verwaltet ein zentrales `Wrapper`-Objekt namens `Orders` eine flache Liste von Transformationen, die in einem separaten Interface als `OrderAction` definiert sind. Anstatt einer tiefen Verschachtelung erfolgt die Ausführung durch eine einfache Iteration über alle registrierten Prozessschritte, wobei jede `OrderAction`-Klasse eine spezifische technische oder fachliche Aufgabe isoliert.
 
 ```java
 
-public interface OrderProcess {
+public interface OrderAction {
     void process(String id, Cart cart);
     void release(String id, Cart cart);
 }
@@ -820,9 +820,9 @@ public interface OrderProcess {
 public class Orders implements Order {
     private String id;                  // Feld 1
     private Cart cart;                  // Feld 2
-    private List<OrderProcess> acts;        // Feld 3
+    private List<OrderAction> acts;        // Feld 3
 
-    public Orders(String id, Cart cart, List<OrderProcess> acts) {
+    public Orders(String id, Cart cart, List<OrderAction> acts) {
         this.id = id; this.cart = cart; this.acts = acts;
     }
 
@@ -841,10 +841,10 @@ public class Orders implements Order {
 }
 
 // Die Implementierungen der Verantwortlichkeiten
-// Jede OrderProcess-Klasse isoliert eine spezifische technische oder fachliche Aufgabe:
+// Jede OrderAction-Klasse isoliert eine spezifische technische oder fachliche Aufgabe:
 
 // Persistenz
-public class Persist implements OrderProcess {
+public class Persist implements OrderAction {
     private OrderRepository repo;
     public Persist(OrderRepository repo) { this.repo = repo; }
 
@@ -853,7 +853,7 @@ public class Persist implements OrderProcess {
 }
 
 // Zahlung (nur process() relevant)
-public class Pay implements OrderProcess {
+public class Pay implements OrderAction {
     private PaymentApi gateway;
     public Pay(PaymentApi gateway) { this.gateway = gateway; }
 
@@ -862,7 +862,7 @@ public class Pay implements OrderProcess {
 }
 
 // Lagerverwaltung (nur release() relevant)
-public class Stock implements OrderProcess {
+public class Stock implements OrderAction {
     private InventoryApi inv;
     public Stock(InventoryApi inv) { this.inv = inv; }
 
@@ -890,11 +890,11 @@ order.process();
 // Audit protokolliert, Notify sendet Bestätigung.
 ```
 
-Die Analyse der Metriken verdeutlicht die strukturellen Vorteile dieses Modells. Die `OrderProcess`-Klassen erreichen einen **CBO-Wert von 2**, da neben dem eigenen Werkzeug (z. B. `PaymentApi`) auch der Interface-Typ `Cart` aus der Methodensignatur als externer Typ zählt. Dies stellt eine weitere Reduktion gegenüber den vertikalen Dekoratoren dar, da kein `delegate`-Feld mehr zur Weiterreichung der Aufrufe benötigt wird, da die Steuerung der Kette vollständig auf den `Orders`-Wrapper übergeht. Querschnittsbelange wie Audit oder Persistenz bleiben dabei strikt in jeweils einer Klasse isoliert, während neue Anforderungen wie ein SMS-Versand einfach als neue Implementierung hinzugefügt werden können, ohne bestehenden Code zu berühren, was dem **Open-Closed-Prinzip** entspricht.
+Die Analyse der Metriken verdeutlicht die strukturellen Vorteile dieses Modells. Die `OrderAction`-Klassen erreichen einen **CBO-Wert von 2**, da neben dem eigenen Werkzeug (z. B. `PaymentApi`) auch der Interface-Typ `Cart` aus der Methodensignatur als externer Typ zählt. Dies stellt eine weitere Reduktion gegenüber den vertikalen Dekoratoren dar, da kein `delegate`-Feld mehr zur Weiterreichung der Aufrufe benötigt wird, da die Steuerung der Kette vollständig auf den `Orders`-Wrapper übergeht. Querschnittsbelange wie Audit oder Persistenz bleiben dabei strikt in jeweils einer Klasse isoliert, während neue Anforderungen wie ein SMS-Versand einfach als neue Implementierung hinzugefügt werden können, ohne bestehenden Code zu berühren, was dem **Open-Closed-Prinzip** entspricht.
 
 Ein struktureller Nebeneffekt dieser Architektur sind die leeren Methoden in Klassen wie `Pay` oder `Stock`, da nicht jeder Prozessschritt zwangsläufig auf jede Aktion reagieren muss. Das Akzeptieren dieser leeren Implementierungen stellt den notwendigen Preis für den sauberen horizontalen Schnitt dar, bedeutet jedoch gleichzeitig einen Verstoß gegen das [Liskov substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle). Nach diesem Prinzip sollte eine Unterklasse so konzipiert sein, dass sie ihre Basisklasse vollständig ersetzen kann, ohne das Programmverhalten durch unerwartete Leerschritte oder eingeschränktes Verhalten zu verfälschen.
 
-Alternativ ließe sich das OrderProcess-Interface im Sinne des **Interface Segregation Principle (ISP)** in spezialisierte Schnittstellen wie `OnProcess` und `OnRelease` aufteilen.
+Alternativ ließe sich das `OrderAction`-Interface im Sinne des **Interface Segregation Principle (ISP)** in spezialisierte Schnittstellen wie `OnProcess` und `OnRelease` aufteilen.
 
 ```java
 // Zwei segregierte Schnittstellen anstelle eines gemeinsamen Interfaces
@@ -981,9 +981,9 @@ Die Wahl eines Softwaredesigns stellt stets eine Abwägung zwischen der initiale
 | **Kopplung (CBO)** | ❌ CBO = 8 | ⚠️ CBO = 7 / 5 je Klasse | ⚠️ CBO = 7 (`StockSvc`) / 5 (`PaySvc`) | ✅ CBO = 2 je Klasse | ✅ CBO = 2 je Klasse |
 | **Änderungsausbreitung** | ❌ gesamte Klasse | ❌ alle 3 Klassen | ❌ mehrere Klassen | ✅ nur 1 Klasse | ✅ nur 1 Klasse |
 | **Testaufwand (Mocks)** | ❌ 5 Mocks pro Methode | ⚠️ 4 Mocks pro Klasse | ⚠️ 4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
-| **Erweiterbarkeit (OCP)** | ❌ Methoden ändern | ❌ Methoden ändern | ❌ Methoden ändern | ✅ neuer Dekorator | ✅ neues `OrderProcess` + Listeneintrag |
+| **Erweiterbarkeit (OCP)** | ❌ Methoden ändern | ❌ Methoden ändern | ❌ Methoden ändern | ✅ neuer Dekorator | ✅ neues `OrderAction` + Listeneintrag |
 | **Komposition** | ✅ eine Klasse | ✅ drei Klassen | ✅ zwei Klassen | ⚠️ tiefe Kette | ✅ flache Liste |
-| **Strukturelle Risiken** | ⚠️ Fat Service, hohe Kopplung | ⚠️ maximale Redundanz | ⚠️ Redundanz, hohe Streuung | ⚠️ Interfacefragilität | ⚠️ LSP-Verletzung oder Interfacefragilität  |
+| **Strukturelle Risiken** | ⚠️ Fat Service, hohe Kopplung | ⚠️ maximale Redundanz | ⚠️ Redundanz, hohe Streuung | ⚠️ Klassen-Facefragilität | ⚠️ LSP-Verletzung oder Interface-Fragilität  |
 
 **Der datenzentrierte Service-Schnitt**
 
@@ -1025,7 +1025,7 @@ Die **Aufspaltung nach fachlichem Zusammenhang** (`OrderStockService` und `Order
 
 Der **vertikale Dekorator** erreicht erstmals eine echte fachliche Isolation. Jede Klasse (`StoredOrder`, `PaidOrder`, `AuditingOrder`) kennt exakt zwei Abhängigkeiten: ihr Delegateobjekt und ihr spezifisches Werkzeug. Der CBO-Wert von 2 und der LCOM4-Wert von 1 sind hier nicht erzwungen, sondern fachlich im Entwurf begründet. Eine Änderung an der Persistenzlogik betrifft ausschließlich `StoredOrder`. Dieses Design erfüllt als erstes der vier Muster die Bräutigam-Formel vollständig.
 
-Der **horizontale Dekorator** treibt die Entkopplung mit einem CBO-Wert von 2 pro Prozessklasse auf die strukturelle Spitze. Die flache Listenkomposition über `Orders` ist leichter verständlich als tiefe Verschachtelungen und erlaubt es, neue Anforderungen durch einen einzigen Listeneintrag zu ergänzen. Der Preis für diese Skalierbarkeit sind jedoch leere Methoden in Klassen wie `Pay` oder `Stock`, die das Liskov Substitution Principle verletzen. Dieses Spannungsfeld lässt sich durch eine Aufspaltung des `OrderProcess`-Interfaces nach dem Interface Segregation Principle auflösen, was jedoch die Anzahl der Abstraktionen weiter erhöht.
+Der **horizontale Dekorator** treibt die Entkopplung mit einem CBO-Wert von 2 pro Prozessklasse auf die strukturelle Spitze. Die flache Listenkomposition über `Orders` ist leichter verständlich als tiefe Verschachtelungen und erlaubt es, neue Anforderungen durch einen einzigen Listeneintrag zu ergänzen. Der Preis für diese Skalierbarkeit sind jedoch leere Methoden in Klassen wie `Pay` oder `Stock`, die das Liskov Substitution Principle verletzen. Dieses Spannungsfeld lässt sich durch eine Aufspaltung des `OrderAction`-Interfaces nach dem Interface Segregation Principle auflösen, was jedoch die Anzahl der Abstraktionen weiter erhöht.
 
 ### Handlungsempfehlungen für die Praxis
 
