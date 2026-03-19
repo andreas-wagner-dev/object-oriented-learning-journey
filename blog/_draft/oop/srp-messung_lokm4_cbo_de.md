@@ -365,11 +365,10 @@ Erst in der Gesamtbetrachtung beider Kennzahlen lässt sich objektiv feststellen
 
 Das nachstehende **Conceptual Quality Diagram** visualisiert das Zusammenspiel zwischen LCOM4 und CBO zur Bewertung der Softwarequalität und der Einhaltung des SRP.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_min.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_concpt_diagram.png)
 
-* X-Achse (CBO - Coupling Between Objects): Misst die Anzahl der externen Abhängigkeiten einer Klasse. Der kritische Schwellenwert (CBO-Threshold) ist bei 5 markiert.
-* Y-Achse (LCOM4 - Lack of Cohesion of Methods): Misst die Anzahl der isolierten Teilgraphen (Logik-Inseln) innerhalb einer Klasse. Ein Wert von 1 steht für maximale Kohäsion, Werte von 2 oder höher für mangelnde Kohäsion.
-
+* Y-Achse (LCOM4): Misst die Anzahl der isolierten Teilgraphen (Logik-Inseln) innerhalb einer Klasse. Ein Wert von 1 steht für maximale Kohäsion, Werte von 2 oder höher für mangelnde Kohäsion.
+* X-Achse (CBO): Misst die Anzahl der externen Abhängigkeiten einer Klasse. Der kritische Schwellenwert (CBO-Threshold) ist bei 5 markiert.
 
 
 Die Wahl des Schwellenwerts beeinflusst mindestens zwei gegenläufige Qualitätsziele. Ein niedriger Grenzwert fördert kleine, fokussierte Klassen, erhöht jedoch gleichzeitig die Fragmentierung des Systems und damit die Anzahl der zu verwaltenden Abstraktionen. Ein höherer Grenzwert erlaubt kompaktere Klassen, erschwert aber das Testen, da pro Klasse mehr Abhängigkeiten als Mocks bereitgestellt werden müssen. Der optimale Schwellenwert ergibt sich daher aus einer Abwägung dieser beiden Pole und sollte gemäß dem Ermessen der jeweiligen Organisation oder des Teams festgelegt werden. Im Rahmen dieses Beitrags wird einheitlich ein Schwellenwert von **maximal 5** verwendet.
