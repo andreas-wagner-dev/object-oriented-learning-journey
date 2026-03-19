@@ -212,7 +212,7 @@ public class Order {
 
     // M2: Zahlungs-Logik
     public void pay(int amount) {
-        // Nutzt M3 (indirekt Feld 3) und Feld 4 (via Zuweisung)
+        // Nutzt Feld 4 (via Zuweisung) und M3 (indirekt Feld 3)
         if (isFinalized()) {
             throw new IllegalStateException("Bereits abgeschlossen.");
         }
