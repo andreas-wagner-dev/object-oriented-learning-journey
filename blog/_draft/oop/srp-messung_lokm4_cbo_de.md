@@ -264,6 +264,9 @@ Die Bewertung der Messergebnisse folgt einer klaren Skala:
 * **CBO-Werte zwischen 1 und 5** gelten als Idealbereich, da dieser eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
 * **CBO-Wert größer als 5** deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
 
+Der in diesem Beitrag verwendete Schwellenwert von **CBO > 5** ist kein universeller Standard. Je nach Quelle variiert der empfohlene Grenzwert erheblich: 
+Während [Sahraoui, Godin & Miceli](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf) in ihren Artikel einen Maximalwert von **14** festlegen, empfiehlt [ObjectScript Quality](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo) einen deutlich niedrigeren Schwellenwert von **4**.
+
 Die Ermittlung der CBO-Werte und die Nuancen von Kopplungstypen veranschaulichen die folgenden Fallbeispiele.
 
 **Fallbeispiel 1: Direkte Abhängigkeit**
@@ -360,6 +363,17 @@ An dieser Stelle entfaltet die Kombination mit der CBO-Metrik ihre volle Diagnos
 
 Erst in der Gesamtbetrachtung beider Kennzahlen lässt sich objektiv feststellen, ob eine Klasse eine echte fachliche Einheit bildet oder lediglich eine Ansammlung lose gekoppelter Aufgaben darstellt, die durch technische Hilfsvariablen zusammengehalten werden. Ein „sauberes“ Design nach der Formalisierung von Robert Bräutigam strebt demnach eine Klasse an, die durch maximale Kohäsion bei minimaler Kopplung besticht, was sich in der Zielmarke eines **LCOM4-Werts von 1** und eines **CBO-Bereichs von 0 bis 5** widerspiegelt.
 
+Das nachstehende **Conceptual Quality Diagram** visualisiert das Zusammenspiel zwischen LCOM4 und CBO zur Bewertung der Softwarequalität und der Einhaltung des SRP.
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_min.png)
+
+* X-Achse (CBO - Coupling Between Objects): Misst die Anzahl der externen Abhängigkeiten einer Klasse. Der kritische Schwellenwert (CBO-Threshold) ist bei 5 markiert.
+* Y-Achse (LCOM4 - Lack of Cohesion of Methods): Misst die Anzahl der isolierten Teilgraphen (Logik-Inseln) innerhalb einer Klasse. Ein Wert von 1 steht für maximale Kohäsion, Werte von 2 oder höher für mangelnde Kohäsion.
+
+
+
+Die Wahl des Schwellenwerts beeinflusst mindestens zwei gegenläufige Qualitätsziele. Ein niedriger Grenzwert fördert kleine, fokussierte Klassen, erhöht jedoch gleichzeitig die Fragmentierung des Systems und damit die Anzahl der zu verwaltenden Abstraktionen. Ein höherer Grenzwert erlaubt kompaktere Klassen, erschwert aber das Testen, da pro Klasse mehr Abhängigkeiten als Mocks bereitgestellt werden müssen. Der optimale Schwellenwert ergibt sich daher aus einer Abwägung dieser beiden Pole und sollte gemäß dem Ermessen der jeweiligen Organisation oder des Teams festgelegt werden. Im Rahmen dieses Beitrags wird einheitlich ein Schwellenwert von **maximal 5** verwendet.
+
 ### 4.4 Der Zielkonflikt zwischen LCOM4 und CBO
 
 Die isolierte Optimierung einer der beiden Kennzahlen führt unweigerlich in eine architektonische Sackgasse. In der Praxis stehen die Werte von LCOM4 und CBO in einer umgekehrten Beziehung.
@@ -373,10 +387,7 @@ Ein SRP-konformer Entwurf befindet sich daher auf der Pareto-Front: Er sucht den
 
 Die optimale Designqualität zeigt sich dort, wo eine Klasse eine eindeutige fachliche Identität besitzt, ohne zu viele andere Klassen für die Realisierung der Anforderungen zu verwenden. Dies beschreibt das Gleichgewicht zwischen hoher Kohäsion (Identität) und niedriger Kopplung (Abhängigkeit). Dieses Gleichgewicht verhindert die Entstehung von ‚Spaghetti-Code‘ (unkontrollierte Querverbindungen) ebenso wie ‚Lasagne-Code‘ (zu viele kleinteilige Schichten), wodurch die Wartbarkeit und Erweiterbarkeit des Systems langfristig gesichert wird.
 
-Der in diesem Beitrag verwendete Schwellenwert von **CBO > 5** ist kein universeller Standard. Je nach Quelle variiert der empfohlene Grenzwert erheblich: 
-Während [Sahraoui, Godin & Miceli](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf) in ihren Artikel einen Maximalwert von **14** festlegen, empfiehlt [ObjectScript Quality](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo) einen deutlich niedrigeren Schwellenwert von **4**.
 
-Die Wahl des Schwellenwerts beeinflusst mindestens zwei gegenläufige Qualitätsziele. Ein niedriger Grenzwert fördert kleine, fokussierte Klassen, erhöht jedoch gleichzeitig die Fragmentierung des Systems und damit die Anzahl der zu verwaltenden Abstraktionen. Ein höherer Grenzwert erlaubt kompaktere Klassen, erschwert aber das Testen, da pro Klasse mehr Abhängigkeiten als Mocks bereitgestellt werden müssen. Der optimale Schwellenwert ergibt sich daher aus einer Abwägung dieser beiden Pole und sollte gemäß dem Ermessen der jeweiligen Organisation oder des Teams festgelegt werden. Im Rahmen dieses Beitrags wird einheitlich ein Schwellenwert von **maximal 5** verwendet.
 
 ## 5. Beispiele: Datenzentrierter Service vs. Objektorientierter Dekorator
 
