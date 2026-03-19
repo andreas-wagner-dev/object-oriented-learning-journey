@@ -159,7 +159,7 @@ Durch die Aufteilung entstehen zwei unabhängige Graphen, die jeweils eine in si
 
 Innerhalb der Klasse `OrderView` erzeugt die Methode `display()` eine direkte Verbindung zwischen dem Kundenobjekt und dem Warenkorb. In der Klasse `OrderPayment` modifiziert die Methode `pay()` beide Instanzvariablen gleichzeitig, was eine starke interne Bindung bewirkt. In beiden Fällen ergibt die Analyse einen einzelnen, vollständig zusammenhängenden Teilgraph mit einem LCOM4-Wert von 1, was die fachliche Isolation bestätigt.
 
-**Fallbeispiel 3: Kohäsion durch Zusammenhang (LCOM4 = 1)**
+**Fallbeispiel 3: Kohäsion durch Feld-Zusammenhang (LCOM4 = 1)**
 
 In diesem Szenario fungiert das Feld status (Feld 3) als Knotenpunkt, da es nun von beiden Methoden verwendet wird. 
 Rein strukturell erhöht sich die Kohäsion, wodurch der LCOM4-Wert auf 1 sinkt. 
@@ -191,13 +191,54 @@ Die Graphenanalyse der Klasse `Order` verdeutlicht das folgende Bild.
 
 Da beide Methoden auf das Feld `status` zugreifen, sind die ursprünglich isolierten Logikbereiche über diese Instanzvariable miteinander verbunden. Im Sinne der Graphentheorie entsteht ein einziger zusammenhängender Graph, da ein Pfad von M1 über Feld 3 zu M2 existiert. Das Ergebnis ist ein LCOM4-Wert von 1.
 
-**Qualitative Kohäsionsanalyse**
+**Fallbeispiel 4: Kohäsion durch Methoden-Abhängigkeiten (LCOM4 = 1)**
 
-Wie im **Fallbeispiel 3** gezeigt, kann ein idealer Metrikwert künstlich durch technische Querschnittsbelange (wie etwa eine `id`, ein `status`-Feld oder UI-spezifische Daten) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten tatsächlich zu lösen. Aus der Sicht eines datenzentrierten Entwurfs mag die strikte Trennung von Zahlungs- und Präsentationslogik, wie in **Fallbeispiel 2** gezeigt, sinnvoll erscheinen. Diese widerspricht jedoch einer verhaltensorientierten Sichtweise, weil dabei die Kapselung im Sinne von Objektorientierung aufgebrochen wird. Aus der verhaltensorientierten Perspektive ist die Einbettung einer `display()`-Methode in das `Order`-Objekt keine künstliche Verbindung, sondern Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem `status`) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Eine Aufspaltung dieser Einheit würde den Einsatz von *Getter*-Methoden erzwingen, was das  *Tell, Don’t Ask* Prinzip missachtet und damit eine semantische Kopplung verursacht.
+In diesem Szenario wird die Klasse Order um die Methode `isFinalized()` (M3) ergänzt. Diese prüft zentral, ob die Bestellung bereits einen Endzustand erreicht hat, wodurch das Objekt seinen Lebenszyklus autonom verwaltet. Eine Änderung der fachlichen Definition von „abgeschlossen“ (beispielsweise durch neue Statuswerte) erfordert somit nur noch eine Anpassung an dieser zentralen Stelle, was die Wartbarkeit erheblich steigert.
 
-Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis. Ein **LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung** für die SRP-Konformität. Die LCOM4-Kennzahl bestätigt lediglich die strukturelle Verbundenheit, **ersetzt jedoch nicht die qualitative Prüfung**, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
+```java
+public class Order {
 
-Als Handlungsempfehlung lässt sich daraus folgendes ableiten. Existiert kein fachlicher Zusammenhang zwischen den Methoden einer Klasse, ist eine Aufteilung geboten. Eine künstliche Verbindung durch rein technische Infrastrukturbelange sollte vermieden werden, um die Transparenz über die tatsächliche Kohäsion nicht zu verzerren. 
+    private Cart cart;                   // Feld 1
+    private Customer customer;           // Feld 2
+    private String status = "PENDING";   // Feld 3
+    private int amount = 0;              // Feld 4
+
+    // M1: Anzeige-Logik
+    public String display() {
+        // Nutzt Feld 1 und 2 und M3 (indirekt Feld 4)
+        String orderStatus = isFinalized() ? "[ARCHIVED] " : "[ACTIVE] ";
+        return orderStatus + customer.getName() + ": " + cart.itemCount();
+    }
+
+    // M2: Zahlungs-Logik
+    public void pay(int amount) {
+        // Nutzt M3 (indirekt Feld 3) und Feld 4 (via Zuweisung)
+        if (isFinalized()) {
+            throw new IllegalStateException("Bereits abgeschlossen.");
+        }
+        this.amount = amount;
+    }
+
+    // M3: Hilfsmethode zur Zustandsprüfung
+    private boolean isFinalized() {
+        // Verbindet Feld 3 und Feld 4
+        return amount > 0 || "CANCELLED".equals(status);
+    }
+}
+```
+Durch diese Struktur fungiert M3 als zentraler Knotenpunkt im Kohäsionsgraphen. Da sowohl die Anzeige-Logik (M1) als auch die Zahlungs-Logik (M2) auf M3 zugreifen und M3 wiederum die Felder 3 (`status`) und 4 (`amount`) miteinander verknüpft, entsteht ein vollständig zusammenhängender Graph. Der resultierende LCOM4-Wert von 1 ist hier kein Produkt einer technischen Hilfsbrücke, sondern das Ergebnis einer echten funktionalen Abhängigkeit innerhalb der Domänenlogik.
+
+**Qualitative Analyse von Kohäsion**
+
+Wie im **Fallbeispiel 2** gezeigt, kann ein idealer Metrikwert künstlich durch technische Querschnittsbelange (wie etwa eine `id`, ein `status`-Feld oder UI-spezifische Daten) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten tatsächlich zu lösen. Aus der Sicht eines datenzentrierten Entwurfs mag die strikte Trennung von Zahlungs- und Präsentationslogik, wie in **Fallbeispiel 3** gezeigt, sinnvoll erscheinen. Diese widerspricht jedoch einer verhaltensorientierten Sichtweise, weil dabei die Kapselung im Sinne der Objektorientierung aufgebrochen wird.
+
+Aus der verhaltensorientierten Perspektive ist die Einbettung einer `display()`-Methode in das `Order`-Objekt keine künstliche Verbindung, sondern Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem `status`) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Eine Aufspaltung dieser Einheit würde den Einsatz von Getter-Methoden erzwingen, was das **Tell, Don’t Ask-Prinzip** missachtet und damit eine semantische Kopplung verursacht.
+
+Das **Fallbeispiel 4** führt diese gegensätzlichen Positionen zusammen. Durch die Einführung der zentralen Hilfsmethode `isFinalized()` wird eine echte funktionale Abhängigkeit geschaffen. Diese Methode verbindet die Felder für Status und Betrag logisch und wird von beiden Hauptmethoden genutzt. Damit wird die Kohäsion nicht mehr nur durch ein einzelnes Feld (technische Brücke) gehalten, sondern durch eine gemeinsame Geschäftsregel (fachliche Kapselung) im Graphen verankert.
+
+Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein **LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung** für die SRP-Konformität. Die LCOM4-Kennzahl bestätigt lediglich die strukturelle Verbundenheit, **ersetzt jedoch nicht die qualitative Prüfung**, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
+
+Als Handlungsempfehlung lässt sich daraus Folgendes ableiten: Existiert kein fachlicher Zusammenhang zwischen den Methoden einer Klasse, ist eine Aufteilung geboten. Eine künstliche Verbindung durch rein technische Infrastrukturbelange sollte vermieden werden, um die Transparenz über die tatsächliche Kohäsion nicht zu verzerren. Ein robustes Design nach **Fallbeispiel 4** zeigt hingegen, wie z.B. interne Hilfsmethoden die fachliche Kohäsion stärken und gleichzeitig die Wartbarkeit durch Zentralisierung von Logik erhöhen.
 
 ### 4.2 Coupling Between Objects
 
