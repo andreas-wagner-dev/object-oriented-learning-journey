@@ -205,7 +205,7 @@ public class Order {
 
     // M1: Anzeige-Logik
     public String display() {
-        // Nutzt Feld 1 und 2 und M3 (indirekt Feld 4)
+        // Nutzt Feld 1, 2 und M3 (indirekt Feld 3 & 4)
         String orderStatus = isFinalized() ? "[ARCHIVED] " : "[ACTIVE] ";
         return orderStatus + customer.getName() + ": " + cart.itemCount();
     }
@@ -219,14 +219,19 @@ public class Order {
         this.amount = amount;
     }
 
-    // M3: Hilfsmethode zur Zustandsprüfung
+    // M3: Hilfsmethode zur Zustandsprüfung (Knotenpunkt)
     private boolean isFinalized() {
-        // Verbindet Feld 3 und Feld 4
+        // Verbindet Feld 3 und Feld 4 fachlich miteinander
         return amount > 0 || "CANCELLED".equals(status);
     }
 }
 ```
-Durch diese Struktur fungiert M3 als zentraler Knotenpunkt im Kohäsionsgraphen. Da sowohl die Anzeige-Logik (M1) als auch die Zahlungs-Logik (M2) auf M3 zugreifen und M3 wiederum die Felder 3 (`status`) und 4 (`amount`) miteinander verknüpft, entsteht ein vollständig zusammenhängender Graph. Der resultierende LCOM4-Wert von 1 ist hier kein Produkt einer technischen Hilfsbrücke, sondern das Ergebnis einer echten funktionalen Abhängigkeit innerhalb der Domänenlogik.
+Durch diese Struktur wird im Graphen ersichtlich, dass **M3** als zentraler Verbindungsknoten fungiert. 
+
+[Bild]
+
+Da sowohl **M1** als auch **M2** auf **M3** zugreifen und **M3** wiederum die **Felder 3** (`status`) und **4** (`amount`) verknüpft, entsteht ein vollständig zusammenhängender Graph. Der resultierende **LCOM4-Wert von 1** ist hier das Ergebnis einer echten funktionalen Abhängigkeit (Kapselung des Lebenszyklus) und keine rein technische Hilfsbrücke.
+
 
 **Qualitative Analyse von Kohäsion**
 
