@@ -75,7 +75,7 @@ Des Weiteren helfen verschiedene Strukturmuster (wie Adapter, Bridge oder Dekora
 
 ### 4.1 Lack of Cohesion of Methods
 
-Eine der bekanntesten Metriken zur Messung der inneren Klassenstruktur ist die Lack of Cohesion of Methods (LCOM). Da in der Literatur verschiedene Versionen dieser Kohäsionsmetrik existieren, wird in diesem Beitrag gezielt die vierte Iteration (LCOM4) nach Hitz und Montazeri (1995) verwendet. Diese zeichnet sich durch eine hohe praktische Relevanz aus, da sie aufgrund ihrer einfachen Anwendung und klaren Interpretierbarkeit eine objektive Bewertung der SRP-Konformität ermöglicht. 
+Eine der bekanntesten Metriken zur Messung der inneren Klassenstruktur ist die Lack of Cohesion of Methods (LCOM). Da in der Literatur verschiedene Versionen dieser Kohäsionsmetrik existieren, wird in diesem Beitrag gezielt die vierte Iteration (LCOM4) nach [Hitz und Montazeri (1995)](https://objectscriptquality.com/docs/metrics/lack-cohesion-methods-lcom4) verwendet. Diese zeichnet sich durch eine hohe praktische Relevanz aus, da sie aufgrund ihrer einfachen Anwendung und klaren Interpretierbarkeit eine objektive Bewertung der SRP-Konformität ermöglicht. 
 
 Die **LCOM4 Metrik** ermittelt die **Anzahl** verbundener Elementgruppen innerhalb einer Klasse, wobei die Kohäsion mittels einer Graphenanalyse veranschaulicht wird. Ein zusammenhängender Teilgraph entsteht dabei immer dann, wenn **Methoden** entweder auf dieselben **Instanzvariablen** zugreifen oder sich durch gegenseitige Aufrufe direkt beeinflussen.
 
@@ -1090,17 +1090,19 @@ Benefits and Trade-offs](https://scispace.com/pdf/applying-the-single-responsibi
 * Sahraoui, Godin & Miceli (2000) [Can Metrics Help Bridging the Gap Between the Improvement of OO Design Quality and Its Automation?](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf)
 * Martin Fowler (2013) [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html)
 * Matthieu Cneude (2020) [The Single Responsibility Principle Revisited](https://thevaluable.dev/single-responsibility-principle-revisited/)
+* Mihai A. RODEGBFR (2018) [My Take On Object Naming](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
 * ObjectScript_Q (2026) [Lack of Cohesion in Methods (LCOM4)](https://objectscriptquality.com/docs/metrics/lack-cohesion-methods-lcom4)
 * ObjectScript_Q (2026) [Coupling Between Object classes (CBO)](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo)
 * Yegor Bugayenko (2015) [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
-  
+* Yegor Bugayenko (2020) [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
+
 ### Weiterführende Artikel und Metriken
 
+* Aivosto Oy Helsinki, Finland (1994–2021) [Chidamber & Kemerer Object-Oriented Metrics Suite](https://www.aivosto.com/project/help/pm-oo-ck.html)
 * European Southern Observatory (2026) [A METRICS SUITE FOR OBJECT ORIENTED DESIGN](https://www.eso.org/~tcsmgr/oowg-forum/TechMeetings/Articles/OOMetrics.pdf)
 * Universität Turku (2016) [Design Principles And Patterns](https://staff.cs.utu.fi/~jounsmed/doos_06/material/DesignPrinciplesAndPatterns.pdf)
-* Aivosto Oy Helsinki, Finland (1994–2021) [Chidamber & Kemerer Object-Oriented Metrics Suite](https://www.aivosto.com/project/help/pm-oo-ck.html)
-* Mihai A. RODEGBFR (2018) [My Take On Object Naming](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
-* Yegor Bugayenko (2020) [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
+* University of Vienna (1994) [Measuring Coupling and Cohesion In Object-Oriented Systems](http://www.isys.uni-klu.ac.at/PDF/1995-0043-MHBM.pdf) 
+
 
 ### Verwandte Bücher
 
