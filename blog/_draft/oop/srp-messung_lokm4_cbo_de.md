@@ -370,8 +370,17 @@ Das nachstehende **Conceptual Quality Diagram** visualisiert das Zusammenspiel z
 * Y-Achse (LCOM4): Misst die Anzahl der isolierten Teilgraphen (Logik-Inseln) innerhalb einer Klasse. Ein Wert von 1 steht für maximale Kohäsion, Werte von 2 oder höher für mangelnde Kohäsion.
 * X-Achse (CBO): Misst die Anzahl der externen Abhängigkeiten einer Klasse. Der kritische Schwellenwert (CBO-Threshold) ist bei 5 markiert.
 
+Die Grafik unterteilt Klassen anhand ihrer Metriken in vier spezifische Qualitätsbereiche. 
 
-Die Wahl des Schwellenwerts beeinflusst mindestens zwei gegenläufige Qualitätsziele. Ein niedriger Grenzwert fördert kleine, fokussierte Klassen, erhöht jedoch gleichzeitig die Fragmentierung des Systems und damit die Anzahl der zu verwaltenden Abstraktionen. Ein höherer Grenzwert erlaubt kompaktere Klassen, erschwert aber das Testen, da pro Klasse mehr Abhängigkeiten als Mocks bereitgestellt werden müssen. Der optimale Schwellenwert ergibt sich daher aus einer Abwägung dieser beiden Pole und sollte gemäß dem Ermessen der jeweiligen Organisation oder des Teams festgelegt werden. Im Rahmen dieses Beitrags wird einheitlich ein Schwellenwert von **maximal 5** verwendet.
+Der Quadrant **unten links** markiert dabei das **SRP-Ideal**, in dem die Klasse sowohl eine maximale Kohäsion (LCOM4 = 1) als auch eine lose Kopplung (CBO < 5) aufweist. In diesem Zustand ist das Single Responsibility Principle vollständig erfüllt, da die Klasse eine klar abgegrenzte Aufgabe mit minimalen externen Abhängigkeiten bewältigt.
+
+Im Gegensatz dazu beschreibt der Quadrant **oben links** eine Fragmentierung. Hier ist die Kopplung zwar ebenfalls gering, doch die Klasse weist eine niedrige Kohäsion (LCOM4 = 2) auf. Das bedeutet, dass sie intern in zwei oder mehr voneinander isolierte Logikbereiche zerfällt und folglich in separate Klassen aufgeteilt werden sollte.
+
+Der Bereich **unten rechts** identifiziert den sogenannten Fat Service. Klassen in diesem Sektor sind intern zwar kohäsiv und bearbeiten eine fachliche Einheit, sind jedoch mit zu vielen externen Klassen vernetzt (CBO > 5). Dies deutet darauf hin, dass die Klasse zu viele Infrastruktur-Abhängigkeiten in sich vereint und trotz fachlicher Stimmigkeit zu komplex für eine einfache Wartung wird.
+
+Den kritischsten Zustand bildet schließlich der Quadrant **oben rechts**. In diesem kritischen Bereich ist die Klasse weder intern kohäsiv noch extern entkoppelt. Eine solche Kombination aus geringer Kohäsion und hoher Kopplung charakterisiert ein klassisches Anti-Pattern, oft als „God Object“ bezeichnet, welches aufgrund seiner Komplexität kaum testbar und nur unter hohem Risiko zu modifizieren ist.
+
+Die **Wahl des Schwellenwerts** beeinflusst mindestens zwei gegenläufige Qualitätsziele. Ein niedriger Grenzwert fördert kleine, fokussierte Klassen, erhöht jedoch gleichzeitig die Fragmentierung des Systems und damit die Anzahl der zu verwaltenden Abstraktionen. Ein höherer Grenzwert erlaubt kompaktere Klassen, erschwert aber das Testen, da pro Klasse mehr Abhängigkeiten als Mocks bereitgestellt werden müssen. Der optimale Schwellenwert ergibt sich daher aus einer Abwägung dieser beiden Pole und sollte gemäß dem Ermessen der jeweiligen Organisation oder des Teams festgelegt werden. Im Rahmen dieses Beitrags wird einheitlich ein Schwellenwert von **maximal 5** verwendet.
 
 ### 4.4 Der Zielkonflikt zwischen LCOM4 und CBO
 
