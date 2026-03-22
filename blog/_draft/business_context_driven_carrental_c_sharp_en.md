@@ -165,11 +165,12 @@ carrental/
 │   └── ...cs
 ├── exchange/
 │   ├── endpoint/                → HTTP client classes JSON/XML DTOs
+│   │   ├── Paypal.cs            ← API client
+│   │   ├── PaypalRequest.cs     ← Request DTO
+│   │   └── PaypalResponse.cs    ← Response DTO
 │   ├── resource/                → JSON/XML DTOs for REST service classes
-│   │   ├── CarResoure.cs        ← DTO of Entity
-│   │   ├── CarResoures.cs       ← Entry Point class (REST-Service)
-│   │   ├── CarRequest.cs        ← Request DTO
-│   │   └── CarResponse.cs       ← Response DTO
+│   │   ├── CarResoure.cs        ← Resoure DTO
+│   │   └── CarResoures.cs       ← Resoure DTO
 │   ├── storage/                 ← EF Core           
 │   │   ├── CarEntity.cs         ← EF Core DTO
 │   │   ├── CarDbContext.cs      ← EF Core DAO
