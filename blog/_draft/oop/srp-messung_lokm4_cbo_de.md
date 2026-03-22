@@ -116,7 +116,7 @@ public class Order {
 
 Die Graphenanalyse zeigt, dass zwischen diesen beiden Gruppen keine Verbindung existiert, da weder ein gemeinsames Feld genutzt noch ein gegenseitiger Methodenaufruf getätigt wird. 
 
-[Bild]
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_cohesion_case1.png)
 
 Die Klasse besitzt zwei unabhängige Verantwortlichkeiten, was sich in zwei isolierten Teilgraphen und einem LCOM4-Wert von 2 widerspiegelt.
 
@@ -155,7 +155,7 @@ public class OrderPayment {
 
 Durch die Aufteilung entstehen zwei unabhängige Graphen, die jeweils eine in sich geschlossene funktionale Einheit bilden. 
 
-[Bild]
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_cohesion_case2.png)
 
 Innerhalb der Klasse `OrderView` erzeugt die Methode `display()` eine direkte Verbindung zwischen dem Kundenobjekt und dem Warenkorb. In der Klasse `OrderPayment` modifiziert die Methode `pay()` beide Instanzvariablen gleichzeitig, was eine starke interne Bindung bewirkt. In beiden Fällen ergibt die Analyse einen einzelnen, vollständig zusammenhängenden Teilgraph mit einem LCOM4-Wert von 1, was die fachliche Isolation bestätigt.
 
@@ -187,7 +187,7 @@ public class Order {
 
 Die Graphenanalyse der Klasse `Order` verdeutlicht das folgende Bild.
 
-[Bild]
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_cohesion_case3.png)
 
 Da beide Methoden auf das Feld `status` zugreifen, sind die ursprünglich isolierten Logikbereiche über diese Instanzvariable miteinander verbunden. Im Sinne der Graphentheorie entsteht ein einziger zusammenhängender Graph, da ein Pfad von M1 über Feld 3 zu M2 existiert. Das Ergebnis ist ein LCOM4-Wert von 1.
 
@@ -228,7 +228,7 @@ public class Order {
 ```
 Durch diese Struktur wird im Graphen ersichtlich, dass **M3** als zentraler Verbindungsknoten fungiert. 
 
-[Bild]
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_cohesion_case4.png)
 
 Da sowohl **M1** als auch **M2** auf **M3** zugreifen und **M3** wiederum die **Felder 3** (`status`) und **4** (`amount`) verknüpft, entsteht ein vollständig zusammenhängender Graph. Der resultierende **LCOM4-Wert von 1** ist hier das Ergebnis einer echten funktionalen Abhängigkeit (Kapselung des Lebenszyklus) und keine rein technische Hilfsbrücke.
 
@@ -415,7 +415,7 @@ Das klassische, datenzentrierte Service-Pattern bündelt alle Operationen einer 
 
 ```java
 // Anemic Domain Model
-public class OrderData {
+public class Order {
     public String id;
     public String status;
     // Getter und Setter...
@@ -502,7 +502,8 @@ public class OrderReservationService {
     private Email email;                // Feld 3
     private Audit audit;                // Feld 4
 
-    public Order reserve(Cart cart, Customer customer) { // Cart (CBO +1), Customer (CBO +1), Order (CBO +1)
+    public Order reserve(Cart cart, Customer customer) {
+        // Cart (CBO +1), Customer (CBO +1), Order (CBO +1)
         inventory.reserve(cart);
         Order order = new Order(cart, customer);
         repository.save(order);
@@ -520,7 +521,8 @@ public class OrderPaymentService {
     private Email email;                // Feld 3
     private Audit audit;                // Feld 4
 
-    public void process(Order order) { // Order (CBO +1)
+    public void process(Order order) {
+        // Order (CBO +1)
         payment.charge(order);
         order.markAsPaid();
         repository.save(order);
