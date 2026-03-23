@@ -140,8 +140,8 @@ public class OrderView {
 // Fokus auf Zahlung/Transaktion
 public class OrderPayment {
 
-    private String status = "PENDING";   // Feld 3
-    private int amount;                  // Feld 4
+    private String status = "OPEN";   // Feld 3
+    private int amount;               // Feld 4
 
     public void pay(int amount) {
         // Nutzt Feld 3 und 4
@@ -169,7 +169,7 @@ public class Order {
 
     private Cart cart;                   // Feld 1
     private Customer customer;           // Feld 2
-    private String status = "PENDING";   // Feld 3
+    private String status = "OPEN";      // Feld 3
     private int amount;                  // Feld 4
 
     public String display() {
@@ -195,34 +195,33 @@ Da beide Methoden auf das Feld `status` zugreifen, sind die ursprünglich isolie
 
 In diesem Szenario wird die Klasse Order um die Methode `isFinalized()` (M3) ergänzt. Diese prüft zentral, ob die Bestellung bereits einen Endzustand erreicht hat, wodurch das Objekt seinen Lebenszyklus autonom verwaltet. Eine Änderung der fachlichen Definition von „abgeschlossen“ (beispielsweise durch neue Statuswerte) erfordert somit nur noch eine Anpassung an dieser zentralen Stelle, was die Wartbarkeit erheblich steigert.
 
+In dieser Struktur wird die Klasse Order durch die zentrale Methode `isPaid()` (M3) funktional verknüpft. Diese kapselt die Logik des Zahlungsstatus und sorgt für eine autonome Verwaltung des Objektzustands. Änderungen an der Definition von „bezahlt“ müssen so nur an dieser zentralen Stelle vorgenommen werden, was die Wartbarkeit optimiert.
+
 ```java
 public class Order {
 
-    private Cart cart;                   // Feld 1
-    private Customer customer;           // Feld 2
-    private String status = "PENDING";   // Feld 3
-    private int amount = 0;              // Feld 4
+    private Cart cart;           // Feld 1
+    private Customer customer;   // Feld 2
+    private int amount = 0;      // Feld 3
 
     // M1: Anzeige-Logik
     public String display() {
-        // Nutzt Feld 1, 2 und M3 (indirekt Feld 3 & 4)
-        String orderStatus = isFinalized() ? "[ARCHIVED] " : "[ACTIVE] ";
-        return orderStatus + customer.getName() + ": " + cart.itemCount();
+        // Nutzt Feld 1, 2 und M3 (indirekt Feld 3)
+        String prefix = isPaid() ? "[PAID] " : "[OPEN] ";
+        return prefix + customer.getName() + ": " + cart.itemCount();
     }
 
     // M2: Zahlungs-Logik
     public void pay(int amount) {
-        // Nutzt Feld 4 (via Zuweisung) und M3 (indirekt Feld 3)
-        if (isFinalized()) {
-            throw new IllegalStateException("Bereits abgeschlossen.");
-        }
+        // Nutzt Feld 3 und M3
+        if (isPaid()) throw new IllegalStateException("Bereits bezahlt.");
         this.amount = amount;
     }
 
-    // M3: Hilfsmethode zur Zustandsprüfung (Knotenpunkt)
-    private boolean isFinalized() {
-        // Verbindet Feld 3 und Feld 4 fachlich miteinander
-        return amount > 0 || "CANCELLED".equals(status);
+    // M3: Zentraler Knotenpunkt
+    private boolean isPaid() {
+        // Greift auf Feld 3 zu
+        return amount > 0;
     }
 }
 ```
@@ -230,7 +229,7 @@ Durch diese Struktur wird im Graphen ersichtlich, dass **M3** als zentraler Verb
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_cohesion_case4.png)
 
-Da sowohl **M1** als auch **M2** auf **M3** zugreifen und **M3** wiederum die **Felder 3** (`status`) und **4** (`amount`) verknüpft, entsteht ein vollständig zusammenhängender Graph. Der resultierende **LCOM4-Wert von 1** ist hier das Ergebnis einer echten funktionalen Abhängigkeit (Kapselung des Lebenszyklus) und keine rein technische Hilfsbrücke.
+Durch die Aufruf-Abhängigkeiten von **M1** und **M2** zu **M3** entsteht ein vollständig zusammenhängender Graph. Der resultierende **LCOM4-Wert von 1** ist hier das Ergebnis einer funktionalen Abhängigkeit (Kapselung des Lebenszyklus) und keine rein technische Hilfsbrücke.
 
 
 **Qualitative Analyse von Kohäsion**
@@ -239,7 +238,7 @@ Wie im **Fallbeispiel 2** gezeigt, kann ein idealer Metrikwert künstlich durch 
 
 Aus der verhaltensorientierten Perspektive ist die Einbettung einer `display()`-Methode in das `Order`-Objekt keine künstliche Verbindung, sondern Ausdruck echter Kapselung. Da die Darstellung einer Bestellung untrennbar mit ihrem fachlichen Zustand (z. B. dem `status`) verknüpft ist, gehört dieses Wissen zum Kern der Entität selbst. Eine Aufspaltung dieser Einheit würde den Einsatz von Getter-Methoden erzwingen, was das **Tell, Don’t Ask-Prinzip** missachtet und damit eine semantische Kopplung verursacht.
 
-Das **Fallbeispiel 4** führt diese gegensätzlichen Positionen zusammen. Durch die Einführung der zentralen Hilfsmethode `isFinalized()` wird eine echte funktionale Abhängigkeit geschaffen. Diese Methode verbindet die Felder für Status und Betrag logisch und wird von beiden Hauptmethoden genutzt. Damit wird die Kohäsion nicht mehr nur durch ein einzelnes Feld (technische Brücke) gehalten, sondern durch eine gemeinsame Geschäftsregel (fachliche Kapselung) im Graphen verankert.
+Das **Fallbeispiel 4** führt diese gegensätzlichen Positionen zusammen. Durch die Einführung der zentralen Hilfsmethode `isPaid()` wird eine echte funktionale Abhängigkeit geschaffen. Diese Methode wertet das Feld Betrag logisch aus und wird von beiden Hauptmethoden genutzt. Damit wird die Kohäsion nicht mehr nur durch ein einzelnes Feld (technische Brücke) gehalten, sondern durch eine gemeinsame Geschäftsregel (fachliche Kapselung) im Graphen verankert.
 
 Diese Fallbeispiele verdeutlichen eine zentrale Erkenntnis für die Praxis: Ein **LCOM4-Wert von 1 ist eine notwendige, aber keine hinreichende Bedingung** für die SRP-Konformität. Die LCOM4-Kennzahl bestätigt lediglich die strukturelle Verbundenheit, **ersetzt jedoch nicht die qualitative Prüfung**, ob die verknüpften Elemente tatsächlich eine fachliche Einheit bilden.
 
