@@ -60,7 +60,7 @@ Die externe Qualität wird hingegen durch die **Kopplung** bestimmt, welche die 
 
 Innerhalb der Kopplung wird zwischen **physikalischen** und **semantischen** Abhängigkeiten unterschieden. Während sich physikalische Verbindungen durch Feldtypen statisch nachweisen lassen, verbirgt sich die semantische Kopplung hinter einem impliziten Wissen über fremde Objektstrukturen. Da diese Abhängigkeiten für den Compiler nicht greifbar sind, führen sie oft zu schwer nachvollziehbaren Fehlfortpflanzungen bei Codeänderungen. Sobald eine Klasse beispielsweise über Ketten wie `user.getAddress().getCity()` auf tieferliegende Daten zugreift, entsteht eine strukturelle Abhängigkeit, die über die reine Typkenntnis hinausgeht. Folglich fungiert jede Lesemethode als möglicher Kanal für eine erhöhte semantische Kopplung.
 
-### 3.2 Minimierung von Kopplungen und Maximierung von Kohäsion
+### 3.2 Maßnahmen zur Optimierung von Kohäsion und Kopplungen
 
 Grundsätzlich ist eine Kopplung zwischen Klassen für die Funktionsfähigkeit eines Systems unumgänglich. Ein übermäßiges Maß an Abhängigkeiten erschwert jedoch die Modifikation, das Testen und die Wiederverwendbarkeit von Klassen erheblich. Um die externe und interne Kopplung von Klassen systematisch zu optimieren, ist die Anwendung der grundlegender OOP-Entwurfsrichtlinien, weiteren SOLID-Prinzipien sowie bewährter Entwurfsmuster essenziell.
 
@@ -70,7 +70,6 @@ Da hierbei Verantwortlichkeiten isoliert werden und die Logik direkt bei den Dat
 Das Prinzip [Encapsulate what varies](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) wirkt dabei unterstützend und isoliert änderungsanfällige Logik hinter Schnittstellen. [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle) verstärkt diesen Effekt durch die Entkopplung hochstufiger Module von konkreten Implementierungen mittels stabiler Abstraktionen. Zusätzlich stellt das [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle) sicher, dass Klassen nur an spezifisch benötigte Teilschnittstellen gebunden werden. Eine korrekte Segregation wird maßgeblich durch das [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) gewährleistet. Demnach müssen Unterklassen ihre Basisklassen so vollständig ersetzen können, dass das Programmverhalten niemals verfälscht wird.
 
 Des Weiteren helfen verschiedene Entwurfsmuster (wie Adapter, Bridge, Dekorator, Strategy oder Visitor...), das [Open-Closed-Prinzip](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) umzusetzen. Demnach sollten Funktionserweiterungen idealerweise ohne die Entstehung neuer, direkter Kopplungen innerhalb der bestehenden Klasse realisiert werden. Diese Entkopplung stützt ebenso maßgeblich die Kohäsion, indem sie verhindert, dass eine Klasse durch immer neue Zuständigkeiten (Varianten oder Sonderfälle) ausgeweitet wird. Anstatt die interne Logik zu verkomplizieren, können neue Verantwortlichkeiten in spezialisierte, eigenständige Klassen ausgelagert werden. So bleibt der ursprüngliche Code fokussiert auf seine Kernaufgabe, während Erweiterungen als hochkohärente, austauschbare Bausteine hinzugefügt werden.
-
 
 ## 4. Messverfahren für Kohäsion (LCOM4) und Kopplung (CBO)
 
