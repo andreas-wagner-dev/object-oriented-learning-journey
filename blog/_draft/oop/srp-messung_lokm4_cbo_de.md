@@ -256,9 +256,7 @@ Ergänzend zur Kohäsion misst die Metrik **Coupling Between Objects** (CBO) nac
 
 *Primitive* Datentypen und *Standardwrapper* wie `int` oder `String` bleiben hierbei unberücksichtigt, da sie zu den Basiselementen einer Programmiersprache gehören.
 
-Die Metrik-CBO dient als Indikator für die Wartbarkeit und Testbarkeit, da ein hoher CBO-Wert bedeutet, dass die Klasse bei Änderungen an ihren Partnerklassen überproportional oft mitangepasst werden muss.
-
-Die Bewertung der Messergebnisse folgt einer klaren Skala:
+Die CBO-Metrik dient als Indikator für die Wartbarkeit und Testbarkeit, da ein hoher CBO-Wert bedeutet, dass die Klasse bei Änderungen an ihren Partnerklassen überproportional oft mitangepasst werden muss. Die Bewertung der Messergebnisse folgt einer klaren Skala:
 
 * **CBO-Wert von 0** deutet darauf hin, dass eine Klasse isoliert ist und somit faktisch nicht am System teilnimmt.
 * **CBO-Werte zwischen 1 und 5** gelten als Idealbereich, da dieser eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
@@ -368,8 +366,8 @@ Ein „sauberes“ Design nach der Formalisierung von Robert Bräutigam strebt d
 > `SRP ≡ max(LCOM4 = 1) ∧ min(CBO ≤ 5)`
 
 Das nachstehende **Diagram** visualisiert das Zusammenspiel zwischen LCOM4 und CBO zur Bewertung der Softwarequalität und der Einhaltung des SRP.
-* **X-Achse (CBO): Misst die Anzahl der externen Abhängigkeiten einer Klasse. Der kritische Schwellenwert (CBO-Threshold) ist bei 5 markiert.
-* Y-Achse (LCOM4): Misst die Anzahl der isolierten Teilgraphen (Logik-Inseln) innerhalb einer Klasse. Ein Wert von 1 steht für maximale Kohäsion, Werte von 2 oder höher für mangelnde Kohäsion.
+* **X-Achse (CBO):** Misst die Anzahl der externen Abhängigkeiten einer Klasse. Der kritische **Schwellenwert** (CBO-Threshold) ist bei **5** markiert.
+* **Y-Achse (LCOM4):** Misst die Anzahl der isolierten Teilgraphen (Logik-Inseln) innerhalb einer Klasse. Ein Wert von 1 steht für maximale Kohäsion, Werte von 2 oder höher für mangelnde Kohäsion.
   
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_conceptual_diagram_slim.png)
 
