@@ -364,10 +364,6 @@ Ein „sauberes“ Design nach der Formalisierung von Robert Bräutigam strebt d
 
 > `SRP ≡ max(LCOM4 = 1) ∧ min(CBO ≤ 5)`
 
-Das nachstehende **Diagram** visualisiert das Zusammenspiel zwischen LCOM4 und CBO zur Bewertung der Softwarequalität und der Einhaltung des SRP.
-* **X-Achse (CBO):** Misst die Anzahl der externen Abhängigkeiten einer Klasse. Der kritische **Schwellenwert** (CBO-Threshold) ist bei **5** markiert.
-* **Y-Achse (LCOM4):** Misst die Anzahl der isolierten Teilgraphen (Logik-Inseln) innerhalb einer Klasse. Ein Wert von 1 steht für maximale Kohäsion, Werte von 2 oder höher für mangelnde Kohäsion.
-
 Das nachstehende Diagramm visualisiert die **Beurteilung einer Klasse** mittels der **LCOM4- und CBO-Metriken** im Hinblick auf das **Single Responsibility Principle**. Die **X-Achse** misst über den Wert **Coupling Between Objects** die Anzahl der externen Abhängigkeiten. Ein kritischer Schwellenwert ist dabei durch den **CBO-Threshold** bei einem **Wert von 5** markiert. Die **Y-Achse** bildet den **Lack of Cohesion Method** Wert ab und bestimmt die Anzahl der isolierten Teilgraphen innerhalb einer Klasse. Während ein **Wert von 1** für **maximale Kohäsion** steht, deuten Werte von 2 oder höher auf unabhängige Logik-Inseln und somit auf eine mangelnde Kohäsion hin.
   
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_lcom4_cbo_diagram.png)
