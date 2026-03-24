@@ -233,7 +233,7 @@ Durch diese Struktur wird im Graphen ersichtlich, dass **M3** als zentraler Verb
 Durch die Aufruf-Abhängigkeiten von **M1** und **M2** zu **M3** entsteht ein vollständig zusammenhängender Graph. Der resultierende **LCOM4-Wert von 1** ist hier das Ergebnis einer funktionalen Abhängigkeit (Kapselung des Lebenszyklus) und keine rein technische Hilfsbrücke.
 
 
-**Qualitative Analyse von Kohäsion**
+**Fachliche und technische Analyse von Kohäsion**
 
 Wie im **Fallbeispiel 2** gezeigt, kann ein idealer Metrikwert künstlich durch technische Querschnittsbelange (wie etwa eine `id`, ein `status`-Feld oder UI-spezifische Daten) erzeugt werden, ohne die zugrunde liegende Vermischung von Verantwortlichkeiten tatsächlich zu lösen. Aus der Sicht eines datenzentrierten Entwurfs mag die strikte Trennung von Zahlungs- und Präsentationslogik, wie in **Fallbeispiel 3** gezeigt, sinnvoll erscheinen. Diese widerspricht jedoch einer verhaltensorientierten Sichtweise, weil dabei die Kapselung im Sinne der Objektorientierung aufgebrochen wird.
 
