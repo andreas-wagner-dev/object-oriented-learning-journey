@@ -387,9 +387,9 @@ Die isolierte Optimierung einer der beiden Kennzahlen führt unweigerlich in ein
 * **Extreme Kohäsion (LCOM4 = 1 durch Atomisierung):** Versucht man, den LCOM-Wert durch das Aufspalten einer Klasse in kleinste Einheiten zu perfektionieren, steigt die Kopplung (CBO) im Gesamtsystem drastisch an. Viele hochspezialisierte Klassen müssen nun über komplexe Schnittstellen miteinander kommunizieren, um eine fachliche Aufgabe zu lösen. Die Komplexität verschiebt sich von der Inneren Logik (Intra-Modul) hin zur Interaktion (Inter-Modul).
 * **Minimale Kopplung (CBO → 0 durch Zentralisierung):** Reduziert man hingegen die externe Kopplung radikal, landet man bei massiven „Gott-Klassen“. Diese benötigen zwar kaum externe Partner, vereinen aber so viele unterschiedliche Zuständigkeiten in sich, dass die interne Kohäsion (LCOM) wegbricht.
 
-[Bild]
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_conflict.png)
 
-Ein SRP-konformer Entwurf befindet sich daher auf der Pareto-Front: Er sucht den Punkt, an dem die Klasse fachlich „fokussiert genug“ ist (LCOM4 = 1), ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten (CBO > 5) zu stürzen. Die Verbesserung des einen Wertes darf nicht durch eine überproportionale Verschlechterung des anderen erkauft werden.
+Ein SRP-konformer Entwurf befindet sich daher auf der Pareto-Front: Er sucht den Punkt, an dem die Klasse fachlich „fokussiert genug“ ist, ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten zu stürzen. Die Verbesserung des einen Wertes darf nicht durch eine überproportionale Verschlechterung des anderen erkauft werden.
 
 Die optimale Designqualität zeigt sich dort, wo eine Klasse eine eindeutige fachliche Identität besitzt, ohne zu viele andere Klassen für die Realisierung der Anforderungen zu verwenden. Dies beschreibt das Gleichgewicht zwischen hoher Kohäsion (Identität) und niedriger Kopplung (Abhängigkeit). Dieses Gleichgewicht verhindert die Entstehung von ‚Spaghetti-Code‘ (unkontrollierte Querverbindungen) ebenso wie ‚Lasagne-Code‘ (zu viele kleinteilige Schichten), wodurch die Wartbarkeit und Erweiterbarkeit des Systems langfristig gesichert wird.
 
