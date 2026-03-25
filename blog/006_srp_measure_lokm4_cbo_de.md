@@ -388,7 +388,7 @@ Die isolierte Optimierung einer der beiden Kennzahlen führt unweigerlich in ein
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_conflict.png)
 
-Ein **SRP-konformer** Entwurf bewegt sich auf der **Pareto-Front**. Er sucht den Punkt, an dem eine Klasse fachlich fokussiert bleibt, ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten zu stürzen. Die Verbesserung eines Wertes darf dabei nicht durch eine überproportionale Verschlechterung des anderen erkauft werden.
+Ein **SRP-konformer** Entwurf bewegt sich auf der [Pareto-Front](https://en.wikipedia.org/wiki/Pareto_front). Er sucht den Punkt oder Bereich, an dem eine Klasse fachlich fokussiert bleibt, ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten zu stürzen. Die Verbesserung eines Wertes darf dabei nicht durch eine überproportionale Verschlechterung des anderen erkauft werden.
 Die optimale Designqualität zeigt sich dort, wo eine Klasse eine eindeutige **fachliche Identität** besitzt, ohne zu viele externe Komponenten für die Realisierung der Anforderungen zu benötigen. Dieses Gleichgewicht zwischen **hoher Kohäsion** und **niedriger Kopplung** verhindert strukturelle Fehlentwicklungen wie:
 
 * **Spaghetti-Code**: Unkontrollierte und verworrene Querverbindungen zwischen den Klassen.
