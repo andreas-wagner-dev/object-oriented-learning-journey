@@ -1022,11 +1022,11 @@ Die Wahl eines Softwaredesigns stellt stets eine Abwägung zwischen der initiale
 
 | Merkmal | Service (Monolith) | Services (nach Methode) | Services (nach Fachlichkeit) | Vertikaler Dekorator | Horizontaler Dekorator |
 |---|---|---|---|---|---|
-| **Fachliche Kohäsion** | ❌ LCOM4 = 1 (erzwungen) | ⚠️ LCOM4 = 1 (trivial) | ⚠️ LCOM4 = 1 (trivial) / ✅ LCOM4 = 1 (echt) | ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) |
-| **Kopplung (CBO)** | ❌ CBO = 8 | ⚠️ CBO = 7 / 5 je Klasse | ⚠️ CBO = 7 (`StockSvc`) / 5 (`PaySvc`) | ✅ CBO = 3 je Klasse | ✅ CBO = 3 je Klasse |
+| **Fachliche Kohäsion (LCOM4)** | ❌ LCOM4 = 1 (erzwungen) | ⚠️ LCOM4 = 1 (trivial) | ⚠️ LCOM4 = 1 (trivial) / ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) |
+| **Kopplung (CBO)** | ❌ CBO = 8 | ⚠️ CBO = 7 / 5 je Klasse | ⚠️ CBO = 7 (`StockSvc`) / 5 (`PaySvc`) | ✅ CBO = 3 oder 2 je Klasse | ✅ CBO = 3 oder 2 je Klasse |
 | **Änderungsausbreitung** | ❌ gesamte Klasse | ❌ alle 3 Klassen | ❌ mehrere Klassen | ✅ nur 1 Klasse | ✅ nur 1 Klasse |
-| **Testaufwand (Mocks)** | ❌ 5 Mocks pro Methode | ⚠️ 4 Mocks pro Klasse | ⚠️ 4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
 | **Erweiterbarkeit (OCP)** | ❌ Methoden ändern | ❌ Methoden ändern | ❌ Methoden ändern | ✅ neuer Dekorator | ✅ neues `OrderAction` + Listeneintrag |
+| **Testaufwand (Mocks)** | ❌ 5 Mocks pro Methode | ⚠️ 4 Mocks pro Klasse | ⚠️ 4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
 | **Verwendung** | ✅ eine Klasse | ✅ drei Klassen | ✅ zwei Klassen | ⚠️ tiefe Kompositionskette | ⚠️ flache, komplizierte Liste |
 | **Strukturelle Risiken** | ⚠️ Fat Service, hohe Kopplung | ⚠️ maximale Redundanz | ⚠️ Redundanz, hohe Streuung | ⚠️ Klassen-Fragilität | ⚠️ LSP-Verletzung oder Interface-Fragilität |
 
