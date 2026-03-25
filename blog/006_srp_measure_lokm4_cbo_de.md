@@ -389,9 +389,13 @@ Die isolierte Optimierung einer der beiden Kennzahlen führt unweigerlich in ein
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_conflict.png)
 
-Ein SRP-konformer Entwurf befindet sich daher auf der Pareto-Front: Er sucht den Punkt, an dem die Klasse fachlich „fokussiert genug“ ist, ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten zu stürzen. Die Verbesserung des einen Wertes darf nicht durch eine überproportionale Verschlechterung des anderen erkauft werden.
+Ein **SRP-konformer** Entwurf bewegt sich auf der **Pareto-Front**. Er sucht den Punkt, an dem eine Klasse fachlich fokussiert bleibt, ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten zu stürzen. Die Verbesserung eines Wertes darf dabei nicht durch eine überproportionale Verschlechterung des anderen erkauft werden.
+Die optimale Designqualität zeigt sich dort, wo eine Klasse eine eindeutige **fachliche Identität** besitzt, ohne zu viele externe Komponenten für die Realisierung der Anforderungen zu benötigen. Dieses Gleichgewicht zwischen **hoher Kohäsion** und **niedriger Kopplung** verhindert strukturelle Fehlentwicklungen wie:
 
-Die optimale Designqualität zeigt sich dort, wo eine Klasse eine eindeutige fachliche Identität besitzt, ohne zu viele andere Klassen für die Realisierung der Anforderungen zu verwenden. Dies beschreibt das Gleichgewicht zwischen hoher Kohäsion (Identität) und niedriger Kopplung (Abhängigkeit). Dieses Gleichgewicht verhindert die Entstehung von ‚Spaghetti-Code‘ (unkontrollierte Querverbindungen) ebenso wie ‚Lasagne-Code‘ (zu viele kleinteilige Schichten), wodurch die Wartbarkeit und Erweiterbarkeit des Systems langfristig gesichert wird.
+* **Spaghetti-Code**: Unkontrollierte und verworrene Querverbindungen zwischen den Klassen.
+* **Lasagne-Code**: Zu viele kleinteilige Schichten, welche die Gesamtübersicht erschweren.
+
+Durch diese Balance werden die Wartbarkeit und Erweiterbarkeit des Systems langfristig verbessert.
 
 
 ## 5. Beispiele: Datenzentrierter Service vs. Objektorientierter Dekorator
@@ -1000,8 +1004,8 @@ Die Wahl eines Softwaredesigns stellt stets eine Abwägung zwischen der initiale
 | **Änderungsausbreitung** | ❌ gesamte Klasse | ❌ alle 3 Klassen | ❌ mehrere Klassen | ✅ nur 1 Klasse | ✅ nur 1 Klasse |
 | **Testaufwand (Mocks)** | ❌ 5 Mocks pro Methode | ⚠️ 4 Mocks pro Klasse | ⚠️ 4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
 | **Erweiterbarkeit (OCP)** | ❌ Methoden ändern | ❌ Methoden ändern | ❌ Methoden ändern | ✅ neuer Dekorator | ✅ neues `OrderAction` + Listeneintrag |
-| **Komposition** | ✅ eine Klasse | ✅ drei Klassen | ✅ zwei Klassen | ⚠️ tiefe Kette | ✅ flache Liste |
-| **Strukturelle Risiken** | ⚠️ Fat Service, hohe Kopplung | ⚠️ maximale Redundanz | ⚠️ Redundanz, hohe Streuung | ⚠️ Klassen-Facefragilität | ⚠️ LSP-Verletzung oder Interface-Fragilität  |
+| **Komposition** | ✅ eine Klasse | ✅ drei Klassen | ✅ zwei Klassen | ⚠️ tiefe Kette | ⚠️ flache, koplezierte Streuung |
+| **Strukturelle Risiken** | ⚠️ Fat Service, hohe Kopplung | ⚠️ maximale Redundanz | ⚠️ Redundanz, hohe Streuung | ⚠️ Klassen-Fragilität | ⚠️ LSP-Verletzung oder Interface-Fragilität |
 
 **Der datenzentrierte Service-Schnitt**
 
@@ -1022,6 +1026,12 @@ Dieser Ansatz schneidet die Domäne streng nach Verantwortlichkeiten in Klassen 
 Nachteilig wirkt sich jedoch die Projektexplosion durch eine deutlich steigende Anzahl an Dateien und Konstruktoren aus. Auch die komplexe Komposition über tiefe Verschachtelungen wie `new PaidOrder(new StoredOrder(...))` ist gewöhnungsbedürftig. Das Muster begünstigt zwar die funktionalen Erweiterungen (Open-Closed-Prinzip), macht aber die Interfacestruktur zu einem kritischen Punkt, der bei Änderungen hohe Aufwände verursacht, da jede Änderung am zentralen `Order`-Interface Anpassungen in sämtlichen Dekoratoren erzwingt.
 
 Das horizontale Muster optimiert zwar die Lesbarkeit bei tiefen Ketten, erzwingt jedoch bei einer größeren Anzahl von Methoden strukturelle Kompromisse in Form von leeren Implementierungen. Ein Wechsel zu diesem Modell ist daher nur dann ratsam, wenn das Design keine leeren Implementierungen von Methoden erfordert, sodass möglichst das *Liskov Substitution Principle* nicht verletzt wird.
+
+**Dekorator- vs. Services-Schnitt**
+
+Das Decorator-Pattern erzeugt durch seine Schichtung eine hohe Spezialisierung der einzelnen Klassen, führt jedoch oft zu vertikaler Komplexität (Lasagne-Code). Im Gegensatz dazu neigen Services zu horizontalem Wachstum. Ohne klare Grenzen sammeln sich dort schnell zu viele Verantwortlichkeiten an, was die Kopplung erhöht und die Kohäsion schwächt (Spaghetti-Code).
+
+Eine Entwurfsentscheidung muss daher abwägen, ob die strukturelle Tiefe des Decorators oder die funktionale Breite des datenzentrierten Patterns besser zur jeweiligen Domäne passt. Letzteres bietet zwar einen direkteren Zugriff auf die Geschäftslogik, läuft jedoch eher Gefahr, zu einer unübersichtlichen Ansammlung von Aufgaben anzuwachsen.
 
 ## 7. Zusammenfassung
 
@@ -1066,7 +1076,7 @@ Unter Beachtung dieser Leitlinien erweist sich das **SRP** nicht als starres Dog
 
 ## 9. Abschließende Betrachtung
 
-Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt des **objektorientierten Designs** dar. In der akademischen Literatur existieren zweifellos präzisere und mathematisch tiefergehende Modelle zur Messung von Kohäsion und Kopplung, welche weitere Nuancen der Softwarekomplexität erfassen.
+Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt des **objektorientierten Designs** dar. In der akademischen Literatur existieren präzisere und mathematisch tiefergehende Modelle zur Messung von Kohäsion und Kopplung, welche weitere Nuancen der Softwarekomplexität erfassen.
 
 Im Vordergrund dieses Beitrags stand jedoch das **Ziel**, einen **einfachen und pragmatischen Ansatz aufzuzeigen**. Da komplexe Formeln im **Praxisalltag** oft nur schwer anwendbar sind, ist ein **einfach bedienbares Instrument entscheidend**, das schnelle und fundierte Designentscheidungen unterstützt. Durch die Kombination der **LCOM4- und CBO-Metriken** mit bewährten **Design-Patterns** wurde ein Weg aufgezeigt, der das abstrakte **Single Responsibility Principle** in eine handhabbare Praxis überführt.
 
