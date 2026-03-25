@@ -1004,7 +1004,7 @@ Die Wahl eines Softwaredesigns stellt stets eine Abwägung zwischen der initiale
 | **Änderungsausbreitung** | ❌ gesamte Klasse | ❌ alle 3 Klassen | ❌ mehrere Klassen | ✅ nur 1 Klasse | ✅ nur 1 Klasse |
 | **Testaufwand (Mocks)** | ❌ 5 Mocks pro Methode | ⚠️ 4 Mocks pro Klasse | ⚠️ 4 Mocks pro Klasse | ✅ 2 Mocks pro Klasse | ✅ 1 Mock pro Klasse |
 | **Erweiterbarkeit (OCP)** | ❌ Methoden ändern | ❌ Methoden ändern | ❌ Methoden ändern | ✅ neuer Dekorator | ✅ neues `OrderAction` + Listeneintrag |
-| **Komposition** | ✅ eine Klasse | ✅ drei Klassen | ✅ zwei Klassen | ⚠️ tiefe Kette | ⚠️ flache, koplezierte Streuung |
+| **Verwendung** | ✅ eine Klasse | ✅ drei Klassen | ✅ zwei Klassen | ⚠️ tiefe Kompositionskette | ⚠️ flache, komplizierte Liste |
 | **Strukturelle Risiken** | ⚠️ Fat Service, hohe Kopplung | ⚠️ maximale Redundanz | ⚠️ Redundanz, hohe Streuung | ⚠️ Klassen-Fragilität | ⚠️ LSP-Verletzung oder Interface-Fragilität |
 
 **Datenzentrierter Service-Schnitt**
