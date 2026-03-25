@@ -425,14 +425,16 @@ public class Order {
 ```java
 public class OrderService {
 
-    private OrderRepository orderRepository;   // Feld 1
-    private InventoryApi inventoryApi;         // Feld 2
-    private PaymentApi paymentApi;             // Feld 3
-    private Email email;                       // Feld 4
-    private Audit audit;                       // Feld 5
+    private OrderRepository orderRepository;   // Feld 1 (CBO +1)
+    private InventoryApi inventoryApi;         // Feld 2 (CBO +1)
+    private PaymentApi paymentApi;             // Feld 3 (CBO +1)
+    private Email email;                       // Feld 4 (CBO +1)
+    private Audit audit;                       // Feld 5 (CBO +1)
 
-    public Order reserve(Cart cart, Customer customer) { // Parameter: Cart (CBO +1), Customer (CBO +1), Rückgabe: Order (CBO +1)
-        // Hinweis: Typen werden klassenübergreifend gezählt; Duplikate (z. B. Order in pay/release) werden nicht mehrfach gewertet.
+    // Parameter: Cart (CBO +1), Customer (CBO +1), Rückgabe: Order (CBO +1)
+    public Order reserve(Cart cart, Customer customer) {
+        // Hinweis: Typen werden klassenübergreifend gezählt;
+        // Duplikate (z. B. Order in pay/release) werden nicht mehrfach gewertet.
         inventoryApi.reserve(cart);
         Order order = new Order(cart, customer);
         orderRepository.save(order);
@@ -459,7 +461,8 @@ public class OrderService {
 }
 
 ```
-Verwendung:
+
+Bei der Verwendung werden alle benötigten Komponenten in eine einzige Klasse injiziert. Der `OrderService` fungiert dabei als zentraler Anlaufpunkt für sämtliche Operationen.
 
 ```java
 OrderService service = new OrderService(
@@ -497,10 +500,10 @@ Ein naheliegender Refactoringansatz besteht darin, die subjektive Definition des
 // Verantwortlichkeit: Bestellung anlegen und Lager reservieren
 public class OrderReservationService {
 
-    private OrderRepository repository; // Feld 1
-    private InventoryApi inventory;     // Feld 2
-    private Email email;                // Feld 3
-    private Audit audit;                // Feld 4
+    private OrderRepository repository; // Feld 1 (CBO +1)
+    private InventoryApi inventory;     // Feld 2 (CBO +1)
+    private Email email;                // Feld 3 (CBO +1)
+    private Audit audit;                // Feld 4 (CBO +1)
 
     public Order reserve(Cart cart, Customer customer) {
         // Cart (CBO +1), Customer (CBO +1), Order (CBO +1)
@@ -516,13 +519,12 @@ public class OrderReservationService {
 // Verantwortlichkeit: Zahlung abwickeln
 public class OrderPaymentService {
 
-    private OrderRepository repository; // Feld 1
-    private PaymentApi payment;         // Feld 2
-    private Email email;                // Feld 3
-    private Audit audit;                // Feld 4
+    private OrderRepository repository; // Feld 1 (CBO +1)
+    private PaymentApi payment;         // Feld 2 (CBO +1)
+    private Email email;                // Feld 3 (CBO +1)
+    private Audit audit;                // Feld 4 (CBO +1)
 
-    public void process(Order order) {
-        // Order (CBO +1)
+    public void process(Order order) {  // Order (CBO +1)
         payment.charge(order);
         order.markAsPaid();
         repository.save(order);
@@ -534,10 +536,10 @@ public class OrderPaymentService {
 // Verantwortlichkeit: Bestellung stornieren und Lager freigeben
 public class OrderReleaseService {
 
-    private OrderRepository repository; // Feld 1
-    private InventoryApi inventory;     // Feld 2
-    private Email email;                // Feld 3
-    private Audit audit;                // Feld 4
+    private OrderRepository repository; // Feld 1 (CBO +1)
+    private InventoryApi inventory;     // Feld 2 (CBO +1)
+    private Email email;                // Feld 3 (CBO +1)
+    private Audit audit;                // Feld 4 (CBO +1)
 
     public void release(Order order) { // Order (CBO +1)
         inventory.release(order);
@@ -577,16 +579,16 @@ Ein naheliegender Refactoringschritt besteht darin, den ursprünglichen „Fat S
 
 ```java
 
-
-// Verantwortlichkeit: Lagerverwaltung — Reservierung beim Anlegen und Freigabe beim Stornieren
+// Verantwortlichkeit: Lagerverwaltung, Reservierung beim Anlegen und Freigabe beim Stornieren
 public class OrderStockService {
 
-    private OrderRepository repository; // Feld 1
-    private InventoryApi inventory;     // Feld 2
-    private Email email;                // Feld 3
-    private Audit audit;                // Feld 4
+    private OrderRepository repository; // Feld 1 (CBO +1)
+    private InventoryApi inventory;     // Feld 2 (CBO +1)
+    private Email email;                // Feld 3 (CBO +1)
+    private Audit audit;                // Feld 4 (CBO +1)
 
     public Order reserve(Cart cart, Customer customer) {
+        // Cart (CBO +1), Customer (CBO +1), Order (CBO +1)
         inventory.reserve(cart);
         Order order = new Order(cart, customer);
         repository.save(order);
@@ -668,9 +670,9 @@ public class StoredOrder implements Order {
     private Cart cart;             // Feld 2 (CBO +1)
     private OrderRepository repo;  // Feld 3 (CBO +1)
 
-    // Konstruktor 1: Initiales Anlegen einer neuen Bestellung (generiert UUID)
+    // Konstruktor 1: Initiales Anlegen einer neuen Bestellung
     public StoredOrder(Cart cart, OrderRepository repo) {
-        //  generiert UUID -> (CBO +1)
+        //  generiert 'id' mittels 'UUID* -> (CBO +1)
         this(UUID.randomUUID().toString(), cart, repo);
     }
 
@@ -735,7 +737,7 @@ public class StockedOrder implements Order {
                               
     @Override
     public void release() {
-        inv.release(delegate);                    // → Feld 2, 1
+        inv.release(delegate);                     // → Feld 2, 1
         delegate.release();                        // → Feld 1
     }
 }
@@ -751,18 +753,18 @@ public class AuditingOrder implements Order {
     }
 
     @Override
-    public String id() { return delegate.id(); }        // → Feld 1
+    public String id() { return delegate.id(); }      // → Feld 1
 
     @Override
     public void process() {
-        delegate.process();                             // → Feld 1
-        audit.log("Processed: " + delegate.id()); // → Feld 2, 1
+        delegate.process();                           // → Feld 1
+        audit.log("Processed: " + delegate.id());     // → Feld 2, 1
     }
 
     @Override
     public void release() {
-        delegate.release();                              // → Feld 1
-        audit.log("Cancelled: " + delegate.id());       // → Feld 2, 1
+        delegate.release();                           // → Feld 1
+        audit.log("Cancelled: " + delegate.id());     // → Feld 2, 1
     }
 }
 
@@ -778,23 +780,23 @@ public class NotifiedOrder implements Order {
     }
 
     @Override
-    public String id() { return delegate.id(); }        // → Feld 1
+    public String id() { return delegate.id(); }      // → Feld 1
 
     @Override
     public void process() {
-        delegate.process();                             // → Feld 1
-        email.sendConfirmation(delegate.id());          // → Feld 2, 1
+        delegate.process();                           // → Feld 1
+        email.sendConfirmation(delegate.id());        // → Feld 2, 1
     }
 
     @Override
     public void release() {
-        delegate.release();                              // → Feld 1
-        email.sendCancellation(delegate.id());          // → Feld 2, 1
+        delegate.release();                           // → Feld 1
+        email.sendCancellation(delegate.id());        // → Feld 2, 1
     }
 }
 
 ```
-In der praktischen Verwendung wird die gewünschte Funktionalität durch eine tiefe Schachtelung der Objekte wie `new NotifiedOrder(new AuditingOrder(...))` zusammengesetzt. Beim Aufruf von `order.process()` durchläuft die Anfrage die gesamte Kette, wobei jede Schicht ihren spezifischen Beitrag, von der Zahlung über die Persistenz bis hin zum Logging und dem Mailversand, leistet.
+In der praktischen Verwendung wird die gewünschte Funktionalität durch eine tiefe Schachtelung der Objekte wie `new NotifiedOrder(new AuditingOrder(...))` zusammengesetzt. Beim Aufruf von `order.process()` durchläuft die Anfrage die gesamte Kette, wobei jede Schicht ihren spezifischen Beitrag, von der Zahlung über die Persistenz bis hin zum Logging und dem Mailversand, leistet. Optional erfolgt die Anlage einer neuen Bestellung einfach über den Konstruktor `new StoredOrder(cart, repo)`.
 
 ```java
 
@@ -803,7 +805,7 @@ Order order = new NotifiedOrder(
     new AuditingOrder(
         new StockedOrder(
             new PaidOrder(
-                // optional bestehende Bestellung laden; für neue: new StoredOrder(cart, repo) 
+                // optional für neue Bestellung: new StoredOrder(cart, repo) 
                 new StoredOrder(id, cart, repo),
                 paymentApi),
             inventoryApi),
