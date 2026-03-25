@@ -478,7 +478,7 @@ Order order = service.reserve(cart, customer);
 // Bezahlen kennt 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
 service.pay(order);
 
-// Stornieren — service kennt 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
+// Stornieren - service kennt 5 Abhängigkeiten, auch wenn nur 3 gebraucht werden
 service.release(order);
 ```
 
@@ -567,7 +567,7 @@ Die LCOM4-Herleitung ergibt für alle drei Klassen per Definition einen Wert von
 
 Die CBO-Ermittlung ergibt für `OrderReservationService` einen **CBO-Wert von 7** (4 Felder + `Cart`, `Customer`, `Order` aus der Signatur). `OrderPaymentService` und `OrderReleaseService` kommen jeweils auf einen **CBO-Wert von 5** (4 Felder + `Order` aus der Signatur).
 
-In der Interpretation wird deutlich, dass die Aufspaltung nach subjektiven Änderungsgründen zwar die Klassengröße reduziert, das Kernproblem jedoch vollständig erhält. Technische Querschnittsbelange wie `Audit`, `Email` und `OrderRepository` sind nun in alle drei Services hineinkopiert. Eine Änderung der Loggingstrategie erfordert Modifikationen an drei verschiedenen Stellen. Zudem teilen `OrderReservationService` und `OrderReleaseService` dieselbe `InventoryApi`-Abhängigkeit, was auf einen fachlichen Zusammenhang dieser Operationen hinweist — ein Indiz, das im folgenden Abschnitt aufgegriffen wird.
+In der Interpretation wird deutlich, dass die Aufspaltung nach subjektiven Änderungsgründen zwar die Klassengröße reduziert, das Kernproblem jedoch vollständig erhält. Technische Querschnittsbelange wie `Audit`, `Email` und `OrderRepository` sind nun in alle drei Services hineinkopiert. Eine Änderung der Loggingstrategie erfordert Modifikationen an drei verschiedenen Stellen. Zudem teilen `OrderReservationService` und `OrderReleaseService` dieselbe `InventoryApi`-Abhängigkeit, was auf einen fachlichen Zusammenhang dieser Operationen hinweist - ein Indiz, das im folgenden Abschnitt aufgegriffen wird.
 
 Das SRP ist hier im Sinne der subjektiven Definition formal eingehalten, da jede Klasse genau eine Methode besitzt. Die Metrikanalyse zeigt jedoch, dass diese Aufteilung keine strukturelle Verbesserung gegenüber dem Monolithen bringt: Die Kopplung bleibt hoch, und die Querschnittsbelange werden lediglich repliziert statt isoliert.
 
@@ -663,7 +663,7 @@ Im neuen Entwurf wandeln sich die Methoden zu reinen Verhaltensaufforderungen. D
 
 
 ```java
-// Kern: Persistenz — Repository eingekapselt, ID im Konstruktor
+// Kern: Persistenz - Repository eingekapselt, ID im Konstruktor
 public class StoredOrder implements Order {
 
     private String id;             // Feld 1
@@ -695,7 +695,7 @@ public class StoredOrder implements Order {
     }
 }
 
-// Vertikaler Dekorator: Zahlung — injiziert PaymentApi, verwendet es in process()
+// Vertikaler Dekorator: Zahlung - injiziert PaymentApi, verwendet es in process()
 public class PaidOrder implements Order {
 
     private Order delegate;        // Feld 1 (CBO +1)
@@ -719,7 +719,7 @@ public class PaidOrder implements Order {
 
 }
 
-// Vertikaler Dekorator: Lagerverwaltung — injiziert InventoryApi, verwendet es in release()
+// Vertikaler Dekorator: Lagerverwaltung - injiziert InventoryApi, verwendet es in release()
 public class StockedOrder implements Order {
 
     private Order delegate;        // Feld 1 (CBO +1)
@@ -742,7 +742,7 @@ public class StockedOrder implements Order {
     }
 }
 
-// Dekorator: Audit-Logging — beide Methoden betroffen
+// Dekorator: Audit-Logging - beide Methoden betroffen
 public class AuditingOrder implements Order {
 
     private Order delegate;        // Feld 1 (CBO +1)
@@ -769,7 +769,7 @@ public class AuditingOrder implements Order {
 }
 
 // NotifiedOrder: Gleiche Struktur wie AuditingOrder → LCOM4 = 1, CBO = 2
-// Dekorator: Mailbenachrichtigung — beide Methoden betroffen
+// Dekorator: Mailbenachrichtigung - beide Methoden betroffen
 public class NotifiedOrder implements Order {
 
     private Order delegate;          // Feld 1 (CBO +1)
@@ -968,7 +968,7 @@ public class Orders implements Order {
     }
 }
 
-// Pay implementiert nur OnProcess — release() entfällt vollständig
+// Pay implementiert nur OnProcess - release() entfällt vollständig
 public class Pay implements OnProcess {
 
     private PaymentApi gateway;  // Feld 1 (CBO +1)
@@ -979,7 +979,7 @@ public class Pay implements OnProcess {
     @Override public void process(String id, Cart cart) { gateway.charge(id); }
 }
 
-// Stock implementiert nur OnRelease — process() entfällt vollständig
+// Stock implementiert nur OnRelease - process() entfällt vollständig
 public class Stock implements OnRelease {
 
     private InventoryApi inv;  // Feld 1 (CBO +1)
@@ -1070,7 +1070,7 @@ Der Vergleich der fünf Designvarianten illustriert, wie sich diese Bedingungen 
 
 Der **monolithische Aufbau** des `OrderService` verdeutlicht, dass ein LCOM4-Wert von 1 trügerisch sein kann. Fünf fachlich voneinander unabhängige Verantwortlichkeiten, nämlich Lagerverwaltung, Zahlung, Mailversand, Persistenz und Protokollierung, werden lediglich über technische Querschnittsfelder wie `Audit` und `OrderRepository` im Graphen verbunden. Die scheinbar ideale Kohäsion ist damit nicht fachlich begründet, sondern ein Artefakt der gemeinsamen Infrastruktur. Der CBO-Wert von 8 entlarvt die eigentliche Problematik: Jede Methode schleppt die gesamte Last aller Abhängigkeiten mit sich, was Unittests aufwändig macht und die Klasse zu einem zentralen Änderungsrisiko werden lässt.
 
-Die **Aufspaltung nach Methode** (`OrderReservationService`, `OrderPaymentService`, `OrderReleaseService`) demonstriert die Grenzen der subjektiven SRP-Definition. Das Prinzip *„one reason to change"* wird formal eingehalten, da jede Klasse exakt eine Methode besitzt. Metrisch ergibt sich jedoch kein Fortschritt: Alle drei Klassen tragen dieselben Querschnittsabhängigkeiten, die Redundanz steigt auf ihr Maximum, und `OrderReservationService` und `OrderReleaseService` teilen dieselbe `InventoryApi` — ein Hinweis, dass die Aufteilung den fachlichen Zusammenhang ignoriert. Die LCOM4-Werte von 1 sind mathematisch erzwungen und liefern keinen Erkenntnisgewinn.
+Die **Aufspaltung nach Methode** (`OrderReservationService`, `OrderPaymentService`, `OrderReleaseService`) demonstriert die Grenzen der subjektiven SRP-Definition. Das Prinzip *„one reason to change"* wird formal eingehalten, da jede Klasse exakt eine Methode besitzt. Metrisch ergibt sich jedoch kein Fortschritt: Alle drei Klassen tragen dieselben Querschnittsabhängigkeiten, die Redundanz steigt auf ihr Maximum, und `OrderReservationService` und `OrderReleaseService` teilen dieselbe `InventoryApi` - ein Hinweis, dass die Aufteilung den fachlichen Zusammenhang ignoriert. Die LCOM4-Werte von 1 sind mathematisch erzwungen und liefern keinen Erkenntnisgewinn.
 
 Die **Aufspaltung nach fachlichem Zusammenhang** (`OrderStockService` und `OrderPaymentService`) ist ein konzeptueller Fortschritt, da die gemeinsame `InventoryApi`-Abhängigkeit von `reserve()` und `release()` korrekt als fachlicher Zusammenhang erkannt und gruppiert wird. Die Kopplung sinkt auf CBO = 7 (`OrderStockService`) bzw. 5 (`OrderPaymentService`). Das Kernproblem bleibt jedoch bestehen: Querschnittsbelange wie Logging und Persistenz werden lediglich in jede neue Klasse hineinkopiert, anstatt strukturell isoliert zu werden. Eine Änderung an der Loggingstrategie erfordert nach wie vor Eingriffe an mehreren Stellen.
 
