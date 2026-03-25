@@ -386,9 +386,9 @@ Die isolierte Optimierung einer der beiden Kennzahlen führt unweigerlich in ein
 * **Extreme Kohäsion (LCOM4 = 1 durch Atomisierung):** Versucht man, den LCOM-Wert durch das Aufspalten einer Klasse in kleinste Einheiten zu perfektionieren, steigt die Kopplung (CBO) im Gesamtsystem drastisch an. Viele hochspezialisierte Klassen müssen nun über komplexe Schnittstellen miteinander kommunizieren, um eine fachliche Aufgabe zu lösen. Die Komplexität verschiebt sich von der inneren Logik einer Klasse hin zur Interaktion zwischen den vielen neuen kleineren Klassen.
 * **Minimale Kopplung (CBO → 0 durch Zentralisierung):** Reduziert man hingegen die externe Kopplung radikal, landet man bei massiven „Gott-Klassen“. Diese benötigen zwar kaum externe Partner, vereinen aber so viele unterschiedliche Zuständigkeiten in sich, dass die interne Kohäsion (LCOM) wegbricht.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_conflict.png)
+Wie in der folgenden Grafik illustriert, bewegt sich ein **SRP-konformer** Entwurf auf der [Pareto-Front](https://en.wikipedia.org/wiki/Pareto_front). Dabei gilt es, den Punkt oder Bereich zu finden, an dem eine Klasse fachlich fokussiert bleibt, ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten zu stürzen. Eine Verbesserung der Kohäsion darf dabei nicht durch eine unverhältnismäßige Zunahme der Kopplung erkauft werden.
 
-Ein **SRP-konformer** Entwurf bewegt sich auf der [Pareto-Front](https://en.wikipedia.org/wiki/Pareto_front). Dabei gilt es, den Punkt oder Bereich zu finden, an dem eine Klasse fachlich fokussiert bleibt, ohne das System in ein unüberschaubares Netz aus Kleinstabhängigkeiten zu stürzen. Eine Verbesserung der Kohäsion darf dabei nicht durch eine unverhältnismäßige Zunahme der Kopplung erkauft werden.
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_conflict.png)
 
 Die optimale Designqualität zeigt sich dort, wo eine Klasse eine eindeutige **fachliche Identität** besitzt, ohne zu viele externe Komponenten für die Realisierung der Anforderungen zu benötigen. Dieses Gleichgewicht zwischen **hoher Kohäsion** und **niedriger Kopplung** verhindert strukturelle Fehlentwicklungen wie:
 
