@@ -1022,7 +1022,7 @@ Die Wahl eines Softwaredesigns stellt stets eine Abwägung zwischen der initiale
 
 | Merkmal | Service (Monolith) | Services (nach Methode) | Services (nach Fachlichkeit) | Vertikaler Dekorator | Horizontaler Dekorator |
 |---|---|---|---|---|---|
-| **Fachliche Kohäsion (LCOM4)** | ❌ LCOM4 = 1 (erzwungen) | ⚠️ LCOM4 = 1 (trivial) | ⚠️ LCOM4 = 1 (trivial) / ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) |
+| **Fachliche Kohäsion (LCOM4)** | ❌ LCOM4 = 1 (erzwungen) | ⚠️ LCOM4 = 1 (trivial) | ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) | ✅ LCOM4 = 1 (fachlich) |
 | **Kopplung (CBO)** | ❌ CBO = 8 | ⚠️ CBO = 7 / 5 je Klasse | ⚠️ CBO = 7 (`StockSvc`) / 5 (`PaySvc`) | ✅ CBO = 3 oder 2 je Klasse | ✅ CBO = 3 oder 2 je Klasse |
 | **Änderungsausbreitung** | ❌ gesamte Klasse | ❌ alle 3 Klassen | ❌ mehrere Klassen | ✅ nur 1 Klasse | ✅ nur 1 Klasse |
 | **Erweiterbarkeit (OCP)** | ❌ Methoden ändern | ❌ Methoden ändern | ❌ Methoden ändern | ✅ neuer Dekorator | ✅ neues `OrderAction` + Listeneintrag |
