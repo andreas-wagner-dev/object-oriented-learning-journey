@@ -83,7 +83,7 @@ The **LCOM4 metric** determines the **number** of connected element groups withi
 The following key figures provide concrete statements for evaluating the class structure:
 
 * An **LCOM4 value of 1** means that all methods and fields are directly or indirectly connected to each other, which corresponds to a highly cohesive class in ideal condition.
-* An **LCOM4 value above 1** means that the class breaks down into several independent subgraphs, which is treated as an objective indication of a violation of the Single Responsibility Principle.
+* An **LCOM4 value greater than 1** means that the class breaks down into several independent subgraphs, which is treated as an objective indication of a violation of the Single Responsibility Principle.
 * An **LCOM4 value of 0**, on the other hand, identifies a class without methods, such as a pure data container, which is evaluated neutrally within this analysis.
 
 The derivation of the LCOM4 metric is illustrated by the following case studies using graph analysis.
