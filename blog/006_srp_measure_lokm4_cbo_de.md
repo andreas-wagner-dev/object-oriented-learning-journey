@@ -608,12 +608,12 @@ public class OrderStockService {
 // Verantwortlichkeit: Zahlung abwickeln
 public class OrderPaymentService {
 
-    private OrderRepository repository; // Feld 1
-    private PaymentApi payment;         // Feld 2
-    private Email email;                // Feld 3
-    private Audit audit;                // Feld 4
+    private OrderRepository repository; // Feld 1 (CBO +1)
+    private PaymentApi payment;         // Feld 2 (CBO +1)
+    private Email email;                // Feld 3 (CBO +1)
+    private Audit audit;                // Feld 4 (CBO +1)
 
-    public void process(Order order) {
+    public void process(Order order) { Order (CBO +1)
         payment.charge(order);
         order.markAsPaid();
         repository.save(order);
@@ -843,6 +843,7 @@ public interface OrderAction {
 }
 
 public class Orders implements Order {
+
     private String id;                  // Feld 1
     private Cart cart;                  // Feld 2 (CBO +1)
     private List<OrderAction> acts;     // Feld 3 (CBO +1)
@@ -871,10 +872,11 @@ public class Orders implements Order {
 // Persistenz
 public class Persist implements OrderAction {
 
-    private OrderRepository repo;  // (CBO +1)
+    private OrderRepository repo;  // Feld 1 (CBO +1)
 
     public Persist(OrderRepository repo) { this.repo = repo; }
 
+    // Cart (CBO +1)
     @Override public void process(String id, Cart cart) { repo.updateStatus(id, "PAID"); }
     @Override public void release(String id, Cart cart) { repo.updateStatus(id, "CANCELLED"); }
 }
@@ -882,10 +884,11 @@ public class Persist implements OrderAction {
 // Zahlung (nur process() relevant)
 public class Pay implements OrderAction {
 
-    private PaymentApi gateway; // (CBO +1)
+    private PaymentApi gateway;   // Feld 1 (CBO +1)
 
     public Pay(PaymentApi gateway) { this.gateway = gateway; }
 
+    // Cart (CBO +1)
     @Override public void process(String id, Cart cart) { gateway.charge(id); }
     @Override public void release(String id, Cart cart) { /* leer */ }
 }
@@ -893,10 +896,11 @@ public class Pay implements OrderAction {
 // Lagerverwaltung (nur release() relevant)
 public class Stock implements OrderAction {
 
-    private InventoryApi inv;  // (CBO +1)
+    private InventoryApi inv;   // Feld 1 (CBO +1)
 
     public Stock(InventoryApi inv) { this.inv = inv; }
 
+    // Cart (CBO +1)
     @Override public void process(String id, Cart cart) { /* leer */ }
     @Override public void release(String id, Cart cart) { inv.release(cart); }
 }
@@ -941,9 +945,9 @@ public interface OnRelease {
 public class Orders implements Order {
 
     private String id;
-    private Cart cart;                 // Feld 1 (CBO +1)
-    private List<OnProcess> onProcess; // Feld 2 (CBO +1)
-    private List<OnRelease> onRelease; // Feld 3 (CBO +1)
+    private Cart cart;                   // Feld 1 (CBO +1)
+    private List<OnProcess> onProcess;   // Feld 2 (CBO +1)
+    private List<OnRelease> onRelease;   // Feld 3 (CBO +1)
 
     public Orders(String id, Cart cart,
                   List<OnProcess> onProcess, List<OnRelease> onRelease) {
@@ -967,28 +971,33 @@ public class Orders implements Order {
 // Pay implementiert nur OnProcess — release() entfällt vollständig
 public class Pay implements OnProcess {
 
-    private PaymentApi gateway;  // (CBO +1)
+    private PaymentApi gateway;  // Feld 1 (CBO +1)
 
     public Pay(PaymentApi gateway) { this.gateway = gateway; }
 
+    // Cart (CBO +1)
     @Override public void process(String id, Cart cart) { gateway.charge(id); }
 }
 
 // Stock implementiert nur OnRelease — process() entfällt vollständig
 public class Stock implements OnRelease {
 
-    private InventoryApi inv;  // (CBO +1)
+    private InventoryApi inv;  // Feld 1 (CBO +1)
 
     public Stock(InventoryApi inv) { this.inv = inv; }
 
+    // Cart (CBO +1)
     @Override public void release(String id, Cart cart) { inv.release(cart); }
 }
 
 // Persist reagiert auf beide Aktionen und implementiert daher beide Interfaces
 public class Persist implements OnProcess, OnRelease {
-    private OrderRepository repo;
+
+    private OrderRepository repo;  // Feld 1 (CBO +1)
+
     public Persist(OrderRepository repo) { this.repo = repo; }
 
+    // Cart (CBO +1)
     @Override public void process(String id, Cart cart) { repo.updateStatus(id, "PAID"); }
     @Override public void release(String id, Cart cart) { repo.updateStatus(id, "CANCELLED"); }
 }
