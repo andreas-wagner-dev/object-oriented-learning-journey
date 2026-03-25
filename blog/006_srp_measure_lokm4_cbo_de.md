@@ -833,7 +833,7 @@ Dieser Entwurf erfüllt zugleich das *Open-Closed-Prinzip*: Soll eine neue Anfor
 
 ### 5.4 Horizontales Dekorator-Pattern (objektorientiert)
 
-Weil der vertikale Dekoratorentwurf mit zunehmender Anzahl an Komponenten an Übersichtlichkeit verliert, schlägt Yegor Bugayenko (2015) einen horizontalen Ansatz vor. Hierbei verwaltet ein zentrales `Wrapper`-Objekt namens `Orders` eine flache Liste von Transformationen, die in einem separaten Interface als `OrderAction` definiert sind. Anstatt einer tiefen Verschachtelung erfolgt die Ausführung durch eine einfache Iteration über alle registrierten Prozessschritte, wobei jede `OrderAction`-Klasse eine spezifische technische oder fachliche Aufgabe isoliert.
+Weil der vertikale Dekoratorentwurf mit zunehmender Anzahl an Komponenten an Übersichtlichkeit verliert, schlägt [Yegor Bugayenko (2015)](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html) einen horizontalen Ansatz vor. Hierbei verwaltet ein zentrales `Wrapper`-Objekt namens `Orders` eine flache Liste von Transformationen, die in einem separaten Interface als `OrderAction` definiert sind. Anstatt einer tiefen Verschachtelung erfolgt die Ausführung durch eine einfache Iteration über alle registrierten Prozessschritte, wobei jede `OrderAction`-Klasse eine spezifische technische oder fachliche Aufgabe isoliert.
 
 ```java
 
@@ -925,7 +925,7 @@ order.process();
 // Audit protokolliert, Notify sendet Bestätigung.
 ```
 
-Die Analyse der Metriken verdeutlicht die strukturellen Vorteile dieses Modells. Die `OrderAction`-Klassen erreichen einen **CBO-Wert von 2**, da neben dem eigenen Werkzeug (z. B. `PaymentApi`) auch der Interface-Typ `Cart` aus der Methodensignatur als externer Typ zählt. Dies stellt eine weitere Reduktion gegenüber den vertikalen Dekoratoren dar, da kein `delegate`-Feld mehr zur Weiterreichung der Aufrufe benötigt wird, da die Steuerung der Kette vollständig auf den `Orders`-Wrapper übergeht. Querschnittsbelange wie Audit oder Persistenz bleiben dabei strikt in jeweils einer Klasse isoliert, während neue Anforderungen wie ein SMS-Versand einfach als neue Implementierung hinzugefügt werden können, ohne bestehenden Code zu berühren, was dem **Open-Closed-Prinzip** entspricht.
+Die Analyse der Metriken verdeutlicht die strukturellen Vorteile dieses Modells. Die `OrderAction`-Klassen erreichen einen **CBO-Wert von 2**, da neben dem eigenen Werkzeug (z. B. `PaymentApi`) auch der Interface-Typ `Cart` aus der Methodensignatur als externer Typ zählt. Dies stellt eine weitere Reduktion gegenüber den vertikalen Dekoratoren dar, da kein `delegate`-Feld mehr zur Weiterreichung der Aufrufe benötigt wird, da die Steuerung der Kette vollständig auf den `Orders`-Wrapper mit einem **CBO-Wert von 3** übergeht. Querschnittsbelange wie Audit oder Persistenz bleiben dabei strikt in jeweils einer Klasse isoliert, während neue Anforderungen wie ein SMS-Versand einfach als neue Implementierung hinzugefügt werden können, ohne bestehenden Code zu berühren, was dem **Open-Closed-Prinzip** entspricht.
 
 Ein struktureller Nebeneffekt dieses Patterns sind die leeren Methoden in Klassen wie `Pay` oder `Stock`, da nicht jeder Prozessschritt zwangsläufig auf jede Aktion reagieren muss. Das Akzeptieren dieser leeren Implementierungen stellt den notwendigen Preis für den sauberen horizontalen Schnitt dar, bedeutet jedoch gleichzeitig einen Verstoß gegen das [Liskov substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle). Nach diesem Prinzip sollte eine Unterklasse so konzipiert sein, dass sie ihre Basisklasse vollständig ersetzen kann, ohne das Programmverhalten durch unerwartete Leerschritte oder eingeschränktes Verhalten zu verfälschen.
 
@@ -1014,7 +1014,7 @@ Order order = new Orders(id, cart,
 );
 ```
 
-Diese Variante ist LSP-konform, da keine Klasse mehr eine Methode implementiert, die für ihre Verantwortlichkeit nicht relevant ist. Der Preis dafür ist die gestiegene Komplexität des `Orders`-Wrappers mit einem **CBO-Wert von 2**, der nun zwei separate Listen verwaltet, sowie die Notwendigkeit, Klassen wie `Persist` explizit in beide Listen einzutragen. So zeigt sich an dieser Stelle ein klassischer Zielkonflikt (vgl. Abschnitt 4.4) zwischen einer flachen, skalierbaren Struktur und der strikten Einhaltung aller SOLID-Prinzipien.
+Diese Variante ist LSP-konform, da keine Klasse mehr eine Methode implementiert, die für ihre Verantwortlichkeit nicht relevant ist. Der Preis dafür ist die gestiegene Komplexität des `Orders`-Wrappers mit einem **CBO-Wert von 3**, der nun zwei separate Listen verwaltet, sowie die Notwendigkeit, Klassen wie `Persist` explizit in beide Listen einzutragen. So zeigt sich an dieser Stelle ein klassischer Zielkonflikt (vgl. Abschnitt 4.4) zwischen einer flachen, skalierbaren Struktur und der strikten Einhaltung aller SOLID-Prinzipien.
 
 ## 6. Gegenüberstellung
 
