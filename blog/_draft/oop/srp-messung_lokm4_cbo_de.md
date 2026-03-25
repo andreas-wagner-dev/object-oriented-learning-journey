@@ -4,7 +4,7 @@
 
 > Das pragmatische SRP: Von subjektiven Debatten zu objektiven Metriken
 
-Das [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) (SRP) ist das erste der fünf [SOLID-Prinzipien](https://en.wikipedia.org/wiki/Package_principles), das von Robert C. Martin zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner scheinbaren Einfachheit gehört es in der Praxis zu den am schwierigsten umzusetzenden Entwurfsprinzipien der objektorientierten Programmierung.
+Das [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) (SRP) ist das erste der fünf [SOLID-Prinzipien](https://en.wikipedia.org/wiki/SOLID), das von Robert C. Martin zu Beginn der 2000er-Jahre etabliert wurde. Trotz seiner konzeptuellen Einfachheit gehört es in der Praxis zu den am schwierigsten operationalisierbaren Entwurfsprinzipien der objektorientierten Programmierung.
 
 Der Zweck des Prinzips ist es, Software modular, wartbar und verständlich zu halten. Eine Klasse, die einen eindeutigen Verantwortungsbereich besitzt, ist leichter zu testen, einfacher zu ändern und klarer in ihrer Absicht. SRP ist damit nicht nur ein Designprinzip, es ist ein Qualitätsmerkmal, das maßgeblich die langfristige Wartbarkeit beeinflusst und die Ansammlung technischer Schulden minimiert.
 
@@ -20,7 +20,7 @@ Die Operationalisierung der Formel erfolgt dabei über zwei zentrale Kennzahlen.
 
 Die **Problematik** des SRP liegt in den **subjektiven Formulierungen**, die in der Praxis mehrdeutig interpretiert werden können. Dadurch bieten sie keine konkreten Bewertungs- oder Handlungsgrundlagen für den Klassenentwurf. Eine gängige Definition besagt, dass eine Klasse nur einen einzigen Grund für Änderungen haben sollte („only one reason to change").  Was jedoch konkret als Änderungsgrund gilt, offenbart sich meist erst im Moment der tatsächlichen Anpassung. Eine vorausschauende Trennung beruht daher oft auf reiner Spekulation, da theoretisch jede minimale Anforderungsänderung als neuer, eigenständiger Grund interpretiert werden könnte.
 
-Aufgrund der Unklarheiten rund um den Begriff des *"Änderungsgrundes"* präzisierte Robert C. Martin seine Ausführungen später, woraus sich im Laufe der Zeit verschiedene Definitionsebenen entwickelten. Diese reichen von der Forderung nach genau einer Aufgabe pro Modul über die Identifikation eines spezifischen Änderungsgrundes bis hin zur Empfehlung, Dinge mit identischen Änderungsursachen zusammenzufassen. In der konkreten Auslegung wird ein solcher Grund schließlich als Anforderung definiert, die von einem einzelnen Akteur oder Geschäftsmann stammt.
+Aufgrund der Unklarheiten rund um den Begriff des *"Änderungsgrundes"* präzisierte Robert C. Martin seine Ausführungen später, woraus sich im Laufe der Zeit verschiedene Definitionsebenen entwickelten. Diese reichen von der Forderung nach genau einer Aufgabe pro Modul über die Identifikation eines spezifischen Änderungsgrundes bis hin zur Empfehlung, Elemente mit identischen Änderungsursachen zusammenzufassen. In der konkreten Auslegung wird ein solcher Grund schließlich als Anforderung definiert, die von einem einzelnen Akteur oder Geschäftsmann stammt.
 
 > "Each software module should have one and only one responsibility"
 > - Robert C. Martin (2003)
@@ -40,7 +40,7 @@ In der praktischen Anwendung werfen diese Definitionen jedoch neue Fragen auf:
 * Auch die praktische Faustregel, ***Zusammengehöriges basierend auf künftigen Änderungsgründen zu bündeln***, ist zum Zeitpunkt der Implementierung kaum prüfbar, da sie eine Vorausplanung der künftigen Produktentwicklung erfordert.
 * Ebenso erweist sich der Verweis auf den ***Geschäftsmann*** zwar für die strategische Domänenmodellierung als hilfreich, bleibt jedoch als konkretes Programmierkriterium für den Codealltag unbrauchbar.
 
-Diese kontextabhängigen Interpretationen führen in Codereviews häufig zu zeitraubenden Grundsatzdebatten. Ohne objektive Bewertungskriterien können solche Diskussionen in subjektive Meinungsverschiedenheiten auszuarten, was die Effizienz und Konsistenz der Softwareentwicklung verhindert.
+Diese kontextabhängigen Interpretationen führen in Codereviews häufig zu zeitraubenden Grundsatzdebatten. Ohne objektive Bewertungskriterien können solche Diskussionen in subjektive Meinungsverschiedenheiten ausarten, was die Effizienz und Konsistenz der Softwareentwicklung verhindert.
 
 ## 3. Die Formalisierung von Kohäsion und Kopplung
 
@@ -62,9 +62,9 @@ Innerhalb der Kopplung wird zwischen **physikalischen** und **semantischen** Abh
 
 ### 3.2 Maßnahmen zur Optimierung von Kohäsion und Kopplungen
 
-Grundsätzlich ist eine Kopplung zwischen Klassen für die Funktionsfähigkeit eines Systems unumgänglich. Ein übermäßiges Maß an Abhängigkeiten erschwert jedoch die Modifikation, das Testen und die Wiederverwendbarkeit von Klassen erheblich. Um die externe und interne Kopplung von Klassen systematisch zu optimieren, ist die Anwendung der grundlegender OOP-Entwurfsrichtlinien, weiteren SOLID-Prinzipien sowie bewährter Entwurfsmuster essenziell.
+Grundsätzlich ist eine Kopplung zwischen Klassen für die Funktionsfähigkeit eines Systems unumgänglich. Ein übermäßiges Maß an Abhängigkeiten erschwert jedoch die Modifikation, das Testen und die Wiederverwendbarkeit von Klassen erheblich. Um die externe und interne Kopplung von Klassen systematisch zu optimieren, ist die Anwendung der grundlegenden OOP-Entwurfsrichtlinien, weiteren SOLID-Prinzipien sowie bewährter Entwurfsmuster essenziell.
 
-Das [Law of Demeter](https://en.wikipedia.org/wiki/Law_of_Demeter) und das Prinzip [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html) Ask dienen als zentrale Maßnahmen zur Vermeidung unnötiger Abhängigkeiten. Während das **Law of Demeter** den Zugriffspfad strikt auf unmittelbare Nachbarn beschränkt, fordert **Tell, Don’t Ask** dazu auf, Objekten Befehle zu erteilen statt deren internen Zustand abzufragen. Die konsequente Anwendung beider Prinzipien wahrt die Kapselung und schützt vor semantischer Instabilität.
+Das [Law of Demeter](https://en.wikipedia.org/wiki/Law_of_Demeter) und das Prinzip [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html) dienen als zentrale Maßnahmen zur Vermeidung unnötiger Abhängigkeiten. Während das **Law of Demeter** den Zugriffspfad strikt auf unmittelbare Nachbarn beschränkt, fordert **Tell, Don’t Ask** dazu auf, Objekten Befehle zu erteilen statt deren internen Zustand abzufragen. Die konsequente Anwendung beider Prinzipien wahrt die Kapselung und schützt vor semantischer Instabilität.
 Da hierbei Verantwortlichkeiten isoliert werden und die Logik direkt bei den Daten verbleibt, steigt die Kohäsion unmittelbar an. Eine Klasse verwaltet ihre Informationen somit autonom und bietet lediglich fachlich relevante Operationen an. Sie konzentriert sich auf ein zusammenhängendes Spektrum von Aufgaben, was eine wesentliche Voraussetzung für die Einhaltung des Single Responsibility Principle darstellt.
 
 Das Prinzip [Encapsulate what varies](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) wirkt dabei unterstützend und isoliert änderungsanfällige Logik hinter Schnittstellen. [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle) verstärkt diesen Effekt durch die Entkopplung hochstufiger Module von konkreten Implementierungen mittels stabiler Abstraktionen. Zusätzlich stellt das [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle) sicher, dass Klassen nur an spezifisch benötigte Teilschnittstellen gebunden werden. Eine korrekte Segregation wird maßgeblich durch das [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) gewährleistet. Demnach müssen Unterklassen ihre Basisklassen so vollständig ersetzen können, dass das Programmverhalten niemals verfälscht wird.
@@ -89,7 +89,7 @@ Die Herleitung der LCOM4-Metrik verdeutlichen die folgenden Fallbeispiele anhand
 
 **Fallbeispiel 1: Niedrige Kohäsion (LCOM4 = 2)**
 
-In diesem Szenario enthält die Klasse `Order` zwei logische Zuständigkeiten für die Anzeige `display()` einer Bestellung und Abwicklung `pay(int amount)` einer Zahlung.
+In diesem Szenario vereint die Klasse `Order` zwei logische Zuständigkeiten für die Anzeige `display()` einer Bestellung und Abwicklung einer Zahlung `pay(int amount)`.
 
 
 ```java
@@ -262,7 +262,7 @@ Die CBO-Metrik dient als Indikator für die Wartbarkeit und Testbarkeit, da ein 
 * **CBO-Wert größer als 5** deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
 
 Der in diesem Beitrag verwendete Schwellenwert von **CBO > 5** ist kein universeller Standard. Je nach Quelle variiert der empfohlene Grenzwert erheblich: 
-Während [Sahraoui, Godin & Miceli](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf) in ihren Artikel einen Maximalwert von **14** festlegen, empfiehlt [ObjectScript Quality](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo) einen deutlich niedrigeren Schwellenwert von **4**.
+Während [Sahraoui, Godin & Miceli](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf) in ihrem Artikel einen Maximalwert von **14** festlegen, empfiehlt [ObjectScript Quality](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo) einen deutlich niedrigeren Schwellenwert von **4**.
 
 Die Ermittlung der CBO-Werte und die Nuancen von Kopplungstypen veranschaulichen die folgenden Fallbeispiele.
 
@@ -351,7 +351,7 @@ Sobald die Klasse Methoden wie `validate()` aufruft, entsteht eine semantische K
 
 ### 4.3 Die Synergie von LCOM4 und CBO
 
-Wie die vorangegangenen Fallbeispiele zeigen, kann ein LCOM4-Wert von 1 trügerisch sein. Sobald eine Klasse technisch notwendige Querschnittsfelder wie eine id, ein Statusfeld oder einen Logger nutzt, werden im Graphen Brücken zwischen eigentlich fremden fachlichen Verantwortlichkeiten geschlagen. Die strukturelle Analyse wertet dies als Kohäsion, obwohl das Single Responsibility Principle faktisch verletzt bleibt.
+Wie die vorangegangenen Fallbeispiele zeigen, kann ein LCOM4-Wert von 1 irreführend sein. Sobald eine Klasse technisch notwendige Querschnittsfelder wie eine id, ein Statusfeld oder einen Logger nutzt, werden im Graphen Brücken zwischen eigentlich fremden fachlichen Verantwortlichkeiten geschlagen. Die strukturelle Analyse wertet dies als Kohäsion, obwohl das Single Responsibility Principle faktisch verletzt bleibt.
 
 An dieser Stelle entfaltet die Kombination mit der CBO-Metrik ihre volle Diagnosekraft. Während der LCOM4 im `OrderService` (vgl. Abschnitt 5.1) eine ideale interne Bindung suggeriert, würde eine Messung der Kopplung (CBO) bei einem „Fat Service“ sofort Alarm schlagen. Ein hoher CBO-Wert offenbart, dass die Klasse trotz ihrer internen Verknüpfung über ein Statusfeld eine übermäßige Anzahl externer Abhängigkeiten bedienen muss. Ein Entwurf ist erst dann wirklich SRP-konform, wenn er beide Kriterien gleichzeitig erfüllt:
 
@@ -384,7 +384,7 @@ Die **Wahl des Schwellenwerts** beeinflusst mindestens zwei gegenläufige Qualit
 
 Die isolierte Optimierung einer der beiden Kennzahlen führt unweigerlich in eine architektonische Sackgasse. In der Praxis stehen die Werte von LCOM4 und CBO in einer umgekehrten Beziehung.
 
-* **Extreme Kohäsion (LCOM4 = 1 durch Atomisierung):** Versucht man, den LCOM-Wert durch das Aufspalten einer Klasse in kleinste Einheiten zu perfektionieren, steigt die Kopplung (CBO) im Gesamtsystem drastisch an. Viele hochspezialisierte Klassen müssen nun über komplexe Schnittstellen miteinander kommunizieren, um eine fachliche Aufgabe zu lösen. Die Komplexität verschiebt sich von der Inneren Logik (Intra-Modul) hin zur Interaktion (Inter-Modul).
+* **Extreme Kohäsion (LCOM4 = 1 durch Atomisierung):** Versucht man, den LCOM-Wert durch das Aufspalten einer Klasse in kleinste Einheiten zu perfektionieren, steigt die Kopplung (CBO) im Gesamtsystem drastisch an. Viele hochspezialisierte Klassen müssen nun über komplexe Schnittstellen miteinander kommunizieren, um eine fachliche Aufgabe zu lösen. Die Komplexität verschiebt sich von der inneren Logik (Intra-Modul) hin zur Interaktion (Inter-Modul).
 * **Minimale Kopplung (CBO → 0 durch Zentralisierung):** Reduziert man hingegen die externe Kopplung radikal, landet man bei massiven „Gott-Klassen“. Diese benötigen zwar kaum externe Partner, vereinen aber so viele unterschiedliche Zuständigkeiten in sich, dass die interne Kohäsion (LCOM) wegbricht.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/oop_srp_coupling_cohesion_conflict.png)
@@ -1045,7 +1045,7 @@ Der **vertikale Dekorator** erreicht erstmals eine echte fachliche Isolation. Je
 
 Der **horizontale Dekorator** treibt die Entkopplung mit einem CBO-Wert von 2 pro Prozessklasse auf die strukturelle Spitze. Die flache Listenkomposition über `Orders` ist leichter verständlich als tiefe Verschachtelungen und erlaubt es, neue Anforderungen durch einen einzigen Listeneintrag zu ergänzen. Der Preis für diese Skalierbarkeit sind jedoch leere Methoden in Klassen wie `Pay` oder `Stock`, die das Liskov Substitution Principle verletzen. Dieses Spannungsfeld lässt sich durch eine Aufspaltung des `OrderAction`-Interfaces nach dem Interface Segregation Principle auflösen, was jedoch die Anzahl der Abstraktionen weiter erhöht.
 
-## 8 Handlungsempfehlungen
+## 8. Handlungsempfehlungen
 
 Die Erkenntnisse aus Theorie und Designvergleich lassen sich in vier konkreten Leitlinien zusammenfassen.
 
@@ -1060,11 +1060,11 @@ Da die LCOM4-Metrik lediglich die Existenz einer Verbindung im Graphen bewertet 
 
 **Kopplung: Physikalische und semantische Abhängigkeiten trennen.** Ein **CBO-Wert größer als 5** signalisiert übermäßige Vernetzung. Als erste Maßnahme empfiehlt sich die Anwendung des **Dependency Inversion Principle**: Abhängigkeiten von konkreten Implementierungen werden durch stabile Interfaces ersetzt, was den CBO unmittelbar senkt. Zusätzlich sollte semantische Kopplung durch die konsequente Einhaltung des **Law of Demeter** und des **Tell-Don't-Ask-Prinzips** verhindert werden. Jede Methode, die auf den internen Zustand eines fremden Objekts zugreift, etwa über Aufrufketten wie `order.getCustomer().getAddress()`, erzeugt eine Abhängigkeit, die kein statisches Analysewerkzeug erfasst, aber bei Änderungen zu unerwarteten Fehlerfortpflanzungen führt.
 
-**Entwurfsmuster wählen, nicht dogmatisch anwenden.** Das **Dekoratormuster** löst das Problem der verteilten Querschnittsbelange strukturell sauber und ist dem Service-Pattern in puncto SRP-Konformität deutlich überlegen. Es ist jedoch **kein universelles Allheilmittel**. Tiefe Dekoratorketten erhöhen die Komplexität der Objektkomposition und machen den Systemüberblick schwerer, während horizontale Varianten das **LSP** unter Druck setzen. Der **Service-Schnitt** bleibt ein **pragmatischer Standard** für einfache [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) Anwendungen oder Teams, deren Fähigkeiten noch nicht auf kompositionsbasierte OOD-Entwurfsmuster ausgerichtet sind, da die geringe kognitive Einstiegshürde und die zentrale Übersicht in diesen Kontexten überwiegen. Die Entscheidung für einen Entwurfsansatz sollte sich daher an der konkreten **Kompetenz des Entwicklungsteams** und den **Wartungskosten** orientieren.
+**Entwurfsmuster wählen, nicht dogmatisch anwenden.** Das **Dekoratormuster** löst das Problem der verteilten Querschnittsbelange strukturell sauber und ist dem Service-Pattern in puncto SRP-Konformität deutlich überlegen. Es ist jedoch **kein universelles Allheilmittel**. Tiefe Dekoratorketten erhöhen die Komplexität der Objektkomposition und machen den Systemüberblick schwerer, während horizontale Varianten das **LSP** unter Druck setzen. Der **Service-Schnitt** bleibt ein **pragmatischer Standard** für einfache [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)-Anwendungen oder Teams, deren Fähigkeiten noch nicht auf kompositionsbasierte OOD-Entwurfsmuster ausgerichtet sind, da die geringe kognitive Einstiegshürde und die zentrale Übersicht in diesen Kontexten überwiegen. Die Entscheidung für einen Entwurfsansatz sollte sich daher an der konkreten **Kompetenz des Entwicklungsteams** und den **Wartungskosten** orientieren.
 
 Unter Beachtung dieser Leitlinien erweist sich das **SRP** nicht als starres Dogma, sondern als **pragmatisches Werkzeug**, das erst durch messbare Metriken konkrete Handlungsoptionen bietet. Nichtsdestotrotz sollten die **Lesbarkeit und Nachvollziehbarkeit** des Gesamtsystems stets stärker gewichtet werden als die einseitige Optimierung einer einzelnen Kennzahl, denn das übergeordnete Ziel bleibt die **langfristige Wartbarkeit** der Software.
 
-## 8. Abschließende Betrachtung
+## 9. Abschließende Betrachtung
 
 Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt des **objektorientierten Designs** dar. In der akademischen Literatur existieren zweifellos präzisere und mathematisch tiefergehende Modelle zur Messung von Kohäsion und Kopplung, welche weitere Nuancen der Softwarekomplexität erfassen.
 
