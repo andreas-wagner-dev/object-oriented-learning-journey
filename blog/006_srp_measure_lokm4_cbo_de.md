@@ -1007,7 +1007,7 @@ Die Wahl eines Softwaredesigns stellt stets eine Abwägung zwischen der initiale
 | **Komposition** | ✅ eine Klasse | ✅ drei Klassen | ✅ zwei Klassen | ⚠️ tiefe Kette | ⚠️ flache, koplezierte Streuung |
 | **Strukturelle Risiken** | ⚠️ Fat Service, hohe Kopplung | ⚠️ maximale Redundanz | ⚠️ Redundanz, hohe Streuung | ⚠️ Klassen-Fragilität | ⚠️ LSP-Verletzung oder Interface-Fragilität |
 
-**Der datenzentrierte Service-Schnitt**
+**Datenzentrierter Service-Schnitt**
 
 Der klassische `OrderService` bündelt sämtliche Belange der Bestellung innerhalb einer einzigen Klasse. Ein wesentlicher Vorteil dieses Ansatzes ist die zentrale Anlaufstelle, da die gesamte Geschäftslogik einer Domäne an einem Ort als verlässliche Informationsquelle konzentriert bleibt. Zudem ermöglicht diese Struktur ein lineares Debugging, bei dem der Kontrollfluss innerhalb einer Datei leicht nachvollziehbar ist, ohne dass zwischen vielen kleinen Klassen gesprungen werden muss. Da dieses Muster als Industriestandard gilt, bietet es zudem eine geringe kognitive Einstiegshürde für neue Entwickler.
 
@@ -1019,7 +1019,7 @@ Die Zerlegung nach fachlichem Zusammenhang (`OrderStockService` und `OrderPaymen
 
 Dem stehen jedoch Nachteile gegenüber, da technische Querschnittsbelange wie `Audit` oder `OrderRepository` weiterhin in jeden Service injiziert werden müssen. Dies führt zu einer verteilten Wartung, bei der globale Änderungen am Loggingformat an mehreren Stellen gleichzeitig nachgezogen werden müssen. Letztlich bleibt eine echte Isolation aus, da die strukturelle Vermischung von technischer Infrastruktur und Domänenlogik bestehen bleibt.
 
-**Der OOD-Dekorator-Schnitt**
+**Verhaltensorientierter Dekorator-Schnitt**
 
 Dieser Ansatz schneidet die Domäne streng nach Verantwortlichkeiten in Klassen wie `StoredOrder` oder `PaidOrder`. Im Unterschied zur objektorientierten Programmierung (OOP), die den Sprachrahmen beschreibt, bezeichnet *Object-Oriented Design* (OOD) die Entwurfsdisziplin, in der Verantwortlichkeiten strukturell auf Objekte verteilt werden. Die Vorteile liegen in der strikten Einhaltung von **SRP** und Open-Closed-Prinzip, da neue Anforderungen durch zusätzliche Dekoratoren gelöst werden, ohne stabilen Code zu gefährden. Dies ermöglicht ein gezieltes Debugging, da Fehler im Logging garantiert in der `AuditingOrder` zu finden sind, während die kognitive Last auf die jeweils aktuelle Zuständigkeit begrenzt bleibt. Zudem wird eine minimale Kopplung erreicht, da jede Klasse lediglich das Interface und ihre spezifische Abhängigkeit kennt.
 
@@ -1027,9 +1027,9 @@ Nachteilig wirkt sich jedoch die Projektexplosion durch eine deutlich steigende 
 
 Das horizontale Muster optimiert zwar die Lesbarkeit bei tiefen Ketten, erzwingt jedoch bei einer größeren Anzahl von Methoden strukturelle Kompromisse in Form von leeren Implementierungen. Ein Wechsel zu diesem Modell ist daher nur dann ratsam, wenn das Design keine leeren Implementierungen von Methoden erfordert, sodass möglichst das *Liskov Substitution Principle* nicht verletzt wird.
 
-**Dekorator- vs. Services-Schnitt**
+**Verhaltensorientiert vs. Datenzentriert**
 
-Das Decorator-Pattern erzeugt durch seine Schichtung eine hohe Spezialisierung der einzelnen Klassen, führt jedoch oft zu vertikaler Komplexität (Lasagne-Code). Im Gegensatz dazu neigen Services zu horizontalem Wachstum. Ohne klare Grenzen sammeln sich dort schnell zu viele Verantwortlichkeiten an, was die Kopplung erhöht und die Kohäsion schwächt (Spaghetti-Code).
+Der verhaltensorientierte Schnitt (**Decorator-Pattern**) erzeugt durch seine Schichtung eine hohe Spezialisierung der einzelnen Klassen. Dies führt jedoch oft zu vertikaler Komplexität (**Lasagne-Code**). Im Gegensatz dazu neigt der datenzentrierte Schnitt (**Service**) zu horizontalem Wachstum. Ohne klare Grenzen sammeln sich dort schnell zu viele Verantwortlichkeiten an, was die Kopplung erhöht und die Kohäsion schwächt (**Spaghetti-Code**).
 
 Eine Entwurfsentscheidung muss daher abwägen, ob die strukturelle Tiefe des Decorators oder die funktionale Breite des datenzentrierten Patterns besser zur jeweiligen Domäne passt. Letzteres bietet zwar einen direkteren Zugriff auf die Geschäftslogik, läuft jedoch eher Gefahr, zu einer unübersichtlichen Ansammlung von Aufgaben anzuwachsen.
 
