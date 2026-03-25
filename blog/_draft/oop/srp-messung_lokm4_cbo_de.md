@@ -1023,7 +1023,7 @@ Nachteilig wirkt sich jedoch die Projektexplosion durch eine deutlich steigende 
 
 Das horizontale Muster optimiert zwar die Lesbarkeit bei tiefen Ketten, erzwingt jedoch bei einer größeren Anzahl von Methoden strukturelle Kompromisse in Form von leeren Implementierungen. Ein Wechsel zu diesem Modell ist daher nur dann ratsam, wenn das Design keine leeren Implementierungen von Methoden erfordert, sodass möglichst das *Liskov Substitution Principle* nicht verletzt wird.
 
-## 7. Zusammenfassung und Handlungsempfehlung
+## 7. Zusammenfassung
 
 Das SRP ist eines der einfachsten Prinzipien und gleichzeitig eines der am schwierigsten umzusetzenden. Die Wurzel dieses Widerspruchs liegt in seiner subjektiven Formulierung: Begriffe wie „Änderungsgrund", „Verantwortlichkeit" oder „Akteur" sind kontextabhängig und führen in Codereviews regelmäßig zu zeitraubenden Grundsatzdebatten, ohne zu einem objektiven Ergebnis zu gelangen.
 
@@ -1045,7 +1045,7 @@ Der **vertikale Dekorator** erreicht erstmals eine echte fachliche Isolation. Je
 
 Der **horizontale Dekorator** treibt die Entkopplung mit einem CBO-Wert von 2 pro Prozessklasse auf die strukturelle Spitze. Die flache Listenkomposition über `Orders` ist leichter verständlich als tiefe Verschachtelungen und erlaubt es, neue Anforderungen durch einen einzigen Listeneintrag zu ergänzen. Der Preis für diese Skalierbarkeit sind jedoch leere Methoden in Klassen wie `Pay` oder `Stock`, die das Liskov Substitution Principle verletzen. Dieses Spannungsfeld lässt sich durch eine Aufspaltung des `OrderAction`-Interfaces nach dem Interface Segregation Principle auflösen, was jedoch die Anzahl der Abstraktionen weiter erhöht.
 
-### Handlungsempfehlungen für die Praxis
+## 8 Handlungsempfehlungen
 
 Die Erkenntnisse aus Theorie und Designvergleich lassen sich in vier konkreten Leitlinien zusammenfassen.
 
@@ -1064,8 +1064,6 @@ Da die LCOM4-Metrik lediglich die Existenz einer Verbindung im Graphen bewertet 
 
 Unter Beachtung dieser Leitlinien erweist sich das **SRP** nicht als starres Dogma, sondern als **pragmatisches Werkzeug**, das erst durch messbare Metriken konkrete Handlungsoptionen bietet. Nichtsdestotrotz sollten die **Lesbarkeit und Nachvollziehbarkeit** des Gesamtsystems stets stärker gewichtet werden als die einseitige Optimierung einer einzelnen Kennzahl, denn das übergeordnete Ziel bleibt die **langfristige Wartbarkeit** der Software.
 
----
-
 ## 8. Abschließende Betrachtung
 
 Die hier vorgestellten Metriken und Entwurfsmuster stellen nur einen Ausschnitt des **objektorientierten Designs** dar. In der akademischen Literatur existieren zweifellos präzisere und mathematisch tiefergehende Modelle zur Messung von Kohäsion und Kopplung, welche weitere Nuancen der Softwarekomplexität erfassen.
@@ -1074,14 +1072,12 @@ Im Vordergrund dieses Beitrags stand jedoch das **Ziel**, einen **einfachen und 
 
 Letztlich ist Softwareentwicklung ein Handwerk, bei dem Metriken lediglich als Kompass dienen. Die Erfahrung und das Urteilsvermögen des Entwicklungsteams bilden dabei das entscheidende Element für nachhaltige Codequalität.
 
----
+## 10. Quellen und Referenzen
 
-
-## 9. Quellen und Referenzen
-
-### Hauptquelle
 * ACM Digital Library (2026) [Applying the Single Responsibility Principle in Industry: Modularity
 Benefits and Trade-offs](https://scispace.com/pdf/applying-the-single-responsibility-principle-in-industry-rewdq52at2.pdf)
+* Aivosto Oy Helsinki, Finland (1994–2021) [Chidamber & Kemerer Object-Oriented Metrics Suite](https://www.aivosto.com/project/help/pm-oo-ck.html)
+* European Southern Observatory (2026) [A METRICS SUITE FOR OBJECT ORIENTED DESIGN](https://www.eso.org/~tcsmgr/oowg-forum/TechMeetings/Articles/OOMetrics.pdf)
 * Robert Martin (2007) [The Single Responsibility Principle](https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g)
 * Robert Martin (2014) [The Single Responsibility Principle](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) 
 * Robert Bräutigam (2014) [The Single Responsibility Principle](https://speakerdeck.com/robertbraeutigam/single-responsibility-principle)
@@ -1089,26 +1085,8 @@ Benefits and Trade-offs](https://scispace.com/pdf/applying-the-single-responsibi
 * Sahraoui, Godin & Miceli (2000) [Can Metrics Help Bridging the Gap Between the Improvement of OO Design Quality and Its Automation?](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf)
 * Martin Fowler (2013) [Tell, Don’t Ask](https://martinfowler.com/bliki/TellDontAsk.html)
 * Matthieu Cneude (2020) [The Single Responsibility Principle Revisited](https://thevaluable.dev/single-responsibility-principle-revisited/)
-* Mihai A. RODEGBFR (2018) [My Take On Object Naming](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
 * ObjectScript_Q (2026) [Lack of Cohesion in Methods (LCOM4)](https://objectscriptquality.com/docs/metrics/lack-cohesion-methods-lcom4)
 * ObjectScript_Q (2026) [Coupling Between Object classes (CBO)](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo)
-* Yegor Bugayenko (2015) [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
-* Yegor Bugayenko (2020) [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
-
-### Weiterführende Artikel und Metriken
-
-* Aivosto Oy Helsinki, Finland (1994–2021) [Chidamber & Kemerer Object-Oriented Metrics Suite](https://www.aivosto.com/project/help/pm-oo-ck.html)
-* European Southern Observatory (2026) [A METRICS SUITE FOR OBJECT ORIENTED DESIGN](https://www.eso.org/~tcsmgr/oowg-forum/TechMeetings/Articles/OOMetrics.pdf)
 * Universität Turku (2016) [Design Principles And Patterns](https://staff.cs.utu.fi/~jounsmed/doos_06/material/DesignPrinciplesAndPatterns.pdf)
 * University of Vienna (1994) [Measuring Coupling and Cohesion In Object-Oriented Systems](http://www.isys.uni-klu.ac.at/PDF/1995-0043-MHBM.pdf) 
-
-
-### Verwandte Bücher
-
-- Martin, R. C. (2003). *Agile Software Development: Principles, Patterns, and Practices*. Prentice Hall.
-- Martin, R. C. (2008). *Clean Code*. Prentice Hall.
-- Martin, R. C. (2017). *Clean Architecture*. Prentice Hall.
-- Gamma, E. et al. (1994). *Design Patterns*. Addison-Wesley. *(Decorator Pattern)*
-- Evans, E. (2003). *Domain-Driven Design*. Addison-Wesley.
-- Chidamber, S. R., & Kemerer, C. F. (1994). *A Metrics Suite for Object Oriented Design*. IEEE TSE 20(6).
-- Hitz, M., & Montazeri, B. (1995). *Measuring Coupling and Cohesion in Object-Oriented Systems*.
+* Yegor Bugayenko (2015) [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
