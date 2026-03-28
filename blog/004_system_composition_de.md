@@ -12,9 +12,9 @@ DE: **Eine solide System Komposition *"injiziert wenig und lässt Keinen blind..
 
 In der modernen objektorientierten Softwareentwicklung ist **Dependency Injection** (DI) längst ein **etabliertes Konzept**. Die Grundidee ist simpel und elegant: Objekte sollen ihre Abhängigkeiten nicht selbst erstellen, sondern von außen erhalten. Doch während die Technik selbst wertvoll ist, haben viele Frameworks mittels sogenannter **DI-Container** das ursprüngliche Konzept in ein **Anti-Pattern** verwandelt.
 
-Der Begriff "Container" beschreibt metaphorisch einen intelligenten, zentralen Behälter, der die Kontrolle über die Objekt-Erstellung und deren Abhängigkeiten invertiert und verwaltet, anstatt dies dem Anwendungscode selbst zu überlassen.
+## 2. DI-Containern und Konsequenzen
 
-### 1.1 Probleme mit DI-Containern
+Der Begriff "Container" beschreibt metaphorisch einen intelligenten, zentralen Behälter, der die Kontrolle über die Objekt-Erstellung und deren Abhängigkeiten invertiert und verwaltet, anstatt dies dem Anwendungscode selbst zu überlassen.
 
 Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller` kann beispielsweise das Framework *Spring* automatisch Klassen erkennen, instanziieren und in den Container aufnehmen, ohne dass sie explizit konfiguriert werden müssen.
 
@@ -28,12 +28,15 @@ Mittels Annotations wie `@Component`, `@Service`, `@Repository` und `@Controller
 
 * **Verlust der OOP-Prinzipien:** In der reinen objektorientierten Programmierung (OOP) ist der `new`-Operator der Schlüssel zur Kontrolle. Durch das Verstecken der Objekterzeugung durch den Container wird die zentrale Rolle des Konstruktors in der Objekthierarchie geschwächt.
 
+## 3. Die Geschichte: Ein Team, ein wachsendes System
 
 Im folgenden betrachten wir eine *Spring-Boot* Payment-Application mit der üblichen Verwendung von DI-Container.  
 
+Ein Team aus drei Personen — Junior-, Mid- und Senior-Entwickler — baut schrittweise eine Spring-Boot-Payment-Applikation auf. Wir beobachten, welche Probleme mit wachsenden Anforderungen entstehen können.
+
 Ein Team aus drei Personen (Junior-, Mid- und Senior-Entwickler) baut es schrittweise auf und wir beobachten, welche Probleme mit den wachsenden Anforderungen entstehen können.
 
-#### Anforderung 1: (Rechnungen und Zahlungen verarbeiten)
+### Anforderung 1: (Rechnungen und Zahlungen verarbeiten)
 
 Die Applikation soll zunächst Rechnungen (`Invoice`) erstellen und dazu Zahlungen (`Payment`) verarbeiten können.
 
@@ -140,7 +143,7 @@ public class PaymentService {
 
 Das Objekt der Klasse `SpringPaymentApp` sowie die Komponente `SpringData` für Zugriffe auf die Datenbank schweben isoliert "herum" und der DI-Container verwaltet alles im Hintergrund.
 
-#### Anforderung 2: (Customer hinzufügen)
+### Anforderung 2: (Customer hinzufügen)
 
 Nun sollen zusätzlich noch Kunden verwaltet werden und beim Erstellen einer Rechnung muss ein Kunde validiert werden.
 
@@ -227,7 +230,7 @@ public class CustomerService {
 
 **(Kein) Problem:** Es ist noch kein Drama, aber hier beginnt die Schieflag: Die neu entstandene horizontale Abhängigkeit innerhalb des Business-Logic-Layers verkompliziert lediglich die Beziehungen in diesem Modul.
 
-#### Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können.
+### Anforderung 3: Kunden sollen ihre offenen Rechnungen sehen können.
 
 > Der Junior übernahm diese Aufgabe ebenfalls. Für ihn war es logisch, dass die Klasse `CustomerService` nun `InvoiceService` kennen musste.
 
