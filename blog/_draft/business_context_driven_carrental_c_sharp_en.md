@@ -181,7 +181,7 @@ carrental/
 │   │    └── CarRentedEvent.cs   ← AVRO DTOs
 │   │   
 │   └── .../
-├── payment/                     ← (uses in endpoint/endpoint/)
+├── payment/                     ← (uses endpoint/endpoint/)
 │   ├── PaypalPayment.cs         ← Paypal Decorator
 │   ├── CardPayment.cs           ← Credit card Decorator
 │   └── ...cs
