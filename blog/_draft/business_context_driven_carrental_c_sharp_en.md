@@ -560,7 +560,7 @@ followed by further subpackages for each aspect, such as:
 * `endpoint/`   → HTTP classes for WEB access with helper classes
 * `resource/`   → HTTP classes for REST and JSON/XML DTOs with helper classes
 * `storage/`    → ORM classes for DB access with helper classes
-* 'paypal/'     → Paypal library
+* `paypal/`     → Paypal REST library
 * `mailing/`    → SMTPS/IMAPS/POP3S for EMAIL sending and server integration with helper classes
 * `messaging/`  → AVRO classes for Kafka integration with helper classes
 * `text/`       → Textformatting library with helper classes
@@ -583,7 +583,8 @@ carrental/
 │   │   ├── CarDbContext.cs  ← EF Core DbContext
 │   │   ├── Db....cs         ← EF Core common Utils or Helper only for this package
 │   │   └── ...
-│   ├── mailing/             → Email: SMTPS, IMAPS or POP3S Protocol   
+│   ├── paypal/              → Paypal: REST library
+│   ├── mailing/             → Email SMTPS, IMAPS or POP3S Protocol   
 │   ├── messaging/           → Queues Apache Avro or Protocol Buffers DTOs
 │   └── ...  
 ├── .../    
@@ -737,7 +738,12 @@ carrental-customer-mailing     ← Email: SMTPS, IMAPS or POP3S Protocol
 
 
 carrental-payment
+├── paypal/                    
+│   └── ...cs                  ← Payment Decorator (uses Paypal endpoint)
+├── Payment.cs                 ← Domain Interface
 ...
+
+carrental-payment-paypal       ← endpoint of Paypal: REST library
 
 
 carrental-user-client
@@ -770,10 +776,16 @@ carrental-customer            → Module-Group - Parent Project
 ├── customer-storage
 └── customer-mailing
 
-....
+carrental-payment
+├── payment                    
+└── payment-paypal
+
+
+carrental-user-client
+├── user                 
+└── ...
 
 ```
-
 ---
 
 ### 6.3 Microservices (Phase 3)
