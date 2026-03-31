@@ -535,6 +535,7 @@ carrental                     → depends on: -endpoint, -resource, -storage, -.
 carrental-endpoint            → HTTP classes JSON/XML DTOs
 carrental-resource            → REST classes JSON/XML DTOs
 carrental-storage             ← EF Core ...DbContexts/Entities
+carrental-paypal              ← Paypal REST client JSON/XML DTOs
 carrental-mailing             ← EMAIL sending by SMTPS/IMAPS/POP3S 
 carrental-messaging           ← QUEUES integration like Kafka with AVRO classes
 carrental-pdf                 ← PDF library with DTOs/helper classes
@@ -559,6 +560,7 @@ followed by further subpackages for each aspect, such as:
 * `endpoint/`   → HTTP classes for WEB access with helper classes
 * `resource/`   → HTTP classes for REST and JSON/XML DTOs with helper classes
 * `storage/`    → ORM classes for DB access with helper classes
+* 'paypal/'     → Paypal library
 * `mailing/`    → SMTPS/IMAPS/POP3S for EMAIL sending and server integration with helper classes
 * `messaging/`  → AVRO classes for Kafka integration with helper classes
 * `text/`       → Textformatting library with helper classes
