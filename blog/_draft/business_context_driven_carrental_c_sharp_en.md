@@ -180,7 +180,11 @@ carrental/
 │   ├── messaging/               ← Queues like Kafka
 │   │    └── CarRentedEvent.cs   ← AVRO DTOs
 │   │   
-│   └── .../            
+│   └── .../
+├── payment/                     ← (uses in endpoint/endpoint/)
+│   ├── PaypalPayment.cs         ← Paypal Decorator
+│   ├── CardPayment.cs           ← Credit card Decorator
+│   └── ...cs
 ├── user/                        ← user contepts and server side UI rendering
 │   ├── control/                 ← UI common controls (used in page/)
 │   ├── layout/                  ← UI Layout/Style components (used in page/)
