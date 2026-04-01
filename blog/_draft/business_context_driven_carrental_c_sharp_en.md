@@ -164,25 +164,26 @@ carrental/
 │   ├── NotifiedCustomer.cs      ← Email Decorator (use SmtpsEmail from exchange/mailing/)
 │   └── ...cs
 ├── exchange/
-│   ├── endpoint/                → HTTP client classes JSON/XML DTOs
+│   ├── paypal/                  → e.g. Paypal REST library, HTTP endpoint classes JSON/XML DTOs
 │   │   ├── Paypal.cs            ← API client
 │   │   ├── PaypalRequest.cs     ← Request DTO
 │   │   └── PaypalResponse.cs    ← Response DTO
 │   ├── resource/                → JSON/XML DTOs for REST service classes
-│   │   ├── CarResoure.cs        ← Resoure DTO
-│   │   └── CarResoures.cs       ← Resoure DTO
+│   │   ├── CarRequest.cs        ← Request DTO as JSON-Object  
+│   │   ├── CarResoure.cs        ← Response DTO as JSON-Object 
+│   │   └── CarResoures.cs       ← Response DTO as JSON-Array
 │   ├── storage/                 ← EF Core           
 │   │   ├── CarEntity.cs         ← EF Core DTO
 │   │   ├── CarDbContext.cs      ← EF Core DAO
 │   │   └── ...cs
 │   ├── mailing/                 → Email: SMTPS, IMAPS or POP3S Protocol  
-│   │    └── SmtpsEmail.cs       ← AVRO DTOs
+│   │    └── SmtpsEmail.cs       ← SMTPS Email
 │   ├── messaging/               ← Queues like Kafka
 │   │    └── CarRentedEvent.cs   ← AVRO DTOs
 │   │   
 │   └── .../
-├── payment/                     ← (uses endpoint/endpoint/)
-│   ├── PaypalPayment.cs         ← Paypal Decorator
+├── payment/                     ← (uses exchange/paypal/)
+│   ├── PaypalPayment.cs         ← Paypal API as Decorator
 │   ├── CardPayment.cs           ← Credit card Decorator
 │   └── ...cs
 ├── user/                        ← user contepts and server side UI rendering
