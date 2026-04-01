@@ -18,7 +18,7 @@ A Business Analyst shows you a System Context Diagram of a **Car Rental System**
  ┌─────────┐    ┌─────────────────┐    ┌─────────────┐
  │ Payment │    │                 │    │  Customer   │
  │ (PayPal)│────│   Car Rental    │────│ (Database)  │
- │         │    │                 │    │             │
+ │         │    │  (Application)  │    │             │
  └─────────┘    └─────────────────┘    └─────────────┘
                         │
                         ▼
