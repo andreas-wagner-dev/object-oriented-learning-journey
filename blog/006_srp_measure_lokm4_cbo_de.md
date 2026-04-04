@@ -260,8 +260,8 @@ Die CBO-Metrik dient als Indikator für die Wartbarkeit und Testbarkeit, da ein 
 * **CBO-Werte zwischen 1 und 5** gelten als Idealbereich, da dieser eine lose Kopplung signalisiert und die Wartbarkeit unterstützt.
 * **CBO-Wert größer als 5** deutet auf eine zu enge Verflechtung mit anderen Klassen hin.
 
-Der in diesem Beitrag verwendete Schwellenwert von **CBO > 5** ist kein universeller Standard. Je nach Quelle variiert der empfohlene Grenzwert erheblich: 
-Während [Sahraoui, Godin & Miceli](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf) in ihrem Artikel einen Maximalwert von **14** festlegen, empfiehlt [ObjectScript Quality](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo) einen deutlich niedrigeren Schwellenwert von **4**.
+Der in diesem Beitrag verwendete Schwellenwert von **CBO von 5** ist kein universeller Standard. Er stellt einen pragmatischen Mittelweg dar, der sowohl Fragmentierung als auch Testaufwand in einem realistischen Verhältnis hält. Je nach Quelle variiert der empfohlene Grenzwert erheblich: Während [Sahraoui, Godin & Miceli](https://www.iro.umontreal.ca/~sahraouh/papers/ICSM00.pdf) in ihrem Artikel einen Maximalwert von **14** festlegen, empfiehlt [ObjectScript Quality](https://objectscriptquality.com/docs/metrics/coupling-between-object-classes-cbo) einen deutlich niedrigeren Schwellenwert von **4**.
+
 
 Die Ermittlung der CBO-Werte und die Nuancen von Kopplungstypen veranschaulichen die folgenden Fallbeispiele.
 
