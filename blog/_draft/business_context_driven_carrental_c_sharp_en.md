@@ -90,10 +90,7 @@ com.company.carrental
 └── infrastructure/
 ```
 
-* **Where is Car?**
-* **Where is Customer?**
-* **Where is Payment?**
-* **Where is User from the Context Diagram?**
+* **Where is Car?**, **Where is Customer?**, **Where is Payment?**, **Where is User from the Context Diagram?**
 
 **You must mentally translate:**
 
@@ -231,6 +228,13 @@ The `application/` package provide main method + (DI) injections of technical in
 
 ### 3) Packages and Classes Reflect Business Concepts, Not Technical Roles
 
+✅ **Recommended: Package names from Context Diagram**
+- `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
+- `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
+- `exchange/` (everything that requires data exchange with external systems HTTP / REST / DB /...)
+
+Each package forms a logical unit that encapsulates a domain concept and hide implementation details.
+
 ✅ **Recommended: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
 - `CachedCar`, `StoredCar`, `ValidCar`
 - `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
@@ -241,17 +245,17 @@ The `application/` package provide main method + (DI) injections of technical in
 
 Only what the business customer says - with result oriented prefixes.
 
-✅ **Recommended: Package names from Context Diagram**
-- `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
-- `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
-- `exchange/` (everything that requires data exchange with external systems HTTP / REST / DB /...)
+❌ **Avoid: Technical package names — very Bad (it is a SHAME)**
+- `service/`, `repository/`, `controller/`, `presentation/`, `persistence/`
+- `common/`, `shared/`, `util/`, `helper/`
+- `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
 
-Each package forms a logical unit that encapsulates a domain concept and hide implementation details.
+Avoid technical package names for grouping by architecture patterns.
 
 ❌ **Avoid: Classes names - Verbs or technical suffixes — very Bad (it is a SHAME)**
-- `carpool/CarProcessor`, `carpool/CarManager`, `carpool/CarClient`
-- `payment/PaymentRepository`, `payment/PaymentService` (architecture pattern)
-- `customer/CustomerHandler`, `customer/CustomerValidator`
+- `CarProcessor`, `CarManager`, `CarClient`
+- `PaymentRepository`, `PaymentService` (architecture pattern)
+- `CustomerHandler`, `CustomerValidator`
 - `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes of architecture pattern)
 - `CarRepository`, `CarValidator` (technical roles)
 - `CarDTO`, `CarModel` (technical classification of architecture pattern)
@@ -259,13 +263,6 @@ Each package forms a logical unit that encapsulates a domain concept and hide im
 - `CarConsumer`, `CarProducer` (use Received/Published prefix instead)
 
 Avoid meaning of technical things and suffixes of architecture patterns.
-
-❌ **Avoid: Technical package names — very Bad (it is a SHAME)**
-- `service/`, `repository/`, `controller/`, `presentation/`, `persistence/`
-- `common/`, `shared/`, `util/`, `helper/`
-- `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
-
-Avoid technical package names for grouping by architecture patterns.
 
 ---
 ## 5. Step by Step - Implementation
@@ -669,6 +666,9 @@ Modular architectures are NOT an obvious next step, but a conscious decision to 
 * **Cognitive overload:** If a developer has to understand half the system to make a small change to the payment system, encapsulation has failed. The modular architecture restores the mental map.
 * **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
 * **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
+
+#### Identify Bounded Context
+
 
 #### Revised Structure & Strategic Decoupling
 
