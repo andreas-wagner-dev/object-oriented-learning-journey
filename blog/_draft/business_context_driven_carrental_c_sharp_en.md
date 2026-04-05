@@ -667,11 +667,9 @@ A modular structurce of code is NOT an obvious next step, but a conscious decisi
 
 #### 6.2.1. Identification and Definition of Bounded Contexts
 
-Based on the provided System Context Diagram, we can identify four distinct Bounded Contexts. Each represents a specific linguistic and functional boundary within the Car Rental System. It is important to note that a bounded context is not a simple database table, but rather a business area of ​​responsibility. 
+"Based on the provided System Context Diagram, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. 
+In the monolithic project structure, these contexts are organized as high-level packages. This architecture employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the exchange/ directory).The identified Bounded Contexts are as follows:"
 
-Based on the monolithic project structure provided, the Bounded Contexts are organized as high-level packages. 
-This structurce uses a Decorator-based approach to separate domain logic from technical concerns (found in the `exchange/` directory). 
-Here are the identified Bounded Contexts:
 
 **1. Car Pool Context (Fleet Management)**
 
@@ -699,7 +697,7 @@ Represented by the `payment/` package.
 
 **4. Booking & Reservation - User Context**
 
-Represented by the `user/` package. This is a "Web-Booking" context.
+Represented by the `user/` package. This is a "Booking" context.
 
 * **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
 * **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
