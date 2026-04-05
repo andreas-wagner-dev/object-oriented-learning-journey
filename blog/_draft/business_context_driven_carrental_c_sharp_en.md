@@ -88,7 +88,7 @@ com.company.carrental
 └── infrastructure/
 ```
 
-* **Where is Car?**, **Where is Customer?**, **Where is Payment?**, **Where is User from the Context Diagram?**
+**Where is Car?** - **Where is Customer?** - **Where is Payment?** - **Where is User from the Context Diagram?**
 
 **You must mentally translate:**
 
