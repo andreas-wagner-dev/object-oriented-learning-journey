@@ -668,7 +668,7 @@ A modular structurce of code is NOT an obvious next step, but a conscious decisi
 #### 6.2.1. Identification and Definition of Bounded Contexts
 
 "Based on the provided System Context Diagram, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. 
-In the monolithic project structure, these contexts are organized as high-level packages. This architecture employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the exchange/ directory).The identified Bounded Contexts are as follows:"
+In the monolithic project structure, these contexts are organized as high-level packages. This structure employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). The identified Bounded Contexts are as follows:
 
 
 **1. Car Pool Context (Fleet Management)**
@@ -731,8 +731,6 @@ Ideally, the shared module `carrental` should be completely eliminated. This is 
 * **Semantic Precision:** A `CustomerId` in `Payment` might require different validation rules than in `Customer` Support.
 
 #### FLAT Project Structure (WITHOUT Shared Kernel)
-
-
 
 ```
 carrental-carpool             ← project of customer bounded context 
