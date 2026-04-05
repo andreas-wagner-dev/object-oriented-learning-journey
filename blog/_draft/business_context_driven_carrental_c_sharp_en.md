@@ -658,19 +658,58 @@ carrental/
 ---
 ### 6.2 Modulith Artifacts (Phase 2)
 
-Modular architectures are NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
+A modular structurce of code is NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
 
 * **The team is growing:** With around 4-5 developers, natural areas of responsibility begin to emerge. Modules allow these boundaries to be defined in the code, so developers are less likely to "poach" on each other's code.
 * **Cognitive overload:** If a developer has to understand half the system to make a small change to the payment system, encapsulation has failed. The modular architecture restores the mental map.
 * **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
 * **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
 
-#### Identify Bounded Context
+#### Identify and define Bounded Contexts
+
+Based on the provided System Context Diagram, we can identify four distinct Bounded Contexts. Each represents a specific linguistic and functional boundary within the Car Rental System. It is important to note that a bounded context is not a simple database table, but rather a business area of ​​responsibility.
+
+Based on the monolithic project structure provided, the Bounded Contexts are organized as high-level packages. 
+This structurce uses a Decorator-based approach to separate domain logic from technical concerns (found in the `exchange/` directory).
+Here are the identified Bounded Contexts:
+
+**1. Car Pool Context (Fleet Management)**
+
+This is the most developed context in the structure, represented by the `carpool/` package.
+   
+* **Responsibility:** Managing the lifecycle and state of physical vehicles.
+* **Key Logic:** Validation (`ValidCar`), Caching (`CachedCar`), and Inventory management (SimpleCar).
+* **Technical Boundary:** It handles its own REST exposure (`ServedCarPool`) and Event Messaging (PublishedCar) by using DTOs from `exchange/resource/` and `exchange/messaging/`.
+
+**2. Customer Context**
+
+Represented by the `customer/` package.
+
+* **Responsibility:** Managing renter profiles and communication.
+* **Key Logic:** Persistence of customer data (`StoredCustomer`) and automated notifications.
+* **Technical Boundary:** It integrates with the mailing system (`NotifiedCustomer`) using the SMTP protocols defined in `exchange/mailing/`.
+
+**3. Payment Context**
+
+Represented by the `payment/` package.
+
+* **Responsibility:** Abstracting financial transactions.
+* **Key Logic:** Processing payments via different providers like `PayPal` or `CreditCard`.
+* **Technical Boundary:** It acts as a Gateway that consumes the specialized API clients and DTOs located in `exchange/paypal/`.
+
+**4. User & UI Context**
+
+Represented by the `user/` package. This is a "Web-Facing" context.
+
+* **Responsibility:** Handling user sessions and server-side UI rendering.
+* **Key Logic:** Managing the visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
+* **Technical Boundary:** It manages the WebUser (session-based) and StoredUser (DB-based) identities.
 
 
 #### Revised Structure & Strategic Decoupling
 
-This step begins with a single monolithic artifact, which is successively decomposed into autonomous modules. The functional boundaries of Bounded Contexts serve as the primary guideline for this modularization.
+This step begins with a single monolithic artifact, which is successively decomposed into autonomous modules. 
+The functional boundaries of Bounded Contexts serve as the primary guideline for this modularization.
 
 ```
 carrental-service              ← Deployable Unit
