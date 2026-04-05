@@ -665,12 +665,12 @@ A modular structurce of code is NOT an obvious next step, but a conscious decisi
 * **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
 * **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
 
-#### Identify and define Bounded Contexts
+#### 6.2.1. Identification and Definition of Bounded Contexts
 
-Based on the provided System Context Diagram, we can identify four distinct Bounded Contexts. Each represents a specific linguistic and functional boundary within the Car Rental System. It is important to note that a bounded context is not a simple database table, but rather a business area of ​​responsibility.
+Based on the provided System Context Diagram, we can identify four distinct Bounded Contexts. Each represents a specific linguistic and functional boundary within the Car Rental System. It is important to note that a bounded context is not a simple database table, but rather a business area of ​​responsibility. 
 
 Based on the monolithic project structure provided, the Bounded Contexts are organized as high-level packages. 
-This structurce uses a Decorator-based approach to separate domain logic from technical concerns (found in the `exchange/` directory).
+This structurce uses a Decorator-based approach to separate domain logic from technical concerns (found in the `exchange/` directory). 
 Here are the identified Bounded Contexts:
 
 **1. Car Pool Context (Fleet Management)**
@@ -697,16 +697,16 @@ Represented by the `payment/` package.
 * **Key Logic:** Processing payments via different providers like `PayPal` or `CreditCard`.
 * **Technical Boundary:** It acts as a Gateway that consumes the specialized API clients and DTOs located in `exchange/paypal/`.
 
-**4. User & UI Context**
+**4. Booking & Reservation - User Context**
 
-Represented by the `user/` package. This is a "Web-Facing" context.
+Represented by the `user/` package. This is a "Web-Booking" context.
 
-* **Responsibility:** Handling user sessions and server-side UI rendering.
-* **Key Logic:** Managing the visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
+* **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
+* **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
 * **Technical Boundary:** It manages the WebUser (session-based) and StoredUser (DB-based) identities.
 
 
-#### Revised Structure & Strategic Decoupling
+#### 6.2.2. Revised Structure & Strategic Decoupling
 
 This step begins with a single monolithic artifact, which is successively decomposed into autonomous modules. 
 The functional boundaries of Bounded Contexts serve as the primary guideline for this modularization.
@@ -734,15 +734,11 @@ Ideally, the shared module `carrental` should be completely eliminated. This is 
 
 #### FLAT Project Structure (WITHOUT Shared Kernel)
 
-```
-carrental                     ← deployable module-composition of all projects, main setup & DI
-├── application/              → depends on: core carrental and carrental-carpool, carrental-customer 
-│   ├── CarRentalApp.cs       ← ASP.NET Core Main + DI
-│   └── KafkaQueueConfig.cs   ← Kafka Configuration
-...                              
 
-carrental-carpool             ← Business (Bounded) Context
-├── carpool/                  → depends on: core carrental and -endpoint, -resource, -storage, -...
+
+```
+carrental-carpool             ← project of customer bounded context 
+├── carpool/                  → depends on: carpool-endpoint, carpool-resource, carpool-storage, carpool-mailing
 │   ├── CachedCarPool.cs      ← Cache Decorator
 │   ├── LoggedCar.cs          ← Logging Decorator
 ├   ...
@@ -755,10 +751,11 @@ carrental-carpool-endpoint    ← Http Clients with JSON DTOs
 carrental-carpool-resource    ← REST Services with JSON DTOs
 carrental-carpool-storage     ← ORM Entity DTOs with Repositories
 carrental-carpool-messaging   ← AVRO Schema generation of DTOs
+```
 
-
-carrental-customer             ← Business (Bounded) Context 
-├── customer/                  → depends on: core carrental and -endpoint, -resource, -storage, -...
+```
+carrental-customer             ← project of customer bounded context 
+├── customer/                  → depends on: customer-endpoint, customer-resource, customer-storage, -customer-mailing
 │   ├── StoredCustomer.cs      ← Database Decorator (use EF-Core and -Entities from ...-customer-storage project)
 │   ├── StoredCustomers.cs     ← Database Decorator (use EF-Core and -Entities from ...-customer-storage project)
 │   ├── NotifiedCustomer.cs    ← Email Decorator (use SmtpsEmail from ...-customer-mailing project)
@@ -773,8 +770,9 @@ carrental-customer-endpoint    ← Http Clients with JSON DTOs
 carrental-customer-resource    ← REST Services with JSON DTOs
 carrental-customer-storage     ← ORM Entity DTOs with Repositories
 carrental-customer-mailing     ← Email: SMTPS, IMAPS or POP3S Protocol
+```
 
-
+```
 carrental-payment
 ├── paypal/                    
 │   └── ...cs                  ← Payment Decorator (uses Paypal endpoint)
@@ -782,12 +780,22 @@ carrental-payment
 ...
 
 carrental-payment-paypal       ← endpoint of Paypal: REST library
+```
 
-
-carrental-user-client
+```
+carrental-user
 ...
 
 ```
+
+```
+carrental                     ← deployable module-composition of all projects, main setup & DI
+├── application/              → depends on: carrental-carpool, carrental-customer, carrental-payment, carrental-user  
+│   ├── CarRentalApp.cs       ← ASP.NET Core Main + DI
+│   └── KafkaQueueConfig.cs   ← Kafka Configuration
+...                              
+```
+
 
 #### HIERARCHICAL Project Structure (WITHOUT Shared Kernel)
 
