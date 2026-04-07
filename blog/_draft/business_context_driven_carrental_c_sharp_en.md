@@ -7,7 +7,7 @@
 
 *Why your code structure should be your Business-Context Diagram?*
 
-**Imagine:** A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with `Payment` providers (`PayPal`/`Stripe`), a `Customer` database, and `User` interfaces.
+Imagine: A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with **Payment** providers (`PayPal`/`Stripe`), a **Customer** database and **User** booking interface.
 
 ```
                        User
@@ -89,7 +89,7 @@ com.company.carrental
 └── infrastructure/
 ```
 
-**Where is Car?** - **Where is Customer?** - **Where is Payment?** - **Where is User from the Context Diagram?**
+**Where is Car?** - **Where is Customer?** - **Where is Payment?** - **Where is Booking from the Context Diagram?**
 
 **You must mentally translate:**
 
@@ -110,10 +110,10 @@ carrental/
 ├── carpool/
 ├── customer/
 ├── payment/
-└── user/
+└── booking/
 ```
 
-**This is a crucial strategic aspect of software architecture:** By directly mapping business contexts in code, we consistently apply the *Ubiquitous Language* at every level of system organization.
+**This is a crucial strategic aspect of software architecture:** By directly mapping business contexts in code, we consistently apply the *Ubiquitous Language* at every level of system organization. 
 
 **Benefits**
 
@@ -134,9 +134,50 @@ carrental/
 
 ---
 
+### 3. Identification and Definition of Bounded Contexts
+
+Based on the provided System Context Diagram, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. The identified Bounded Contexts are as follows:
+
+**1. Car Pool Context (Fleet Management)**
+
+This is the most developed context in the structure, represented by the `carpool/` package.
+   
+* **Responsibility:** Managing the lifecycle and state of physical vehicles.
+* **Key Logic:** Validation (`ValidCar`), Caching (`CachedCar`), and Inventory management (SimpleCar).
+* **Technical Boundary:** It handles its own REST exposure (`ServedCarPool`) and Event Messaging (PublishedCar) by using DTOs from `exchange/resource/` and `exchange/messaging/`.
+
+**2. Customer Context**
+
+Represented by the `customer/` package.
+
+* **Responsibility:** Managing renter profiles and communication.
+* **Key Logic:** Persistence of customer data (`StoredCustomer`) and automated notifications.
+* **Technical Boundary:** It integrates with the mailing system (`NotifiedCustomer`) using the SMTP protocols defined in `exchange/mailing/`.
+
+**3. Payment Context**
+
+Represented by the `payment/` package.
+
+* **Responsibility:** Abstracting financial transactions.
+* **Key Logic:** Processing payments via different providers like `PayPal` or `CreditCard`.
+* **Technical Boundary:** It acts as a Gateway that consumes the specialized API clients and DTOs located in `exchange/paypal/`.
+
+**4. Booking & Reservation - User Context**
+
+Represented by the `user/` package. This is a "Booking" context.
+
+* **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
+* **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
+* **Technical Boundary:** It manages the WebUser (session-based) and StoredUser (DB-based) identities.
+
+
+
 ## 3. Business Context-Driven Project Structure - Car-Rental
 
 The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
+
+In the monolithic project structure, these contexts are organized as high-level packages. This structure employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). 
+
 
 ```
 carrental/
@@ -182,15 +223,18 @@ carrental/
 │   ├── PaypalPayment.cs         ← Paypal API as Decorator
 │   ├── CardPayment.cs           ← Credit card Decorator
 │   └── ...cs
-├── user/                        ← user contepts and server side UI rendering
-│   ├── control/                 ← UI common controls (used in page/)
-│   ├── layout/                  ← UI Layout/Style components (used in page/)
-│   ├── page/                    ← UI pages of the application
-│   ├── Control.cs               ← abstract Control
-│   ├── Layout.cs                ← abstract Layout (Helper/Util)
-│   ├── Page.cs                  ← abstract Page extends Control
-│   ├── StoredUser.cs            ← Db Decorator
-│   └── WebUser.cs               ← Web/Session Decorator
+├── booking/    
+│   ├── user/                        ← user contepts and server side UI rendering
+│   │   ├── control/                 ← UI common controls (used in page/)
+│   │   ├── layout/                  ← UI Layout/Style components (used in page/)
+│   │   ├── page/                    ← UI pages of the application
+│   │   ├── Control.cs               ← abstract Control
+│   │   ├── Layout.cs                ← abstract Layout (Helper/Util)
+│   │   ├── Page.cs                  ← abstract Page extends Control
+│   │   ├── StoredUser.cs            ← Db Decorator
+│   │   └── WebUser.cs               ← Web/Session Decorator
+│   ├── IUser.cs                     ← Domain Interface
+│   ├── IUsers.cs 
 ├── CarNumber.cs                 ← Shared/Util/Helper for all packages
 ├── ICar.cs                      ← Domain Interface
 ├── ICarPool.cs                  ← Collection Interface
@@ -266,7 +310,7 @@ Avoid meaning of technical things and suffixes of architecture patterns.
 ---
 ## 5. Step by Step - Implementation
 
-### Domain Interfaces in Root Package
+### 5.1 Domain Interfaces in Root Package
 
 The **most important concepts and ideas** should be at the beginning - **in the top-level package** of the software. 
 This ensures *conceptual integrity*, preserving the *abstract identity* of the system before technical details distort it.
@@ -307,7 +351,7 @@ public interface ICarPool
 }
 ```
 
-### Composition Root Pattern
+### 5.2 Composition Root Pattern
 
 By placing the initial system class (as an interface/abstract class) at level "0" of the project structure, we clearly indicate the beginning of the story to the reader.
 
@@ -334,7 +378,7 @@ public interface ICarRentalApp
 
 ---
 
-### Detail Implementations with Decorators - `carpool/`
+### 5.3 Detail Implementations with Decorators - `carpool/`
 
 Business logic as code – the radical idea behind the Decorator pattern.  
 This means that your code structure should precisely reflect your business process.
@@ -462,7 +506,7 @@ Each business requirement = one decorator. *Clear*. *Traceable*. *Maintainable*.
 
 ---
 
-### Implementation of Composition Root in `application/`
+### 5.4 Implementation of Composition Root in `application/`
 
 The Composition Root is an application infrastructure component.
 > Only applications should have Composition Roots. Libraries and frameworks shouldn't.
@@ -522,9 +566,11 @@ public class CarRentalApp : ICarRentalApp
 
 ---
 
-### Isolation of Frameworks and Libraries 
+### 5.5 Isolation of Frameworks and Libraries 
 
-**1) Ideally**, technical aspects implemented through frameworks or libraries should be outsourced to **separate projects** and integrated into the main project as dependencies.
+Anti-Corruption Layer
+
+**Option 1) Ideally**, technical aspects implemented through frameworks or libraries should be outsourced to **separate projects** and integrated into the main project as dependencies.
 
 ```
 carrental                     → depends on: -endpoint, -resource, -storage, -... 
@@ -546,8 +592,8 @@ For example, if you are using ORMs like EF Core, isolate them in a **separate pr
 
 **Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical of projects.
 
-**2) Alternative:** suitable for projects with small codebases.
-
+**Option 2) Alternative:** suitable for projects with small codebases.
+3.3 The Exchange Package: 
 Isolate all technical aspects (everything that requires data exchange with external systems)
 
 * into a dedicated package `exchange/`
@@ -644,17 +690,29 @@ public class CarDbContext : DbContext
 
 ---
 
-## 6. Evolution Path
+## 6. Architectural Evolution Path
 
-### 6.1 Mono Artifact (Phase 1)
+A structure should evolve with the business and architectual needs. This section outlines a proven three-phase approach.
+
+### 6.1 Phase 1: Monolith
+
+**Start Here:** Single deployable artifact with all bounded contexts in one package.
+
 ```
-carrental/
+carrental/          ← Single assembly
 ├── application/
 ├── carpool/
 ├── customer/
+├── exchange/
 ├── payment/
 └── user/
 ```
+
+**When to use:**
+•	Starting a new project
+•	Team size < 10 developers
+•	Business boundaries are still evolving
+•	Simple deployment requirements
 
 ---
 ### 6.2 Modulith Artifacts (Phase 2)
@@ -666,43 +724,6 @@ A modular structurce of code is NOT an obvious next step, but a conscious decisi
 * **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
 * **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
 
-#### 6.2.1. Identification and Definition of Bounded Contexts
-
-"Based on the provided System Context Diagram, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. 
-In the monolithic project structure, these contexts are organized as high-level packages. This structure employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). The identified Bounded Contexts are as follows:
-
-
-**1. Car Pool Context (Fleet Management)**
-
-This is the most developed context in the structure, represented by the `carpool/` package.
-   
-* **Responsibility:** Managing the lifecycle and state of physical vehicles.
-* **Key Logic:** Validation (`ValidCar`), Caching (`CachedCar`), and Inventory management (SimpleCar).
-* **Technical Boundary:** It handles its own REST exposure (`ServedCarPool`) and Event Messaging (PublishedCar) by using DTOs from `exchange/resource/` and `exchange/messaging/`.
-
-**2. Customer Context**
-
-Represented by the `customer/` package.
-
-* **Responsibility:** Managing renter profiles and communication.
-* **Key Logic:** Persistence of customer data (`StoredCustomer`) and automated notifications.
-* **Technical Boundary:** It integrates with the mailing system (`NotifiedCustomer`) using the SMTP protocols defined in `exchange/mailing/`.
-
-**3. Payment Context**
-
-Represented by the `payment/` package.
-
-* **Responsibility:** Abstracting financial transactions.
-* **Key Logic:** Processing payments via different providers like `PayPal` or `CreditCard`.
-* **Technical Boundary:** It acts as a Gateway that consumes the specialized API clients and DTOs located in `exchange/paypal/`.
-
-**4. Booking & Reservation - User Context**
-
-Represented by the `user/` package. This is a "Booking" context.
-
-* **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
-* **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
-* **Technical Boundary:** It manages the WebUser (session-based) and StoredUser (DB-based) identities.
 
 
 #### 6.2.2. Revised Structure & Strategic Decoupling
@@ -717,7 +738,7 @@ carrental-service              ← Deployable Unit
 ├── carrental-carpool          ← Bounded Context: Fleet Management
 ├── carrental-customer         ← Bounded Context: CRM / Identity
 ├── carrental-payment          ← Bounded Context: Billing & Transactions
-└── carrental-user-client      ← Frontend / API Gateway Logic
+└── carrental-booking-client   ← Frontend / API Gateway Logic
 ```
 
 **Strategic Note on Decoupling**
@@ -726,7 +747,7 @@ carrental-service              ← Deployable Unit
 
 Ideally, the shared module `carrental` should be completely eliminated. This is achieved by duplicating necessary *Value Objects*, such as `CarId`, `CustomerId`, and `PaymentId`, directly within their respective contexts. 
 
-**Why avoid the Shared Kernel or common module?**
+**Why avoid the Shared Kernel or Common module?**
 * **Autonomy:** Each *bounded context* remains truly independent and can evolve its data structures without side effects on others.
 * **Preventing Bloat:** It prevents a `common module` from becoming an uncontrolled *"dumping ground"* for unrelated logic.
 * **Semantic Precision:** A `CustomerId` in `Payment` might require different validation rules than in `Customer` Support.
@@ -735,7 +756,7 @@ Ideally, the shared module `carrental` should be completely eliminated. This is 
 
 ```
 carrental-carpool             ← project of customer bounded context 
-├── carpool/                  → depends on: carpool-endpoint, carpool-resource, carpool-storage, carpool-mailing
+├── carpool/                  → depends on: carpool-endpoint, *-resource, *-storage, *-mailing
 │   ├── CachedCarPool.cs      ← Cache Decorator
 │   ├── LoggedCar.cs          ← Logging Decorator
 ├   ...
@@ -752,9 +773,9 @@ carrental-carpool-messaging   ← AVRO Schema generation of DTOs
 
 ```
 carrental-customer             ← project of customer bounded context 
-├── customer/                  → depends on: customer-endpoint, customer-resource, customer-storage, -customer-mailing
-│   ├── StoredCustomer.cs      ← Database Decorator (use EF-Core and -Entities from ...-customer-storage project)
-│   ├── StoredCustomers.cs     ← Database Decorator (use EF-Core and -Entities from ...-customer-storage project)
+├── customer/                  → depends on: customer-endpoint, *-resource, *-storage, -*-mailing
+│   ├── StoredCustomer.cs      ← Database Decorator (use EF-Core and -Entities from ...-*-storage project)
+│   ├── StoredCustomers.cs     ← Database Decorator (use EF-Core and -Entities from ...-*-storage project)
 │   ├── NotifiedCustomer.cs    ← Email Decorator (use SmtpsEmail from ...-customer-mailing project)
 │   └── ...cs
 ├── CarId.cs                   ← Value Object
@@ -780,14 +801,14 @@ carrental-payment-paypal       ← endpoint of Paypal: REST library
 ```
 
 ```
-carrental-user
+carrental-booking
 ...
 
 ```
 
 ```
 carrental                     ← deployable module-composition of all projects, main setup & DI
-├── application/              → depends on: carrental-carpool, carrental-customer, carrental-payment, carrental-user  
+├── application/              → depends on: carrental-carpool, *-customer, *-payment, *-booking  
 │   ├── CarRentalApp.cs       ← ASP.NET Core Main + DI
 │   └── KafkaQueueConfig.cs   ← Kafka Configuration
 ...                              
@@ -800,7 +821,7 @@ If the number of projects becomes too unwieldy, the technical aspects can be enc
 
 ```
 carrental                     ← Root Module-Composition of all Projects
-├── application/              → depends on: core carrental and carrental-carpool, carrental-customer 
+├── application/              → depends on: carrental-carpool, *-customer, *-payment, *-booking  
 │   ├── CarRentalApp.cs       ← ASP.NET Core Main + DI
 │   └── KafkaQueueConfig.cs   ← Kafka Configuration
 ...
@@ -824,14 +845,14 @@ carrental-payment
 └── payment-paypal
 
 
-carrental-user-client
+carrental-booking
 ├── user                 
 └── ...
 
 ```
 ---
 
-### 6.3 Microservices (Phase 3)
+### Phase 3: Microservices
 
 Microservices are NOT an automatic next step. They bring significant complexity. Only consider microservices if:
 
@@ -858,20 +879,32 @@ Split at package/module boundaries.
 Each service is structured like the **Mono or Modulith** artifact (in Phase 1 or 2)
 ```
 carrental-gateway-service   ← artifact (build as deployable .dll)
-carrental-client-service    ← artifact frontend (build as deployable  .dll)
+carrental-booking-service    ← artifact frontend (build as deployable  .dll)
 carrental-carpool-service   ← artifact (build as deployable  .dll)
 carrental-customer-service  ← artifact (build as deployable .dll)
 carrental-payment-service   ← artifact (build as deployable .dll)
 ```
 
-Each phase maintains the same principles - only deployment boundaries change.
+**Note:** Each service maintains the SAME internal structure as the monolith/modulith. Only deployment boundaries change.
+
+
+### 7. Conclusion: Screaming Architecture
 
 **Screaming Architecture:** —> means your package structure IS your business context diagram. 
 
-No *mental* translation or mapping needed.
+**No *mental* translation or mapping needed.**
+
+When someone asks:
+•	"Where is the car logic?" → carpool/
+•	"Where is payment processing?" → payment/
+•	"Where is customer data?" → customer/
+•	"Where is the user booking?" → booking/
+
+
+The structure screams the business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
 
 ---
-## 7. References
+## 8. References and Further Reading
 
 * Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
 * Philipp Hauer, [Package by Feature (2020)](https://phauer.com/2020/package-by-feature/)
@@ -884,5 +917,4 @@ No *mental* translation or mapping needed.
 * Yegor Bugayenko, [Don't Create Objects That End With -ER](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
 * Yegor Bugayenko, [A Compound Name Is a Code Smell](https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html)
 * Yegor Bugayenko, [Evil Suffix For Object Names](https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html)
-* Wikipedia, [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
 
