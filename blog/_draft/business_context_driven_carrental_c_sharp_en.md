@@ -10,7 +10,8 @@
 **Imagine:** A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with `Payment` providers (`PayPal`/`Stripe`), a `Customer` database, and `User` interfaces.
 
 ```
-                      User
+                       User
+                    (Booking)
                         │
                         ▼
  ┌─────────┐    ┌─────────────────┐    ┌─────────────┐
