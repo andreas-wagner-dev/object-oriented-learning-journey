@@ -1,5 +1,5 @@
 # Business Context-Driven Code Structure 
-**State: Darft!!!**
+**State: Draft!!!**
 > *The Missing Link Between Business and Code*
 
 
