@@ -134,47 +134,12 @@ carrental/
 
 ---
 
-### 3. Identification and Definition of Bounded Contexts
-
-Based on the provided System Context Diagram, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. The identified Bounded Contexts are as follows:
-
-**1. Car Pool Context (Fleet Management)**
-
-This is the most developed context in the structure, represented by the `carpool/` package.
-   
-* **Responsibility:** Managing the lifecycle and state of physical vehicles.
-* **Key Logic:** Validation (`ValidCar`), Caching (`CachedCar`), and Inventory management (SimpleCar).
-* **Technical Boundary:** It handles its own REST exposure (`ServedCarPool`) and Event Messaging (PublishedCar) by using DTOs from `exchange/resource/` and `exchange/messaging/`.
-
-**2. Customer Context**
-
-Represented by the `customer/` package.
-
-* **Responsibility:** Managing renter profiles and communication.
-* **Key Logic:** Persistence of customer data (`StoredCustomer`) and automated notifications.
-* **Technical Boundary:** It integrates with the mailing system (`NotifiedCustomer`) using the SMTP protocols defined in `exchange/mailing/`.
-
-**3. Payment Context**
-
-Represented by the `payment/` package.
-
-* **Responsibility:** Abstracting financial transactions.
-* **Key Logic:** Processing payments via different providers like `PayPal` or `CreditCard`.
-* **Technical Boundary:** It acts as a Gateway that consumes the specialized API clients and DTOs located in `exchange/paypal/`.
-
-**4. Booking & Reservation - User Context**
-
-Represented by the `user/` package. This is a "Booking" context.
-
-* **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
-* **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
-* **Technical Boundary:** It manages the WebUser (session-based) and StoredUser (DB-based) identities.
-
-
 
 ## 3. Business Context-Driven Project Structure - Car-Rental
 
 The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
+
+## 3.1 The monolithic project structure
 
 In the monolithic project structure, these contexts are organized as high-level packages. This structure employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). 
 
@@ -248,6 +213,43 @@ carrental/
 
 * When business says *“there’s a problem with car rentals”*, you go to **carpool/**
 * When they say *“payment processing is slow”*, you go to **payment/**
+
+### 3.2 Identification and Definition of Bounded Contexts
+
+Based on the provided System Context Diagram, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. The identified Bounded Contexts are as follows:
+
+**1. Car Pool Context (Fleet Management)**
+
+This is the most developed context in the structure, represented by the `carpool/` package.
+   
+* **Responsibility:** Managing the lifecycle and state of physical vehicles.
+* **Key Logic:** Validation (`ValidCar`), Caching (`CachedCar`), and Inventory management (SimpleCar).
+* **Technical Boundary:** It handles its own REST exposure (`ServedCarPool`) and Event Messaging (PublishedCar) by using DTOs from `exchange/resource/` and `exchange/messaging/`.
+
+**2. Customer Context**
+
+Represented by the `customer/` package.
+
+* **Responsibility:** Managing renter profiles and communication.
+* **Key Logic:** Persistence of customer data (`StoredCustomer`) and automated notifications.
+* **Technical Boundary:** It integrates with the mailing system (`NotifiedCustomer`) using the SMTP protocols defined in `exchange/mailing/`.
+
+**3. Payment Context**
+
+Represented by the `payment/` package.
+
+* **Responsibility:** Abstracting financial transactions.
+* **Key Logic:** Processing payments via different providers like `PayPal` or `CreditCard`.
+* **Technical Boundary:** It acts as a Gateway that consumes the specialized API clients and DTOs located in `exchange/paypal/`.
+
+**4. Booking & Reservation - User Context**
+
+Represented by the `user/` package. This is a "Booking" context.
+
+* **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
+* **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
+* **Technical Boundary:** It manages the WebUser (session-based) and StoredUser (DB-based) identities.
+
 
 ---
 
