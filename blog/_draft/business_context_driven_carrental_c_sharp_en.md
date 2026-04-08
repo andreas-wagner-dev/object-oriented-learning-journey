@@ -707,7 +707,7 @@ carrental/          ← Single assembly
 ├── customer/
 ├── exchange/
 ├── payment/
-└── user/
+└── booking/
 ```
 
 **When to use:**
