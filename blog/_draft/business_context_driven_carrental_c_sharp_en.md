@@ -113,7 +113,7 @@ carrental/
 └── booking/
 ```
 
-**This is a crucial strategic aspect of software architecture:** By directly mapping business contexts in code, we consistently apply the *Ubiquitous Language* at every level of system organization. 
+**This is a crucial strategic aspect of software architecture:** By directly mapping bounded contexts in code, we consistently apply the Ubiquitous Language at every level of system organization.
 
 **Benefits**
 
@@ -141,8 +141,7 @@ The packages of an object-oriented system are based on clear OO-Design principle
 
 ## 3.1 The monolithic project structure
 
-In the monolithic project structure, these contexts are organized as high-level packages. This structure employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). 
-
+In the monolithic project structure, these contexts are organized as high-level packages. 
 
 ```
 carrental/
@@ -213,6 +212,8 @@ carrental/
 
 * When business says *“there’s a problem with car rentals”*, you go to **carpool/**
 * When they say *“payment processing is slow”*, you go to **payment/**
+
+The above structure employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). 
 
 ### 3.2 Identification and Definition of Bounded Contexts
 
