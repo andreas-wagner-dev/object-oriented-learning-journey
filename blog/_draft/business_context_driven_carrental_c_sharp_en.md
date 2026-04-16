@@ -878,17 +878,86 @@ Microservices are NOT an automatic next step. They bring significant complexity.
 
 **Warning:** If you have fewer than 15 developers or your modules are not yet stable, stick with the modular monolith!
 
-Split at package/module boundaries.
-Each service is structured like the **Mono or Modulith** artifact (in Phase 1 or 2)
+The following division is the logical consequence of Business Context-Driven structure. It separates  Bounded Contexts along with their technical infrastructure dependencies to individual microservices. Each service is structured like the **Mono or Modulith** artifact (in Phase 1 or 2).
+
 ```
 carrental-gateway-service   ← artifact (build as deployable .dll)
-carrental-booking-service    ← artifact frontend (build as deployable  .dll)
+
 carrental-carpool-service   ← artifact (build as deployable  .dll)
 carrental-customer-service  ← artifact (build as deployable .dll)
 carrental-payment-service   ← artifact (build as deployable .dll)
-```
 
+carrental-booking-service   ← artifact frontend (build as deployable  .dll)
+```
 **Note:** Each service maintains the SAME internal structure as the monolith/modulith. Only deployment boundaries change.
+
+### Frontend as a Standalone Microservice (BFF Pattern)
+
+In modern cloud-native architectures, it is often beneficial to treat the frontend not merely as a static asset, a collection of files (such as .js, .css, .html), but as a standalone "Backend-for-Frontend" (BFF) service. The BFF functions as a customized user interface precisely tailored to the needs of a specific client (e.g., web, mobile, or smart device). This enables a strict separation of presentation logic and business interfaces.
+
+```
+carrental-booking-client             → Frontend Project / BFF Service Project 
+├── src/
+│   ├── application/                  → startup: composition root pure JS / Node.js
+│   │   ├── NativeCarrentalApp.js     → decorator pure JS: main entry point
+│   │   ├── ServedCarrentalApp.js     → decorator Node.js: main entry point
+│   │   ...
+│   ├── exchange/                     → access of external resources
+│   │   ├── database/                 → database / schema generation
+│   │   │   ├── UserDb
+│   │   │   ...
+│   │   ├── endpoint/                 → HTTP clients for business services
+│   │   │   ├── CarPoolApi.js
+│   │   │   ├── CustomerApi.js
+│   │   │   ├── PaymentApi.js
+│   │   ...
+│   ├── control/                 → custom UI elements / external plugins (jquery ui)
+│   │   ├── InputGroup.js        → composite container
+│   │   ├── TextInput.js         → input field
+│   │   ├── TextLabel.js         → output field
+│   │   ├── Form.js              → abstract Form extends Control  
+│   │   ├── Page.js              → abstract Page extends Control  
+│   │   ├── List.js              → abstract List extends Control 
+│   │   ├── Table.js             → abstract Table extends Control  
+│   │   ├── Menu.js              → abstract Menu extends Control  
+│   │   ├── Navigation.js        → abstract Rooting extends Control
+│   │   ...
+│   ├── layout/                  → CSS styles / pictures / layouts 
+│   │   ├── icon/                → icons of application
+│   │   ├── image/               → images of application
+│   │   │   ├── background.png
+│   │   │   ...
+│   │   ├── layout.css           → CSS common rules for layouts
+│   │   ├── Layout.js            → layout as helper class
+│   │ ...
+│   ├── page/                    → HTML sites or JS page components
+│   │   ├── admin-form.js
+│   │   ├── car-details.js    
+│   │   ├── carpool-list.js  
+│   │   ├── payment-form.js  
+│   │   ├── user-profile.js
+│   │   ├── main-form.js  
+│   │   ├── main-menu.js  
+│   │  ...
+│   ├── customer/                → implementation of domain logic of Person
+│   │   ├── ValidAddress.js      → decorator for validation
+│   │   ├── ValidCustomer.js     → decorator for validation
+│   │   ...                      → other decorators (Logged*, Cashed*)
+│   ├── Address.js               → abstract domain class/interface
+│   ├── Control.js               → abstract UI component class (composite-pattern)
+│   ├── Car.js                   → abstract domain class/interface
+│   ├── CarPool.js               → abstract domain class/interface
+│   ├── Customer.js              → abstract domain class/interface
+│   ├── CarrentalApp.js          → abstract main class for composition root
+│   ├── UserProfile.js           → domain class extends Person
+│   ...
+├── test/                        → Unit and integration tests
+├── .gitignore                   → Environment variables
+├── .environment
+├── readme.md
+├── package.json
+│   ...
+```
 
 
 ### 7. Conclusion: Screaming Architecture
@@ -897,11 +966,11 @@ carrental-payment-service   ← artifact (build as deployable .dll)
 
 **No *mental* translation or mapping needed.**
 
-When someone asks:
-•	"Where is the car logic?" → carpool/
-•	"Where is payment processing?" → payment/
-•	"Where is customer data?" → customer/
-•	"Where is the user booking?" → booking/
+When someone asks: 
+*	"Where is the car logic?" → `carpool/`
+*	"Where is payment processing?" → `payment/`
+*	"Where is customer data?" → `customer/`
+*	"Where is the user booking?" → `booking/`
 
 
 The structure screams the business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
