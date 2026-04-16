@@ -164,7 +164,7 @@ carrental/
 │   ├── StoredCustomers.cs       ← Database Decorator
 │   ├── NotifiedCustomer.cs      ← Email Decorator (use SmtpsEmail from exchange/mailing/)
 │   └── ...cs
-├── exchange/
+├── exchange/                    → Anti-Corruption Layer
 │   ├── paypal/                  → e.g. Paypal REST library, HTTP endpoint classes JSON/XML DTOs
 │   │   ├── Paypal.cs            ← API client
 │   │   ├── PaypalRequest.cs     ← Request DTO
