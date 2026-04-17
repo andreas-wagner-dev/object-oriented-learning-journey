@@ -113,6 +113,8 @@ carrental/
 └── booking/
 ```
 
+**This is a crucial strategic aspect of software architecture:** By directly mapping bounded contexts in code, we consistently apply the Ubiquitous Language at every level of system organization.
+
 When someone asks: 
 *	"Where is the car logic?" → `carpool/`
 *	"Where is payment processing?" → `payment/`
@@ -120,9 +122,6 @@ When someone asks:
 *	"Where is the user booking?" → `booking/`
 
 **No *mental* translation or mapping needed.**
-
-**Screaming Architecture:** —> means your package structure IS your business context diagram. 
-**This is a crucial strategic aspect of software architecture:** By directly mapping bounded contexts in code, we consistently apply the Ubiquitous Language at every level of system organization.
 
 **Benefits**
 
@@ -413,7 +412,7 @@ public interface ICarRentalApp
 ### 4.3 Detail Implementations with Decorators - `carpool/`
 
 Business logic as code – the radical idea behind the Decorator pattern.  
-This means that your code structure should precisely reflect your business process.
+This means that the code structure should precisely reflect the business process.
 
 E.g. in a car rental business, when you rent a car, you:
 1. Validate the rental request
@@ -513,9 +512,9 @@ public class StoredCar : ICar
           → PublishedCar (Events)
 ```
 
-**The Core Message: Decorators Are Your Business Logic**
+**The Core Message: Decorators Are the Business Logic**
 
-Here's the paradigm shift:
+The paradigm shift:
 
 * **Traditional thinking:** "Decorators are a technical pattern for adding functionality"
 * **Business-driven thinking:** "Decorators ARE the business process, made executable"
