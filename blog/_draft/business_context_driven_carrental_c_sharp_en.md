@@ -299,7 +299,8 @@ The `application/` package provide main method + (DI) injections of technical in
 ✅ **Recommended: Package names from Context Diagram**
 - `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
 - `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
-- `exchange/` (everything that requires data exchange with external systems HTTP / REST / DB /...)
+- `exchange/` (everything that requires data exchange with external systems or libraries HTTP / REST / DB / PDF /...)
+- `application/` (The application itself - package provide startup class with main method + (DI) injections of technical infrastructure)
 
 Each package forms a logical unit that encapsulates a domain concept and hide implementation details.
 
