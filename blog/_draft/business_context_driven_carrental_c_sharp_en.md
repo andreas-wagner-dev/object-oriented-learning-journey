@@ -139,9 +139,21 @@ carrental/
 
 The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
 
-## 3.1 The monolithic project structure
+## 3.1 The monolithic project structure: Business Capability Mapping (Top-Down)
 
-In the monolithic project structure, these contexts are organized as high-level packages. 
+In monolithic project structures, **Business Capability Mapping** is a key method for context analysis. It examines a company's organizational capabilities, focusing on the "what" of the business rather than the "how." The business capabilities identified in this way are organized as overarching packages within the monolithic structure. This ensures that the software architecture reflects the business domain.
+
+The **Ubiquitous Language Analysis** serves to fine-tune the boundaries: As soon as the same term takes on a different meaning in different departments, this is a clear indication of separate contexts.
+
+**Application:** A car rental company must manage vehicles (Carpool), support customers (Customer), process payments (Payment), and manage reservations (Booking).
+
+A striking example of linguistic differentiation can be found in the concept of the customer:
+
+* In the **Customer** context, the customer is treated as a legal entity with master data and history.
+* In the **Booking** context, however, the same customer acts as a user, performing interactions on the platform and making reservations.
+
+These different perspectives lead to the "customer" being represented by different models (`Customer` vs. `User`) depending on the context, in order to clearly separate the respective business logic.
+
 
 ```
 carrental/
