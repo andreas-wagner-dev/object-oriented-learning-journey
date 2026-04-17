@@ -113,6 +113,15 @@ carrental/
 └── booking/
 ```
 
+When someone asks: 
+*	"Where is the car logic?" → `carpool/`
+*	"Where is payment processing?" → `payment/`
+*	"Where is customer data?" → `customer/`
+*	"Where is the user booking?" → `booking/`
+
+**No *mental* translation or mapping needed.**
+
+**Screaming Architecture:** —> means your package structure IS your business context diagram. 
 **This is a crucial strategic aspect of software architecture:** By directly mapping bounded contexts in code, we consistently apply the Ubiquitous Language at every level of system organization.
 
 **Benefits**
@@ -975,18 +984,16 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 
 ### 7. Conclusion: Screaming Architecture
 
-**Screaming Architecture:** —> means your package structure IS your business context diagram. 
+There are **3 golden Rules** - to achieves the next level of readability:
 
-**No *mental* translation or mapping needed.**
+1. Packages should never depend on sub-packages.
+2. Sub-packages should not introduce new concepts, just more details.
+3. Packages and classes should reflect business-concepts, not technical ones.
 
-When someone asks: 
-*	"Where is the car logic?" → `carpool/`
-*	"Where is payment processing?" → `payment/`
-*	"Where is customer data?" → `customer/`
-*	"Where is the user booking?" → `booking/`
+so that the code tells a story.
 
+**Screaming Architecture:** —> means the structure screams the business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
 
-The structure screams the business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
 
 ---
 ## 8. References and Further Reading
