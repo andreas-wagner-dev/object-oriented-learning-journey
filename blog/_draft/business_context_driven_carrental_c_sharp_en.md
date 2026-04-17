@@ -143,18 +143,20 @@ When someone asks:
 
 ---
 
+## 3. Object-Oriented Domain-Driven Analysis and Design
 
-## 3. Business Context-Driven Project Structure - Car-Rental
+### 3.1 Object-Oriented Domain-Driven Analysis
 
-The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
+**Business Capability Mapping (Top-Down)**
 
-## 3.1 The monolithic project structure: Business Capability Mapping (Top-Down)
+In modular monolithic structure, **Business Capability Mapping** is the primary method for context analysis and the definition of **Domain Responsibility**. It examines an organization’s capabilities by **focusing on the "what"** of the business rather than the "how." These identified capabilities are organized as top-level packages within the monolith, ensuring that the software architecture directly mirrors the business domain.
 
-In monolithic project structures, **Business Capability Mapping** is a key method for context analysis. It examines a company's organizational capabilities, focusing on the "what" of the business rather than the "how." The business capabilities identified in this way are organized as overarching packages within the monolithic structure. This ensures that the software architecture reflects the business domain.
+**Ubiquitous Language**
 
-The **Ubiquitous Language Analysis** serves to fine-tune the boundaries: As soon as the same term takes on a different meaning in different departments, this is a clear indication of separate contexts.
+The  **Ubiquitous Language analysis** serves to fine-tune these boundaries and define the **Key Logic:** Whenever a single term assumes different meanings across departments, it signals the need for separate Bounded Contexts.
 
-**Application:** A car rental company must manage vehicles (Carpool), support customers (Customer), process payments (Payment), and manage reservations (Booking).
+
+**Application:** A car rental company must manage vehicles (**Carpool**), support customers (**Customer**), process payments (**Payment**), and manage reservations of users (**Booking**).
 
 A striking example of linguistic differentiation can be found in the concept of the customer:
 
@@ -163,6 +165,54 @@ A striking example of linguistic differentiation can be found in the concept of 
 
 These different perspectives lead to the "customer" being represented by different models (`Customer` vs. `User`) depending on the context, in order to clearly separate the respective business logic.
 
+**Key Logic Example:** The distinction becomes critical when defining business rules. For instance, the logic for "Deleting a Customer" varies significantly:
+* In the **Customer Context**, a "Delete" might trigger a check for legal data retention periods or active contracts.
+* In the **Booking Context**, the same "Delete" action simply means invalidating an active web session or clearing a temporary resevation of a cart.
+
+**Technical Boundary (Anti-Corruption Layer)**
+
+The following structure implements an Anti-Corruption Layer (ACL) as concept to strictly decouple the core domain logic from external subsystems and technical infrastructure concerns. 
+
+By employing an **Adapter/Bridge or Decorator-based approach**, this layer (centralized in the `exchange/` directory) acts  as a translator between different semantics. It ensures that the internal domain remains "pure" and is never compromised by the data structures or technical constraints of external dependencies, such as legacy databases, third-party APIs (e.g., PayPal), or messaging systems (e.g., Kafka).
+
+### 3.2 Object-Oriented Domain-Driven Design (OO-DDD)
+
+Based on the provided System Context Diagram and stratigic analysis, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. The identified Bounded Contexts are as follows:
+
+**1. Car Pool Context (Fleet Management)**
+
+This is the most developed context in the structure, represented by the `carpool/` package.
+   
+* **Responsibility:** Managing the lifecycle and state of physical vehicles.
+* **Key Logic:** Validation (`ValidCar`), Caching (`CachedCar`), and Inventory management (SimpleCar).
+* **Technical Boundary:** It handles its own REST exposure (`ServedCarPool`) and Event Messaging (PublishedCar) by using DTOs from `exchange/resource/` and `exchange/messaging/`.
+
+**2. Customer Context**
+
+Represented by the `customer/` package.
+
+* **Responsibility:** Managing renter profiles and communication.
+* **Key Logic:** Persistence of customer data (`StoredCustomer`) and automated notifications.
+* **Technical Boundary:** It integrates with the mailing system (`NotifiedCustomer`) using the SMTP protocols defined in `exchange/mailing/`.
+
+**3. Payment Context**
+
+Represented by the `payment/` package.
+
+* **Responsibility:** Abstracting financial transactions.
+* **Key Logic:** Processing payments via different providers like `PayPal` or `CreditCard`.
+* **Technical Boundary:** It acts as a Gateway that consumes the specialized API clients and DTOs located in `exchange/paypal/`.
+
+**4. Booking & Reservation - User Context**
+
+Represented by the `booking/` package. This is a "user" context.
+
+* **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
+* **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
+* **Technical Boundary:** It manages the WebUser (session-based) and StoredUser (DB-based) identities.
+
+
+The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
 
 ```
 carrental/
@@ -219,61 +269,21 @@ carrental/
 │   │   ├── StoredUser.cs            ← Db Decorator
 │   │   └── WebUser.cs               ← Web/Session Decorator
 │   ├── IUser.cs                     ← Domain Interface
-│   ├── IUsers.cs
-│   ├── IUserReservations.cs     ← Domain Collection Interface
+│   ├── IUsers.cs                    ← Domain Collection Interface
+│   ├── StoredReservation.cs         ← Database Decorator
+│   ...
 ├── CarNumber.cs                 ← Shared/Util/Helper for all packages
 ├── ICar.cs                      ← Domain Interface
 ├── ICarPool.cs                  ← Collection Interface
 ├── ICustomer.cs
 ├── ICustomers.cs
 ├── IReservation.cs              ← Domain Interface
-├── IReservations.cs             ← Collection Interface
+├── IReservations.cs             ← Domain Collection Interface
 ├── ICarRentalApp.cs             ← Composition Root Interface
 └── ...
 ```
 
-The above structure employs a Adapter-/Bridge-Pattern or Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). 
-
-### 3.2 Identification and Definition of Bounded Contexts
-
-Based on the provided System Context Diagram, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. The identified Bounded Contexts are as follows:
-
-**1. Car Pool Context (Fleet Management)**
-
-This is the most developed context in the structure, represented by the `carpool/` package.
-   
-* **Responsibility:** Managing the lifecycle and state of physical vehicles.
-* **Key Logic:** Validation (`ValidCar`), Caching (`CachedCar`), and Inventory management (SimpleCar).
-* **Technical Boundary:** It handles its own REST exposure (`ServedCarPool`) and Event Messaging (PublishedCar) by using DTOs from `exchange/resource/` and `exchange/messaging/`.
-
-**2. Customer Context**
-
-Represented by the `customer/` package.
-
-* **Responsibility:** Managing renter profiles and communication.
-* **Key Logic:** Persistence of customer data (`StoredCustomer`) and automated notifications.
-* **Technical Boundary:** It integrates with the mailing system (`NotifiedCustomer`) using the SMTP protocols defined in `exchange/mailing/`.
-
-**3. Payment Context**
-
-Represented by the `payment/` package.
-
-* **Responsibility:** Abstracting financial transactions.
-* **Key Logic:** Processing payments via different providers like `PayPal` or `CreditCard`.
-* **Technical Boundary:** It acts as a Gateway that consumes the specialized API clients and DTOs located in `exchange/paypal/`.
-
-**4. Booking & Reservation - User Context**
-
-Represented by the `booking/` package. This is a "user" context.
-
-* **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
-* **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
-* **Technical Boundary:** It manages the WebUser (session-based) and StoredUser (DB-based) identities.
-
-
----
-
-## 4. Key Principles of Packaging and Naming Conventions
+### 3.3. Key Principles of Packaging and Naming Conventions
 
 ### 1) Packages Should Never Depend on Sub-Packages
 
@@ -330,10 +340,9 @@ Avoid technical package names for grouping by architecture patterns.
 
 Avoid meaning of technical things and suffixes of architecture patterns.
 
----
-## 5. Step by Step - Implementation
+## 4. Implementing Object-Oriented Domain-Driven Design
 
-### 5.1 Domain Interfaces in Root Package
+### 4.1 Domain Interfaces in Root Package
 
 The **most important concepts and ideas** should be at the beginning - **in the top-level package** of the software. 
 This ensures *conceptual integrity*, preserving the *abstract identity* of the system before technical details distort it.
@@ -374,7 +383,7 @@ public interface ICarPool
 }
 ```
 
-### 5.2 Composition Root Pattern
+### 4.2 Composition Root Pattern
 
 By placing the initial system class (as an interface/abstract class) at level "0" of the project structure, we clearly indicate the beginning of the story to the reader.
 
@@ -401,7 +410,7 @@ public interface ICarRentalApp
 
 ---
 
-### 5.3 Detail Implementations with Decorators - `carpool/`
+### 4.3 Detail Implementations with Decorators - `carpool/`
 
 Business logic as code – the radical idea behind the Decorator pattern.  
 This means that your code structure should precisely reflect your business process.
@@ -529,7 +538,7 @@ Each business requirement = one decorator. *Clear*. *Traceable*. *Maintainable*.
 
 ---
 
-### 5.4 Implementation of Composition Root in `application/`
+### 4.4 Implementation of Composition Root in `application/`
 
 The Composition Root is an application infrastructure component.
 > Only applications should have Composition Roots. Libraries and frameworks shouldn't.
@@ -589,7 +598,7 @@ public class CarRentalApp : ICarRentalApp
 
 ---
 
-### 5.5 Isolation of Frameworks and Libraries 
+### 4.5 Isolation of Frameworks and Libraries 
 
 Anti-Corruption Layer
 
@@ -713,11 +722,11 @@ public class CarDbContext : DbContext
 
 ---
 
-## 6. Architectural Evolution Path
+## 5. Architectural Evolution Path
 
 A structure should evolve with the business and architectual needs. This section outlines a proven three-phase approach.
 
-### 6.1 Phase 1: Monolith
+### 5.1 Phase 1: Monolith
 
 **Start Here:** Single deployable artifact with all bounded contexts in one package.
 
@@ -738,7 +747,7 @@ carrental/          ← Single assembly
 •	Simple deployment requirements
 
 ---
-### 6.2 Modulith Artifacts (Phase 2)
+### 5.2 Modulith Artifacts (Phase 2)
 
 A modular structurce of code is NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
 
@@ -749,7 +758,7 @@ A modular structurce of code is NOT an obvious next step, but a conscious decisi
 
 
 
-#### 6.2.2. Revised Structure & Strategic Decoupling
+#### 5.2.2. Revised Structure & Strategic Decoupling
 
 This step begins with a single monolithic artifact, which is successively decomposed into autonomous modules. 
 The functional boundaries of Bounded Contexts serve as the primary guideline for this modularization.
@@ -875,7 +884,7 @@ carrental-booking
 ```
 ---
 
-### Phase 3: Microservices
+### 5.3 Phase 3: Microservices
 
 Microservices are NOT an automatic next step. They bring significant complexity. Only consider microservices if:
 
@@ -980,7 +989,7 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 ```
 
 
-### 7. Conclusion: Screaming Architecture
+### 6. Conclusion: Screaming Architecture
 
 There are **3 golden Rules** - to achieves the next level of readability:
 
@@ -994,7 +1003,7 @@ so that the code tells a story.
 
 
 ---
-## 8. References and Further Reading
+## 7. References and Further Reading
 
 * Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
 * Philipp Hauer, [Package by Feature (2020)](https://phauer.com/2020/package-by-feature/)
