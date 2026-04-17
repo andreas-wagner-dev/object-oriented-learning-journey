@@ -198,14 +198,15 @@ carrental/
 │   │   ├── StoredUser.cs            ← Db Decorator
 │   │   └── WebUser.cs               ← Web/Session Decorator
 │   ├── IUser.cs                     ← Domain Interface
-│   ├── IUsers.cs 
+│   ├── IUsers.cs
+│   ├── IUserReservations.cs     ← Domain Collection Interface
 ├── CarNumber.cs                 ← Shared/Util/Helper for all packages
 ├── ICar.cs                      ← Domain Interface
 ├── ICarPool.cs                  ← Collection Interface
 ├── ICustomer.cs
 ├── ICustomers.cs
-├── IUser.cs                     ← Domain Interface
-├── IUsers.cs                    ← Collection Interface
+├── IReservation.cs              ← Domain Interface
+├── IReservations.cs             ← Collection Interface
 ├── ICarRentalApp.cs             ← Composition Root Interface
 └── ...
 ```
