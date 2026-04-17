@@ -138,7 +138,7 @@ carrental/
 
 
 --
-## 3. Business Context-Driven Project Structure - Car-Rental
+## 3. The Strategic Part: Design
 
 ## 3.1 The monolithic project structure
 
@@ -193,6 +193,7 @@ A striking example of linguistic differentiation can be found in the concept of 
 * In the **Booking** context, however, the same customer acts as a user, performing interactions on the platform and making reservations.
 
 These different perspectives lead to the "customer" being represented by different models (`Customer` vs. `User`) depending on the context, in order to clearly separate the respective business logic.
+
 
 
 
@@ -271,7 +272,7 @@ carrental/
 
 The above structure employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). 
 
-
+## 3. The Technical Part: Implementation
 ---
 
 ## 4. Key Principles of Packaging and Naming Conventions
