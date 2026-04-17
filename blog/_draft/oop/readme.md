@@ -990,6 +990,12 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 
 ### 7. Conclusion: Screaming Architecture
 
+There are **3 golden Rules** - to achieves the next level of readability - so that the code tells a story.
+ 
+1. Packages should never depend on sub-packages. 
+2. Sub-packages should not introduce new concepts, just more details. 
+3. Packages and classes should reflect business-concepts, not technical ones.
+
 **Screaming Architecture:** —> means your package structure IS your business context diagram. 
 
 **No *mental* translation or mapping needed.**
