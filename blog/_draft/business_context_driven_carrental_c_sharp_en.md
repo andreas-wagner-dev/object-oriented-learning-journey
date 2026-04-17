@@ -245,7 +245,7 @@ Represented by the `payment/` package.
 
 **4. Booking & Reservation - User Context**
 
-Represented by the `user/` package. This is a "Booking" context.
+Represented by the `booking/` package. This is a "user" context.
 
 * **Responsibility:** Handling Booking & user sessions and server-side UI rendering.
 * **Key Logic:** Managing the user Reservation and visual layout (`layout/`), UI components (`control/`), and web pages (`page/`).
