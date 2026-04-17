@@ -232,10 +232,7 @@ carrental/
 └── ...
 ```
 
-* When business says *“there’s a problem with car rentals”*, you go to **carpool/**
-* When they say *“payment processing is slow”*, you go to **payment/**
-
-The above structure employs a Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). 
+The above structure employs a Adapter-/Bridge-Pattern or Decorator-based approach to rigorously decouple core domain logic from technical infrastructure concerns (located in the `exchange/` directory). 
 
 ### 3.2 Identification and Definition of Bounded Contexts
 
