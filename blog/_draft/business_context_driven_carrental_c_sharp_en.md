@@ -152,8 +152,7 @@ In modular monolithic structure, **Business Capability Mapping** is the primary 
 
 The  **Ubiquitous Language analysis** serves to fine-tune these boundaries and define the **Key Logic:** Whenever a single term assumes different meanings across departments, it signals the need for separate Bounded Contexts.
 
-
-**Application:** A car rental company must manage vehicles (**Carpool**), support customers (**Customer**), process payments (**Payment**), and manage reservations of users (**Booking**).
+A car rental company must manage vehicles (**Carpool**), support customers (**Customer**), process payments (**Payment**), and manage reservations of users (**Booking**).
 
 A striking example of linguistic differentiation can be found in the concept of the customer:
 
