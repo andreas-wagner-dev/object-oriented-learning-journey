@@ -121,23 +121,21 @@ When someone asks:
 *	"Where is customer data?" → `customer/`
 *	"Where is the user booking?" → `booking/`
 
-**No *mental* translation or mapping needed.**
-
-**Benefits**
+**Benefits: No *mental* translation or mapping needed.** 
 
 **1. Code Navigation**
-- Before: 1-2 minutes to locate feature
-- After: 10-30 seconds
+- *Before:* 1-2 minutes to locate feature
+- *After:* 10-30 seconds
 - Improvement: ~80-90% less time
 
 **2. Onboarding New Developers**
-- Before: "Where is the car logic?" → 5 minutes explanation
-- After: "Look in the `carpool/` package" → 5-10 seconds
+- *Before:* "Where is the car logic?" → 5 minutes explanation
+- *After:* "Look in the `carpool/` package" → 5-10 seconds
 - Improvement: ~90% less explanation effort
 
 **3. Business-Developer Communication**
-- Before: Business says "PayPal problem" → Developer mentally translates to technical packages
-- After: Business says "PayPal problem" → Developer goes directly to `payment/`
+- *Before:* Business says "PayPal problem" → Developer mentally translates to technical packages
+- *After:* Business says "PayPal problem" → Developer goes directly to `payment/`
 - Improvement: No translation overhead
 
 ---
