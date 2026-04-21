@@ -148,6 +148,40 @@ When someone asks:
 --
 ## 3. The Strategic Part: Design
 
+### 3.1 Object-Oriented Domain-Driven Analysis
+
+**Business Capability Mapping (Top-Down)**
+
+In modular monolithic structure, **Business Capability Mapping** is the primary method for context analysis and the definition of **Domain Responsibility**. It examines an organization’s capabilities by **focusing on the "what"** of the business rather than the "how." These identified capabilities are organized as top-level packages within the monolith, ensuring that the software architecture directly mirrors the business domain.
+
+**Ubiquitous Language**
+
+The  **Ubiquitous Language analysis** serves to fine-tune these boundaries and define the **Key Logic:** Whenever a single term assumes different meanings across departments, it signals the need for separate Bounded Contexts.
+
+A car rental company must manage vehicles (**Carpool**), support customers (**Customer**), process payments (**Payment**), and manage reservations of users (**Booking**).
+
+A striking example of linguistic differentiation can be found in the concept of the customer:
+
+* In the **Customer** context, the customer is treated as a legal entity with master data and history.
+* In the **Booking** context, however, the same customer acts as a user, performing interactions on the platform and making reservations.
+
+These different perspectives lead to the "customer" being represented by different models (`Customer` vs. `User`) depending on the context, in order to clearly separate the respective business logic.
+
+**Key Logic Example:** The distinction becomes critical when defining business rules. For instance, the logic for "Deleting a Customer" varies significantly:
+* In the **Customer Context**, a "Delete" might trigger a check for legal data retention periods or active contracts.
+* In the **Booking Context**, the same "Delete" action simply means invalidating an active web session or clearing a temporary resevation of a cart.
+
+**Technical Boundary (Anti-Corruption Layer)**
+
+The following structure implements an Anti-Corruption Layer (ACL) as concept to strictly decouple the core domain logic from external subsystems and technical infrastructure concerns. 
+
+By employing an **Adapter/Bridge or Decorator-based approach**, this layer (centralized in the `exchange/` directory) acts  as a translator between different semantics. It ensures that the internal domain remains "pure" and is never compromised by the data structures or technical constraints of external dependencies, such as legacy databases, third-party APIs (e.g., PayPal), or messaging systems (e.g., Kafka).
+
+### 3.2 Object-Oriented Domain-Driven Design (OO-DDD)
+
+Based on the provided System Context Diagram and stratigic analysis, we can identify four distinct **Bounded Contexts**. Each represents a *specific linguistic* and *functional* **boundary** within the Car Rental System. It is important to note that a Bounded Context is not merely a database table, but a dedicated business area of responsibility. The identified Bounded Contexts are as follows:
+
+
 ## 3.1 The monolithic project structure
 
 --
