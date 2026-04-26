@@ -8,11 +8,11 @@ Während herkömmliche Konzepte Software oft als Ansammlung technischer Schichte
 
 Im Kontext des Drehbuchs als Bauanleitung kann so die fachliche Domäne in den Kollaborations-, Konstruktions - und Aufruf -Graphen als eine strukturierte Geschichte eines Spielfilms abgebildet werden:
 
-🎭 **Der Kollaborations-Graph (Das Ensemble):** Er zeigt, welche Charaktere dauerhaft miteinander verbunden sind. Dies entspricht der Besetzung der Hauptrollen und ihrer Beziehungen im Drehbuch.
+🏗️ Der Kompositions-Graph (Der Set-Aufbau / Die Regie): Dieser Graph zeigt den Aufbau des Sets - ausgehend vom den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) montiert, bevor die Kamera rollt. In der Fachlogik selbst ist dieser Graph unsichtbar. Im Fokus stehe das statische Klassen Gerüst (Wer besitzt wen?).
 
-🏗️ **Der Konstruktions-Graph (Die Regie / Der Set-Aufbau):** Dieser Graph zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) montiert, bevor die Kamera rollt. In der Fachlogik selbst ist dieser Graph unsichtbar.
+🎭 Der Kollaborations-Graph (Das Ensemble): Er zeigt, welche Charaktere dauerhaft miteinander verbunden sind . Dies entspricht der Besetzung der Hauptrollen und ihrer Beziehungen im Drehbuch. Hier steht der Nachrichtenaustausch (Wer ruft welche Methode auf?) im Vordergrund.
 
-💬 **Der Aufruf-Graph (Die Handlung):** Dies ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren zur Laufzeit. Dabei gilt das „Tell, Don’t Ask“-Prinzip als zentrale Regieanweisung, um Objekte als autonome Problemlöser mit fachlich prägnantem Verhalten zu entwerfen.
+💬 Der Aufruf-Graph (Die Handlung): Dies ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren während den Ablauf der Szenen. Hier zeigt sich zur Laufzeit  welche Methode welche andere Methode aufruft. Dabei gilt das „Tell, Don’t Ask“-Prinzip als zentrale Regie
 
 Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, müssen die Akte und Szenen in einer systematisch nachvollziehbaren Struktur organisiert sein. Dafür gelten drei pragmatische Regeln für die Paket-Struktur:
 
