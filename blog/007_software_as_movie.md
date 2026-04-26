@@ -1,4 +1,4 @@
-# **🎞️ Das Software als Spielfilm-Drehbuch**
+# **🎞️ Software als Spielfilm-Drehbuch**
 
 Das Aufkommen von Künstlicher Intelligenz (KI) wie ChatGPT, Claude oder GitHub Copilot hat die Softwareentwicklung grundlegend revolutioniert. Die alte Faustregel *„10-mal mehr lesen als schreiben“* hat sich heute nicht etwa erledigt, sondern verschärft und steht somit unter völlig neuen Vorzeichen. Um diese Flut an generiertem Code überhaupt noch menschlich erfassen und beherrschen zu können, bedarf es einer  neuen Perspektive auf die Softwarearchitektur. 
 
