@@ -6,21 +6,23 @@ Obwohl Computer heute problemlos sämtliche Datenstrukturen verarbeiten, bevorzu
 
 Während herkömmliche Konzepte Software oft als Ansammlung technischer Schichten mit zustandslosen Service-Klassen und passiven Datencontainern sehen, inszeniert die Spielfilm-Philosophie das objektorientierte System als Graphen intelligenter Akteure, welches logisch in Akte sowie Szenen gegliedert ist und die Charaktere mit ihren Fähigkeiten in den Handlungen beschreibt.
 
-Im Kontext des Drehbuchs als Bauanleitung kann so die fachliche Domäne in den Kollaborations-, Konstruktions - und Aufruf -Graphen als eine strukturierte Geschichte eines Spielfilms abgebildet werden:
+Im Kontext des Drehbuchs als Bauanleitung kann so die fachliche Domäne in den Kollaborations-, Konstruktions- und Aufruf-Graphen als eine strukturierte Geschichte eines Spielfilms abgebildet werden:
 
-🏗️ Der Kompositions-Graph (Der Set-Aufbau / Die Regie): Dieser Graph zeigt den Aufbau des Sets - ausgehend vom den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) montiert, bevor die Kamera rollt. In der Fachlogik selbst ist dieser Graph unsichtbar. Im Fokus stehe das statische Klassen Gerüst (Wer besitzt wen?).
+🏗️ Der Konstruktions-Graph (Die Regie / Der Set-Aufbau): Dieser Graph zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) montiert, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
 
-🎭 Der Kollaborations-Graph (Das Ensemble): Er zeigt, welche Charaktere dauerhaft miteinander verbunden sind . Dies entspricht der Besetzung der Hauptrollen und ihrer Beziehungen im Drehbuch. Hier steht der Nachrichtenaustausch (Wer ruft welche Methode auf?) im Vordergrund.
+🎭 Der Kollaborations-Graph (Das Ensemble): Er zeigt, welche Charaktere dauerhaft miteinander verbunden sind. Dies entspricht der Besetzung der Hauptrollen und ihrer Beziehungen im Drehbuch. Hier steht die statische Vernetzung im Vordergrund (Wer kennt wen und kann miteinander kommunizieren?).
 
-💬 Der Aufruf-Graph (Die Handlung): Dies ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren während den Ablauf der Szenen. Hier zeigt sich zur Laufzeit  welche Methode welche andere Methode aufruft. Dabei gilt das „Tell, Don’t Ask“-Prinzip als zentrale Regie
+💬 Der Aufruf-Graph (Die Handlung): Dies ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren während des Ablaufs der Szenen. Hier zeigt sich zur Laufzeit der dynamische Nachrichtenaustausch (Wer ruft gerade welche Methode auf?).
+
+Das „Tell, Don’t Ask“-Prinzip gilt als zentrale Regieanweisung, um Objekte als autonome Problemlöser mit fachlich prägnantem Verhalten zu entwerfen.
 
 Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, müssen die Akte und Szenen in einer systematisch nachvollziehbaren Struktur organisiert sein. Dafür gelten drei pragmatische Regeln für die Paket-Struktur:
 
-1. **Keine Zirkelbezüge:** Pakete dürfen nicht von ihren Unterpaketen abhängen.
+Abhängigkeiten: Pakete dürfen nicht von ihren Unterpaketen abhängen und keine Zirkelbezüge bilden.
 
-2. **Detailverfeinerung:** Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren lediglich bestehende Details.
+Detailverfeinerung: Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren nur bereits bestehende Details.
 
-3. **Fachsprache:** Pakete müssen die Sprache der realen Fachwelt sprechen (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
+Fachsprache: Pakete reflektieren die Sprache der realen Fachwelt (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
 
 # **🎬 Die cineastische Projektstruktur**
 
