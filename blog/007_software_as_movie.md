@@ -1331,3 +1331,9 @@ In einer Ära, in der KIs in Sekundenschnelle endlose Zeilen Code generieren kö
 Lassen Sie uns als Entwickler aufhören, nur technische Schablonen auszufüllen oder blind KI-generierte Fragmente aneinanderzureihen. Werden wir zu Regisseuren und Autoren. Schreiben wir Software, die nicht nur funktioniert, sondern ihre eigene Bestimmung stolz und lesbar auf die Leinwand bringt.
 
 **Klappe zu, Film ab!**
+
+
+
+
+
+https://testing.googleblog.com/2008/08/where-have-all-singletons-gone.html
