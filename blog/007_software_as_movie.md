@@ -1133,7 +1133,7 @@ public class WeddingCloseUp {
 
 ## **7. Die Regie (Directing)**
 
-Die Regie ist der **Composition Root** der Anwendung. Hier werden alle Fäden zusammengeführt: Die Charaktere werden gecastet, die Outfits werden angezogen, die Bühnentechnik wird aufgebaut und die Szenen werden in die Filmrolle eingefügt.
+Die Regie ist der **Composition Root** der Anwendung. Hier werden alle Fäden zusammengeführt: Die *Charaktere* werden gecastet, die *Outfits* werden angezogen, die *Bühnentechnik* wird aufgebaut und die *Szenen* werden in die Filmrolle eingefügt.
 
 ```
 manuscript/  
@@ -1141,7 +1141,9 @@ manuscript/
    └─ InstalledMovie.java      ← Der Composition Root
 ```
 
-### **7.1 Der Composition Root (InstalledMovie.java)**
+### **7.1 Der Composition Root**
+
+Die `InstalledMovie.java` Klassen realisiert den *Composition Root* der gesamten Anwendung. Hier wird das komplette Drehbuch zusammengestellt und die Filmrolle befüllt.  
 
 ```java
 package manuscript.directing;
@@ -1189,8 +1191,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**  
- * InstalledMovie ist der Composition Root der gesamten Anwendung.  
- * Hier wird das komplette Drehbuch zusammengestellt und die Filmrolle befüllt.  
+ * Der Composition Root der gesamten Anwendung.
  */  
 public class InstalledMovie implements Movie {
 
@@ -1266,16 +1267,16 @@ public class InstalledMovie implements Movie {
 }
 ```
 
-**Die Schlüsselelemente der Regie:**
+### **7.2 Schlüsselelemente der Regie**
 
-* **Die main als Kinosaal:** Die main()-Methode ist frei von jeglicher Logik. Sie drückt nur auf den „Play"-Knopf.
-* **Die Filmrolle als Queue:** Durch das Hinzufügen der Szenen in eine Queue (Warteschlange) im start()-Prozess wird die Reihenfolge der Chronologie festgeschrieben. nextScene() rattert diese einfach herunter, ohne die konkreten Szenen-Inhalte kennen zu müssen.
+* **Die main als Kinosaal:** Die `main()`-Methode ist frei von jeglicher Logik. Sie drückt nur auf den „Play"-Knopf.
+* **Die Filmrolle als Queue:** Durch das Hinzufügen der Szenen in eine Queue (Warteschlange) im `start()`-Prozess wird die Reihenfolge der Chronologie festgeschrieben. `nextScene()` rattert diese einfach herunter, ohne die konkreten Szenen-Inhalte kennen zu müssen.
 * **Volle Kapselung:** Selbst in der Hauptschleife bleibt das System blind für technische Details. Es kennt nur den Befehl execute() der jeweiligen Szene.
 
 Wenn du die Applikation ausführst, wird die Konsole die Chronologie des Drehbuchs exakt wie ein Drehbuch-Protokoll ausgeben:
 
 1. **Szene 1:** Die Trauung läuft, die Braut nimmt den Ring entgegen und das Persistent-Kostüm speichert das Objekt lautlos im Hintergrund.
-2. **Szene 2:** Der Bräutigam zahlt per pay(). Der StripePaymentAdapter übersetzt den Befehl für die executeTransaction() der Stripe-API.
+2. **Szene 2:** Der Bräutigam zahlt per `pay()`. Der StripePaymentAdapter übersetzt den Befehl für die `executeTransaction()` der Stripe-API.
 3. **Szene 3:** Der Beamer schaltet sich ein. Erst **jetzt** ruft der Proxy das echte Video ab und schont bis zu diesem Moment den Arbeitsspeicher.
 4. **Szene 4-7:** Die weiteren Akte der Lebensgeschichte laufen nacheinander ab.
 
@@ -1296,27 +1297,29 @@ Exception in thread "main" java.lang.IllegalStateException: Ring konnte nicht ü
 
 Der Debugger „schreit" die Fachlichkeit. Man sieht keinen generischen Daten-Update, sondern eine Braut, die in einer bestimmten Szene einen Ring entgegennimmt und eine fachliche Zustandsänderung bewirkt. Die Technik dient der Geschichte.
 
-Selbst im Fehlerfall „schreit" dieser Stacktrace seine fachliche Bedeutung heraus: Man sieht sofort, in welcher Szene (Wedding), bei welcher Kameraeinstellung (CloseUp) oder bei welcher konkreten Figur (Bride) die Erzählung unterbrochen wurde.
+Selbst im Fehlerfall „schreit" dieser Stacktrace seine fachliche Bedeutung heraus: Man sieht sofort, in welcher Szene (`Wedding`), bei welcher Kameraeinstellung (`CloseUp`) oder bei welcher konkreten Figur (`Bride`) die Erzählung unterbrochen wurde.
 
-## **9. Prinzipien und Regeln: Code als Drehbuch**
+## **9. Prinzipien und Bauplan mit Regeln: Code als Drehbuch**
 
 ### **9.1 Die leitenden Prinzipien**
 
-* **„Tell, Don't Ask":** Objekte werden nicht nach ihrem Zustand abgefragt, sondern durch prägnante Methoden direkt zum Handeln aufgefordert.
 * **Graphen als Skript:** Der *Kollaborations-Graph* bildet das Ensemble, der *Konstruktions-Graph* regelt den Set-Aufbau und der *Aufruf-Graph* beschreibt den Dialog zur Laufzeit.
+
+* **„Tell, Don't Ask":** Objekte werden nicht nach ihrem Zustand abgefragt, sondern durch prägnante Methoden direkt zum Handeln aufgefordert.
+
 * **System als Drehbuch:** Die Projektorganisation erfolgt nicht in Schichten, sondern hierarchisch nach Domänenkonzepten.
 
-### **9.2 Die 3 Paket-Regeln**
+### **📦 9.2 Bauplan und Paket-Regeln**
 
-1. Ein übergeordnetes Paket darf niemals von seinen Unterpaketen abhängen.
-2. Unterpakete führen keine neuen Fachkonzepte ein, sondern detaillieren nur bestehende.
-3. Pakete und deren Klassen müssen die Sprache der realen Fachwelt sprechen, nicht die der technischen Umsetzung.
+Um eine saubere Struktur zu gewährleisten, müssen die Ebenen und ihre Pakete nach folgenden Prinzipien aufgebaut sein:
 
-### **9.3 Der Bauplan für Ebenen**
+**Fokus auf Ebene Null:** Auf der obersten Ebene eines Pakets liegen ausschließlich Schnittstellen, abstrakte Klassen, Wertobjekte und Entitäten der Hauptkonzepte – völlig frei von technischem Ballast.
 
-* **Fokus auf Ebene Null:** Schnittstellen, abstrakte Klassen, Wertobjekte und Entitäten der Hauptkonzepte liegen ohne technischen Ballast auf der obersten Ebene eines Pakets.
-* **Rolle der Unterpakete:** Die darunterliegenden Unterpakete stellen ausschließlich die konkreten Implementierungen für diese Konzepte bereit.
-* **Hierarchie:** Die Verwendung von Unterpaketen ist zulässig, sofern sie nicht auf derselben Hierarchieebene liegen. Zyklische Abhängigkeiten sind dabei auszuschließen.
+**Hierarchie ohne Zyklen:** Ein übergeordnetes Paket darf niemals von seinen Unterpaketen abhängen. Die Verwendung von Unterpaketen ist zulässig, sofern sie nicht auf derselben Hierarchieebene liegen. Zyklische Abhängigkeiten sind dabei strikt auszuschließen.
+
+**Rolle der Unterpakete:** Die Unterpakete führen keine neuen Fachkonzepte ein. Sie detaillieren lediglich die bestehenden Konzepte der übergeordnete Ebene und stellen nur die konkreten Implementierungen bereit.
+
+**Fachsprache:** Alle Pakete und deren Klassen müssen die Sprache der realen Fachwelt sprechen, nicht die der technischen Umsetzung.
 
 ---
 
