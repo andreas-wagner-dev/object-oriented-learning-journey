@@ -8,21 +8,21 @@ Während herkömmliche Konzepte Software oft als Ansammlung technischer Schichte
 
 Im Kontext des Drehbuchs als Bauanleitung kann so die fachliche Domäne in den Kollaborations-, Konstruktions- und Aufruf-Graphen als eine strukturierte Geschichte eines Spielfilms abgebildet werden:
 
-🏗️ Der Konstruktions-Graph (Die Regie / Der Set-Aufbau): Dieser Graph zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) montiert, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
+**Der Konstruktions-Graph (Die Regie / Der Set-Aufbau):** Dieser Graph zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) montiert, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
 
-🎭 Der Kollaborations-Graph (Das Ensemble): Er zeigt, welche Charaktere dauerhaft miteinander verbunden sind. Dies entspricht der Besetzung der Hauptrollen und ihrer Beziehungen im Drehbuch. Hier steht die statische Vernetzung im Vordergrund (Wer kennt wen und kann miteinander kommunizieren?).
+**Der Kollaborations-Graph (Das Ensemble):** Er zeigt, welche Charaktere dauerhaft miteinander verbunden sind. Dies entspricht der Besetzung der Hauptrollen und ihrer Beziehungen im Drehbuch. Hier steht die statische Vernetzung im Vordergrund (Wer kennt wen und kann miteinander kommunizieren?).
 
-💬 Der Aufruf-Graph (Die Handlung): Dies ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren während des Ablaufs der Szenen. Hier zeigt sich zur Laufzeit der dynamische Nachrichtenaustausch (Wer ruft gerade welche Methode auf?).
+**Der Aufruf-Graph (Die Handlung):** Dies ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren während des Ablaufs der Szenen. Hier zeigt sich zur Laufzeit der dynamische Nachrichtenaustausch (Wer ruft gerade welche Methode auf?).
 
-Das „Tell, Don’t Ask“-Prinzip gilt als zentrale Regieanweisung, um Objekte als autonome Problemlöser mit fachlich prägnantem Verhalten zu entwerfen.
+Das **„Tell, Don’t Ask“-Prinzip** gilt als zentrale Regieanweisung, um Objekte als autonome Problemlöser mit fachlich prägnantem Verhalten zu entwerfen.
 
 Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, müssen die Akte und Szenen in einer systematisch nachvollziehbaren Struktur organisiert sein. Dafür gelten drei pragmatische Regeln für die Paket-Struktur:
 
-Abhängigkeiten: Pakete dürfen nicht von ihren Unterpaketen abhängen und keine Zirkelbezüge bilden.
+**Abhängigkeiten:** Pakete dürfen nicht von ihren Unterpaketen abhängen und keine Zirkelbezüge bilden.
 
-Detailverfeinerung: Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren nur bereits bestehende Details.
+**Detailverfeinerung:** Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren nur bereits bestehende Details.
 
-Fachsprache: Pakete reflektieren die Sprache der realen Fachwelt (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
+**Fachsprache:** Pakete reflektieren die Sprache der realen Fachwelt (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
 
 # **🎬 Die cineastische Projektstruktur**
 
@@ -53,7 +53,7 @@ manuscript/
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
-Ein Teammitglied (Investor, Fachexperte, Architekt oder Entwickler), das dieses Projekt öffnet, muss nicht raten, worum es geht – es liest das Inhaltsverzeichnis einer Lebensgeschichte.
+Ein Teammitglied (Investor, Fachexperte, Architekt oder Entwickler), das dieses Projekt öffnet, muss nicht raten, worum es geht - es liest das Inhaltsverzeichnis einer Lebensgeschichte.
 
 **Die Bestandteile der Inszenierung**
 
@@ -62,7 +62,7 @@ Ein Teammitglied (Investor, Fachexperte, Architekt oder Entwickler), das dieses 
 * **Die Charaktere & Outfits:** Unter character liegen die konkreten Ausprägungen der Akteure. Der Ordner outfit beherbergt die Kleidung, die den Figuren je nach Szene neue Fähigkeiten verleihen, ohne deren innere Identität zu verändern.  
 * **Backstage:** Die technische Infrastruktur bleibt als dienende Technik strikt in der backstage verborgen.  
 * **Stage:** Die Benutzeroberfläche agiert als stage im Rampenlicht und nimmt die Vorführung für den Zuschauer auf.  
-* **Das Directing:** In diesem Paket fließen die Fäden zusammen. Hier wird entschieden, welche Figuren in welcher Szene aufeinandertreffen.
+* **Directing:** In diesem Paket fließen die Fäden zusammen. Hier wird entschieden, welche Figuren in welcher Szene aufeinandertreffen.
 
 ## **1. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
 
