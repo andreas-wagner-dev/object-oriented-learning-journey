@@ -24,7 +24,7 @@ Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, m
 2. **Detailverfeinerung:** Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren nur bestehende.
 3. **Fachsprache:** Pakete spiegeln die Sprache der Domäne wider (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
 
-## 1.1 **🎬 Die cineastische Projektstruktur**
+## 2. **🎬 Die cineastische Projektstruktur**
 
 Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung und macht die Inszenierung der Anwendung auf den ersten Blick verständlich.
 
@@ -72,7 +72,7 @@ Die Darstellung (Stage), ist die sichtbare Oberfläche. Hier wird das, was in Do
 **Composition-Root — Directing**  
 In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen. Es stellt den zentralen () Einstiegspunkt der Anwendung dar, orchestriert alle benötigten Klassen aus den anderen Paketen und entscheidet über Instanziierung (Inszenierung), Abläufe und Übergänge. Kein anderes Paket darf von diesem Paket abhängen.
 
-### **1.2 Das Ensemble und die Requisiten (Die Domänen-Ebene)**
+## **3. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
 
 Das Herzstück der Architektur bildet die fachliche Identität auf Ebene Null. Hier werden die Hauptcharaktere als Interfaces, der Handlungsrahmen als Szenen sowie ihre Attribute als Requisiten (Value Objects) definiert. Diese Ebene ist frei von technischem Rauschen und macht die Essenz des Systems sofort greifbar.
 
@@ -85,7 +85,7 @@ manuscript/
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
-#### **1.2.1 Das Scene.java Interface**
+### **3.1 Das Scene.java Interface**
 
 Das Scene-Interface definiert den kleinsten Handlungsrahmen im Drehbuch. Jede Szene kapselt eine spezifische fachliche Interaktion.
 
@@ -107,7 +107,7 @@ public interface Scene {
 }
 ```
 
-#### **1.2.3 Die fertige Montage: Movie.java**
+### **3.2 Die fertige Montage: Movie.java**
 
 Damit das Ganze funktioniert, sieht das zentrale **Movie.java** Interface wie folgt aus:
 
@@ -123,7 +123,7 @@ public interface Movie {
 }
 ```
 
-#### **1.2.4 Der Actor als zentrale Figur**
+### **3.3 Der Actor als zentrale Figur**
 
 Das **Actor**-Interface ist die Hauptrolle im Drehbuch. Alle handelnden Figuren müssen dieses Interface implementieren.
 
@@ -150,7 +150,7 @@ public interface Actor {
 }
 ```
 
-#### **1.2.5 Das Name Value Object**
+### **3.4 Das Name Value Object**
 
 Das **Name**-Value Object ist ein unveränderliches Requisit, das den Namen eines Akteurs repräsentiert.
 
@@ -176,7 +176,7 @@ public record Name(String value) {
 }
 ```
 
-#### **1.2.6 Das Outfit als Basis-Decorator**
+### **3.5 Das Outfit als Basis-Decorator**
 
 Das **Outfit** ist die Basis für alle Decorator-Implementierungen. Es erlaubt es, Akteuren zusätzliche Fähigkeiten zu verleihen, ohne ihre Identität zu verändern.
 
@@ -208,7 +208,7 @@ public abstract class Outfit implements Actor {
 }
 ```
 
-### **1.3 Die Charaktere (Das Casting)**
+## **4. Die Charaktere (Das Casting)**
 
 In diesem Paket werden die grundlegenden Persönlichkeiten und Rollenprofile der Anwendung definiert. Es beschreibt die konkreten Figuren, die im Laufe der Geschichte auftreten können, noch ohne spezifische Verkleidung oder technische Bindung.
 
@@ -220,7 +220,7 @@ manuscript/
    └─ Newborn.java             ← Das Neugeborene
 ```
 
-#### **1.3.1 Der Bräutigam (Groom.java)**
+### **4.1 Der Bräutigam (Groom.java)**
 
 ```java
 package manuscript.character;
@@ -258,7 +258,7 @@ public class Groom implements Actor {
 }
 ```
 
-#### **1.3.2 Die Braut (Bride.java)**
+### **4.2 Die Braut (Bride.java)**
 
 ```java
 package manuscript.character;
@@ -301,7 +301,7 @@ public class Bride implements Actor {
 }
 ```
 
-#### **1.3.3 Das Neugeborene (Newborn.java)**
+### **4.3 Das Neugeborene (Newborn.java)**
 
 ```java
 package manuscript.character;
@@ -339,7 +339,7 @@ public class Newborn implements Actor {
 }
 ```
 
-### **1.4 Die Maskenbildnerei (Das Outfit)**
+### **4.4 Die Maskenbildnerei (Das Outfit)**
 
 Hier liegen die Decorator der Architektur. Ein Outfit fungiert als Objekt in Verkleidung. Wie ein Schauspieler schlüpft die Figur in ein Kostüm (z. B. für die Persistenz oder Validierung), um zusätzliche Fähigkeiten zu simulieren, wobei sie dieselbe Person bleibt und denselben fachlichen Text spricht.
 
@@ -351,7 +351,7 @@ manuscript/
    └─ ValidatedActor.java      ← Actor mit Regelprüfung
 ```
 
-#### **1.4.1 Der Suited Actor (SuitedActor.java)**
+### **4.5 Der Suited Actor (SuitedActor.java)**
 
 ```java
 package manuscript.outfit;
@@ -377,7 +377,7 @@ public class SuitedActor extends Outfit {
 }
 ```
 
-#### **1.4.2 Der Persistent Actor (PersistentActor.java)**
+### **4.6 Der Persistent Actor (PersistentActor.java)**
 
 ```java
 package manuscript.outfit;
@@ -408,7 +408,7 @@ public class PersistentActor extends Outfit {
 }
 ```
 
-#### **1.4.3 Der Validated Actor (ValidatedActor.java)**
+### **4.7 Der Validated Actor (ValidatedActor.java)**
 
 ```java
 package manuscript.outfit;
@@ -437,7 +437,7 @@ public class ValidatedActor extends Outfit {
 }
 ```
 
-### **1.5. Die Akte der Dramaturgie (Die Fachprozesse)**
+## **5. Die Akte der Dramaturgie (Die Fachprozesse)**
 
 In den chronologischen Paketen findet die schrittweise Realisierung der Anforderungen statt. Hier werden die abstrakten Figuren für konkrete Szenarien ausgestattet und in den Dialog geschickt. Das *Tell, Don't Ask*-Prinzip sorgt in diesen Paketen für eine zielgerichtete Handlung ohne technisches Rauschen.
 
@@ -465,9 +465,9 @@ manuscript/
    └─ Bedtime.java             ← Die Gute-Nacht-Geschichte
 ```
 
-#### **1.5.1 AKT 1: Die Hochzeit**
+### **5.1 AKT 1: Die Hochzeit**
 
-#### **4.1.1 Die Trauungs-Szene (WeddingCeremony.java)**
+#### **5.1.1 Die Trauungs-Szene (WeddingCeremony.java)**
 
 ```java
 package manuscript.wedding;
@@ -505,7 +505,7 @@ public class WeddingCeremony implements Scene {
 }
 ```
 
-#### **4.1.2 Der Ringtausch (RingExchange.java)**
+#### **5.1.2 Der Ringtausch (RingExchange.java)**
 
 ```java
 package manuscript.wedding;
@@ -538,7 +538,7 @@ public class RingExchange implements Scene {
 }
 ```
 
-#### **4.1.3 Das Video-Interface (Video.java)**
+#### **5.1.3 Das Video-Interface (Video.java)**
 
 ```java
 package manuscript.wedding;
@@ -561,7 +561,7 @@ public interface Video {
 }
 ```
 
-#### **4.1.4 Das echte Video (RealVideo.java)**
+#### **5.1.4 Das echte Video (RealVideo.java)**
 
 ```java
 package manuscript.wedding;
@@ -603,7 +603,7 @@ public class RealVideo implements Video {
 }
 ```
 
-#### **4.1.5 Das Video-Proxy (VideoProxy.java)**
+#### **5.1.5 Das Video-Proxy (VideoProxy.java)**
 
 ```java
 package manuscript.wedding;
@@ -640,7 +640,7 @@ public class VideoProxy implements Video {
 }
 ```
 
-#### **4.1.6 Die Liebesgeschichten-Rückblende (LoveStoryFlashback.java)**
+#### **5.1.6 Die Liebesgeschichten-Rückblende (LoveStoryFlashback.java)**
 
 ```java
 package manuscript.wedding;
@@ -672,7 +672,7 @@ public class LoveStoryFlashback implements Scene {
 }
 ```
 
-#### **4.1.7 Die Band bezahlen (PayTheBand.java)**
+#### **5.1.7 Die Band bezahlen (PayTheBand.java)**
 
 ```java
 package manuscript.wedding;
@@ -703,9 +703,9 @@ public class PayTheBand implements Scene {
 }
 ```
 
-### **4.2 AKT 2: Die Flitterwochen**
+### **5.2 AKT 2: Die Flitterwochen**
 
-#### **4.2.1 Hotel Check-In (HotelCheckIn.java)**
+#### **5.2.1 Hotel Check-In (HotelCheckIn.java)**
 
 ```java
 package manuscript.honeymoon;
@@ -735,7 +735,7 @@ public class HotelCheckIn implements Scene {
 }
 ```
 
-#### **4.2.2 Romantisches Abendessen (SunsetDinner.java)**
+#### **5.2.2 Romantisches Abendessen (SunsetDinner.java)**
 
 ```java
 package manuscript.honeymoon;
@@ -765,9 +765,9 @@ public class SunsetDinner implements Scene {
 }
 ```
 
-### **4.3 AKT 3: Die Geburt**
+### **5.3 AKT 3: Die Geburt**
 
-#### **4.3.1 Das Krankenhaus (Hospital.java)**
+#### **5.3.1 Das Krankenhaus (Hospital.java)**
 
 ```java
 package manuscript.birth;
@@ -793,7 +793,7 @@ public class Hospital {
 }
 ```
 
-#### **4.3.2 Die Geburts-Szene (BirthScene.java)**
+#### **5.3.2 Die Geburts-Szene (BirthScene.java)**
 
 ```java
 package manuscript.birth;
@@ -828,9 +828,9 @@ public class BirthScene implements Scene {
 }
 ```
 
-### **4.4 AKT 4: Das Familienleben**
+### **5.4 AKT 4: Das Familienleben**
 
-#### **4.4.1 Die Morgenroutine (MorningRoutine.java)**
+#### **5.4.1 Die Morgenroutine (MorningRoutine.java)**
 
 ```java
 package manuscript.familylife;
@@ -866,7 +866,7 @@ public class MorningRoutine implements Scene {
 }
 ```
 
-#### **4.4.2 Die Gute-Nacht-Geschichte (Bedtime.java)**
+#### **5.4.2 Die Gute-Nacht-Geschichte (Bedtime.java)**
 
 ```java
 package manuscript.familylife;
@@ -899,7 +899,7 @@ public class Bedtime implements Scene {
 }
 ```
 
-## **5. Die Bühnentechnik (Backstage)**
+## **6. Die Bühnentechnik (Backstage)**
 
 Die Backstage-Infrastruktur bleibt strikt von der Fachlogik getrennt. Hier liegen alle technischen Adapter, Datenbankzugriffe und externe Schnittstellen.
 
@@ -915,7 +915,7 @@ manuscript/
       └─ ApiConnector.java         ← Externe API-Verbindungen
 ```
 
-### **5.1 Das Datenbank-Archiv (DatabaseArchive.java)**
+### **6.1 Das Datenbank-Archiv (DatabaseArchive.java)**
 
 ```java
 package manuscript.backstage;
@@ -948,7 +948,7 @@ public class DatabaseArchive {
 }
 ```
 
-### **5.2 Das Payment-Interface (Payable.java)**
+### **6.2 Das Payment-Interface (Payable.java)**
 
 ```java
 package manuscript.backstage.payment;
@@ -967,7 +967,7 @@ public interface Payable {
 }
 ```
 
-### **5.3 Der Stripe API Client (StripeApiClient.java)**
+### **6.3 Der Stripe API Client (StripeApiClient.java)**
 
 ```java
 package manuscript.backstage.payment;
@@ -987,7 +987,7 @@ public class StripeApiClient {
 }
 ```
 
-### **5.4 Der Stripe Payment Adapter (StripePaymentAdapter.java)**
+### **6.4 Der Stripe Payment Adapter (StripePaymentAdapter.java)**
 
 ```java
 package manuscript.backstage.payment;
@@ -1017,7 +1017,7 @@ public class StripePaymentAdapter extends Outfit implements Payable {
 }
 ```
 
-## **6. Die Bühne (Stage)**
+## **7. Die Bühne (Stage)**
 
 Die Stage ist die Präsentationsschicht, die dem Zuschauer (Benutzer) die Handlung sichtbar macht. Sie nutzt die Fachlogik, ohne sie zu verändern.
 
@@ -1032,7 +1032,7 @@ manuscript/
       └─ WeddingCloseUp.java       ← Nahaufnahme der Hochzeit
 ```
 
-### **6.1 Die Sprechblase (SpeechBubble.java)**
+### **7.1 Die Sprechblase (SpeechBubble.java)**
 
 ```java
 package manuscript.stage.accessory;
@@ -1054,7 +1054,7 @@ public class SpeechBubble {
 }
 ```
 
-### **6.2 Der Action Button (ActionButton.java)**
+### **7.2 Der Action Button (ActionButton.java)**
 
 ```java
 package manuscript.stage.accessory;
@@ -1082,7 +1082,7 @@ public class ActionButton {
 }
 ```
 
-### **6.3 Das Cinematic Grid (CinematicGrid.java)**
+### **7.3 Das Cinematic Grid (CinematicGrid.java)**
 
 ```java
 package manuscript.stage.accessory;
@@ -1104,7 +1104,7 @@ public class CinematicGrid {
 }
 ```
 
-### **6.4 Die Wedding Close-Up Szene (WeddingCloseUp.java)**
+### **7.4 Die Wedding Close-Up Szene (WeddingCloseUp.java)**
 
 ```java
 package manuscript.stage.take;
@@ -1139,7 +1139,7 @@ public class WeddingCloseUp {
 }
 ```
 
-## **7. Die Regie (Directing)**
+## **8. Die Regie (Directing)**
 
 Die Regie ist der **Composition Root** der Anwendung. Hier werden alle Fäden zusammengeführt: Die *Charaktere* werden gecastet, die *Outfits* werden angezogen, die *Bühnentechnik* wird aufgebaut und die *Szenen* werden in die Filmrolle eingefügt.
 
@@ -1149,7 +1149,7 @@ manuscript/
    └─ InstalledMovie.java      ← Der Composition Root
 ```
 
-### **7.1 Der Composition Root**
+### **8.1 Der Composition Root**
 
 Die `InstalledMovie.java` Klassen realisiert den *Composition Root* der gesamten Anwendung. Hier wird das komplette Drehbuch zusammengestellt und die Filmrolle befüllt.  
 
@@ -1275,7 +1275,7 @@ public class InstalledMovie implements Movie {
 }
 ```
 
-### **7.2 Schlüsselelemente der Regie**
+### **8.2 Schlüsselelemente der Regie**
 
 * **Die main als Kinosaal:** Die `main()`-Methode ist frei von jeglicher Logik. Sie drückt nur auf den „Play"-Knopf.
 * **Die Filmrolle als Queue:** Durch das Hinzufügen der Szenen in eine Queue (Warteschlange) im `start()`-Prozess wird die Reihenfolge der Chronologie festgeschrieben. `nextScene()` rattert diese einfach herunter, ohne die konkreten Szenen-Inhalte kennen zu müssen.
@@ -1288,7 +1288,7 @@ Wenn du die Applikation ausführst, wird die Konsole die Chronologie des Drehbuc
 3. **Szene 3:** Der Beamer schaltet sich ein. Erst **jetzt** ruft der Proxy das echte Video ab und schont bis zu diesem Moment den Arbeitsspeicher.
 4. **Szene 4-7:** Die weiteren Akte der Lebensgeschichte laufen nacheinander ab.
 
-## **8. Der cineastische Stacktrace**
+## **9. Der cineastische Stacktrace**
 
 Auch der Stack Trace dieses Graphen liest sich am Ende wie eine Inhaltsangabe des Films.
 
@@ -1307,9 +1307,9 @@ Der Debugger „schreit" die Fachlichkeit. Man sieht keinen generischen Daten-Up
 
 Selbst im Fehlerfall „schreit" dieser Stacktrace seine fachliche Bedeutung heraus: Man sieht sofort, in welcher Szene (`Wedding`), bei welcher Kameraeinstellung (`CloseUp`) oder bei welcher konkreten Figur (`Bride`) die Erzählung unterbrochen wurde.
 
-## **9. Prinzipien und Bauplan mit Regeln: Code als Drehbuch**
+## **10. Prinzipien und Bauplan mit Regeln: Code als Drehbuch**
 
-### **9.1 Die leitenden Prinzipien**
+**Die leitenden Prinzipien**
 
 * **Graphen als Skript:** Der *Kollaborations-Graph* bildet das Ensemble, der *Konstruktions-Graph* regelt den Set-Aufbau und der *Aufruf-Graph* beschreibt den Dialog zur Laufzeit.
 
@@ -1317,7 +1317,7 @@ Selbst im Fehlerfall „schreit" dieser Stacktrace seine fachliche Bedeutung her
 
 * **System als Drehbuch:** Die Projektorganisation erfolgt nicht in Schichten, sondern hierarchisch nach Domänenkonzepten.
 
-### **📦 9.2 Bauplan und Paket-Regeln**
+**Der Bauplan und Paket-Regeln**
 
 Um eine saubere Struktur zu gewährleisten, müssen die Ebenen und ihre Pakete nach folgenden Prinzipien aufgebaut sein:
 
@@ -1331,7 +1331,7 @@ Um eine saubere Struktur zu gewährleisten, müssen die Ebenen und ihre Pakete n
 
 ---
 
-## **🎬 Schlusswort: Code, der Geschichten erzählt**
+## **11. Schlusswort: Code, der Geschichten erzählt**
 
 Wenn wir Software als Drehbuch begreifen, verlassen wir die Welt der leblosen Datencontainer und betreten eine Bühne, auf der die Fachlichkeit endlich sichtbar wird. Die Trennung von Backstage‑Technik und Regie‑Orchestrierung befreit die Domäne von allem Ballast, der sie jahrzehntelang verschüttet hat. Was bleibt, ist die reine Erzählung — klar, menschlich, nachvollziehbar.
 
