@@ -6,7 +6,7 @@ Computer können beliebige Datenstrukturen verarbeiten. Menschen dagegen versteh
 
 Während klassische Architekturmodelle Software als technische Schichtenlandschaft aus zustandslosen Services und passiven Datencontainern betrachten, inszeniert die Spielfilm‑Philosophie ein objektorientiertes System als Ensemble intelligenter Akteure. Diese Akteure treten in Szenen auf, handeln in Akten und treiben die Geschichte durch ihr Verhalten voran.
 
-**Drehbuchs als Bauanleitung**
+## 1. **Drehbuchs als Bauanleitung**
 
 Im Sinne eines Drehbuchs als Bauanleitung lässt sich die fachliche Domäne über drei zentrale Graphen beschreiben — als strukturierte Erzählung eines Spielfilms:
 
@@ -24,16 +24,11 @@ Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, m
 2. **Detailverfeinerung:** Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren nur bestehende.
 3. **Fachsprache:** Pakete spiegeln die Sprache der Domäne wider (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
 
-# **🎬 Die cineastische Projektstruktur**
+## 1.1 **🎬 Die cineastische Projektstruktur**
 
 Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung und macht die Inszenierung der Anwendung auf den ersten Blick verständlich.
 
 Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
-
-
-Die Struktur des Projekts ist die physische Manifestation des Drehbuchs. Sie trennt die fachliche Identität von der technischen Realisierung und macht die Inszenierung der Anwendung auf den ersten Blick lesbar.
-
-Wer das Manuskript öffnet, sieht keine technische Schablone, sondern ein Drehbuch einer individuellen Geschichte – einsatzbereit für ein Filmstudio:
 
 ```
 manuscript/  
@@ -62,22 +57,22 @@ Ein Teammitglied, egal ob Investor, Fachexperte, Architekt oder Entwickler, muss
 
 **Bestandteile und Abhängigkeiten der Inszenierung**
 
-**1. Domain — Main Ideas & Concepts**  
+**Domain — Main Ideas & Concepts**  
 Die Domänenebene bildet das begriffliche Fundament des gesamten Systems. Hier entstehen die zentralen Ideen, Regeln und Konzepte, auf denen alle anderen Pakete aufbauen. Sie ist die einzige Ebene, die von keinem Paket abhängt, wird jedoch von allen anderen Paketen genutzt.
 
-**3. Infrastructure — Backstage**  
+**Infrastructure — Backstage**  
 Das Unterpaket Backstage enthält die technische Infrastruktur. Es stellt Werkzeuge, Dienste und Mechaniken bereit, die in allen anderen Paketen benötigt werden. Die Infrastruktur darf ausschließlich von der Domäne abhängen.
 
-**4. Details — Scenes**  
+**Details — Scenes**  
 Die fachlichen Detail‑Pakete realisieren mithilfe der technischen Infrastruktur die Domänenkonzepte: die inhaltliche Ausgestaltung der abstrakten Domänenklassen im konkreten Abläufen und Interaktionen.
 
-**5. UI — Stage**  
+**UI — Stage**  
 Die Darstellung (Stage), ist die sichtbare Oberfläche. Hier wird das, was in Domäne definiert wurde, für den Nutzer (Zuschauer) sichtbar gemacht. Die Präsentation hängt von der Domäne, fachlichen Detail‑Paketen und der Infrastruktur ab.
 
-**6. Composition-Root — Directing**  
+**Composition-Root — Directing**  
 In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen. Es stellt den zentralen () Einstiegspunkt der Anwendung dar, orchestriert alle benötigten Klassen aus den anderen Paketen und entscheidet über Instanziierung (Inszenierung), Abläufe und Übergänge. Kein anderes Paket darf von diesem Paket abhängen.
 
-## **1. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
+### **1.2 Das Ensemble und die Requisiten (Die Domänen-Ebene)**
 
 Das Herzstück der Architektur bildet die fachliche Identität auf Ebene Null. Hier werden die Hauptcharaktere als Interfaces, der Handlungsrahmen als Szenen sowie ihre Attribute als Requisiten (Value Objects) definiert. Diese Ebene ist frei von technischem Rauschen und macht die Essenz des Systems sofort greifbar.
 
@@ -90,7 +85,7 @@ manuscript/
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
-### **1.1 Das Scene.java Interface**
+#### **1.2.1 Das Scene.java Interface**
 
 Das Scene-Interface definiert den kleinsten Handlungsrahmen im Drehbuch. Jede Szene kapselt eine spezifische fachliche Interaktion.
 
@@ -112,7 +107,7 @@ public interface Scene {
 }
 ```
 
-### **1.2 Die fertige Montage: Movie.java**
+#### **1.2.3 Die fertige Montage: Movie.java**
 
 Damit das Ganze funktioniert, sieht das zentrale **Movie.java** Interface wie folgt aus:
 
@@ -128,7 +123,7 @@ public interface Movie {
 }
 ```
 
-### **1.3 Der Actor als zentrale Figur**
+#### **1.2.4 Der Actor als zentrale Figur**
 
 Das **Actor**-Interface ist die Hauptrolle im Drehbuch. Alle handelnden Figuren müssen dieses Interface implementieren.
 
@@ -155,7 +150,7 @@ public interface Actor {
 }
 ```
 
-### **1.4 Das Name Value Object**
+#### **1.2.5 Das Name Value Object**
 
 Das **Name**-Value Object ist ein unveränderliches Requisit, das den Namen eines Akteurs repräsentiert.
 
@@ -181,7 +176,7 @@ public record Name(String value) {
 }
 ```
 
-### **1.5 Das Outfit als Basis-Decorator**
+#### **1.2.6 Das Outfit als Basis-Decorator**
 
 Das **Outfit** ist die Basis für alle Decorator-Implementierungen. Es erlaubt es, Akteuren zusätzliche Fähigkeiten zu verleihen, ohne ihre Identität zu verändern.
 
@@ -213,7 +208,7 @@ public abstract class Outfit implements Actor {
 }
 ```
 
-## **2. Die Charaktere (Das Casting)**
+### **1.3 Die Charaktere (Das Casting)**
 
 In diesem Paket werden die grundlegenden Persönlichkeiten und Rollenprofile der Anwendung definiert. Es beschreibt die konkreten Figuren, die im Laufe der Geschichte auftreten können, noch ohne spezifische Verkleidung oder technische Bindung.
 
@@ -225,7 +220,7 @@ manuscript/
    └─ Newborn.java             ← Das Neugeborene
 ```
 
-### **2.1 Der Bräutigam (Groom.java)**
+#### **1.3.1 Der Bräutigam (Groom.java)**
 
 ```java
 package manuscript.character;
@@ -263,7 +258,7 @@ public class Groom implements Actor {
 }
 ```
 
-### **2.2 Die Braut (Bride.java)**
+#### **1.3.2 Die Braut (Bride.java)**
 
 ```java
 package manuscript.character;
@@ -306,7 +301,7 @@ public class Bride implements Actor {
 }
 ```
 
-### **2.3 Das Neugeborene (Newborn.java)**
+#### **1.3.3 Das Neugeborene (Newborn.java)**
 
 ```java
 package manuscript.character;
@@ -344,7 +339,7 @@ public class Newborn implements Actor {
 }
 ```
 
-## **3. Die Maskenbildnerei (Das Outfit)**
+### **1.4 Die Maskenbildnerei (Das Outfit)**
 
 Hier liegen die Decorator der Architektur. Ein Outfit fungiert als Objekt in Verkleidung. Wie ein Schauspieler schlüpft die Figur in ein Kostüm (z. B. für die Persistenz oder Validierung), um zusätzliche Fähigkeiten zu simulieren, wobei sie dieselbe Person bleibt und denselben fachlichen Text spricht.
 
@@ -356,7 +351,7 @@ manuscript/
    └─ ValidatedActor.java      ← Actor mit Regelprüfung
 ```
 
-### **3.1 Der Suited Actor (SuitedActor.java)**
+#### **1.4.1 Der Suited Actor (SuitedActor.java)**
 
 ```java
 package manuscript.outfit;
@@ -382,7 +377,7 @@ public class SuitedActor extends Outfit {
 }
 ```
 
-### **3.2 Der Persistent Actor (PersistentActor.java)**
+#### **1.4.2 Der Persistent Actor (PersistentActor.java)**
 
 ```java
 package manuscript.outfit;
@@ -413,7 +408,7 @@ public class PersistentActor extends Outfit {
 }
 ```
 
-### **3.3 Der Validated Actor (ValidatedActor.java)**
+#### **1.4.3 Der Validated Actor (ValidatedActor.java)**
 
 ```java
 package manuscript.outfit;
@@ -442,7 +437,7 @@ public class ValidatedActor extends Outfit {
 }
 ```
 
-## **4. Die Akte der Dramaturgie (Die Fachprozesse)**
+### **1.5. Die Akte der Dramaturgie (Die Fachprozesse)**
 
 In den chronologischen Paketen findet die schrittweise Realisierung der Anforderungen statt. Hier werden die abstrakten Figuren für konkrete Szenarien ausgestattet und in den Dialog geschickt. Das *Tell, Don't Ask*-Prinzip sorgt in diesen Paketen für eine zielgerichtete Handlung ohne technisches Rauschen.
 
@@ -470,7 +465,7 @@ manuscript/
    └─ Bedtime.java             ← Die Gute-Nacht-Geschichte
 ```
 
-### **4.1 AKT 1: Die Hochzeit**
+#### **1.5.1 AKT 1: Die Hochzeit**
 
 #### **4.1.1 Die Trauungs-Szene (WeddingCeremony.java)**
 
