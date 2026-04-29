@@ -26,6 +26,11 @@ Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, m
 
 # **🎬 Die cineastische Projektstruktur**
 
+Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung und macht die Inszenierung der Anwendung auf den ersten Blick verständlich.
+
+Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
+
+
 Die Struktur des Projekts ist die physische Manifestation des Drehbuchs. Sie trennt die fachliche Identität von der technischen Realisierung und macht die Inszenierung der Anwendung auf den ersten Blick lesbar.
 
 Wer das Manuskript öffnet, sieht keine technische Schablone, sondern ein Drehbuch einer individuellen Geschichte – einsatzbereit für ein Filmstudio:
@@ -63,6 +68,13 @@ Ein Teammitglied (Investor, Fachexperte, Architekt oder Entwickler), das dieses 
 * **Backstage:** Die technische Infrastruktur bleibt als dienende Technik strikt in der backstage verborgen.  
 * **Stage:** Die Benutzeroberfläche agiert als stage im Rampenlicht und nimmt die Vorführung für den Zuschauer auf.  
 * **Directing:** In diesem Paket fließen die Fäden zusammen. Hier wird entschieden, welche Figuren in welcher Szene aufeinandertreffen.
+
+**Die Abhängigkeiten der Inszenierung**
+
+Die **Domänen Ebene** ist der Kern und hängt von niemandem. Die fachlichen Konzepte als **Unterpakete** wie *Akte*, *Charaktere* und *Outfits* bauen auf der Domänen Ebene und auf **Backstage** auf und sind untereinander unabhängig. **Backstage** liefert Technik und hängt von der Domänen Ebene. **Stage** nutzt Domäne, Akte, Charaktere, Outfits und Backstage. **Directing** umschliesst alles, hängt von allen Ebenen und orchestriert die Inszenierung; niemand darf von Directing abhängen.
+
+Die **Domänen Ebene** bildet den Kern und ist von niemandem abhängig. Akte sowie Charaktere und Outfits bauen auf der Domänen Ebene und auf Backstage auf, bleiben aber untereinander unabhängig. **Backstage** liefert die technische Basis und darf selbst nur von der Domänen Ebene abhängig sein. Die **Stage** nutzt Domäne, Akte, Charaktere, Outfits und Backstage für die Darstellung, während niemand von der Stage abhängig ist. **Directing** umschließt alle Ebenen und orchestriert die gesamte Inszenierung, zugleich darf keine andere Ebene von Directing abhängig sein.
+
 
 ## **1. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
 
