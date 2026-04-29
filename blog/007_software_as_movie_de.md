@@ -1331,7 +1331,7 @@ Die cineastische Projektstruktur ist keine hübsche Metapher, sondern ein Werkze
 
 Gerade jetzt, in einer Zeit, in der KI in Sekundenbruchteilen unendliche Mengen Code erzeugt, brauchen wir diese Erzählstruktur dringender denn je. Sie ist unser Kompass in einer Welt, in der das Schreiben trivial geworden ist, das Verstehen aber zur eigentlichen Herausforderung wird. Nur wenn unsere Software einer klaren Dramaturgie folgt, können wir KI als Co‑Autor einsetzen, ohne in einer Flut aus generierten Fragmenten die Orientierung zu verlieren.
 
-Hören wir also auf, nur technische Schablonen zu füllen oder blind KI‑Output aneinanderzukleben. Werden wir zu Regisseuren. Zu Autoren. Zu Erzählern. Schreiben wir Software, die nicht nur funktioniert, sondern ihre eigene Bedeutung stolz auf die Leinwand bringt.
+Hören wir also auf, nur technische Schablonen zu füllen oder blind KI‑Output aneinanderzukleben. Werden wir zu Regisseuren. Zu Autoren. Zu Erzählern. Schreiben wir Coden, der nicht nur funktioniert, sondern der die eigene Bedeutung stolz auf die Leinwand bringt.
 
 **Klappe zu, Film ab!**
 
