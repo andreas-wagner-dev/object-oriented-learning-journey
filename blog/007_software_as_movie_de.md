@@ -1,28 +1,28 @@
 # **🎞️ Software als Spielfilm-Drehbuch**
 
-Das Aufkommen von Künstlicher Intelligenz (KI) wie ChatGPT, Claude oder GitHub Copilot hat die Softwareentwicklung grundlegend revolutioniert. Die alte Faustregel *„10-mal mehr lesen als schreiben“* hat sich heute nicht etwa erledigt, sondern verschärft und steht somit unter völlig neuen Vorzeichen. Um diese Flut an generiertem Code überhaupt noch menschlich erfassen und beherrschen zu können, bedarf es einer  neuen Perspektive auf die Softwarearchitektur. 
+Das Aufkommen von Künstlicher Intelligenz (KI) wie ChatGPT, Claude oder GitHub Copilot hat die Softwareentwicklung grundlegend verändert. Die alte Faustregel „zehnmal mehr lesen als schreiben“ gilt heute stärker denn je — nur dass wir inzwischen nicht mehr unseren eigenen Code lesen, sondern vor allem den von Maschinen generierten. Um diese Flut überhaupt noch menschlich erfassen und beherrschen zu können, braucht es eine neue Perspektive auf Softwarearchitektur.
 
-Obwohl Computer heute problemlos sämtliche Datenstrukturen verarbeiten, bevorzugen Menschen spannende Geschichten. Deshalb liegt es nahe, auch unseren Code wie das Drehbuch eines Spielfilms aufzubauen. 
+Computer können beliebige Datenstrukturen verarbeiten. Menschen dagegen verstehen die Welt über Geschichten. Deshalb liegt es nahe, auch unseren Code wie das Drehbuch eines Spielfilms zu gestalten.
 
-Während herkömmliche Konzepte Software oft als Ansammlung technischer Schichten mit zustandslosen Service-Klassen und passiven Datencontainern sehen, inszeniert die Spielfilm-Philosophie das objektorientierte System als Graphen intelligenter Akteure, welches logisch in Akte sowie Szenen gegliedert ist und die Charaktere mit ihren Fähigkeiten in den Handlungen beschreibt.
+Während klassische Architekturmodelle Software als technische Schichtenlandschaft aus zustandslosen Services und passiven Datencontainern betrachten, inszeniert die Spielfilm‑Philosophie ein objektorientiertes System als Ensemble intelligenter Akteure. Diese Akteure treten in Szenen auf, handeln in Akten und treiben die Geschichte durch ihr Verhalten voran.
 
-Im Kontext des Drehbuchs als Bauanleitung kann so die fachliche Domäne in den Kollaborations-, Konstruktions- und Aufruf-Graphen als eine strukturierte Geschichte eines Spielfilms abgebildet werden:
+**Drehbuchs als Bauanleitung**
 
-**Der Konstruktions-Graph (Die Regie / Der Set-Aufbau):** Dieser Graph zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) montiert, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
+Im Sinne eines Drehbuchs als Bauanleitung lässt sich die fachliche Domäne über drei zentrale Graphen beschreiben — als strukturierte Erzählung eines Spielfilms:
 
-**Der Kollaborations-Graph (Das Ensemble):** Er zeigt, welche Charaktere dauerhaft miteinander verbunden sind. Dies entspricht der Besetzung der Hauptrollen und ihrer Beziehungen im Drehbuch. Hier steht die statische Vernetzung im Vordergrund (Wer kennt wen und kann miteinander kommunizieren?).
+**Der Konstruktions-Graph (Die Regie / Der Set-Aufbau):** Dieser Graph zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) aufgebaut, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
 
-**Der Aufruf-Graph (Die Handlung):** Dies ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren während des Ablaufs der Szenen. Hier zeigt sich zur Laufzeit der dynamische Nachrichtenaustausch (Wer ruft gerade welche Methode auf?).
+**Der Kollaborations-Graph (Das Ensemble):** Er zeigt, welche Charaktere dauerhaft miteinander verbunden sind. Das entspricht der Besetzung der Hauptrollen und ihren Beziehungen im Drehbuch. Hier steht die statische Vernetzung im Vordergrund (Wer kennt wen und kann miteinander kommunizieren?).
 
-Das **„Tell, Don’t Ask“-Prinzip** gilt als zentrale Regieanweisung, um Objekte als autonome Problemlöser mit fachlich prägnantem Verhalten zu entwerfen.
+**Der Aufruf-Graph (Die Handlung):** Dies ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren während des Ablaufs der Szenen. Hier wird sichtbar, wie zur Laufzeit Nachrichten ausgetauscht werden (Wer ruft gerade welche Methode auf?).
+
+Das **„Tell, Don’t Ask“-Prinzip** fungiert dabei als zentrale Regieanweisung: Objekte sollen nicht befragt werden wie Datencontainer, sondern als autonome Charaktere handeln, die ihre Aufgaben selbst lösen.
 
 Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, müssen die Akte und Szenen in einer systematisch nachvollziehbaren Struktur organisiert sein. Dafür gelten drei pragmatische Regeln für die Paket-Struktur:
 
-**Abhängigkeiten:** Pakete dürfen nicht von ihren Unterpaketen abhängen und keine Zirkelbezüge bilden.
-
-**Detailverfeinerung:** Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren nur bereits bestehende Details.
-
-**Fachsprache:** Pakete reflektieren die Sprache der realen Fachwelt (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
+1. **Abhängigkeiten:** Pakete dürfen nicht von ihren Unterpaketen abhängen und keine Zirkelbezüge bilden.
+2. **Detailverfeinerung:** Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren nur bestehende.
+3. **Fachsprache:** Pakete spiegeln die Sprache der Domäne wider (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
 
 # **🎬 Die cineastische Projektstruktur**
 
