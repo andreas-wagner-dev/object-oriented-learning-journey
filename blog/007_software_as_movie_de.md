@@ -58,23 +58,24 @@ manuscript/
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
-Ein Teammitglied (Investor, Fachexperte, Architekt oder Entwickler), das dieses Projekt öffnet, muss nicht raten, worum es geht - es liest das Inhaltsverzeichnis einer Lebensgeschichte.
+Ein Teammitglied, egal ob Investor, Fachexperte, Architekt oder Entwickler, muss nicht raten, worum es geht. Es liest das Inhaltsverzeichnis einer Lebensgeschichte.
 
-**Die Bestandteile der Inszenierung**
+**Bestandteile und Abhängigkeiten der Inszenierung**
 
-* **Die Domänen-Ebene (Wurzelverzeichnis):** Das Movie-Interface gibt die Gesamthandlung vor. Actor bildet das zentrale Interface für alle agierenden Figuren. Name fungiert als unveränderliches Requisit (*Value Object*), während Scene den Kontext für flüchtige Interaktionen definiert.  
-* **Die Akte (Chronologische Prozesse):** Die Ordner wedding, honeymoon, birth und familylife spiegeln die tatsächlichen Phasen der Geschäftslogik (bzw. der Lebensgeschichte) wider. Jeder Ordner kapselt die Logik, die für diesen spezifischen Lebensabschnitt der Applikation notwendig ist.  
-* **Die Charaktere & Outfits:** Unter character liegen die konkreten Ausprägungen der Akteure. Der Ordner outfit beherbergt die Kleidung, die den Figuren je nach Szene neue Fähigkeiten verleihen, ohne deren innere Identität zu verändern.  
-* **Backstage:** Die technische Infrastruktur bleibt als dienende Technik strikt in der backstage verborgen.  
-* **Stage:** Die Benutzeroberfläche agiert als stage im Rampenlicht und nimmt die Vorführung für den Zuschauer auf.  
-* **Directing:** In diesem Paket fließen die Fäden zusammen. Hier wird entschieden, welche Figuren in welcher Szene aufeinandertreffen.
+**1. Domain — Main Ideas & Concepts**  
+Die Domänenebene bildet das begriffliche Fundament des gesamten Systems. Hier entstehen die zentralen Ideen, Regeln und Konzepte, auf denen alle anderen Pakete aufbauen. Sie ist die einzige Ebene, die von keinem Paket abhängt, wird jedoch von allen anderen Paketen genutzt.
 
-**Die Abhängigkeiten der Inszenierung**
+**3. Infrastructure — Backstage**  
+Das Unterpaket Backstage enthält die technische Infrastruktur. Es stellt Werkzeuge, Dienste und Mechaniken bereit, die in allen anderen Paketen benötigt werden. Die Infrastruktur darf ausschließlich von der Domäne abhängen.
 
-Die **Domänen Ebene** ist der Kern und hängt von niemandem. Die fachlichen Konzepte als **Unterpakete** wie *Akte*, *Charaktere* und *Outfits* bauen auf der Domänen Ebene und auf **Backstage** auf und sind untereinander unabhängig. **Backstage** liefert Technik und hängt von der Domänen Ebene. **Stage** nutzt Domäne, Akte, Charaktere, Outfits und Backstage. **Directing** umschliesst alles, hängt von allen Ebenen und orchestriert die Inszenierung; niemand darf von Directing abhängen.
+**4. Details — Scenes**  
+Die fachlichen Detail‑Pakete realisieren mithilfe der technischen Infrastruktur die Domänenkonzepte: die inhaltliche Ausgestaltung der abstrakten Domänenklassen im konkreten Abläufen und Interaktionen.
 
-Die **Domänen Ebene** bildet den Kern und ist von niemandem abhängig. Akte sowie Charaktere und Outfits bauen auf der Domänen Ebene und auf Backstage auf, bleiben aber untereinander unabhängig. **Backstage** liefert die technische Basis und darf selbst nur von der Domänen Ebene abhängig sein. Die **Stage** nutzt Domäne, Akte, Charaktere, Outfits und Backstage für die Darstellung, während niemand von der Stage abhängig ist. **Directing** umschließt alle Ebenen und orchestriert die gesamte Inszenierung, zugleich darf keine andere Ebene von Directing abhängig sein.
+**5. UI — Stage**  
+Die Darstellung (Stage), ist die sichtbare Oberfläche. Hier wird das, was in Domäne definiert wurde, für den Nutzer (Zuschauer) sichtbar gemacht. Die Präsentation hängt von der Domäne, fachlichen Detail‑Paketen und der Infrastruktur ab.
 
+**6. Composition-Root — Directing**  
+In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen. Es stellt den zentralen () Einstiegspunkt der Anwendung dar, orchestriert alle benötigten Klassen aus den anderen Paketen und entscheidet über Instanziierung (Inszenierung), Abläufe und Übergänge. Kein anderes Paket darf von diesem Paket abhängen.
 
 ## **1. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
 
