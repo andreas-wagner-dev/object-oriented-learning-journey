@@ -70,7 +70,7 @@ Die fachlichen Detail‑Pakete realisieren mithilfe der technischen Infrastruktu
 Die Darstellung (Stage), ist die sichtbare Oberfläche. Hier wird das, was in Domäne definiert wurde, für den Nutzer (Zuschauer) sichtbar gemacht. Die Präsentation hängt von der Domäne, fachlichen Detail‑Paketen und der Infrastruktur ab.
 
 **Composition-Root — Directing**  
-In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen. Es stellt den zentralen () Einstiegspunkt der Anwendung dar, orchestriert alle benötigten Klassen aus den anderen Paketen und entscheidet über Instanziierung (Inszenierung), Abläufe und Übergänge. Kein anderes Paket darf von diesem Paket abhängen.
+In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen. Es stellt den zentralen Einstiegspunkt `main()` der Anwendung bereit, orchestriert alle benötigten Klassen, entscheidet über deren Instanziierung (Inszenierung) und welche sonstigen Einstellungen zum Start benötigt werden. Kein anderes Paket darf von diesem Paket abhängen.
 
 ## **3. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
 
