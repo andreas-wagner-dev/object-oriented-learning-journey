@@ -4,11 +4,15 @@ Das Aufkommen von Künstlicher Intelligenz (KI) wie ChatGPT, Claude oder GitHub 
 
 Computer können beliebige Datenstrukturen verarbeiten. Menschen dagegen verstehen die Welt über Geschichten. Deshalb liegt es nahe, auch unseren Code wie das Drehbuch eines Spielfilms zu gestalten.
 
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
+
 Während klassische Architekturmodelle Software als technische Schichtenlandschaft aus zustandslosen Services und passiven Datencontainern betrachten, inszeniert die Spielfilm‑Philosophie ein objektorientiertes System als Ensemble intelligenter Akteure. Diese Akteure treten in Szenen auf, handeln in Akten und treiben die Geschichte durch ihr Verhalten voran.
 
 ## 1. **Drehbuchs als Bauanleitung**
 
 Im Sinne eines Drehbuchs als Bauanleitung lässt sich die fachliche Domäne über drei zentrale Graphen beschreiben — als strukturierte Erzählung eines Spielfilms:
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
 
 **Der Konstruktions-Graph (Die Regie / Der Set-Aufbau)** zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) aufgebaut, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
 
@@ -29,6 +33,8 @@ Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, m
 Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung und macht die Inszenierung der Anwendung auf den ersten Blick verständlich.
 
 Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
 
 ```
 manuscript/  
@@ -76,6 +82,7 @@ In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen
 
 Das Herzstück der Architektur bildet die fachliche Identität auf Ebene Null. Hier werden die Hauptcharaktere als Interfaces, der Handlungsrahmen als Szenen sowie ihre Attribute als Requisiten (Value Objects) definiert. Diese Ebene ist frei von technischem Rauschen und macht die Essenz des Systems sofort greifbar.
 
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_04_code_like_movie.png)
 ```
 manuscript/  
 ├─ Actor.java         ← AKTEUR (Zentrales Interface)  
@@ -211,6 +218,8 @@ public abstract class Outfit implements Actor {
 ## **4. Die Charaktere (Das Casting)**
 
 In diesem Paket werden die grundlegenden Persönlichkeiten und Rollenprofile der Anwendung definiert. Es beschreibt die konkreten Figuren, die im Laufe der Geschichte auftreten können, noch ohne spezifische Verkleidung oder technische Bindung.
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_05_code_like_movie.png)
 
 ```
 manuscript/  
@@ -440,6 +449,8 @@ public class ValidatedActor extends Outfit {
 ## **5. Die Akte der Dramaturgie (Die Fachprozesse)**
 
 In den chronologischen Paketen findet die schrittweise Realisierung der Anforderungen statt. Hier werden die abstrakten Figuren für konkrete Szenarien ausgestattet und in den Dialog geschickt. Das *Tell, Don't Ask*-Prinzip sorgt in diesen Paketen für eine zielgerichtete Handlung ohne technisches Rauschen.
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_06_code_like_movie.png)
 
 ```
 manuscript/  
@@ -767,6 +778,7 @@ public class SunsetDinner implements Scene {
 
 ### **5.3 AKT 3: Die Geburt**
 
+
 #### **5.3.1 Das Krankenhaus (Hospital.java)**
 
 ```java
@@ -903,6 +915,8 @@ public class Bedtime implements Scene {
 
 Die Backstage-Infrastruktur bleibt strikt von der Fachlogik getrennt. Hier liegen alle technischen Adapter, Datenbankzugriffe und externe Schnittstellen.
 
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_07_code_like_movie.png)
+
 ```
 manuscript/  
 └─ backstage/  
@@ -1020,6 +1034,8 @@ public class StripePaymentAdapter extends Outfit implements Payable {
 ## **7. Die Bühne (Stage)**
 
 Die Stage ist die Präsentationsschicht, die dem Zuschauer (Benutzer) die Handlung sichtbar macht. Sie nutzt die Fachlogik, ohne sie zu verändern.
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
 
 ```
 manuscript/  
@@ -1142,6 +1158,8 @@ public class WeddingCloseUp {
 ## **8. Die Regie (Directing)**
 
 Die Regie ist der **Composition Root** der Anwendung. Hier werden alle Fäden zusammengeführt: Die *Charaktere* werden gecastet, die *Outfits* werden angezogen, die *Bühnentechnik* wird aufgebaut und die *Szenen* werden in die Filmrolle eingefügt.
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
 
 ```
 manuscript/  
@@ -1292,6 +1310,8 @@ Wenn du die Applikation ausführst, wird die Konsole die Chronologie des Drehbuc
 
 Auch der Stack Trace dieses Graphen liest sich am Ende wie eine Inhaltsangabe des Films.
 
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_09_code_like_movie.png)
+
 ```
 Exception in thread "main" java.lang.IllegalStateException: Ring konnte nicht übergeben werden: Trauring ist nicht auffindbar!
     at manuscript.character.Bride.receiveRing(Bride.java:42)
@@ -1336,6 +1356,8 @@ Um eine saubere Struktur zu gewährleisten, müssen die Ebenen und ihre Pakete n
 Wenn wir Software als Drehbuch begreifen, verlassen wir die Welt der leblosen Datencontainer und betreten eine Bühne, auf der die Fachlichkeit endlich sichtbar wird. Die Trennung von Backstage‑Technik und Regie‑Orchestrierung befreit die Domäne von allem Ballast, der sie jahrzehntelang verschüttet hat. Was bleibt, ist die reine Erzählung — klar, menschlich, nachvollziehbar.
 
 Die cineastische Projektstruktur ist keine hübsche Metapher, sondern ein Werkzeug. Sie verwandelt das tägliche Lesen von Code in ein intuitives Erlebnis. Wenn ein Stacktrace nicht mehr kryptische Framework‑Fragmente ausspuckt, sondern eine misslungene Szene beschreibt — eine Braut, die den Ring nicht entgegennehmen kann, eine Kameraeinstellung, die den Moment einfängt — dann dient die Technik endlich der Geschichte, nicht umgekehrt.
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_11_code_like_movie.png)
 
 Gerade jetzt, in einer Zeit, in der KI in Sekundenbruchteilen unendliche Mengen Code erzeugt, brauchen wir diese Erzählstruktur dringender denn je. Sie ist unser Kompass in einer Welt, in der das Schreiben trivial geworden ist, das Verstehen aber zur eigentlichen Herausforderung wird. Nur wenn unsere Software einer klaren Dramaturgie folgt, können wir KI als Co‑Autor einsetzen, ohne in einer Flut aus generierten Fragmenten die Orientierung zu verlieren.
 
