@@ -57,19 +57,19 @@ Ein Teammitglied, egal ob Investor, Fachexperte, Architekt oder Entwickler, muss
 
 **Bestandteile und Abhängigkeiten der Inszenierung**
 
-**Domain — Main Ideas & Concepts**  
-Die Domänenebene bildet das begriffliche Fundament des gesamten Systems. Hier entstehen die zentralen Ideen, Regeln und Konzepte, auf denen alle anderen Pakete aufbauen. Sie ist die einzige Ebene, die von keinem Paket abhängt, wird jedoch von allen anderen Paketen genutzt.
+**Ideas & Concepts (Domain)**  
+Die Domänenebene bildet das begriffliche Fundament des gesamten Systems. Hier entstehen die zentralen Ideen, Regeln und Konzepte auf denen alle anderen Pakete aufbauen. Sie ist die einzige Ebene, die von keinem Paket abhängt, wird jedoch von allen anderen Paketen genutzt.
 
-**Infrastructure — Backstage**  
+**Backstage (Infrastructure)**  
 Das Unterpaket Backstage enthält die technische Infrastruktur. Es stellt Werkzeuge, Dienste und Mechaniken bereit, die in allen anderen Paketen benötigt werden. Die Infrastruktur darf ausschließlich von der Domäne abhängen.
 
-**Details — Scenes**  
+**Scenes (Details)**  
 Die fachlichen Detail‑Pakete realisieren mithilfe der technischen Infrastruktur die Domänenkonzepte: die inhaltliche Ausgestaltung der abstrakten Domänenklassen im konkreten Abläufen und Interaktionen.
 
-**UI — Stage**  
+**Stage (UI)**  
 Die Darstellung (Stage), ist die sichtbare Oberfläche. Hier wird das, was in Domäne definiert wurde, für den Nutzer (Zuschauer) sichtbar gemacht. Die Präsentation hängt von der Domäne, fachlichen Detail‑Paketen und der Infrastruktur ab.
 
-**Composition-Root — Directing**  
+**Directing (Composition-Root)**  
 In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen. Es stellt den zentralen Einstiegspunkt `main()` der Anwendung bereit, orchestriert alle benötigten Klassen, entscheidet über deren Instanziierung (Inszenierung) und welche sonstigen Einstellungen zum Start benötigt werden. Kein anderes Paket darf von diesem Paket abhängen.
 
 ## **3. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
