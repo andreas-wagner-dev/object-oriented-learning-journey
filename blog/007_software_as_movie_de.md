@@ -4,7 +4,7 @@ Das Aufkommen von Künstlicher Intelligenz (KI) wie ChatGPT, Claude oder GitHub 
 
 Computer können beliebige Datenstrukturen verarbeiten. Menschen dagegen verstehen die Welt über Geschichten. Deshalb liegt es nahe, auch unseren Code wie das Drehbuch eines Spielfilms zu gestalten.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_00_code_like_movie.png)
 
 Während klassische Architekturmodelle Software als technische Schichtenlandschaft aus zustandslosen Services und passiven Datencontainern betrachten, inszeniert die Spielfilm‑Philosophie ein objektorientiertes System als Ensemble intelligenter Akteure. Diese Akteure treten in Szenen auf, handeln in Akten und treiben die Geschichte durch ihr Verhalten voran.
 
@@ -12,7 +12,7 @@ Während klassische Architekturmodelle Software als technische Schichtenlandscha
 
 Im Sinne eines Drehbuchs als Bauanleitung lässt sich die fachliche Domäne über drei zentrale Graphen beschreiben — als strukturierte Erzählung eines Spielfilms:
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
 
 **Der Konstruktions-Graph (Die Regie / Der Set-Aufbau)** zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) aufgebaut, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
 
@@ -34,7 +34,7 @@ Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die f
 
 Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
 
 ```
 manuscript/  
@@ -82,7 +82,7 @@ In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen
 
 Das Herzstück der Architektur bildet die fachliche Identität auf Ebene Null. Hier werden die Hauptcharaktere als Interfaces, der Handlungsrahmen als Szenen sowie ihre Attribute als Requisiten (Value Objects) definiert. Diese Ebene ist frei von technischem Rauschen und macht die Essenz des Systems sofort greifbar.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_04_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
 ```
 manuscript/  
 ├─ Actor.java         ← AKTEUR (Zentrales Interface)  
@@ -219,7 +219,7 @@ public abstract class Outfit implements Actor {
 
 In diesem Paket werden die grundlegenden Persönlichkeiten und Rollenprofile der Anwendung definiert. Es beschreibt die konkreten Figuren, die im Laufe der Geschichte auftreten können, noch ohne spezifische Verkleidung oder technische Bindung.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_05_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_04_code_like_movie.png)
 
 ```
 manuscript/  
@@ -450,7 +450,7 @@ public class ValidatedActor extends Outfit {
 
 In den chronologischen Paketen findet die schrittweise Realisierung der Anforderungen statt. Hier werden die abstrakten Figuren für konkrete Szenarien ausgestattet und in den Dialog geschickt. Das *Tell, Don't Ask*-Prinzip sorgt in diesen Paketen für eine zielgerichtete Handlung ohne technisches Rauschen.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_06_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_05_code_like_movie.png)
 
 ```
 manuscript/  
@@ -1035,7 +1035,7 @@ public class StripePaymentAdapter extends Outfit implements Payable {
 
 Die Stage ist die Präsentationsschicht, die dem Zuschauer (Benutzer) die Handlung sichtbar macht. Sie nutzt die Fachlogik, ohne sie zu verändern.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_07_code_like_movie.png)
 
 ```
 manuscript/  
