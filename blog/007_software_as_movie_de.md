@@ -24,15 +24,15 @@ Der **Aufruf-Graph (Die Handlung)** ist der flüchtige Moment der Interaktion �
 
 Das **„Tell, Don’t Ask“-Prinzip** fungiert dabei als zentrale Regieanweisung: Objekte sollen nicht befragt werden wie Datencontainer, sondern als autonome Charaktere handeln, die ihre Aufgaben selbst lösen.
 
-Damit bei der Umsetzung des Drehbuchs im Projekt keine Verwirrungen entstehen, müssen die Akte und Szenen in einer systematisch nachvollziehbaren Struktur organisiert sein. Dafür gelten drei pragmatische Regeln für die Paket-Struktur:
+Damit bei der Umsetzung des Drehbuchs keine Verwirrung entsteht, müssen *Akte* und *Szenen* systematisch organisiert sein. Für eine nachvollziehbare Paket-Struktur gelten drei pragmatische Regeln:
 
-1. **Abhängigkeiten:** Pakete dürfen nicht von ihren Unterpaketen abhängen und keine Zirkelbezüge bilden.
-2. **Detailverfeinerung:** Unterpakete führen keine neuen Konzepte ein, sondern konkretisieren nur bestehende.
-3. **Fachsprache:** Pakete spiegeln die Sprache der Domäne wider (Ubiquitous Language), nicht die technische Sprache der Umsetzer.
+1. **Klare Abhängigkeiten:** Pakete dürfen niemals von ihren Unterpaketen abhängen. Zirkelbezüge sind strikt verboten.
+2. **Präzise Detailverfeinerung:** Unterpakete führen keine völlig neuen Konzepte ein. Sie konkretisieren lediglich bereits bestehende.
+3. **Lebendige Fachsprache:** Pakete spiegeln die Sprache der Domäne wider (Ubiquitous Language) – nicht die technischen Begriffe der Umsetzer.
 
 ## 2. **🎬 Die cineastische Projektstruktur**
 
-Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung und macht die Inszenierung der Anwendung auf den ersten Blick verständlich.
+Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung. So wird die Inszenierung der Anwendung auf den ersten Blick verständlich 
 
 Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
 
@@ -61,23 +61,22 @@ manuscript/
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
-Ein Teammitglied, egal ob Investor, Fachexperte, Architekt oder Entwickler, muss nicht raten, worum es geht. Es liest das Inhaltsverzeichnis einer Lebensgeschichte.
+Egal ob Investor, Fachexperte, Architekt oder Entwickler: Niemand muss raten [2]. Jeder liest sofort das Inhaltsverzeichnis einer Geschichte.
 
 **Bestandteile und Abhängigkeiten der Inszenierung**
 
-**Ideas & Concepts (Domain)**  
-Die Domänenebene bildet das begriffliche Fundament des gesamten Systems. Hier entstehen die zentralen Ideen, Regeln und Konzepte auf denen alle anderen Pakete aufbauen. Sie ist die einzige Ebene, die von keinem Paket abhängt, wird jedoch von allen anderen Paketen genutzt.
+Um die Geschichte ohne Logikfehler zu erzählen, folgen die Pakete einer strikten Hierarchie:
 
-**Backstage (Infrastructure)**  
-Das Unterpaket Backstage enthält die technische Infrastruktur. Es stellt Werkzeuge, Dienste und Mechaniken bereit, die in allen anderen Paketen benötigt werden. Die Infrastruktur darf ausschließlich von der Domäne abhängen.
+**Ideas & Concepts (Domain):** Das begriffliche Fundament. Hier stehen die zentralen Ideen und fachlichen Regeln. Diese Ebene ist völlig autonom und hängt von nichts ab. Alle anderen Pakete bauen auf ihr auf.
 
-**Scenes (Details)**  
-Die fachlichen Detail‑Pakete realisieren mithilfe der technischen Infrastruktur die Domänenkonzepte: die inhaltliche Ausgestaltung der abstrakten Domänenklassen im konkreten Abläufen und Interaktionen.
+**Backstage (Infrastructure):** Die technische Infrastruktur. Hier liegen Werkzeuge, Datenbanken und APIs.Sie dient dem Ensemble und darf ausschließlich von der Domäne abhängen.
 
-**Stage (UI)**  
-Die Darstellung (Stage), ist die sichtbare Oberfläche. Hier wird das, was in Domäne definiert wurde, für den Nutzer (Zuschauer) sichtbar gemacht. Die Präsentation hängt von der Domäne, fachlichen Detail‑Paketen und der Infrastruktur ab.
+**Scenes (Details):** Die fachlichen Detail-Pakete. Sie füllen die abstrakten Domänenkonzepte mit Leben. Hier werden konkrete Abläufe und Interaktionen der Story ausgestaltet.
 
-**Directing (Composition-Root)**  
+**Stage (UI):** Die sichtbare Oberfläche. Hier wird das Geschehen für das Publikum (die Nutzer) sichtbar gemacht. Die Bühne greift auf Domäne, Szenen und die Infrastruktur zu.
+
+**Directing (Composition-Root):** Hier laufen alle Fäden zusammen in einer Composition‑Root‑Klasse zusammen. Sie stellt den zentralen Einstiegspunkt `main()` der Anwendung bereit. Die Regie orchestriert die Besetzung, instanziiert die Objekte und startet die Show. Kein anderes Paket darf von der Regie abhängen.
+
 In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen. Es stellt den zentralen Einstiegspunkt `main()` der Anwendung bereit, orchestriert alle benötigten Klassen, entscheidet über deren Instanziierung (Inszenierung) und welche sonstigen Einstellungen zum Start benötigt werden. Kein anderes Paket darf von diesem Paket abhängen.
 
 ## **3. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
