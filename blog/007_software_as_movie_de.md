@@ -1,8 +1,10 @@
 # **🎞️ Software als Spielfilm-Drehbuch**
 
-Das Aufkommen von Künstlicher Intelligenz (KI) wie ChatGPT, Claude oder GitHub Copilot hat die Softwareentwicklung grundlegend verändert. Die alte Faustregel „zehnmal mehr lesen als schreiben“ gilt heute stärker denn je — nur dass wir inzwischen nicht mehr unseren eigenen Code lesen, sondern vor allem den von Maschinen generierten. Um diese Flut überhaupt noch menschlich erfassen und beherrschen zu können, braucht es eine neue Perspektive auf Softwarearchitektur.
+Das Aufkommen von Künstlicher Intelligenz wie ChatGPT, Claude oder GitHub Copilot hat die Softwareentwicklung grundlegend verändert. Die alte Faustregel „zehnmal mehr lesen als schreiben“ gilt heute stärker denn je – nur dass wir inzwischen nicht mehr unseren eigenen Code lesen, sondern vor allem den von Maschinen generierten. Um diese Flut überhaupt noch menschlich erfassen und beherrschen zu können, braucht es eine neue Perspektive auf Softwarearchitektur.
 
-Computer können beliebige Datenstrukturen verarbeiten. Menschen dagegen verstehen die Welt über Geschichten. Deshalb liegt es nahe, auch unseren Code wie das Drehbuch eines Spielfilms zu gestalten.
+Computer verarbeiten beliebige Datenstrukturen. Menschen dagegen verstehen die Welt über Geschichten. Biologisch gesehen speichern wir Informationen am besten über Ursache, Wirkung und Emotionen ab. Wo nackte Daten scheitern, bleiben gute Geschichten im Kopf – und motivieren zum Weiterlesen.
+
+Deshalb liegt es nahe, Code wie ein Film-Drehbuch zu gestalten.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_00_code_like_movie.png)
 
