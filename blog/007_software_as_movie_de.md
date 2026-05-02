@@ -1358,9 +1358,7 @@ Für eine systematisch nachvollziehbare Struktur gelten folgende zentrale Regeln
 
 **Detailverfeinerung in Unterpaketen:** Unterpakete führen keine neuen Fachkonzepte ein. Sie dienen lediglich der inhaltlichen Ausgestaltung und stellen die konkreten Implementierungen für die Konzepte der übergeordneten Ebene bereit.
 
-**Fachsprache (Ubiquitous Language):** Pakete und Klassen müssen die Sprache der realen Fachwelt sprechen, nicht die der technischen Umsetzung.
-
----
+**Fachsprache (Ubiquitous Language):** Pakete, Klassen und Methoden müssen die Sprache der realen Fachwelt sprechen, nicht die der technischen Umsetzung.
 
 ## **11. Schlusswort: Code, der Geschichten erzählt**
 
@@ -1379,13 +1377,14 @@ Hören wir also auf, nur technische Schablonen zu füllen oder blind KI‑Output
 
 ## Quellen-Verzeichnis
 
-Robert Bräutigam (2021): [Next Level Readability](https://www.informatik-aktuell.de/entwicklung/programmiersprachen/next-level-lesbarkeit.html)(in German)  
-Robert Bräutigam (2017): [Happy Packaging](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
-Mark Seemann (2011): [Composition Root Pattern](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
-Mark Seemann (2011): [Compose object graphs with confidence](https://blog.ploeh.dk/2011/03/04/Composeobjectgraphswithconfidence/)
-Miško Hevery (2008): [Where Have All the Singletons Gone?](https://testing.googleblog.com/2008/08/where-have-all-singletons-gone.html)
-Yegor Bugayenko (2016): [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html)
+* Imogen Short (2025): [The neuroscience of storytelling](https://www.linkedin.com/pulse/neuroscience-storytelling-why-stories-make-us-remember-imogen-short-c23ec/)
+* Robert Bräutigam (2021): [Next Level Readability](https://www.informatik-aktuell.de/entwicklung/programmiersprachen/next-level-lesbarkeit.html)(in German)  
+* Robert Bräutigam (2017): [Happy Packaging](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
+* Mark Seemann (2011): [Composition Root Pattern](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
+* Mark Seemann (2011): [Compose object graphs with confidence](https://blog.ploeh.dk/2011/03/04/Composeobjectgraphswithconfidence/)
+* Miško Hevery (2008): [Where Have All the Singletons Gone?](https://testing.googleblog.com/2008/08/where-have-all-singletons-gone.html)
+* Yegor Bugayenko (2016): [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html)
 
-Wikipedia (2026): [Adapter Pattern](https://en.wikipedia.org/wiki/Adapter_pattern)
-Wikipedia (2026): [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
-Wikipedia (2026): [Proxy Pattern](https://en.wikipedia.org/wiki/Proxy_pattern)
+* Wikipedia (2026): [Adapter Pattern](https://en.wikipedia.org/wiki/Adapter_pattern)
+* Wikipedia (2026): [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
+* Wikipedia (2026): [Proxy Pattern](https://en.wikipedia.org/wiki/Proxy_pattern)
