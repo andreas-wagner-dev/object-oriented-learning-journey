@@ -99,18 +99,12 @@ Die `Scene` ist das atomare Element unserer Erzählung. Sie kapselt eine spezifi
 
 ```java
 package manuscript;
-
-/**  
- * Definiert den kleinsten Handlungsrahmen.  
- * Eine Szene bündelt den Dialog und die Interaktion der Akteure. 
- */  
+  
 @FunctionalInterface  
 public interface Scene {
     void execute();  
 }
 ```
-
-
 
 ### **3.2 Der Actor (Die Hauptrolle)**
 
@@ -430,7 +424,6 @@ public class PersistentActor extends Outfit {
 Hinter dem Vorhang, im Verborgenen, arbeitet die Bühnentechnik. Hier werden die technischen Dienste implementiert, die unsere Akteure nutzen, um ihre Rollen auszufüllen. Die Domäne weiß zwar, dass es ein Archiv gibt, aber nicht, wie die Regale darin gebaut sind.
 
 
-
 ## **5. Die Akte der Dramaturgie (Die Fachprozesse)**
 
 In den fachlichen Paketen findet die schrittweise Realisierung der Anforderungen statt. Hier werden die abstrakten Figuren für konkrete Szenarien ausgestattet und in den Dialog geschickt. Das *Tell, Don't Ask*-Prinzip sorgt in diesen Paketen für eine zielgerichtete Handlung ohne technisches Rauschen.
@@ -439,7 +432,8 @@ In den fachlichen Paketen findet die schrittweise Realisierung der Anforderungen
 
 Jedes Paket repräsentiert einen Akt im Leben der Anwendung:
 ```
-manuscript/  
+manuscript/
+...
 ├─ wedding/  
 │  ├─ WeddingCeremony.java     ← Die Trauungs-Szene  
 │  ├─ PayTheBand.java          ← Das Bezahlen der Band  
@@ -503,6 +497,8 @@ public class WeddingCeremony implements Scene {
 
 #### **5.1.2 Der Ringtausch (RingExchange.java)**
 
+`RingExchange` ist eine eigenständige Szene, die ausschließlich den Austausch der Ringe zwischen Braut und Bräutigam darstellt.
+ 
 ```java
 package manuscript.wedding;
 
@@ -510,10 +506,6 @@ import manuscript.Scene;
 import manuscript.character.Groom;
 import manuscript.character.Bride;
 
-/**  
- * RingExchange ist eine eigenständige Szene, die ausschließlich  
- * den Austausch der Ringe zwischen Braut und Bräutigam darstellt.  
- */  
 public class RingExchange implements Scene {
     
     private final Groom groom;
@@ -538,9 +530,9 @@ public class RingExchange implements Scene {
 
 Ein Film im Film? Das erfordert Fingerspitzengefühl. Das `Video`-Interface abstrahiert die Darstellung, während der `VideoProxy` als geschickter Statist agiert: Er wartet im Hintergrund und lädt das schwere Bildmaterial erst dann, wenn der Regisseur tatsächlich „Action!“ ruft (Lazy Loading).
 
-* `Video.java`: Das fachliche Versprechen, ein Video abspielen zu können.
-* `RealVideo.java`: Die ressourcenintensive Umsetzung.
-* `VideoProxy.java`: Der Platzhalter, der die Performance schont, bis der Moment gekommen ist.
+* `Video`: Das fachliche Versprechen, ein Video abspielen zu können.
+* `RealVideo`: Die ressourcenintensive Umsetzung.
+* `LazyVideo`: Der Platzhalter, der die Performance schont, bis der Moment gekommen ist.
 
 ```java
 package manuscript.wedding;
@@ -596,7 +588,7 @@ public class RealVideo implements Video {
 
 #### **5.1.5 Das Video-Proxy (VideoProxy.java)**
 
-VideoProxy ist ein Lazy-Loading-Proxy für Videos. Das eigentliche Video wird erst geladen, wenn es tatsächlich abgespielt wird.
+LazyVideoP ist ein Lazy-Loading-Proxy für Videos. Das eigentliche Video wird erst geladen, wenn es tatsächlich abgespielt wird.
    
 ```java
 package manuscript.wedding;
@@ -631,8 +623,7 @@ public class VideoProxy implements Video {
 
 #### **5.1.6 Die Liebesgeschichten-Rückblende (LoveStoryFlashback.java)**
 
-Hier führen wir die Requisiten zusammen. Die Szene nutzt den Proxy, um die Geschichte des Paares auf die Leinwand (`SpeechBubble`) zu bringen. Die `LoveStoryFlashback` Klasse spielt einen Video-Rückblick ab,  
-der die Liebesgeschichte des Paares zeigt.  
+ Die `LoveStoryFlashback` Klasse spielt einen Video-Rückblick ab, der die Liebesgeschichte des Paares. Hier werden die Requisiten   zusammengeführt. Die Szene nutzt `LazyVideo` als Proxy, um die Geschichte des Paares auf die Leinwand (`SpeechBubble`) zu bringen.zeigt.  
 
 ```java
 package manuscript.wedding;
@@ -758,9 +749,9 @@ public class SunsetDinner implements Scene {
 
 Dieser Akt führt eine neue **Location (Hospital)** und einen neuen **Charakter (Newborn)** ein. Hier zeigt sich, wie externe Systeme (Krankenhaus) kontrolliert in die Geschichte integriert werden, um einen neuen Lebensabschnitt einzuläuten.Hospital: Ein Infrastruktur-Dienst, der den Rahmen für das Geschehen bietet.BirthScene: Die Geburtsstunde eines neuen Objekts im System.
 
-#### **5.3.1 Das Krankenhaus (Hospital.java)**
+#### **5.3.1 Das Krankenhaus**
 
-Hospital repräsentiert das Krankenhaus als Ort der Geburt.
+`Hospital` repräsentiert das Krankenhaus als Ort der Geburt.
 
 ```java
 package manuscript.birth;
@@ -783,9 +774,9 @@ public class Hospital {
 }
 ```
 
-#### **5.3.2 Die Geburts-Szene (BirthScene.java)**
+#### **5.3.2 Die Geburts-Szene**
 
-BirthScene orchestriert die Geburt des Kindes.
+`BirthScene` orchestriert die Geburt des Kindes.
 
 ```java
 package manuscript.birth;
@@ -826,7 +817,7 @@ Der finale Akt beschreibt den „Dauerzustand“. Die Szenen werden repetitiver,
 
 #### **5.4.1 Die Morgenroutine (MorningRoutine.java)**
 
-MorningRoutine repräsentiert den typischen Morgen einer jungen Familie.
+Die `MorningRoutine` repräsentiert den typischen Morgen einer jungen Familie.
 
 ```java
 package manuscript.familylife;
@@ -899,7 +890,6 @@ Damit die Akteure auf der Bühne glänzen können, stellt die Bühnentechnik ver
 
 ```
 manuscript/
-```
 ... 
 ├─ backstage/
 │  ├─ archive/  
@@ -920,11 +910,11 @@ manuscript/
 
 ```
 
- Die Architektur nutzt hier konsequent das Interface-Segregation-Prinzip:
+Die Architektur nutzt hier konsequent das **Interface-Segregation-Prinzip**:
 
-* Archive.java: Das abstrakte Gedächtnis. Es definiert, wie Informationen aufbewahrt werden, ohne sich auf eine Datenbank-Technologie festzulegen.
-* Channel.java: Die Leitung nach draußen. Ob Telefon, Funk oder API – ein Channel ermöglicht die Kommunikation mit der Außenwelt.
-* Payable.java: Die finanzielle Infrastruktur, die den Austausch von Werten ermöglicht.
+* `Archive`: Das abstrakte Gedächtnis. Es definiert, wie Informationen aufbewahrt werden, ohne sich auf eine Datenbank-Technologie festzulegen.
+* `Channel`: Die Leitung nach draußen. Ob Telefon, Funk oder API – ein `Channel` ermöglicht die Kommunikation mit der Außenwelt.
+* `Payable`: Die finanzielle Infrastruktur, die den Austausch von Werten ermöglicht.
 
 **Die Detail-Pakete (Implementierungen)**
 
@@ -936,7 +926,7 @@ In den Unterpaketen wie `archive/`, `payment/` oder `phone/` liegen die „schwe
 Durch diese Struktur erreichen wir, dass die Domäne (das Drehbuch) nur gegen die Interfaces in `backstage/` programmiert wird. Ob im Hintergrund ein Headset (im Paket `phone/`) oder eine DatabaseArchive (im Paket `archive/`) schuftet, bleibt für die Fachlogik vollkommen transparent.
 
 
-### **6.1 Das Datenbank-Archiv (DatabaseArchive.java)**
+### **6.1 Das Datenbank-Archiv**
 
 Das `DatabaseArchive` ist der Tresor unseres Theaters. Akteure müssen sich nicht mit SQL-Verbindungen belasten; sie übergeben ihren Zustand dem Archiv, das die technische Abwicklung im Hintergrund übernimmt.
 
@@ -967,13 +957,13 @@ public class DatabaseArchive implements Archive {
 }
 ```
 
-### **6.2 Das Payment-Interface (Payable.java)**
+### **6.2 Das Payment-Interface**
 
 Hier sehen wir das **Adapter-Pattern** in seiner reinsten Form. Wir möchten die Hochzeit nicht mit Details einer Kreditkarten-Abrechnung belasten.
 
-* Payable: Die fachliche Anforderung („Jemand muss bezahlen können“).
-* StripeApi: Das technische Fremdsystem, das eine völlig andere Sprache spricht.
-* StripePayment: Unser Dolmetscher. Er ist gleichzeitig ein Outfit (Maske) für den Akteur und ein Payable (Zahlungsdienst). Er übersetzt den fachlichen Wunsch in einen API-Aufruf.
+* `Payable`: Die fachliche Anforderung („Jemand muss bezahlen können“).
+* `StripeApi`: Das technische Fremdsystem, das eine völlig andere Sprache spricht.
+* `StripePayment`: Unser Dolmetscher. Er ist gleichzeitig ein Outfit (Maske) für den Akteur und ein Payable (Zahlungsdienst). Er übersetzt den fachlichen Wunsch in einen API-Aufruf.
 
 ```java
 package manuscript.backstage;
@@ -984,7 +974,7 @@ public interface Payable {
 }
 ```
 
-### **6.3 Der Stripe API Client (StripeApiClient.java)**
+### **6.3 Die Stripe API**
 
 `StripeApi` ist die technische Schnittstelle zur Stripe-API. Diese Klasse kennt nur die technische Sprache von Stripe, nicht die Fachdomäne.
 
@@ -1002,10 +992,9 @@ public class StripeApi {
 }
 ```
 
-### **6.4 Der Stripe Payment Adapter (StripePayment.java)**
+### **6.4 Der Stripe Payment Adapter**
 
-`StripePayment`-Adapter übersetzt die fachliche `pay()`-Methode  
-in die technische `executeTransaction()` der Stripe-API.
+`StripePayment`-Adapter übersetzt die fachliche `pay()`-Methode in die technische `executeTransaction()` der Stripe-API.
 
 ```java
 package manuscript.backstage.payment;
@@ -1055,14 +1044,13 @@ manuscript/
 
 Um dem Zuschauer Informationen zu vermitteln, benötigt die Bühne Werkzeuge. Diese haben keine eigene Business-Logik, sondern dienen rein der Interaktion und Darstellung:
 
-* **SpeechBubble:** Ein visuelles Element, um Dialoge oder Nachrichten hervorzuheben.
-* **ActionButton:** Die Brücke zwischen Zuschauer und Handlung. Ein Klick löst eine fachliche Szene aus – die UI stößt den Prozess an, führt ihn aber nicht selbst aus.
-* **CinematicGrid:** Sorgt für die visuelle Ordnung und Struktur auf dem Bildschirm.
-
+* `SpeechBubble`: Ein visuelles Element, um Dialoge oder Nachrichten hervorzuheben.
+* `CinematicGrid`: Sorgt für die visuelle Ordnung und Struktur auf dem Bildschirm.
+* `ActionButton`: Die Brücke zwischen Zuschauer und Handlung. Ein Klick löst eine fachliche Szene aus – die UI stößt den Prozess an, führt ihn aber nicht selbst aus.
 
 ### **7.1.1 Die Sprechblase**
 
-SpeechBubble repräsentiert eine visuelle Sprechblase auf der Bühne.
+Die `SpeechBubble` repräsentiert eine visuelle Sprechblase auf der Bühne.
 
 ```java
 package manuscript.stage.accessory;
@@ -1087,8 +1075,7 @@ public class SpeechBubble {
 
 ### **7.1.2 Der Action Button**
 
-`ActionButton` ist ein interaktiver Button auf der Bühne,  
-der eine Szene auslöst, wenn er geklickt wird.
+`ActionButton` ist ein interaktiver Button auf der Bühne, der eine Szene auslöst, wenn er geklickt wird.
 
 ```java
 package manuscript.stage.accessory;
@@ -1114,7 +1101,7 @@ public class ActionButton {
 
 ### **7.1.3 Das Cinematic Grid**
 
-`CinematicGrid` ist ein visuelles Raster für die Darstellung von Szenen.
+Dass `CinematicGrid` ist ein visuelles Raster für die Darstellung von Szenen.
 
 ```java
 package manuscript.stage.accessory;
@@ -1183,11 +1170,9 @@ manuscript/
 ...
 ```
 
-### **8.1 Der Composition Root**
+### **8.1 Der Regisseur (Composition Root)**
 
-Die `InstalledMovie.java` Klassen realisiert den *Composition Root* der gesamten Anwendung. Hier wird das komplette Drehbuch zusammengestellt und die Filmrolle befüllt.
-
-Erst an dieser stelle wird entschieden, welche konkreten technischen Implementierungen (z. B. Stripe oder SQL) für die abstrakten Rollen im Drehbuch eingesetzt werden.
+Die `InstalledMovie` Klassen realisiert den *Composition Root* der gesamten Anwendung. Hier wird das komplette Drehbuch zusammengestellt und die Filmrolle befüllt. Erst an dieser stelle wird entschieden, welche konkreten technischen Implementierungen (z. B. Stripe oder SQL) für die abstrakten Rollen im Drehbuch eingesetzt werden.
 
 ```java
 package manuscript.directing;
@@ -1330,9 +1315,7 @@ Wenn du die Applikation ausführst, wird die Konsole die Chronologie des Drehbuc
 
 ## **9. Der cineastische Stacktrace**
 
-Das Qualitätsmerkmal einer guten Struktur zeigt sich im Moment des Scheiterns. In klassischen Systemen wühlt man sich bei einem Fehler oft durch kryptische Framework-Klassen und generische Service-Layer. Bei der Spielfilm-Philosophie liest sich selbst der Fehlerspeicher wie eine Inhaltsangabe.
-
-Auch der Stack Trace dieses Graphen liest sich am Ende wie eine Inhaltsangabe des Films.
+Das Qualitätsmerkmal einer guten Struktur zeigt sich im Moment des Scheiterns. Man wühlt sich bei einem Fehler wie so oft durch kryptische Framework-Klassen und generische Service-Layer. Selbst der Fehlerspeicher liest sich wie eine Inhaltsangabe des Films.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_09_code_like_movie.png)
 
@@ -1347,13 +1330,7 @@ Exception in thread "main" java.lang.IllegalStateException: Ring konnte nicht ü
     at manuscript.directing.InstalledMovie.main(InstalledMovie.java:27)
 ```
 
-Der Debugger „schreit" die Fachlichkeit. Man sieht keinen generischen Daten-Update, sondern eine Braut, die in einer bestimmten Szene einen Ring entgegennimmt und eine fachliche Zustandsänderung bewirkt. Die Technik dient der Geschichte.
-
-Selbst im Fehlerfall „schreit" dieser Stacktrace seine fachliche Bedeutung heraus: Man sieht sofort, in welcher Szene (`Wedding`), bei welcher Kameraeinstellung (`CloseUp`) oder bei welcher konkreten Figur (`Bride`) die Erzählung unterbrochen wurde.
-
-**Wenn der Debugger die Geschichte erzählt**
-
-Der Stacktrace „schreit“ uns die Fachlichkeit förmlich entgegen. Wir sehen keinen generischen `DataUpdateException` in einem `AbstractServiceFactoryProxy`, sondern ein konkretes Drama:
+Nicht nur die Braut sodern auch der Stacktrace „schreit“ uns die Fachlichkeit förmlich entgegen. Man sieht keine generische `DataUpdateException` in einem `AbstractServiceFactoryProxy`, stattdessen ein konkretes Drama:
 * Wer? Die Braut (`Bride`).
 * Was? Sie konnte den Ring nicht empfangen (`receiveRing`).
 * In welchem Kostüm? Während sie als PersistentActor agierte.
@@ -1361,7 +1338,7 @@ Der Stacktrace „schreit“ uns die Fachlichkeit förmlich entgegen. Wir sehen 
 
 Die Technik wird hier vollkommen transparent. Man erkennt sofort, an welcher Stelle im Drehbuch die Erzählung unterbrochen wurde. Fehlersuche wird so vom frustrierenden Code-Wühlen zur gezielten **Regie-Korrektur**.
 
-## **10. Prinzipien und Bauplan mit Regeln: Code als Drehbuch**
+## **10. Bauplan als Drehbuch**
 
 **Die leitenden Prinzipien**
 
@@ -1371,7 +1348,7 @@ Die Technik wird hier vollkommen transparent. Man erkennt sofort, an welcher Ste
 
 * **System als Drehbuch:** Die Projektorganisation orientiert sich nicht an technischen Schichten, sondern folgt hierarchisch den fachlichen Domänenkonzepten.
 
-**Der Bauplan: Regeln für die Paket-Struktur**
+**Regeln für die Paket-Struktur**
 
 Für eine systematisch nachvollziehbare Struktur gelten folgende zentrale Regeln der Paketierung:
 
@@ -1395,14 +1372,20 @@ Die cineastische Projektstruktur ist weit mehr als eine Metapher; sie ist ein pr
 
 In einer Zeit, in der KI in Sekundenbruchteilen enorme Mengen an Code erzeugt, wird diese Erzählstruktur zur Notwendigkeit. Sie fungiert als Kompass in einer Welt, in der das Schreiben trivial, das Verstehen aber zur eigentlichen Herausforderung geworden ist. Nur wenn Software einer klaren Dramaturgie folgt, kann KI effektiv als Co-Autor eingesetzt werden, ohne dass die Orientierung in einer Flut generierter Fragmente verloren geht.
 
-Es gilt, über das bloße Befüllen technischer Schablonen oder das Aneinanderkleben von KI-Output hinauszugehen. Die Rolle des Entwicklers wandelt sich hierbei zum Regisseur und Autoren. Das Ziel ist Code, der nicht nur funktioniert, sondern seine eigene Bedeutung präzise auf die Leinwand bringt.
-
-Hören wir also auf, nur technische Schablonen zu füllen oder blind KI‑Output aneinanderzukleben. Werden wir zu Regisseuren. Zu Autoren. Zu Erzählern. Schreiben wir Coden, der nicht nur funktioniert, sondern der die eigene Bedeutung stolz auf die Leinwand bringt.
+Hören wir also auf, nur technische Schablonen zu füllen oder blind KI‑Output aneinanderzukleben. Werden wir zu Regisseuren. Zu Autoren. Zu Erzählern. Schreiben wir Coden, der nicht nur funktioniert, sondern seine fahchlich Bedeutung präzise auf die Leinwand bringt.
 
 **Klappe zu, Film ab!**
 
 
-## Quellen-verzeichnis
+## Quellen-Verzeichnis
 
+Robert Bräutigam (2021): [Next Level Readability](https://www.informatik-aktuell.de/entwicklung/programmiersprachen/next-level-lesbarkeit.html)(in German)  
+Robert Bräutigam (2017): [Happy Packaging](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
+Mark Seemann (2011): [Composition Root Pattern](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
+Mark Seemann (2011): [Compose object graphs with confidence](https://blog.ploeh.dk/2011/03/04/Composeobjectgraphswithconfidence/)
+Miško Hevery (2008): [Where Have All the Singletons Gone?](https://testing.googleblog.com/2008/08/where-have-all-singletons-gone.html)
+Yegor Bugayenko (2016): [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html)
 
-https://testing.googleblog.com/2008/08/where-have-all-singletons-gone.html
+Wikipedia (2026): [Adapter Pattern](https://en.wikipedia.org/wiki/Adapter_pattern)
+Wikipedia (2026): [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
+Wikipedia (2026): [Proxy Pattern](https://en.wikipedia.org/wiki/Proxy_pattern)
