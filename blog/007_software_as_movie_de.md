@@ -6,7 +6,7 @@ Computer verarbeiten beliebige Datenstrukturen. Menschen dagegen verstehen die W
 
 Deshalb liegt es nahe, Code wie ein Film-Drehbuch zu gestalten.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_00_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
 
 Während klassische Architekturmodelle Software als technische Schichtenlandschaft aus zustandslosen Services und passiven Datencontainern betrachten, inszeniert die Spielfilm‑Philosophie ein objektorientiertes System als Ensemble intelligenter Akteure. Diese Akteure treten in Szenen auf, handeln in Akten und treiben die Geschichte durch ihr Verhalten voran.
 
@@ -14,7 +14,7 @@ Während klassische Architekturmodelle Software als technische Schichtenlandscha
 
 Im Sinne eines Drehbuchs als Bauanleitung lässt sich die fachliche Domäne über drei zentrale Graphen beschreiben — als strukturierte Erzählung eines Spielfilms:
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
 
 **Der Konstruktions-Graph (Die Regie / Der Set-Aufbau)** zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) aufgebaut, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
 
@@ -36,7 +36,7 @@ Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die f
 
 Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
 
 ```
 manuscript/  
@@ -83,7 +83,7 @@ In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen
 
 Das Herzstück der Architektur bildet die fachliche Identität auf Ebene Null. Hier werden die Hauptcharaktere als Interfaces, der Handlungsrahmen als Szenen sowie ihre Attribute als Requisiten (Value Objects) definiert. Diese Ebene ist frei von technischem Rauschen und macht die Essenz des Systems sofort greifbar.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_04_code_like_movie.png)
 ```
 manuscript/  
 ├─ Actor.java         ← AKTEUR (Zentrales Interface)  
@@ -191,7 +191,7 @@ public interface Movie {
 
 In diesem Paket werden die grundlegenden Persönlichkeiten und Rollenprofile der Anwendung definiert. Es beschreibt die konkreten Figuren, die im Laufe der Geschichte auftreten können, noch ohne spezifische Verkleidung oder technische Bindung.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_04_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_05_code_like_movie.png)
 
 ```
 manuscript/  
@@ -201,7 +201,7 @@ manuscript/
    └─ Newborn.java             ← Das Neugeborene
 ```
 
-### **4.1 Der Bräutigam (Groom.java)**
+### **4.1 Der Bräutigam**
 
 ```java
 package manuscript.character;
@@ -239,7 +239,7 @@ public class Groom implements Actor {
 }
 ```
 
-### **4.2 Die Braut (Bride.java)**
+### **4.2 Die Braut**
 
 ```java
 package manuscript.character;
@@ -282,7 +282,7 @@ public class Bride implements Actor {
 }
 ```
 
-### **4.3 Das Neugeborene (Newborn.java)**
+### **4.3 Das Neugeborene**
 
 ```java
 package manuscript.character;
@@ -336,7 +336,7 @@ manuscript/
 * **Der PersistentActor:** Sorgt dafür, dass die Taten des Akteurs für die Nachwelt (Datenbank) erhalten bleiben.
 * **Der ValidatedActor:** Agiert als Souffleur, der vor dem Auftritt prüft, ob der Akteur bereit für seine Rolle ist.
 
-### **4.5 Der Suited Actor (SuitedActor.java)**
+### **4.5 Der Suited Actor**
 
 Der `SuitedActor` repräsentiert einen Akteur im Hochzeitsanzug.  
 Er behält seine Identität, tritt aber formeller auf.
@@ -365,7 +365,7 @@ public class SuitedActor extends Outfit {
 }
 ```
 
-### **4.6 Der Validated Actor (ValidatedActor.java)**
+### **4.6 Der Validated Actor**
 
 Der `ValidatedActor` prüft vor jeder Handlung, ob die Voraussetzungen erfüllt sind.
  
@@ -392,7 +392,7 @@ public class ValidatedActor extends Outfit {
 }
 ```
 
-### **4.7 Der Persistent Actor (PersistentActor.java)**
+### **4.7 Der Persistent Actor**
 
 Der `PersistentActor` versieht einen Actor mit Persistenz-Fähigkeiten. Nach jeder Handlung wird der Zustand in der Datenbank gespeichert.
 
@@ -428,7 +428,7 @@ Hinter dem Vorhang, im Verborgenen, arbeitet die Bühnentechnik. Hier werden die
 
 In den fachlichen Paketen findet die schrittweise Realisierung der Anforderungen statt. Hier werden die abstrakten Figuren für konkrete Szenarien ausgestattet und in den Dialog geschickt. Das *Tell, Don't Ask*-Prinzip sorgt in diesen Paketen für eine zielgerichtete Handlung ohne technisches Rauschen.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_05_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_06_code_like_movie.png)
 
 Jedes Paket repräsentiert einen Akt im Leben der Anwendung:
 ```
@@ -459,7 +459,7 @@ manuscript/
 
 ### **5.1 AKT 1: Die Hochzeit**
 
-#### **5.1.1 Die Inszenierung der Trauung (WeddingCeremony.java)**
+#### **5.1.1 Die Inszenierung der Trauung**
 
 Die `WeddingCeremony` ist unser Regieplan für den Höhepunkt des ersten Aktes. Sie bringt die Akteure zusammen und lässt sie gemäß ihrer fachlichen Bestimmung handeln.
 
@@ -495,7 +495,7 @@ public class WeddingCeremony implements Scene {
 }
 ```
 
-#### **5.1.2 Der Ringtausch (RingExchange.java)**
+#### **5.1.2 Der Ringtausch**
 
 `RingExchange` ist eine eigenständige Szene, die ausschließlich den Austausch der Ringe zwischen Braut und Bräutigam darstellt.
  
@@ -526,7 +526,7 @@ public class RingExchange implements Scene {
 }
 ```
 
-#### **5.1.3 Das Video-Interface (Video.java)**
+#### **5.1.3 Das Video-Interface**
 
 Ein Film im Film? Das erfordert Fingerspitzengefühl. Das `Video`-Interface abstrahiert die Darstellung, während der `VideoProxy` als geschickter Statist agiert: Er wartet im Hintergrund und lädt das schwere Bildmaterial erst dann, wenn der Regisseur tatsächlich „Action!“ ruft (Lazy Loading).
 
@@ -545,7 +545,7 @@ public interface Video {
 }
 ```
 
-#### **5.1.4 Das echte Video (RealVideo.java)**
+#### **5.1.4 Das echte Video**
 
 Das `RealVideo` ist die konkrete Implementierung eines Videos.  
 Das Laden verbraucht viele Ressourcen, daher sollte es nur bei Bedarf geschehen.
@@ -621,7 +621,7 @@ public class VideoProxy implements Video {
 }
 ```
 
-#### **5.1.6 Die Liebesgeschichten-Rückblende (LoveStoryFlashback.java)**
+#### **5.1.6 Die Liebesgeschichten-Rückblende**
 
  Die `LoveStoryFlashback` Klasse spielt einen Video-Rückblick ab, der die Liebesgeschichte des Paares. Hier werden die Requisiten   zusammengeführt. Die Szene nutzt `LazyVideo` als Proxy, um die Geschichte des Paares auf die Leinwand (`SpeechBubble`) zu bringen.zeigt.  
 
@@ -651,7 +651,7 @@ public class LoveStoryFlashback implements Scene {
 }
 ```
 
-#### **5.1.7 Die Band bezahlen (PayTheBand.java)**
+#### **5.1.7 Die Band bezahlen**
 
 Auch ein Drehbuch kommt nicht ohne weltliche Dinge aus. Diese Szene nutzt einen Adapter (`Payable`), um die fachliche Welt der Hochzeit mit dem nüchternen Zahlungssystem der Bühnentechnik zu verbinden. Die `PayTheBand` repräsentiert die Szene, in der die Hochzeitsband bezahlt wird. Dies demonstriert den Adapter-Pattern für externe Zahlungssysteme.
 
@@ -687,7 +687,7 @@ Nach dem Trubel der Hochzeit fokussiert sich das Drehbuch auf die Zweisamkeit. T
 * **HotelCheckIn:** Die Ankunft am Set.
 * **SunsetDinner:** Eine Szene, die den Zustand der Akteure (Zufriedenheit) subtil verändert.
 
-#### **5.2.1 Hotel Check-In (HotelCheckIn.java)**
+#### **5.2.1 Hotel Check-In**
 
 `HotelCheckIn` ist die Szene, in der das Paar im Hotel ankommt.
 
@@ -716,7 +716,7 @@ public class HotelCheckIn implements Scene {
 }
 ```
 
-#### **5.2.2 Romantisches Abendessen (SunsetDinner.java)**
+#### **5.2.2 Romantisches Abendessen**
 
 `SunsetDinner` ist die romantische Abendessen-Szene während der Flitterwochen.
 
@@ -815,7 +815,7 @@ Der finale Akt beschreibt den „Dauerzustand“. Die Szenen werden repetitiver,
 * **MorningRoutine:** Koordination mehrerer Akteure zur Erreichung eines gemeinsamen Ziels (Frühstück/Versorgung).
 * **Bedtime:** Eine ruhige Szene, die zeigt, wie Akteure auf die Handlungen anderer reagieren (Einschlafen nach dem Vorlesen).
 
-#### **5.4.1 Die Morgenroutine (MorningRoutine.java)**
+#### **5.4.1 Die Morgenroutine**
 
 Die `MorningRoutine` repräsentiert den typischen Morgen einer jungen Familie.
 
@@ -850,7 +850,7 @@ public class MorningRoutine implements Scene {
 }
 ```
 
-#### **5.4.2 Die Gute-Nacht-Geschichte (Bedtime.java)**
+#### **5.4.2 Die Gute-Nacht-Geschichte**
 
 Bedtime ist die Szene, in der der Vater seinem Kind eine Gute-Nacht-Geschichte vorliest.
 
@@ -886,7 +886,7 @@ public class Bedtime implements Scene {
 
 Damit die Akteure auf der Bühne glänzen können, stellt die Bühnentechnik verschiedene Kanäle und Speichersysteme bereit.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_07_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
 
 ```
 manuscript/
@@ -1024,7 +1024,7 @@ public class StripePaymentAdapter extends Outfit implements Payable {
 
 Die Bühne ist die Präsentationsschicht unserer Anwendung. Hier wird die Handlung für den Zuschauer (Benutzer) sichtbar gemacht. Das Entscheidende: Die Bühne nutzt die Fachlogik, verändert sie aber nicht. Sie ist der Ort, an dem Requisiten (Accessories) platziert und Einstellungen (Takes) vorgenommen werden.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_07_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_09_code_like_movie.png)
 
 
 ```
@@ -1160,7 +1160,7 @@ public class WeddingCloseUp {
 
 Die Regie ist der **Composition Root** der Anwendung. Hier werden alle Fäden zusammengeführt: Die *Charaktere* werden gecastet, die *Outfits* werden angezogen, die *Bühnentechnik* wird aufgebaut und die *Szenen* werden in die Filmrolle eingefügt.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_09_code_like_movie.png)
 
 ```
 manuscript/
@@ -1317,7 +1317,7 @@ Wenn du die Applikation ausführst, wird die Konsole die Chronologie des Drehbuc
 
 Das Qualitätsmerkmal einer guten Struktur zeigt sich im Moment des Scheiterns. Man wühlt sich bei einem Fehler wie so oft durch kryptische Framework-Klassen und generische Service-Layer. Selbst der Fehlerspeicher liest sich wie eine Inhaltsangabe des Films.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_09_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_10_code_like_movie.png)
 
 ```
 Exception in thread "main" java.lang.IllegalStateException: Ring konnte nicht übergeben werden: Trauring ist nicht auffindbar!
