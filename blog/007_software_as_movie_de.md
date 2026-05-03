@@ -12,15 +12,13 @@ Während klassische Architekturmodelle Software als technische Schichtenlandscha
 
 ## 1. **Drehbuchs als Bauanleitung**
 
-Im Sinne eines Drehbuchs als Bauanleitung lässt sich die fachliche Domäne über drei zentrale Graphen beschreiben — als strukturierte Erzählung eines Spielfilms:
+In einem objektorientierten System lässt sich die fachliche Domäne über drei zentrale Graphen beschreiben. Das Drehbuch wird hierbei zur Bauanleitung, die festlegt, wie die statische Struktur und der flüchtige Moment der Interaktion ineinandergreifen:
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
 
-**Der Konstruktions-Graph (Die Regie / Der Set-Aufbau)** zeigt den Aufbau des Sets durch den Composition Root. Hier wird die „Bühnentechnik“ (Infrastruktur) aufgebaut, bevor die Kamera rollt. Im Fokus steht das statische Objektgerüst (Wer besitzt wen?). In der Fachlogik selbst ist dieser Graph unsichtbar.
-
-Der **Kollaborations-Graph (Das Ensemble)** zeigt, welche Charaktere dauerhaft miteinander verbunden sind. Das entspricht der Besetzung der Hauptrollen und ihren Beziehungen im Drehbuch. Hier steht die statische Vernetzung im Vordergrund (Wer kennt wen und kann miteinander kommunizieren?).
-
-Der **Aufruf-Graph (Die Handlung)** ist der flüchtige Moment der Interaktion – der Dialog zwischen den Akteuren während des Ablaufs der Szenen. Hier wird sichtbar, wie zur Laufzeit Nachrichten ausgetauscht werden (Wer ruft gerade welche Methode auf?).
+* **Der Konstruktions-Graph (Die Regie / Der Set-Aufbau):** Er beschreibt die Instanziierung und den Aufbau des Objektgerüsts durch den [Composition Root](https://blog.ploeh.dk/2011/07/28/CompositionRoot/). Hier wird die „Bühnentechnik“ installiert, bevor die erste Szene beginnt (Wer besitzt wen?).
+* **Der Kollaborations-Graph (Das Ensemble):** Er definiert die dauerhaften Beziehungen zwischen den Objekten. Dies entspricht der festen Besetzung der Rollen und ihrer Vernetzung untereinander (Wer kennt wen und kann miteinander kommunizieren?).
+* **Der Aufruf-Graph (Die Handlung):** Er bildet die dynamischen Interaktionen zur Laufzeit ab – den eigentlichen Dialog zwischen den Akteuren während der Ausführung einer Szene (Wer ruft gerade welche Methode auf?).
 
 Das **„Tell, Don’t Ask“-Prinzip** fungiert dabei als zentrale Regieanweisung: Objekte sollen nicht befragt werden wie Datencontainer, sondern als autonome Charaktere handeln, die ihre Aufgaben selbst lösen.
 
