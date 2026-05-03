@@ -16,9 +16,9 @@ In einem objektorientierten System lässt sich die fachliche Domäne über drei 
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
 
-* **Der Konstruktions-Graph (Die Regie / Der Set-Aufbau):** Er beschreibt die Instanziierung und den Aufbau des Objektgerüsts durch den [Composition Root](https://blog.ploeh.dk/2011/07/28/CompositionRoot/). Hier wird die „Bühnentechnik“ installiert, bevor die erste Szene beginnt (Wer besitzt wen?).
-* **Der Kollaborations-Graph (Das Ensemble):** Er definiert die dauerhaften Beziehungen zwischen den Objekten. Dies entspricht der festen Besetzung der Rollen und ihrer Vernetzung untereinander (Wer kennt wen und kann miteinander kommunizieren?).
-* **Der Aufruf-Graph (Die Handlung):** Er bildet die dynamischen Interaktionen zur Laufzeit ab – den eigentlichen Dialog zwischen den Akteuren während der Ausführung einer Szene (Wer ruft gerade welche Methode auf?).
+* **Der Konstruktions-Graph (Die Regie / Der Set-Aufbau):** Er beschreibt die Instanziierung und den Aufbau des Objektgerüsts durch den [Composition Root](https://blog.ploeh.dk/2011/07/28/CompositionRoot/) (Wer besitzt wen?). Hier wird die „Bühnentechnik“ installiert, bevor die erste Szene beginnt.
+* **Der Kollaborations-Graph (Das Ensemble):** Er definiert die dauerhaften Beziehungen zwischen den Objekten (Wer kennt wen und kann miteinander kommunizieren?). Dies entspricht der festen Besetzung der Rollen und ihrer Vernetzung untereinander.
+* **Der Aufruf-Graph (Die Handlung):** Er bildet die dynamischen Interaktionen zur Laufzeit ab  (Wer ruft gerade welche Methode auf?) – den eigentlichen Dialog zwischen den Akteuren während der Ausführung einer Szene.
 
 Das **„Tell, Don’t Ask“-Prinzip** fungiert dabei als zentrale Regieanweisung: Objekte sollen nicht befragt werden wie Datencontainer, sondern als autonome Charaktere handeln, die ihre Aufgaben selbst lösen.
 
