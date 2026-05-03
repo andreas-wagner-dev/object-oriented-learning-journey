@@ -886,7 +886,7 @@ public class Bedtime implements Scene {
 
 Damit die Akteure auf der Bühne glänzen können, stellt die Bühnentechnik verschiedene Kanäle und Speichersysteme bereit.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_07_code_like_movie.png)
 
 ```
 manuscript/
@@ -1024,7 +1024,7 @@ public class StripePaymentAdapter extends Outfit implements Payable {
 
 Die Bühne ist die Präsentationsschicht unserer Anwendung. Hier wird die Handlung für den Zuschauer (Benutzer) sichtbar gemacht. Das Entscheidende: Die Bühne nutzt die Fachlogik, verändert sie aber nicht. Sie ist der Ort, an dem Requisiten (Accessories) platziert und Einstellungen (Takes) vorgenommen werden.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_09_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
 
 
 ```
