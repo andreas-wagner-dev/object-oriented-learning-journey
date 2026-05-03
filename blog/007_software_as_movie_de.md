@@ -20,7 +20,9 @@ In einem objektorientierten System lässt sich die fachliche Domäne über drei 
 * **Der Kollaborations-Graph (Das Ensemble):** Er definiert die dauerhaften Beziehungen zwischen den Objekten (Wer kennt wen und kann miteinander kommunizieren?). Dies entspricht der festen Besetzung der Rollen und ihrer Vernetzung untereinander.
 * **Der Aufruf-Graph (Die Handlung):** Er bildet die dynamischen Interaktionen zur Laufzeit ab  (Wer ruft gerade welche Methode auf?) – den eigentlichen Dialog zwischen den Akteuren während der Ausführung einer Szene.
 
-Das **„Tell, Don’t Ask“-Prinzip** fungiert dabei als zentrale Regieanweisung: Objekte sollen nicht befragt werden wie Datencontainer, sondern als autonome Charaktere handeln, die ihre Aufgaben selbst lösen.
+Die zentralen Regieanweisungen
+
+**Das Law of Demete**r und das Prinzip **Tell, Don’t Ask** fungieren als zentrale Regieanweisungen: Während das Law of Demeter den Zugriffspfad strikt auf unmittelbare Nachbarn beschränkt – ein Akteur interagiert also nur mit seinen direkten Szenenpartnern –, fordert Tell, Don’t Ask dazu auf, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen.
 
 Damit bei der Umsetzung des Drehbuchs keine Verwirrung entsteht, müssen *Akte* und *Szenen* systematisch organisiert sein. Für eine nachvollziehbare Paket-Struktur gelten drei pragmatische Regeln:
 
