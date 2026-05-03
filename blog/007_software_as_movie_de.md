@@ -38,6 +38,8 @@ Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbu
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
 
+Egal ob Investor, Fachexperte, Architekt oder Entwickler: Niemand muss raten. Jeder liest sofort das Inhaltsverzeichnis einer Geschichte.
+
 ```
 manuscript/  
 │  
@@ -61,7 +63,7 @@ manuscript/
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
-Egal ob Investor, Fachexperte, Architekt oder Entwickler: Niemand muss raten [2]. Jeder liest sofort das Inhaltsverzeichnis einer Geschichte.
+
 
 **Bestandteile und Abhängigkeiten der Inszenierung**
 
