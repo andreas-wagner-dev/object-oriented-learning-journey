@@ -199,9 +199,9 @@ public interface Media {
 Es ist nicht nur ein technisches Hilfsmittel, sondern die Erzählweise, mit der die Akteure ihre Informationen an die Stage (UI) oder das Backstage (Datenbank) übermitteln. Durch diese Umkehrung der Verantwortlichkeit wird das Objekt vom passiven Datenlieferanten zum aktiven Teilnehmer der Inszenierung.
 
 
-### **3.6 Die Movie als Composition Root (Die fertige Montage)**
+### **3.6 Die Movie als Composition Root (Die Geschichte selbst)**
 
-Das `Movie`-Interface dient als zentraler Koordinator, der die verschiedenen Komponenten wie Szenen und Akteure in eine logische, zeitliche Reihenfolge bringt. Es entkoppelt Regie, Drehbuch und fachliche Inhalte, um eine klare Struktur für den Ablauf der Geschichte zu gewährleisten.
+Das `Movie` Interface repräsentiert einen klaren Einstiegspunkt für den gesamten Ablauf der Erzählung. Es dient als zentraler Koordinator, der die verschiedenen Komponenten wie Szenen und Akteure in eine logische und zeitliche Reihenfolge bringt. Als Abstraktion der Geschichte selbst gewährleistet es die Entkopplung der fachlichen Inhalte von der technischen Regie.
 
 ```java
 package manuscript;
