@@ -1453,13 +1453,15 @@ Die Technik wird hier vollkommen transparent. Man erkennt sofort, an welcher Ste
 
 * **„Tell, Don't Ask":** Objekte werden nicht nach ihrem inneren Zustand abgefragt. Stattdessen erfolgt die Interaktion über fachliche Methoden, die das Objekt direkt zum Handeln auffordern.
 
-* **System als Drehbuch:** Die Projektorganisation orientiert sich nicht an technischen Schichten, sondern folgt hierarchisch den fachlichen Domänenkonzepten.
+**Law of Demeter:** Ein Objekte interagiert nur mit seinen direkten Nachbarn. Dies garantiert die lose Kopplung innerhalb der Inszenierung.
 
-**Regeln für die Paket-Struktur**
+**Regeln für die Projekt-Struktur**
 
 Für eine systematisch nachvollziehbare Struktur gelten folgende zentrale Regeln der Paketierung:
 
-**Fokus auf Ebene Null:** Auf der obersten Ebene eines Projekts befinden sich ausschließlich Schnittstellen, abstrakte Klassen, Value Objects und Entitäten. Diese Ebene bleibt vollständig frei von technischem Ballast.
+* **Struktur als Drehbuch:** Die Paketierung orientiert sich nicht an technischen Schichten, sondern folgt hierarchisch den fachlichen Domänenkonzepten.
+
+**Fokus auf Ebene Null:** Die oberste Paketebene enthält ausschließlich den fachlichen Kern aus Schnittstellen, abstrakten Klassen, Value Objects, Entitäten und das zentrale Systeminterface als fachlichen Einstiegspunkt einer Anwendung. Diese Ebene bleibt vollständig frei von technischem Ballast. Die konkreten Realisierungen erfolgen strikt getrennt in den jeweiligen Unterpaketen.
 
 **Hierarchie ohne Zyklen:** Ein übergeordnetes Paket darf niemals von seinen Unterpaketen abhängen. Die Verwendung von Unterpaketen ist zulässig, sofern sie nicht auf derselben Hierarchieebene liegen. Zyklische Abhängigkeiten sind dabei strikt auszuschließen.
 
