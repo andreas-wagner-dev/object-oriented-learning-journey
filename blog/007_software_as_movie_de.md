@@ -95,8 +95,6 @@ manuscript/
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
-
-
 ### **3.1 Der Actor (Die Hauptrolle)**
 
 Das `Actor`-Interface ist der Dreh- und Angelpunkt. Jede handelnde Figur im System muss diese Rolle annehmen. Es reduziert alle Akteure auf ihre fachliche Essenz: Identität und Handlung.
@@ -206,7 +204,12 @@ Das `Movie` Interface repräsentiert einen klaren Einstiegspunkt für den gesamt
 ```java
 package manuscript;
 
-public interface Movie {  
+/**
+ * Das Movie Interface ist die fachliche Repräsentation der Geschichte.
+ * Es definiert den Lebenszyklus und die Abfolge der Inszenierung.
+ */
+public interface Movie {
+
     /** Startet die Vorführung und befüllt die Filmrolle. */  
     void start();
 
@@ -230,6 +233,8 @@ manuscript/
 ```
 
 ### **4.1 Der Bräutigam**
+
+Der Bräutigam ist einer der Hauptcharaktere in der Hochzeitsgeschichte. Er artikuliert seine Identität gegenüber dem Medium, ohne seine interne Struktur zu entblößen.
 
 ```java
 package manuscript.character;
@@ -281,6 +286,8 @@ public class Groom implements Actor {
 ```
 
 ### **4.2 Die Braut**
+
+Die Braut ist die zweite Hauptfigur. Sie verwaltet ihren Zustand (den Empfang des Rings) intern und teilt diesen über die fachliche `speak(...)` Methode mit.
 
 ```java
 package manuscript.character;
@@ -335,6 +342,8 @@ public class Bride implements Actor {
 ```
 
 ### **4.3 Das Neugeborene**
+
+Das `Neugeborene` erscheint in der Familiengeschichte. Seine primäre Ausdrucksform ist das Weinen, was fachlich als Mitteilung an ein Medium realisiert wird.
 
 ```java
 package manuscript.character;
