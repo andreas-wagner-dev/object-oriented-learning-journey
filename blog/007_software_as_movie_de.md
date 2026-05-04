@@ -3,7 +3,7 @@
 > KI schreibt Code heute in Sekunden. Aber wer versteht ihn morgen noch?  
 > Warum wir aufhören sollten, Schichten zu bauen, und anfangen müssen, Drehbücher zu schreiben. 
  
- Tags: 🎬💻 #SoftwareArchitecture #CleanCode #AI #Storytelling"
+ Tags: 🎬💻 #SoftwareArchitecture #CleanCode #AI #Storytelling #DesignPattern 
 
 
 # **🎞️ Software als Spielfilm-Drehbuch**
