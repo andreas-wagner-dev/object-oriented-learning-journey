@@ -511,10 +511,10 @@ manuscript/
 ├─ wedding/  
 │  ├─ WeddingCeremony.java     ← Die Trauungs-Szene  
 │  ├─ PayTheBand.java          ← Das Bezahlen der Band  
-│  ├─ RingExchange.java        ← Ringtausch Interaktion  
-│  ├─ RealVideo.java           ← Film-Implementierung   
+│  ├─ RingExchange.java        ← Ringtausch Interaktion
 │  ├─ LoveStoryFlashback.java  ← Das Abspielen eines Films   
-│  ├─ VideoProxy.java          ← Verzögertes Laden des Films  
+│  ├─ RealVideo.java           ← Film-Implementierung   
+│  ├─ LazyVideo.java           ← Verzögertes Laden des Films  
 │  └─ Video.java               ← Film-Interface  
 │  
 ├─ honeymoon/  
@@ -662,17 +662,17 @@ public class RealVideo implements Video {
 
 #### **5.1.5 Das Video-Proxy (VideoProxy.java)**
 
-LazyVideoP ist ein Lazy-Loading-Proxy für Videos. Das eigentliche Video wird erst geladen, wenn es tatsächlich abgespielt wird.
+LazyVideo ist ein Lazy-Loading-Proxy für Videos. Das eigentliche Video wird erst geladen, wenn es tatsächlich abgespielt wird.
    
 ```java
 package manuscript.wedding;
 
-public class VideoProxy implements Video {
+public class LazyVideo implements Video {
     
     private final String filename;
     private RealVideo realVideo;
     
-    public VideoProxy(String filename) {
+    public LazyVideo(String filename) {
         this.filename = filename;
     }
     
