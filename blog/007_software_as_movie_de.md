@@ -43,25 +43,26 @@ Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbu
 Egal ob Investor, Fachexperte, Architekt oder Entwickler: Niemand muss raten. Jeder liest sofort das Inhaltsverzeichnis einer Geschichte.
 
 ```
-manuscript/  
-│  
-├─ directing/         ← REGIE (Das Steuerungssystem / Composition Root)  
-│  
-├─ character/         ← ENSEMBLE (Die Hauptdarsteller & Rollenprofile)  
-├─ outfit/            ← MASKE (Strukturelle Hüllen & Verkleidungen)  
-├─ wedding/           ← AKT 1 (Fachlicher Prozess: Zusammenführung)  
-├─ honeymoon/         ← AKT 2 (Fachlicher Prozess: Übergangsphase)  
-├─ birth/             ← AKT 3 (Fachlicher Prozess: Initialisierung)  
-├─ familylife/        ← AKT 4 (Fachlicher Prozess: Dauerzustand)  
-│  
+manuscript/
+│
+├─ directing/         ← REGIE (Das Steuerungssystem / Composition Root)
+│
+├─ character/         ← ENSEMBLE (Die Hauptdarsteller & Rollenprofile)
+├─ outfit/            ← MASKE (Strukturelle Hüllen & Verkleidungen)
+├─ wedding/           ← AKT 1 (Fachlicher Prozess: Zusammenführung)
+├─ honeymoon/         ← AKT 2 (Fachlicher Prozess: Übergangsphase)
+├─ birth/             ← AKT 3 (Fachlicher Prozess: Initialisierung)
+├─ familylife/        ← AKT 4 (Fachlicher Prozess: Dauerzustand)
+│
 ├─ backstage/         ← BÜHNENTECHNIK (Datenbanken, APIs, Infrastruktur)  
 │  
-├─ stage/             ← DIE BÜHNE (Benutzeroberflächen & Präsentation)  
-│  
-├─ Actor.java         ← AKTEUR (Zentrales Interface)  
-├─ Name.java          ← REQUISITEN (Präzise Fachwerte / Value Objects)  
-├─ Outfit.java        ← AUSSTATTUNG (Basis-Decorator)  
-├─ Scene.java         ← SZENE (Das Interaktionsprotokoll)  
+├─ stage/             ← DIE BÜHNE (Benutzeroberflächen & Präsentation)
+│
+├─ Actor.java         ← AKTEUR (Zentrales Interface)
+├─ Name.java          ← REQUISITEN (Präzise Fachwerte / Value Objects)
+├─ Outfit.java        ← AUSSTATTUNG (Basis-Decorator)
+├─ Scene.java         ← SZENE (Das Interaktionsprotokoll)
+├─ Media.java         ← Medium (Der Informationsträger)
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
@@ -89,7 +90,8 @@ manuscript/
 ├─ Actor.java         ← AKTEUR (Zentrales Interface)  
 ├─ Name.java          ← REQUISITE (Präzise Fachwerte / Value Object)  
 ├─ Outfit.java        ← AUSSTATTUNG (Basis-Decorator)  
-├─ Scene.java         ← SZENE (Das Interaktionsprotokoll)  
+├─ Scene.java         ← SZENE (Das Interaktionsprotokoll)
+├─ Media.java         ← Medium (Der Informationsträger)  
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
@@ -173,7 +175,26 @@ public interface Scene {
 }
 ```
 
-### **3.5 Die Movie als Composition Root (Die fertige Montage)**
+### **3.5 Das Medium (Der Informationsträger)**
+
+```java
+package manuscript;
+
+public interface Media {
+
+    Media with(String name, String value);
+    Media with(String name, BigDecimal value);
+    Media with(String name, LocalDate value);
+    Media with(String name, boolean value);
+
+ // optional extension
+ // Media with(String name, String [] strings);  // ← list
+ // Media with(String name, Media media);       // ← nested
+ // Media with(String name, Media[] medias);   // ← nested list
+}
+```
+
+### **3.6 Die Movie als Composition Root (Die fertige Montage)**
 
 Das `Movie`-Interface dient als zentraler Koordinator, der die verschiedenen Komponenten wie Szenen und Akteure in eine logische, zeitliche Reihenfolge bringt. Es entkoppelt Regie, Drehbuch und fachliche Inhalte, um eine klare Struktur für den Ablauf der Geschichte zu gewährleisten.
 
@@ -1004,11 +1025,11 @@ package manuscript.backstage.payment;
 import manuscript.Actor;
 import manuscript.Outfit;
 
-public class StripePaymentAdapter extends Outfit implements Payable {
+public class StripePayment extends Outfit implements Payable {
     
     private final StripeApi stripeApi;
     
-    public StripePaymentAdapter(Actor actor, StripeApi stripeApi) {
+    public StripePayment(Actor actor, StripeApi stripeApi) {
         super(actor);
         this.stripeApi = stripeApi;
     }
@@ -1256,7 +1277,7 @@ public class InstalledMovie implements Movie {
         Actor baseChild = new Newborn("Luna");
 
         Actor suitedGroom = new SuitedActor(baseGroom);
-        StripePaymentAdapter groomWithCard = new StripePaymentAdapter(suitedGroom, stripe);
+        StripePayment groomWithCard = new StripePayment(suitedGroom, stripe);
         Actor persistentBride = new PersistentActor(baseBride, archive);
 
         // ============================================================
