@@ -77,9 +77,7 @@ Um die Geschichte ohne Logikfehler zu erzählen, folgen die Pakete einer strikte
 
 **Stage (UI):** Die sichtbare Oberfläche. Hier wird das Geschehen für das Publikum (die Nutzer) sichtbar gemacht. Die Bühne greift auf Domäne, Szenen und die Infrastruktur zu.
 
-**Directing (Composition-Root):** Hier laufen alle Fäden zusammen in einer Composition‑Root‑Klasse zusammen. Sie stellt den zentralen Einstiegspunkt `main()` der Anwendung bereit. Die Regie orchestriert die Besetzung, instanziiert die Objekte und startet die Show. Kein anderes Paket darf von der Regie abhängen.
-
-In diesem Paket laufen alle Fäden in einer Composition‑Root‑Klasse zusammen. Es stellt den zentralen Einstiegspunkt `main()` der Anwendung bereit, orchestriert alle benötigten Klassen, entscheidet über deren Instanziierung (Inszenierung) und welche sonstigen Einstellungen zum Start benötigt werden. Kein anderes Paket darf von diesem Paket abhängen.
+**Directing (Composition-Root):** Das Paket Directing fungiert als operative Regiezentrale. In einer Composition Root Klasse stellt sie den zentralen Einstiegspunkt `main()` bereit und orchestriert das Zusammenspiel aller Klassen. Hier wird über die Instanziierung der Objekte sowie alle zum Start erforderlichen Einstellungen entschieden. Die Regie bildet somit die einzige Instanz, die das gesamte Ensemble kennt und die verschiedenen Bestandteile zu einer fertigen Inszenierung zusammenführt. Kein anderes Paket darf von der Regie abhängen.
 
 ## **3. Das Ensemble und die Requisiten (Die Domänen-Ebene)**
 
