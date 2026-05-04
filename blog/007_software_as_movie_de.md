@@ -1178,7 +1178,7 @@ public class SpeechBubble {
 
 ### **7.1.2 Der Action Button**
 
-`ActionButton` ist ein interaktiver Button auf der Bühne, der eine Szene auslöst, wenn er geklickt wird.
+Der `ActionButton` ist ein interaktiver Button auf der Bühne, der eine Szene auslöst, wenn er betätigt wird.
 
 ```java
 package manuscript.stage.accessory;
@@ -1204,7 +1204,7 @@ public class ActionButton {
 
 ### **7.1.3 Das Cinematic Grid**
 
-Dass `CinematicGrid` ist ein visuelles Raster für die Darstellung von Szenen.
+Das `CinematicGrid` ist ein visuelles Raster für die Darstellung von Szenen.
 
 ```java
 package manuscript.stage.accessory;
