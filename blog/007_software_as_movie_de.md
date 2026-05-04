@@ -1449,7 +1449,7 @@ Die Technik wird hier vollkommen transparent. Man erkennt sofort, an welcher Ste
 
 Um eine fachliche und progressive Erzählstruktur im Code zu gewährleisten, bedarf es einer klaren Trennung zwischen der Art der Kommunikation und der physischen Organisation des Projekts.
 
-**Die leitenden Prinzipien (Die Regieanweisung)**
+## **10.1 Die leitenden Prinzipien (Die Regieanweisung)**
 
 Diese Prinzipien definieren, wie Akteure innerhalb des Systems interagieren, um die Kapselung und Autonomie zu wahren:
 
@@ -1459,7 +1459,7 @@ Diese Prinzipien definieren, wie Akteure innerhalb des Systems interagieren, um 
 
 **Law of Demeter:** Akteure kommunizieren nur mit ihren unmittelbaren Nachbarn. Diese Beschränkung der Zugriffspfade garantiert eine lose Kopplung und schützt die Inszenierung vor semantischer Instabilität.
 
-**Regeln für die Projektstruktur (Das Inhaltsverzeichnis)**
+## **10.2 Regeln für die Projektstruktur (Das Inhaltsverzeichnis)**
 
 Damit die Geschichte für den Leser auffindbar bleibt, folgt die Paketierung fachlichen statt technischen Kriterien:
 
