@@ -22,13 +22,13 @@ Die Modellierung eines objektorientierten Systems erfolgt über drei zentrale Gr
 
 Die zentralen Regieanweisungen
 
-**Das Law of Demete**r und das Prinzip **Tell, Don’t Ask** fungieren als zentrale Regieanweisungen: Während das Law of Demeter den Zugriffspfad strikt auf unmittelbare Nachbarn beschränkt – ein Akteur interagiert also nur mit seinen direkten Szenenpartnern –, fordert Tell, Don’t Ask dazu auf, Objekten Befehle zu erteilen, statt deren internen Zustand abzufragen.
+Das **Law of Demeter** und das Prinzip **Tell Don’t Ask**  fungieren als zentrale Regieanweisungen. Während das *Law of Demeter* den Zugriffspfad strikt auf unmittelbare Nachbarn beschränkt und ein Akteur somit nur mit seinen direkten Szenenpartnern interagiert, fordert *Tell Don’t Ask* Prinzip dazu auf, Objekten Befehle zu erteilen statt deren internen Zustand abzufragen.
 
-Damit bei der Umsetzung des Drehbuchs keine Verwirrung entsteht, müssen *Akte* und *Szenen* systematisch organisiert sein. Für eine nachvollziehbare Paket-Struktur gelten drei pragmatische Regeln:
+Um einen fachlichen und progressiven Informationsfluss zu gewährleisten, muss das Inhaltsverzeichnis des Drehbuchs einen klaren Navigationspfad abbilden, der dem Leser hilft, die Bestandteile der Geschichte effizient zu lokalisieren. Hierfür gelten drei pragmatische Regeln:
 
-1. **Klare Abhängigkeiten:** Pakete dürfen niemals von ihren Unterpaketen abhängen. Zirkelbezüge sind strikt verboten.
-2. **Präzise Detailverfeinerung:** Unterpakete führen keine völlig neuen Konzepte ein. Sie konkretisieren lediglich bereits bestehende.
-3. **Lebendige Fachsprache:** Pakete spiegeln die Sprache der Domäne wider (Ubiquitous Language) – nicht die technischen Begriffe der Umsetzer.
+1. **Klare Abhängigkeiten:** Pakete dürfen niemals von ihren Unterpaketen abhängen. Zirkelbezüge sind strikt verboten, um den gerichteten Informationsfluss zu wahren.
+2. **Präzise Detailverfeinerung:** Unterpakete führen keine neuen Konzepte ein. Sie konkretisieren lediglich bereits bestehende Begriffe der übergeordneten Ebene.
+3. **Lebendige Fachsprache:** Pakete spiegeln die Sprache der Domäne wider (Ubiquitous Language), nicht die technischen Begriffe der Umsetzer.
 
 ## 2. **🎬 Die cineastische Projektstruktur**
 
