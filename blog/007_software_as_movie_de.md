@@ -12,7 +12,7 @@ Während klassische Architekturmodelle Software als technische Schichtenlandscha
 
 ## 1. **Drehbuchs als Bauanleitung**
 
-In einem objektorientierten System lässt sich die fachliche Domäne über drei zentrale Graphen beschreiben. Das Drehbuch wird hierbei zur Bauanleitung, die festlegt, wie die statische Struktur und der flüchtige Moment der Interaktion ineinandergreifen:
+Die Modellierung eines objektorientierten Systems erfolgt über drei zentrale Graphen. In diesem Kontext übernimmt das Drehbuch die Rolle einer Bauanleitung: Es definiert den Rahmen, in dem die statische Struktur und der flüchtige Moment der Interaktion nahtlos ineinandergreifen.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
 
