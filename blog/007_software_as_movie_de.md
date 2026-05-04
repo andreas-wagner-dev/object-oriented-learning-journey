@@ -320,6 +320,17 @@ public class Bride implements Actor {
         System.out.println("💍 " + name + " nimmt den Trauring entgegen.");
         hasRing = true;
     }
+
+     /**
+     * Die Braut "spricht" das "Ja-Wort".
+     */
+    public Media speak(Media media) {
+        return media
+            .with("role", "Bride")
+            .with("name", name.value())
+            .with("text", "Yes, I will...");
+            .with("hasRing", hasRing);
+    }
 }
 ```
 
@@ -356,7 +367,19 @@ public class Newborn implements Actor {
      * Das Baby weint.  
      */  
     public void cry() {
-        System.out.println("😭 " + name + " weint laut!");
+        Air air = new Air(); // default Medium
+        speak(air);
+        System.out.println(air.toString());
+    }
+    
+     /**
+     * Das Baby weint.
+     */
+    public Media speak(Media media) {
+        return media
+            .with("role", "Newborn")
+            .with("name", name.value())
+            .with("text", "😭 " + name + " weint laut!");
     }
 }
 ```
