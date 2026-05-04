@@ -491,6 +491,7 @@ public class PersistentActor extends Outfit {
         archive.save(decoratedActor);
         System.out.println("💾 " + name() + " wurde in der Datenbank gespeichert.");
     }
+
 }
 ```
 
@@ -1017,15 +1018,44 @@ public class DatabaseArchive implements Archive {
         System.out.println("🗄️  Datenbank-Archiv verbunden: " + connectionString);
     }
     
-    public void save(Actor actor) {
-        // Simuliere Datenbank-Speicherung
-        System.out.println("💾 [DB] Speichere " + actor.name() + " in der Datenbank...");
-    }
-    
     public Actor load(String name) {
         // Simuliere Datenbank-Laden
         System.out.println("📂 [DB] Lade " + name + " aus der Datenbank...");
         return null; // In einer echten Implementierung würde hier ein Actor zurückgegeben
+    }
+
+    @Override
+    public void save(Actor actor) {
+        // Simuliere Datenbank-Speicherung
+        // Das Archiv reicht dem Akteur ein leeres Blatt (RecordMedia)
+        RecordMedia record = new RecordMedia();
+        
+        // Der Akteur "spricht" seine Daten auf das Blatt
+        actor.speak(record);
+        
+        // Das Archiv speichert das Ergebnis
+        System.out.println("⚙️ [BACKSTAGE] Archiviert: " + record.getContent());
+    }
+
+     /**
+     * Ein privates Medium, das nur innerhalb des Archivs existiert,
+     * um die Daten des Akteurs entgegenzunehmen.
+     */
+    private static class RecordMedia implements Media {
+
+        private final Map<String, Object> data = new HashMap<>(0);
+
+        @Override
+        public Media with(String name, String value) {
+            data.put(name, value);
+            return this;
+        }
+
+        // ... weitere with Methoden für BigDecimal, LocalDate etc.
+
+        public String getContent() {
+            return data.toString();
+        }
     }
 }
 ```
