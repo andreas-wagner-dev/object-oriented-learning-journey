@@ -1447,27 +1447,33 @@ Die Technik wird hier vollkommen transparent. Man erkennt sofort, an welcher Ste
 
 ## **10. Bauplan als Drehbuch**
 
-**Die leitenden Prinzipien**
+Um eine fachliche und progressive Erzählstruktur im Code zu gewährleisten, bedarf es einer klaren Trennung zwischen der Art der Kommunikation und der physischen Organisation des Projekts.
 
-* **Graphen als Skript:** Der *Kollaborations-Graph* bildet das Ensemble ab, der *Konstruktions-Graph* regelt den Set-Aufbau (Infrastruktur) und der *Aufruf-Graph* beschreibt den Dialog der Objekte zur Laufzeit.
+**Die leitenden Prinzipien (Die Regieanweisung)**
 
-* **„Tell, Don't Ask":** Objekte werden nicht nach ihrem inneren Zustand abgefragt. Stattdessen erfolgt die Interaktion über fachliche Methoden, die das Objekt direkt zum Handeln auffordern.
+Diese Prinzipien definieren, wie Akteure innerhalb des Systems interagieren, um die Kapselung und Autonomie zu wahren:
 
-**Law of Demeter:** Ein Objekte interagiert nur mit seinen direkten Nachbarn. Dies garantiert die lose Kopplung innerhalb der Inszenierung.
+**Graphen als Skript:** Die Modellierung des Systems erfolgt über drei Dimensionen. Der *Kollaborationsgraph* bildet das Ensemble ab, der *Konstruktionsgraph* regelt den Setaufbau und der *Aufrufgraph* beschreibt den Dialog der Objekte zur Laufzeit.
 
-**Regeln für die Projekt-Struktur**
+**Tell Don’t Ask:** Interaktionen erfolgen ausschließlich über fachliche Befehle. Ein Objekt wird niemals nach seinem Zustand gefragt, um externe Entscheidungen zu treffen; es wird direkt zum Handeln aufgefordert.
 
-Für eine systematisch nachvollziehbare Struktur gelten folgende zentrale Regeln der Paketierung:
+**Law of Demeter:** Akteure kommunizieren nur mit ihren unmittelbaren Nachbarn. Diese Beschränkung der Zugriffspfade garantiert eine lose Kopplung und schützt die Inszenierung vor semantischer Instabilität.
 
-**Projekt-Struktur:** Die Paketierung orientiert sich nicht an technischen Schichten, sondern folgt hierarchisch den fachlichen Domänenkonzepten.
+**Regeln für die Projektstruktur (Das Inhaltsverzeichnis)**
 
-**Fokus auf Ebene Null:** Die oberste Paketebene enthält ausschließlich den fachlichen Kern aus Schnittstellen, abstrakten Klassen, Value Objects, Entitäten und das zentrale Systeminterface als fachlichen Einstiegspunkt einer Anwendung. Diese Ebene bleibt vollständig frei von technischem Ballast. Die konkreten Realisierungen erfolgen strikt getrennt in den jeweiligen Unterpaketen.
+Damit die Geschichte für den Leser auffindbar bleibt, folgt die Paketierung fachlichen statt technischen Kriterien:
 
-**Hierarchie ohne Zyklen:** Ein übergeordnetes Paket darf niemals von seinen Unterpaketen abhängen. Die Verwendung von Unterpaketen ist zulässig, sofern sie nicht auf derselben Hierarchieebene liegen. Zyklische Abhängigkeiten sind dabei strikt auszuschließen.
+**Domänenzentrierung:** Die Paketstruktur orientiert sich nicht an technischen Schichten (wie *Service* oder *Repository*), sondern folgt hierarchisch den fachlichen Domänenkonzepten.
 
-**Detailverfeinerung in Unterpaketen:** Unterpakete führen keine neuen Fachkonzepte ein. Sie dienen lediglich der inhaltlichen Ausgestaltung und stellen die konkreten Implementierungen für die Konzepte der übergeordneten Ebene bereit.
+**Fokus auf Ebene Null:** Die oberste Paketebene enthält ausschließlich den fachlichen Kern. Dazu gehören *Schnittstellen*, *abstrakte Klassen*, *Value Objects*, *Entitäten* und das zentrale *Systeminterface* als Einstiegspunkt der Anwendung. Diese Ebene bleibt frei von technischem Ballast.
 
-**Fachsprache (Ubiquitous Language):** Pakete, Klassen und Methoden müssen die Sprache der realen Fachwelt sprechen, nicht die der technischen Umsetzung.
+**Trennung der Realisierung:** Alle konkreten Implementierungen und technischen Details (wie *Infrastruktur* und *Benutzerpresäntation*) erfolgen strikt getrennt in untergeordneten Paketen.
+
+**Hierarchie ohne Zyklen:** Ein übergeordnetes Paket darf niemals von seinen Unterpaketen abhängen. Zyklische Abhängigkeiten sind strikt auszuschließen, um einen gerichteten Informationsfluss zu wahren. Die Verwendung von Unterpaketen ist zulässig, sofern sie nicht auf derselben Hierarchieebene liegen.
+
+**Detailverfeinerung:** Unterpakete führen keine neuen Fachkonzepte ein. Sie dienen lediglich der inhaltlichen Ausgestaltung der Konzepte aus der übergeordneten Ebene.
+
+**Fachsprache (Ubiquitous Language):** Die Benennung von *Paketen*, *Klassen* und *Methoden* folgt der Sprache der realen Fachwelt, nicht der technischen Umsetzung.
 
 ## **11. Schlusswort: Code, der Geschichten erzählt**
 
