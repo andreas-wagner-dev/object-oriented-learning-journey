@@ -417,8 +417,7 @@ manuscript/
 
 ### **4.5 Der Suited Actor**
 
-Der `SuitedActor` repräsentiert einen Akteur im Hochzeitsanzug.  
-Er behält seine Identität, tritt aber formeller auf.
+Der `SuitedActor` repräsentiert einen Akteur im Hochzeitsanzug. Er behält seine Identität, tritt aber formeller auf.
 
 ```java
 package manuscript.outfit;
@@ -627,8 +626,7 @@ public interface Video {
 
 #### **5.1.4 Das echte Video**
 
-Das `RealVideo` ist die konkrete Implementierung eines Videos.  
-Das Laden verbraucht viele Ressourcen, daher sollte es nur bei Bedarf geschehen.
+Das `RealVideo` ist die konkrete Implementierung eines Videos. Das Laden verbraucht viele Ressourcen, daher sollte es nur bei Bedarf geschehen.
 
 ```java
 package manuscript.wedding;
@@ -668,7 +666,7 @@ public class RealVideo implements Video {
 
 #### **5.1.5 Das Video-Proxy (VideoProxy.java)**
 
-LazyVideo ist ein Lazy-Loading-Proxy für Videos. Das eigentliche Video wird erst geladen, wenn es tatsächlich abgespielt wird.
+Das `LazyVideo` ist ein Lazy-Loading-Proxy für Videos. Das eigentliche Video wird erst geladen, wenn es tatsächlich abgespielt wird.
    
 ```java
 package manuscript.wedding;
@@ -703,7 +701,7 @@ public class LazyVideo implements Video {
 
 #### **5.1.6 Die Liebesgeschichten-Rückblende**
 
- Die `LoveStoryFlashback` Klasse spielt einen Video-Rückblick ab, der die Liebesgeschichte des Paares. Hier werden die Requisiten   zusammengeführt. Die Szene nutzt `LazyVideo` als Proxy, um die Geschichte des Paares auf die Leinwand (`SpeechBubble`) zu bringen.zeigt.  
+Die `LoveStoryFlashback` Klasse spielt einen Video-Rückblick ab, der die Liebesgeschichte des Paares. Hier werden die Requisiten   zusammengeführt. Die Szene nutzt `LazyVideo` als Proxy, um die Geschichte des Paares auf die Leinwand (`SpeechBubble`) zu bringen.zeigt.  
 
 ```java
 package manuscript.wedding;
