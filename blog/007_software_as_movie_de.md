@@ -95,20 +95,9 @@ manuscript/
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
 
-### **3.1 Das Scene-Interface (Der Handlungsrahmen)**
 
-Die `Scene` ist das atomare Element unserer Erzählung. Sie kapselt eine spezifische fachliche Interaktion in einer ausführbaren Einheit.
 
-```java
-package manuscript;
-  
-@FunctionalInterface  
-public interface Scene {
-    void execute();  
-}
-```
-
-### **3.2 Der Actor (Die Hauptrolle)**
+### **3.1 Der Actor (Die Hauptrolle)**
 
 Das `Actor`-Interface ist der Dreh- und Angelpunkt. Jede handelnde Figur im System muss diese Rolle annehmen. Es reduziert alle Akteure auf ihre fachliche Essenz: Identität und Handlung.
 
@@ -124,7 +113,7 @@ public interface Actor {
 }
 ```
 
-### **3.3 Das Name Value Object (Die Requisite)**
+### **3.2 Das Name Value Object (Die Requisite)**
 
 Ein `Name` ist mehr als ein simpler String. Er ist ein unveränderliches Objekt mit eingebauter Validierung. In unserer Filmwelt ist es ein Requisit, das sicherstellt, dass kein Charakter "namenlos" die Bühne betritt.
 
@@ -146,7 +135,7 @@ public record Name(String value) {
 }
 ```
 
-### **3.4 Das Outfit (Die Maske)**
+### **3.3 Das Outfit (Die Maske)**
 
 Das `Outfit` nutzt das Decorator-Pattern, um Akteuren dynamisch neue Fähigkeiten zu verleihen (z. B. ein `LoggingOutfit` oder ein `TransactionalOutfit`), ohne deren Kernidentität zu verändern. Es ist die "Verkleidung", die das Verhalten für eine bestimmte Szene anpasst.
 
@@ -173,7 +162,20 @@ public abstract class Outfit implements Actor {
 }
 ```
 
-### **3.5 Die fertige Montage (Composition Root)**
+### **3.4 Die Szene (Der Handlungsrahmen)**
+
+Die `Scene`-Interface ist das atomare Element unserer Erzählung. Sie kapselt eine spezifische fachliche Interaktion in einer ausführbaren Einheit.
+
+```java
+package manuscript;
+  
+@FunctionalInterface  
+public interface Scene {
+    void execute();  
+}
+```
+
+### **3.5 Die Movie als Composition Root (Die fertige Montage)**
 
 Das `Movie`-Interface dient als zentraler Koordinator, der die verschiedenen Komponenten wie Szenen und Akteure in eine logische, zeitliche Reihenfolge bringt. Es entkoppelt Regie, Drehbuch und fachliche Inhalte, um eine klare Struktur für den Ablauf der Geschichte zu gewährleisten.
 
@@ -1168,9 +1170,13 @@ Die Regie ist der **Composition Root** der Anwendung. Hier werden alle Fäden zu
 manuscript/
 ...
 ├─ directing/  
-│   └─ InstalledMovie.java      ← Der Composition Root
+│   └─ InstalledMovie.java      ← Die Implementierung von Composition Root
+...
+├─ Movie.java                   ← Der Composition Root
 ...
 ```
+
+Um dem Leser einen direkten Einstieg in den Ablauf der Geschichte zu ermöglichen, wird der Composition Root als Interface direkt im Root-Paket fachlich eingeführt. Das `Movie`-Interface repräsentiert dabei die Anwendung selbst. Die technische Realisierung erfolgt im Paket `directing/`, wo alle Fäden der Inszenierung zusammenlaufen.
 
 ### **8.1 Der Regisseur (Composition Root)**
 
