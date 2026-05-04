@@ -8,7 +8,7 @@ Deshalb liegt es nahe, Code wie ein Film-Drehbuch zu gestalten.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
 
-Während klassische Architekturmodelle Software als technische Schichtenlandschaft aus zustandslosen Services und passiven Datencontainern betrachten, inszeniert die Spielfilm‑Philosophie ein objektorientiertes System als Ensemble intelligenter Akteure. Diese Akteure treten in Szenen auf, handeln in Akten und treiben die Geschichte durch ihr Verhalten voran.
+Im Gegensatz zu Ansätzen, die Software als technische Schichtenlandschaft aus zustandslosen Services und passiven Datencontainern betrachten, inszeniert die Spielfilm‑Philosophie ein objektorientiertes System als Ensemble intelligenter Akteure. Diese Akteure treten in Szenen auf, handeln in Akten und treiben die Geschichte durch ihr Verhalten voran.
 
 ## 1. **Drehbuchs als Bauanleitung**
 
