@@ -177,6 +177,8 @@ public interface Scene {
 
 ### **3.5 Das Medium (Der Informationsträger)**
 
+Das `Media` Interface bildet die Brücke zwischen der Kapselung und der notwendigen Informationausgabe. Anstatt einen Akteur nach seinem internen Zustand zu fragen (ask), um diesen dann extern zu verarbeiten, erhält der Akteur die Anweisung, sich selbst auf einem Medium darzustellen (tell). Ein Charakter entblößt nicht seine gesamte Privatsphäre gegenüber dem Regisseur, sondern liefert gezielt die Informationen, die für die aktuelle Szene oder die Kameraeinstellung relevant sind.
+
 ```java
 package manuscript;
 
@@ -193,6 +195,9 @@ public interface Media {
  // Media with(String name, Media[] medias);   // ← nested list
 }
 ```
+
+Es ist nicht nur ein technisches Hilfsmittel, sondern die Erzählweise, mit der die Akteure ihre Informationen an die Stage (UI) oder das Backstage (Datenbank) übermitteln. Durch diese Umkehrung der Verantwortlichkeit wird das Objekt vom passiven Datenlieferanten zum aktiven Teilnehmer der Inszenierung.
+
 
 ### **3.6 Die Movie als Composition Root (Die fertige Montage)**
 
@@ -259,6 +264,19 @@ public class Groom implements Actor {
     public void giveRing() {
         System.out.println("💍 " + name + " überreicht den Trauring.");
     }
+
+     /**
+     * Der Akteur artikuliert seine Identität.
+     * Er "spricht" zum Medium und übergibt seine fachlichen Details,
+     * ohne seine interne Struktur zu entblößen.
+     */
+    public Media speak(Media media) {
+        return media
+            .with("role", "Groom")
+            .with("name", name.value())
+            .with("text", "Yes, I will...");
+    }
+    
 }
 ```
 
