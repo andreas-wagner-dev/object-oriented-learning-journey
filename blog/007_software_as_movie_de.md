@@ -538,43 +538,9 @@ manuscript/
 
 ### **5.1 AKT 1: Die Hochzeit**
 
-#### **5.1.1 Die Inszenierung der Trauung**
 
-Die `WeddingCeremony` ist unser Regieplan für den Höhepunkt des ersten Aktes. Sie bringt die Akteure zusammen und lässt sie gemäß ihrer fachlichen Bestimmung handeln.
 
-```java
-package manuscript.wedding;
-
-import manuscript.Scene;
-import manuscript.character.Groom;
-import manuscript.character.Bride;
-
-public class WeddingCeremony implements Scene {
-    
-    private final Groom groom;
-    private final Bride bride;
-    
-    public WeddingCeremony(Groom groom, Bride bride) {
-        this.groom = groom;
-        this.bride = bride;
-    }
-    
-    @Override
-    public void execute() {
-        System.out.println("\n💒 === DIE TRAUUNGSZEREMONIE BEGINNT ===");
-        
-        groom.perform();
-        bride.perform();
-        
-        groom.giveRing();
-        bride.receiveRing();
-        
-        System.out.println("💒 === DIE TRAUUNG IST VOLLZOGEN ===\n");
-    }
-}
-```
-
-#### **5.1.2 Der Ringtausch**
+#### **5.1.1 Der Ringtausch**
 
 `RingExchange` ist eine eigenständige Szene, die ausschließlich den Austausch der Ringe zwischen Braut und Bräutigam darstellt.
  
@@ -605,6 +571,43 @@ public class RingExchange implements Scene {
 }
 ```
 
+#### **5.1.2 Die Inszenierung der Trauung**
+
+Die `WeddingCeremony` ist unser Regieplan für den Höhepunkt des ersten Aktes. Sie bringt die Akteure zusammen und lässt sie gemäß ihrer fachlichen Bestimmung handeln.
+
+```java
+package manuscript.wedding;
+
+import manuscript.Scene;
+import manuscript.character.Groom;
+import manuscript.character.Bride;
+
+public class WeddingCeremony implements Scene {
+    private final Groom groom;
+    private final Bride bride;
+    private final Scene ringExchange; // Die Zeremonie beinhaltet den Ringtausch
+
+    public WeddingCeremony(Groom groom, Bride bride, Scene ringExchange) {
+        this.groom = groom;
+        this.bride = bride;
+        this.ringExchange = ringExchange;
+    }
+
+    @Override
+    public void execute() {
+        System.out.println("\n💒 === DIE TRAUUNGSZEREMONIE BEGINNT ===");
+        
+        // Die Akteure geben ihr Versprechen ab
+        groom.perform();
+        bride.perform();
+        
+        // Der Höhepunkt: Der Ringtausch wird als Unterszene aufgerufen
+        ringExchange.execute();
+        
+        System.out.println("💒 === DIE TRAUUNG IST VOLLZOGEN ===\n");
+    }
+}
+```
 #### **5.1.3 Das Video-Interface**
 
 Ein Film im Film? Das erfordert Fingerspitzengefühl. Das `Video`-Interface abstrahiert die Darstellung, während der `VideoProxy` als geschickter Statist agiert: Er wartet im Hintergrund und lädt das schwere Bildmaterial erst dann, wenn der Regisseur tatsächlich „Action!“ ruft (Lazy Loading).
@@ -1337,7 +1340,7 @@ public class InstalledMovie implements Movie {
 
     // 1. DIE BÜHNENTECHNIK (Backstage)  
     private final DatabaseArchive archive = new DatabaseArchive("jdbc:cinema://localhost/drehbuch");
-    private final StripeApiClient stripe = new StripeApiClient();
+    private final StripeApi stripe = new StripeApi();
       
     // Die Filmrolle  
     private final Queue<Scene> filmRoll = new LinkedList<>();
@@ -1356,20 +1359,22 @@ public class InstalledMovie implements Movie {
         // ============================================================
         // DAS CASTING & DIE MASKE (Vorbereitung der Akteure)
         // ============================================================
-        Actor baseGroom = new Groom("Romeo");
-        Actor baseBride = new Bride("Julia");
-        Actor baseChild = new Newborn("Luna");
+        Groom groom = new Groom("Romeo");
+        Bride bride = new Bride("Julia");
+        Newborn newborn = new Newborn("Luna");
 
-        Actor suitedGroom = new SuitedActor(baseGroom);
+        Actor suitedGroom = new SuitedActor(groom);
         StripePayment groomWithCard = new StripePayment(suitedGroom, stripe);
-        Actor persistentBride = new PersistentActor(baseBride, archive);
+        Actor persistentBride = new PersistentActor(bride, archive);
 
         // ============================================================
         // DIE INSZENIERUNG DER SZENEN (Die Filmrolle wird befüllt)
         // ============================================================
 
         // AKT 1: Die Hochzeit
-        filmRoll.add(new WeddingCeremony((Groom) baseGroom, (Bride) baseBride));
+        // Hier wird die atomare Szene (RingExchange) in die Rahmenszene injiziert
+        Scene ringtausch = new RingExchange(romeo, julia);
+        filmRoll.add(new WeddingCeremony(groom, bride, ringtausch));
         filmRoll.add(new PayTheBand(groomWithCard, 500.00));
         
         // Video-Rückblick (mit Proxy-Pattern)
@@ -1379,20 +1384,20 @@ public class InstalledMovie implements Movie {
 
         // Visuelle Nahaufnahme
         CinematicGrid grid = new CinematicGrid(12);
-        WeddingCloseUp visualTake = new WeddingCloseUp((Groom) baseGroom, (Bride) baseBride, grid);
+        WeddingCloseUp visualTake = new WeddingCloseUp(groom, bride, grid);
         filmRoll.add(visualTake::render);
 
         // AKT 2: Die Flitterwochen
-        filmRoll.add(new HotelCheckIn(baseGroom, baseBride));
-        filmRoll.add(new SunsetDinner(baseGroom, baseBride));
+        filmRoll.add(new HotelCheckIn(groom, bride));
+        filmRoll.add(new SunsetDinner(groom, bride));
 
         // AKT 3: Die Geburt
         Hospital hospital = new Hospital("St. Mary's Klinik");
-        filmRoll.add(new BirthScene((Bride) baseBride, (Newborn) baseChild, hospital));
+        filmRoll.add(new BirthScene(bride, newborn, hospital));
 
         // AKT 4: Das Familienleben
-        filmRoll.add(new MorningRoutine((Groom) baseGroom, (Bride) baseBride, (Newborn) baseChild));
-        filmRoll.add(new Bedtime((Groom) baseGroom, (Newborn) baseChild));
+        filmRoll.add(new MorningRoutine(groom, bride, newborn));
+        filmRoll.add(new Bedtime(groom, newborn));
     }
 
     @Override
