@@ -1305,7 +1305,7 @@ import manuscript.backstage.payment.StripePaymentAdapter;
 // Akte
 import manuscript.wedding.WeddingCeremony;
 import manuscript.wedding.PayTheBand;
-import manuscript.wedding.VideoProxy;
+import manuscript.wedding.LazyVideo;
 import manuscript.wedding.Video;
 import manuscript.wedding.LoveStoryFlashback;
 
@@ -1369,9 +1369,9 @@ public class InstalledMovie implements Movie {
         filmRoll.add(new PayTheBand(groomWithCard, 500.00));
         
         // Video-Rückblick (mit Proxy-Pattern)
-        Video videoProxy = new VideoProxy("liebesgeschichte_hd.mp4");
+        Video lazyVideo = new LazyVideo("liebesgeschichte_hd.mp4");
         SpeechBubble screen = new SpeechBubble("Leinwand bereit...");
-        filmRoll.add(new LoveStoryFlashback(videoProxy, screen));
+        filmRoll.add(new LoveStoryFlashback(lazyVideo, screen));
 
         // Visuelle Nahaufnahme
         CinematicGrid grid = new CinematicGrid(12);
