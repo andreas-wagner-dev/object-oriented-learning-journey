@@ -8,13 +8,9 @@
 
 # **🎞️ Software als Spielfilm-Drehbuch**
 
-
-
 Das Aufkommen von Künstlicher Intelligenz wie ChatGPT, Claude oder GitHub Copilot hat die Softwareentwicklung grundlegend verändert. Die alte Faustregel „zehnmal mehr lesen als schreiben“ gilt heute stärker denn je – nur dass wir inzwischen nicht mehr unseren eigenen Code lesen, sondern vor allem den von Maschinen generierten. Um diese Flut überhaupt noch menschlich erfassen und beherrschen zu können, braucht es eine neue Perspektive auf Softwarearchitektur.
 
-Computer verarbeiten beliebige Datenstrukturen. Menschen dagegen verstehen die Welt über Geschichten. Biologisch gesehen speichern wir Informationen am besten über Ursache, Wirkung und Emotionen ab. Wo nackte Daten scheitern, bleiben gute Geschichten im Kopf – und motivieren zum Weiterlesen.
-
-Deshalb liegt es nahe, Code wie ein Film-Drehbuch zu gestalten.
+Computer verarbeiten beliebige Datenstrukturen. Menschen dagegen verstehen die Welt über Geschichten. Biologisch gesehen speichern wir Informationen am besten über Ursache, Wirkung und Emotionen ab. Wo nackte Daten scheitern, bleiben gute Geschichten im Kopf – und motivieren zum Weiterlesen. Deshalb liegt es nahe, Code wie ein Film-Drehbuch zu gestalten.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
 
@@ -1486,6 +1482,14 @@ Damit die Geschichte für den Leser auffindbar bleibt, folgt die Paketierung fac
 **Fachsprache (Ubiquitous Language):** Die Benennung von *Paketen*, *Klassen* und *Methoden* folgt der Sprache der realen Fachwelt, nicht der technischen Umsetzung.
 
 ## **11. Schlusswort: Code, der Geschichten erzählt**
+
+Software als Drehbuch zu begreifen bedeutet, die Welt der leblosen Datencontainer zu verlassen und eine Bühne zu betreten, auf der die Fachlichkeit sichtbar wird. Die strikte Trennung von Backstagetechnik und Regieorchestrierung befreit die Domäne von technischem Ballast. Was bleibt, ist die reine Erzählung — klar, menschlich und nachvollziehbar.
+
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_11_code_like_movie.png)
+
+Die Spielfilm‑Philosophie geht über das bloße Befüllen technischer Schablonen oder das Aneinanderkleben von KI Output hinauszugehen und verwandelt das Lesen von Code in ein intuitives Erlebnis. Die Rolle des Entwicklers wandelt sich hierbei zum Regisseur und Autoren. Das Ziel ist Code, der nicht nur funktioniert, sondern seine eigene Bedeutung präzise auf die Leinwand bringt.
+
+---
 
 Software als Drehbuch zu begreifen bedeutet, die Welt der leblosen Datencontainer zu verlassen und eine Bühne zu betreten, auf der die Fachlichkeit sichtbar wird. Die strikte Trennung von Backstage-Technik und Regie-Orchestrierung befreit die Domäne von technischem Ballast. Was bleibt, ist die reine Erzählung — klar, menschlich und nachvollziehbar.
 
