@@ -20,9 +20,11 @@ Die Modellierung eines objektorientierten Systems erfolgt über drei zentrale Gr
 * **Der Kollaborations-Graph (Das Ensemble):** Er definiert die dauerhaften Beziehungen zwischen den Objekten (Wer kennt wen und kann miteinander kommunizieren?). Dies entspricht der festen Besetzung der Rollen und ihrer Vernetzung untereinander.
 * **Der Aufruf-Graph (Die Handlung):** Er bildet die dynamischen Interaktionen zur Laufzeit ab  (Wer ruft gerade welche Methode auf?) – den eigentlichen Dialog zwischen den Akteuren während der Ausführung einer Szene.
 
-Die zentralen Regieanweisungen
+**Die zentralen Regieanweisungen**
 
 Das **Law of Demeter** und das Prinzip **Tell Don’t Ask**  fungieren als zentrale Regieanweisungen. Während das *Law of Demeter* den Zugriffspfad strikt auf unmittelbare Nachbarn beschränkt und ein Akteur somit nur mit seinen direkten Szenenpartnern interagiert, fordert *Tell Don’t Ask* Prinzip dazu auf, Objekten Befehle zu erteilen statt deren internen Zustand abzufragen.
+
+**Das Inhaltsverzeichnis des Drehbuchs**
 
 Um einen fachlichen und progressiven Informationsfluss zu gewährleisten, muss das Inhaltsverzeichnis des Drehbuchs einen klaren Navigationspfad abbilden, der dem Leser hilft, die Bestandteile der Geschichte effizient zu lokalisieren. Hierfür gelten drei pragmatische Regeln:
 
@@ -62,8 +64,6 @@ manuscript/
 ├─ Scene.java         ← SZENE (Das Interaktionsprotokoll)  
 └─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
 ```
-
-
 
 **Bestandteile und Abhängigkeiten der Inszenierung**
 
