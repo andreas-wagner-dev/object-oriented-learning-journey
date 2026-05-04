@@ -1459,7 +1459,7 @@ Die Technik wird hier vollkommen transparent. Man erkennt sofort, an welcher Ste
 
 Für eine systematisch nachvollziehbare Struktur gelten folgende zentrale Regeln der Paketierung:
 
-* **Struktur als Drehbuch:** Die Paketierung orientiert sich nicht an technischen Schichten, sondern folgt hierarchisch den fachlichen Domänenkonzepten.
+**Projekt-Struktur:** Die Paketierung orientiert sich nicht an technischen Schichten, sondern folgt hierarchisch den fachlichen Domänenkonzepten.
 
 **Fokus auf Ebene Null:** Die oberste Paketebene enthält ausschließlich den fachlichen Kern aus Schnittstellen, abstrakten Klassen, Value Objects, Entitäten und das zentrale Systeminterface als fachlichen Einstiegspunkt einer Anwendung. Diese Ebene bleibt vollständig frei von technischem Ballast. Die konkreten Realisierungen erfolgen strikt getrennt in den jeweiligen Unterpaketen.
 
