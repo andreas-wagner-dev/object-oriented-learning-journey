@@ -1,4 +1,14 @@
+
+**Teaser Statement**
+> KI schreibt Code heute in Sekunden. Aber wer versteht ihn morgen noch?  
+> Warum wir aufhören sollten, Schichten zu bauen, und anfangen müssen, Drehbücher zu schreiben. 
+ 
+ Tags: 🎬💻 #SoftwareArchitecture #CleanCode #AI #Storytelling"
+
+
 # **🎞️ Software als Spielfilm-Drehbuch**
+
+
 
 Das Aufkommen von Künstlicher Intelligenz wie ChatGPT, Claude oder GitHub Copilot hat die Softwareentwicklung grundlegend verändert. Die alte Faustregel „zehnmal mehr lesen als schreiben“ gilt heute stärker denn je – nur dass wir inzwischen nicht mehr unseren eigenen Code lesen, sondern vor allem den von Maschinen generierten. Um diese Flut überhaupt noch menschlich erfassen und beherrschen zu können, braucht es eine neue Perspektive auf Softwarearchitektur.
 
