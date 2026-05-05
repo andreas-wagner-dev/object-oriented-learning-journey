@@ -40,9 +40,7 @@ Um einen fachlichen und progressiven Informationsfluss zu gewährleisten, muss d
 
 ## 2. **🎬 Die cineastische Projektstruktur**
 
-Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung. So wird die Inszenierung der Anwendung auf den ersten Blick verständlich 
-
-Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
+Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung. So wird die Inszenierung der Anwendung auf den ersten Blick verständlich. Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
 
@@ -78,7 +76,7 @@ Um die Geschichte ohne Logikfehler zu erzählen, folgen die Pakete einer strikte
 
 **Ideas & Concepts (Domain):** Das begriffliche Fundament. Hier stehen die zentralen Ideen und fachlichen Regeln. Diese Ebene ist völlig autonom und hängt von nichts ab. Alle anderen Pakete bauen auf ihr auf.
 
-**Backstage (Infrastructure):** Die technische Infrastruktur. Hier liegen Werkzeuge, Datenbanken und APIs.Sie dient dem Ensemble und darf ausschließlich von der Domäne abhängen.
+**Backstage (Infrastructure):** Die technische Infrastruktur. Hier liegen Werkzeuge, Datenbanken und APIs. Sie dient dem Ensemble und darf ausschließlich von der Domäne abhängen.
 
 **Scenes (Details):** Die fachlichen Detail-Pakete. Sie füllen die abstrakten Domänenkonzepte mit Leben. Hier werden konkrete Abläufe und Interaktionen der Story ausgestaltet.
 
@@ -231,11 +229,13 @@ In diesem Paket werden die grundlegenden Persönlichkeiten und Rollenprofile der
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_05_code_like_movie.png)
 
 ```
-manuscript/  
-└─ character/  
-   ├─ Groom.java               ← Der Bräutigam  
-   ├─ Bride.java               ← Die Braut  
-   └─ Newborn.java             ← Das Neugeborene
+manuscript/
+...
+├─ character/  
+│  ├─ Groom.java               ← Der Bräutigam  
+│  ├─ Bride.java               ← Die Braut  
+│  └─ Newborn.java             ← Das Neugeborene
+...
 ```
 
 ### **4.1 Der Bräutigam**
@@ -278,8 +278,7 @@ public class Groom implements Actor {
 
      /**
      * Der Akteur artikuliert seine Identität.
-     * Er "spricht" zum Medium und übergibt seine fachlichen Details,
-     * ohne seine interne Struktur zu entblößen.
+     * Er "spricht" zum Medium und übergibt seine fachlichen Details, ohne seine interne Struktur zu entblößen.
      */
     public Media speak(Media media) {
         return media
@@ -301,9 +300,6 @@ package manuscript.character;
 import manuscript.Actor;
 import manuscript.Name;
 
-/**  
- * Die Braut ist die zweite Hauptfigur in der Hochzeitsgeschichte.  
- */  
 public class Bride implements Actor {
     
     private final Name name;
@@ -404,16 +400,18 @@ public class Newborn implements Actor {
 Hier liegen die Decorator der Architektur. Ein Outfit fungiert als Objekt in Verkleidung. Wie ein Schauspieler schlüpft die Figur in ein Kostüm (z. B. für die Persistenz oder Validierung), um zusätzliche Fähigkeiten zu simulieren, wobei sie dieselbe Person bleibt und denselben fachlichen Text spricht.
 
 ```
-manuscript/  
-└─ outfit/  
-   ├─ SuitedActor.java         ← Actor im Hochzeitsanzug  
-   ├─ PersistentActor.java     ← Actor mit Datenbank-Anbindung  
-   └─ ValidatedActor.java      ← Actor mit Regelprüfung
+manuscript/
+...
+├─ outfit/  
+│  ├─ SuitedActor.java         ← Actor im Hochzeitsanzug  
+│  ├─ PersistentActor.java     ← Actor mit Datenbank-Anbindung  
+│  └─ ValidatedActor.java      ← Actor mit Regelprüfung
+...
 ```
 
-* **Der SuitedActor:** Verleiht dem Auftritt den passenden visuellen Rahmen.
-* **Der PersistentActor:** Sorgt dafür, dass die Taten des Akteurs für die Nachwelt (Datenbank) erhalten bleiben.
-* **Der ValidatedActor:** Agiert als Souffleur, der vor dem Auftritt prüft, ob der Akteur bereit für seine Rolle ist.
+* `SuitedActor`: Verleiht dem Auftritt den passenden visuellen Rahmen.
+* `PersistentActor`: Sorgt dafür, dass die Taten des Akteurs für die Nachwelt (Datenbank) erhalten bleiben.
+* `ValidatedActor`: Agiert als Souffleur, der vor dem Auftritt prüft, ob der Akteur bereit für seine Rolle ist.
 
 ### **4.5 Der Suited Actor**
 
@@ -425,10 +423,6 @@ package manuscript.outfit;
 import manuscript.Actor;
 import manuscript.Outfit;
 
-/**  
- * SuitedActor repräsentiert einen Akteur im Hochzeitsanzug.  
- * Er behält seine Identität, tritt aber formeller auf.  
- */  
 public class SuitedActor extends Outfit {
     
     public SuitedActor(Actor actor) {
@@ -538,11 +532,9 @@ manuscript/
 
 ### **5.1 AKT 1: Die Hochzeit**
 
-
-
 #### **5.1.1 Der Ringtausch**
 
-`RingExchange` ist eine eigenständige Szene, die ausschließlich den Austausch der Ringe zwischen Braut und Bräutigam darstellt.
+Der `RingExchange` ist eine eigenständige Szene, die ausschließlich den Austausch der Ringe zwischen Braut und Bräutigam darstellt.
  
 ```java
 package manuscript.wedding;
@@ -610,7 +602,7 @@ public class WeddingCeremony implements Scene {
 ```
 #### **5.1.3 Das Video-Interface**
 
-Ein Film im Film? Das erfordert Fingerspitzengefühl. Das `Video`-Interface abstrahiert die Darstellung, während der `VideoProxy` als geschickter Statist agiert: Er wartet im Hintergrund und lädt das schwere Bildmaterial erst dann, wenn der Regisseur tatsächlich „Action!“ ruft (Lazy Loading).
+Ein Film im Film? Das erfordert Fingerspitzengefühl. Das `Video`-Interface abstrahiert die Darstellung, während der `LazyVideo` als geschickter Statist agiert: Er wartet im Hintergrund und lädt das schwere Bildmaterial erst dann, wenn der Regisseur tatsächlich „Action!“ ruft (Lazy Loading).
 
 * `Video`: Das fachliche Versprechen, ein Video abspielen zu können.
 * `RealVideo`: Die ressourcenintensive Umsetzung.
@@ -765,8 +757,8 @@ public class PayTheBand implements Scene {
 
 Nach dem Trubel der Hochzeit fokussiert sich das Drehbuch auf die Zweisamkeit. Technisch gesehen nutzen wir hier das `Actor`-Interface anstelle konkreter Klassen. Das bedeutet: In den Flitterwochen ist es egal, ob es sich um den „nackten“ Bräutigam oder einen „persistierten“ Bräutigam im Anzug handelt – für das Hotel zählt nur der Gast (die Rolle).
 
-* **HotelCheckIn:** Die Ankunft am Set.
-* **SunsetDinner:** Eine Szene, die den Zustand der Akteure (Zufriedenheit) subtil verändert.
+* `HotelCheckIn`: Die Ankunft am Set.
+* `SunsetDinner`: Eine Szene, die den Zustand der Akteure (Zufriedenheit) subtil verändert.
 
 #### **5.2.1 Hotel Check-In**
 
@@ -893,8 +885,8 @@ public class BirthScene implements Scene {
 
 Der finale Akt beschreibt den „Dauerzustand“. Die Szenen werden repetitiver, aber nicht weniger wichtig. Hier sehen wir die Kollaboration des gesamten Ensembles. Vater, Mutter und Kind agieren als eingespieltes Team.
 
-* **MorningRoutine:** Koordination mehrerer Akteure zur Erreichung eines gemeinsamen Ziels (Frühstück/Versorgung).
-* **Bedtime:** Eine ruhige Szene, die zeigt, wie Akteure auf die Handlungen anderer reagieren (Einschlafen nach dem Vorlesen).
+* `MorningRoutine`: Koordination mehrerer Akteure zur Erreichung eines gemeinsamen Ziels (Frühstück/Versorgung).
+* `Bedtime`: Eine ruhige Szene, die zeigt, wie Akteure auf die Handlungen anderer reagieren (Einschlafen nach dem Vorlesen).
 
 #### **5.4.1 Die Morgenroutine**
 
@@ -933,7 +925,7 @@ public class MorningRoutine implements Scene {
 
 #### **5.4.2 Die Gute-Nacht-Geschichte**
 
-Bedtime ist die Szene, in der der Vater seinem Kind eine Gute-Nacht-Geschichte vorliest.
+Die `Bedtime` ist die Szene, in der der Vater seinem Kind eine Gute-Nacht-Geschichte vorliest.
 
 ```java
 package manuscript.familylife;
@@ -1234,7 +1226,7 @@ public class CinematicGrid {
 
 Unter `stage/take/` definieren wir spezifische Kameraperspektiven. Ein Take kombiniert Akteure mit visuellen Elementen, um einen bestimmten Moment der Geschichte einzufangen. 
 
-* **WeddingCloseUp:** Hier wird die Kamera auf das Brautpaar gerichtet. Es zeigt, wie die UI-Ebene die Domänen-Objekte (`Groom`, `Bride`) nutzt, um sie innerhalb eines Rasters (`CinematicGrid`) zu inszenieren.
+* `WeddingCloseUp`: Hier wird die Kamera auf das Brautpaar gerichtet. Es zeigt, wie die UI-Ebene die Domänen-Objekte (`Groom`, `Bride`) nutzt, um sie innerhalb eines Rasters (`CinematicGrid`) zu inszenieren.
 
 ```java
 package manuscript.stage.take;
