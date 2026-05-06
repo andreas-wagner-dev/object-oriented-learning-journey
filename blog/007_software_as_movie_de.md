@@ -999,7 +999,6 @@ In den Unterpaketen wie `archive/`, `payment/` oder `phone/` liegen die „schwe
 
 Durch diese Struktur erreichen wir, dass die Domäne (das Drehbuch) nur gegen die Interfaces in `backstage/` programmiert wird. Ob im Hintergrund ein Headset (im Paket `phone/`) oder eine DatabaseArchive (im Paket `archive/`) schuftet, bleibt für die Fachlogik vollkommen transparent.
 
-
 ### **6.1 Das Datenbank-Archiv**
 
 Das `DatabaseArchive` ist der Tresor unseres Theaters. Akteure müssen sich nicht mit SQL-Verbindungen belasten; sie übergeben ihren Zustand dem Archiv, das die technische Abwicklung im Hintergrund übernimmt.
@@ -1125,7 +1124,7 @@ public class StripePayment extends Outfit implements Payable {
 
 ## **7. Die Bühne (Stage)**
 
-Die Bühne ist die Präsentationsschicht unserer Anwendung. Hier wird die Handlung für den Zuschauer (Benutzer) sichtbar gemacht. Das Entscheidende: Die Bühne nutzt die Fachlogik, verändert sie aber nicht. Sie ist der Ort, an dem Requisiten (Accessories) platziert und Einstellungen (Takes) vorgenommen werden.
+Die Bühne ist das Präsentationskonzept unserer Anwendung. Hier wird die Handlung für den Zuschauer (Benutzer) sichtbar gemacht. Das Entscheidende: Die Bühne nutzt die Fachlogik, verändert sie aber nicht. Sie ist der Ort, an dem Requisiten (Accessories) platziert und Einstellungen (Takes) vorgenommen werden.
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
 
