@@ -1258,6 +1258,61 @@ public class WeddingCloseUp {
 }
 ```
 
+## 7.3 Die Selbstdarstellung der Akteure (Die Bühne als Medium)
+
+In einer herkömmlichen Architektur zieht sich die Benutzeroberfläche die Daten mittels Getter aus den Objekten. In der Spielfilmphilosophie bleibt die Autonomie der Akteure gewahrt: Der Akteur präsentiert sich selbst, indem er zu einem Medium spricht. Die Screen Komponente ist dabei lediglich eine spezielle technische Realisierung des Media Interfaces
+
+### 7.3.1 Die Screen Komponente (Screen.java)
+
+Die Screen Komponente fungiert als fachliches Medium der Bühne. Sie empfängt die Erzählung der Akteure und transformiert sie in eine visuelle Darstellung, ohne dass der Akteur die Details der Anzeige kennen muss.
+```java
+package manuscript.stage;
+
+import manuscript.Media;
+import java.math.BigDecimal;
+
+/**
+ * Das visuelle Medium der Bühne.
+ * Es empfängt die Daten des Akteurs und bringt sie zur Anzeige.
+ */
+public class Screen implements Media {
+
+    @Override
+    public Media with(String name, String value) {
+        System.out.println("📺 [SCREEN] " + name + ": " + value);
+        return this;
+    }
+
+    @Override
+    public Media with(String name, BigDecimal value) {
+        System.out.println("📺 [SCREEN] " + name + " (Zahl): " + value);
+        return this;
+    }
+    
+    // ... Implementierung weiterer with Methoden
+}
+
+```
+
+### 7.3.2 Die Inszenierung der Präsentation
+
+Anstatt dass die Bühne den Akteur ausliest, fordert die Regie den Akteur auf, sich auf der bereitgestellten Leinwand zu präsentieren. Dies folgt strikt der Regieanweisung **Tell Don’t Ask**.
+
+```java
+// Innerhalb einer Szene oder der Regie
+Screen stageScreen = new Screen();
+Groom romeo = new Groom("Romeo");
+
+// Der Akteur artikuliert sich gegenüber der Leinwand
+romeo.speak(stageScreen);
+```
+
+## 7.4 Datenanimation: Der Akteur als sein eigener Szenenbildner
+
+In klassischen Systemen zieht die Präsentationsebene Daten aus passiven Objekten heraus, um sie anzuzeigen. In der cineastischen Architektur übernimmt der Akteur die Regie über seine eigene Darstellung. Das Objekt fungiert nicht als Datenspeicher, sondern als Repräsentant seiner Identität.
+
+
+
 ## **8. Die Regie (Directing)**
 
 Die Regie ist der **Composition Root** der Anwendung. Hier werden alle Fäden zusammengeführt: Die *Charaktere* werden gecastet, die *Outfits* werden angezogen, die *Bühnentechnik* wird aufgebaut und die *Szenen* werden in die Filmrolle eingefügt.
