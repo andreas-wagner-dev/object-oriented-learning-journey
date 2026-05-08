@@ -90,13 +90,15 @@ Das Herzstück der Struktur bildet die fachliche Identität auf Ebene Null. Hier
 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_04_code_like_movie.png)
 ```
-manuscript/  
+manuscript/
+...
 ├─ Actor.java         ← AKTEUR (Zentrales Interface)  
 ├─ Name.java          ← REQUISITE (Präzise Fachwerte / Value Object)  
 ├─ Outfit.java        ← AUSSTATTUNG (Basis-Decorator)  
 ├─ Scene.java         ← SZENE (Das Interaktionsprotokoll)
 ├─ Media.java         ← Medium (Der Informationsträger)  
-└─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
+├─ Movie.java         ← DREHBUCH (Der rote Faden / Einstiegspunkt)
+...
 ```
 An dieser Stelle des Entwurfs ist es wichtig die Fachbegriffe der Ubiquitous Language zu verwenden denn, diese sind nicht nur präzise, sondern erzeugen Resonanz. Sie wecken die Emotionen des Fachbereichs und sorgen dafür, dass Entwickler und Fachexperten dieselbe Geschichte fühlen, nicht nur lesen.
 
