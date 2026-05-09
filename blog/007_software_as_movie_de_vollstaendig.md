@@ -11,7 +11,7 @@ Das Aufkommen von Künstlicher Intelligenz wie ChatGPT, Claude oder GitHub Copil
 
 Computer verarbeiten beliebige Datenstrukturen. Menschen dagegen verstehen die Welt über Geschichten. Biologisch gesehen ist unser Gehirn darauf programmiert, Informationen über Ursache, Wirkung und **Emotionen** zu speichern. Wo nackte Daten eher kognitive Kälte erzeugen und schnell in Vergessenheit geraten, erzeugen gute Geschichten Resonanz. Sie wecken Neugier, schaffen Empathie für die fachlichen Abläufe und motivieren zum Weiterlesen. Deshalb liegt es nahe, Code wie ein Filmdrehbuch zu gestalten.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_00_code_like_movie.png)
 
 Im Gegensatz zu Ansätzen, die Software als technische Schichtenlandschaft aus zustandslosen Services mit passiven Datencontainern betrachten, inszeniert die Spielfilmphilosophie ein objektorientiertes System als lebendiges Ensemble intelligenter Akteure. Diese Akteure treten in Szenen auf, handeln in Akten und verleihen der logischen Abfolge eine menschlich greifbare Dramaturgie. Die Geschichte wird so nicht mehr bloß ausgeführt, sondern durch das Verhalten der Akteure emotional erlebbar gemacht.
 
@@ -19,7 +19,7 @@ Im Gegensatz zu Ansätzen, die Software als technische Schichtenlandschaft aus z
 
 Die Modellierung eines objektorientierten Systems erfolgt über drei zentrale Graphen. In diesem Kontext übernimmt das Drehbuch die Rolle einer Bauanleitung: Es definiert den Rahmen, in dem die statische Struktur und der flüchtige Moment der Interaktion nahtlos ineinandergreifen.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_01_code_like_movie.png)
 
 * **Der Konstruktions-Graph (Die Regie / Der Set-Aufbau):** Er beschreibt die Instanziierung und den Aufbau des Objektgerüsts durch den [Composition Root](https://blog.ploeh.dk/2011/07/28/CompositionRoot/) (Wer besitzt wen?). Hier wird die „Bühnentechnik" installiert, bevor die erste Szene beginnt.
 * **Der Kollaborations-Graph (Das Ensemble):** Er definiert die dauerhaften Beziehungen zwischen den Objekten (Wer kennt wen und kann miteinander kommunizieren?). Dies entspricht der festen Besetzung der Rollen und ihrer Vernetzung untereinander.
@@ -41,7 +41,7 @@ Um einen fachlichen und progressiven Informationsfluss zu gewährleisten, muss d
 
 Die Struktur des Projekts ist die sichtbare Form des Drehbuchs. Sie trennt die fachliche Identität von der technischen Umsetzung. So wird die Inszenierung der Anwendung auf den ersten Blick verständlich. Wer das Manuskript öffnet, sieht keine technische Schablone, sondern das Drehbuch einer individuellen Geschichte, bereit für die Produktion in einem Filmstudio:
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_02_code_like_movie.png)
 
 Egal ob Investor, Fachexperte, Architekt oder Entwickler: Niemand muss raten. Jeder liest sofort das Inhaltsverzeichnis einer Lebensgeschichte.
 
@@ -87,7 +87,7 @@ Um die Geschichte ohne Logikfehler zu erzählen, folgen die Pakete einer strikte
 
 Das Herzstück der Struktur bildet die fachliche Identität auf Ebene Null. Hier werden die Hauptcharaktere als Interfaces, der Handlungsrahmen als Szenen sowie ihre Attribute als Requisiten (Value Objects) definiert. Diese Ebene ist frei von technischem Rauschen und macht die Essenz des Systems sofort greifbar.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_04_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
 ```
 manuscript/
 │
@@ -247,7 +247,7 @@ Das `Movie`-Interface ist bewusst minimalistisch: Eine einzige Methode `play()` 
 
 Das Herzstück jeder Geschichte sind die Charaktere. Sie tragen die Handlung, repräsentieren fachliche Rollen und agieren als autonome Akteure mit klarem Verhalten.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_05_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_04_code_like_movie.png)
 
 ```
 manuscript/character/
@@ -525,7 +525,7 @@ Die `Band` trägt selbst einen Namen und gruppiert Musiker. Wie bei `Guests` wir
 
 In der Filmwelt verwandelt die Maske Schauspieler in ihre Rollen. Ein Anzug macht aus einem Darsteller einen Gentleman, ein Kostüm verleiht ihm Autorität oder Eleganz. Im Code erfüllt das **Decorator-Pattern** denselben Zweck: Es stattet Akteure mit zusätzlichem Verhalten aus, ohne ihre Kernidentität zu verändern.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_06_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_05_code_like_movie.png)
 
 ```
 manuscript/outfit/
@@ -698,7 +698,7 @@ Durch die Implementierung des `Headset`-Interfaces kann der Bräutigam als Empf�
 
 Während die Akteure und Szenen die fachliche Essenz der Geschichte tragen, arbeitet im Hintergrund die Bühnentechnik. Sie sorgt dafür, dass Licht, Ton und Kulissen funktionieren – bleibt aber für das Publikum unsichtbar. Im Code entspricht dies der Infrastruktur-Ebene: Datenbanken, APIs, Kommunikationskanäle und Zahlungsdienste.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_07_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_06_code_like_movie.png)
 
 ```
 manuscript/backstage/
@@ -947,7 +947,7 @@ Das `Phone` verwaltet eine Liste von `Headset`-Empfängern. Beim Publizieren ein
 
 Ein Film ist in Akte unterteilt, die wiederum aus Szenen bestehen. Jeder Akt erzählt einen abgeschlossenen Teil der Geschichte. Im Code entsprechen Akte den fachlichen Prozessen, die in Szenen zerlegt sind.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_06_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_07_code_like_movie.png)
 ```
 manuscript/
 ...
