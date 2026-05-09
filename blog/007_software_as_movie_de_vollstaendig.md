@@ -414,7 +414,7 @@ public class Guest implements Actor {
 
     @Override
     public void perform() {
-        System.out.println("🧍‍♂️" + name + " lächelt fröhlich.");
+		System.out.println("🧍‍♂️" + name + " smiles.");
     }
 
     public void clap() {
