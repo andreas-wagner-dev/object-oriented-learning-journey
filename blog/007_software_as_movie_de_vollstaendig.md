@@ -1722,12 +1722,13 @@ Das Qualitätsmerkmal einer guten Struktur zeigt sich im Moment des Scheiterns. 
 ```
 Exception in thread "main" java.lang.IllegalStateException: Ring konnte nicht übergeben werden: Trauring ist nicht auffindbar!
     at manuscript.character.Bride.receiveRing(Bride.java:42)
-    at manuscript.outfit.PersistentActor.receiveRing(PersistentActor.java:36)
+    at manuscript.outfit.BrideWithArchive.perform(BrideWithArchive.java:31)
     at manuscript.stage.take.WeddingCloseUp.lambda$render$0(WeddingCloseUp.java:38)
-    at manuscript.stage.accessory.ActionButton.click(ActionButton.java:15)
-    at manuscript.wedding.WeddingCeremony.execute(WeddingCeremony.java:30)
-    at manuscript.directing.InstalledMovie.nextScene(InstalledMovie.java:62)
-    at manuscript.directing.InstalledMovie.main(InstalledMovie.java:27)
+    at manuscript.stage.accessory.Button.click(Button.java:15)
+    at manuscript.stage.take.WeddingCloseUp.clickOnButton(WeddingCloseUp.java:62)
+    at manuscript.directing.AnalogMovie.lambda$start$0(AnalogMovie.java:112)
+    at manuscript.directing.AnalogMovie.play(AnalogMovie.java:125)
+    at manuscript.directing.AnalogMovie.main(AnalogMovie.java:44)
 ```
 
 Nicht nur die Braut, sondern auch der Stacktrace "schreit" die Fachlichkeit förmlich heraus. Man sieht keine generische `DataUpdateException` in einem `AbstractServiceFactoryProxy`, sondern ein konkretes Drama am Set:
