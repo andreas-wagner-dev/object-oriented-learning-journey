@@ -90,7 +90,7 @@ Das Herzstück der Struktur bildet die fachliche Identität auf Ebene Null. Hier
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_03_code_like_movie.png)
 ```
 manuscript/
-│
+...
 ├─ Actor.java         ← Das universelle Akteur-Interface
 ├─ Name.java          ← Das Requisit: Präziser Fachwert
 ├─ Outfit.java        ← Die Ausstattung: Basis-Decorator
@@ -105,11 +105,8 @@ In der Welt des Films gibt es Stars, Statisten und Komparsen. Im Drehbuch spiele
 
 ```java
 public interface Actor {
-    
     Name name();
-    
     void perform();
-
     void speak(Media media);
 }
 ```
@@ -155,13 +152,13 @@ public abstract class Outfit implements Actor {
     
     protected final Actor decoratedActor;
     
-    protected Outfit(Actor actor) {this.decoratedActor = actor; }
+    protected Outfit(Actor actor) { this.decoratedActor = actor; }
     
     @Override
     public Name name() { return decoratedActor.name(); }
     
     @Override
-    public void perform() { decoratedActor.perform();}
+    public void perform() { decoratedActor.perform(); }
 }
 ```
 
@@ -188,11 +185,8 @@ Kommunikation in Filmen findet über verschiedene Medien statt: Sprache, Gesten,
 Das Interface `Media` definiert eine fluent API, um Inhalte zu befüllen.
 ```java
 public interface Media {
-
     Media with(String name, String value);
-
     Media with(String name, boolean value);
-
     public String content(String name);
 }
 ```
@@ -219,15 +213,13 @@ public abstract class Default implements Media {
     }
     
     @Override
-    public String toString() { return content.toString();}
+    public String toString() { return content.toString(); }
 }
 ```
 `Air` ist ein konkretes Medium für die unsichtbare Übertragung – etwa das gesprochene Wort in die Luft.
 
 ```java
-public final class Air extends Media.Default {
-
-}
+public final class Air extends Media.Default { }
 ```
  Weitere Spezialisierungen können für unterschiedliche Kontexte hinzugefügt werden, etwa `Email`, `RecordMedia` oder `VideoCanvas`.
 
@@ -281,9 +273,7 @@ public class Bride implements Actor {
 	public Name name() { return name;}
 
 	@Override
-	public void perform() {
-		System.out.println("💍 " + name + " recites her wedding vows..");
-	}
+	public void perform() { System.out.println("💍 " + name + " recites her wedding vows.."); }
 
 	public void giveRing(Media ringBasket) {
 		ringBasket.with("groom-ring", "Wedding-Ring");
@@ -291,12 +281,12 @@ public class Bride implements Actor {
 	}
 
 	public void receiveRing(Media ringBasket) {
+		String ring = ringBasket.content("bride-ring");
+		if (ring.isEmpty()) {
+			throw new IllegalStateException("Wedding ring is missing!");
+		}
 		if (hasRing) {
 			throw new IllegalStateException("The bride is already wearing a ring!");
-		}
-		String ring = ringBasket.content("bride-ring");
-		if (ring == null) {
-			throw new IllegalStateException("Wedding ring is missing!");
 		}
 		System.out.println("💍 " + name + " take the " + ring + ".");
 		hasRing = true;
@@ -331,9 +321,7 @@ public class Groom implements Actor {
 	public Name name() { return name;}
 
 	@Override
-	public void perform() {
-		System.out.println("💍 " + name + " recites her wedding vows..");
-	}
+	public void perform() { System.out.println("💍 " + name + " recites her wedding vows.."); }
 
 	public void giveRing(Media ringBasket) {
 		ringBasket.with("bride-ring", "Wedding-Ring");
@@ -341,12 +329,12 @@ public class Groom implements Actor {
 	}
 	
 	public void receiveRing(Media ringBasket) {
+		String ring = ringBasket.content("groom-ring");
+		if (ring.isEmpty()) {
+			throw new IllegalStateException("Wedding ring is missing!");
+		}
 		if (hasRing) {
 			throw new IllegalStateException("The groom is already wearing a ring!");
-		}
-		String ring = ringBasket.content("groom-ring");
-		if (ring == null) {
-			throw new IllegalStateException("Wedding ring is missing!");
 		}
 		System.out.println("💍 " + name + " take the " + ring + ".");
 		hasRing = true;
@@ -382,9 +370,7 @@ public class Newborn implements Actor {
     public Name name() { return name;}
     
     @Override
-    public void perform() {
-        System.out.println("👶 " + name + " smiles cheerfully.");
-    }
+    public void perform() { System.out.println("👶 " + name + " smiles cheerfully.");}
 
     public void speak(Media media) {
         media.with("role", "Newborn")
@@ -479,9 +465,7 @@ public class Musician implements Actor {
     public Name name() { return name; }
 
     @Override
-    public void perform() {
-        System.out.println("🧍‍ " + name + " play music.");
-    }
+    public void perform() { System.out.println("🧍‍ " + name + " play music.");}
 
     @Override
     public void speak(Media media) {
@@ -586,9 +570,7 @@ public class BrideWithArchive extends Outfit {
     }
     
     @Override
-    public void speak(Media spaek) {
-        decoratedActor.speak(spaek);
-    }
+    public void speak(Media spaek) { decoratedActor.speak(spaek); }
     
     @Override
     public void perform() {
@@ -628,8 +610,7 @@ public class BrideWithMailbox extends Outfit {
     }
     
     public void invite(Actor actor) {
-        Email mail = new Email(name().value(), actor.name().value(), "Invitation to Wedding..."); 
-        emailBox.put(mail);
+        emailBox.put(new Email(name().value(), actor.name().value(), "Invitation to Wedding..."));
     }
 }
 ```
@@ -853,16 +834,8 @@ public class Transaction extends Media.Default {
     private String toAccount;
 
     public Transaction(String fromAccount, String toAccount) {
-        validate(fromAccount);
-        validate(toAccount);
         this.fromAccount = fromAccount;
         this.toAccount = toAccount;
-    }
-
-    private void validate(String accountId) {
-        if (accountId == null || accountId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Account-Id must not be null or empty!");
-        }
     }
 
     public String from() { return fromAccount; }
@@ -1735,8 +1708,8 @@ Das Qualitätsmerkmal einer guten Struktur zeigt sich im Moment des Scheiterns. 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_10_code_like_movie.png)
 
 ```
-Exception in thread "main" java.lang.IllegalStateException: The bride is already wearing a ring!
-	at manuscript.character.Bride.receiveRing(Bride.java:44)
+Exception in thread "main" java.lang.IllegalStateException: Wedding ring is missing!
+	at manuscript.character.Bride.receiveRing(Bride.java:45)
 	at manuscript.stage.take.WeddingCloseUp.lambda$0(WeddingCloseUp.java:46)
 	at manuscript.stage.accessory.Button.click(Button.java:16)
 	at manuscript.stage.take.WeddingCloseUp.clickOnButton(WeddingCloseUp.java:66)
