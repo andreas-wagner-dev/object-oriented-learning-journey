@@ -1381,7 +1381,6 @@ Die Gute-Nacht-Geschichte ist der Abschluss des Films. Sie zeigt, dass die Gesch
 
 Die Bühne ist der Ort, an dem das Geschehen für das Publikum sichtbar wird. Im Code entspricht dies der Präsentationsschicht: UI-Komponenten, visuelle Darstellungen und Interaktionen.
 
-
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
 ```
 manuscript/stage/
@@ -1391,7 +1390,7 @@ manuscript/stage/
 │  ├─ Button.java                ← Interaktive Schaltfläche
 │  ├─ CinematicGrid.java         ← Cineastisches Rasterlayout
 │  └─ SpeechBubble.java          ← Sprechblase für Dialoge
-├─ take/
+├─ wedding/
 │  └─ WeddingCloseUp.java        ← Nahaufnahme der Hochzeit
 ├─ Multimedia.java               ← Composite: Komponente mit Unterkomponenten
 ├─ Take.java                     ← Schnittstelle für visuelle Aufnahmen
