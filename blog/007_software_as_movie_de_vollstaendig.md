@@ -1062,8 +1062,7 @@ Das `Phone` verwaltet eine Liste von `Headset`-Empfängern. Beim Publizieren ein
 
 Ein Film ist in Akte unterteilt, die wiederum aus Szenen bestehen. Jeder Akt erzählt einen abgeschlossenen Teil der Geschichte. Im Code entsprechen Akte den fachlichen Prozessen, die in Szenen zerlegt sind.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
-
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_06_code_like_movie.png)
 ```
 manuscript/
 │
@@ -1531,8 +1530,8 @@ Die Gute-Nacht-Geschichte ist der Abschluss des Films. Sie zeigt, dass die Gesch
 
 Die Bühne ist der Ort, an dem das Geschehen für das Publikum sichtbar wird. Im Code entspricht dies der Präsentationsschicht: UI-Komponenten, visuelle Darstellungen und Interaktionen.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_09_code_like_movie.png)
 
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
 ```
 manuscript/stage/
 │
@@ -1677,7 +1676,7 @@ Das `CinematicGrid` sammelt visuelle Elemente und zeigt sie in einer Liste an. D
 
 Die Regie ist die Schaltzentrale. Sie orchestriert die gesamte Inszenierung, instanziiert alle Akteure, baut die Infrastruktur auf und füllt die Filmrolle mit Szenen.
 
-![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_10_code_like_movie.png)
+![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_09_code_like_movie.png)
 
 ```
 manuscript/directing/
@@ -1868,9 +1867,6 @@ Die cineastische Struktur ist am Ende ein emotionales Investment. Sie verwandelt
 Die Spielfilmphilosophie geht somit über das bloße Befüllen technischer Schablonen oder das Aneinanderkleben von KI Output hinaus und verwandelt das Lesen von Code in ein intuitives Erlebnis. Die Rolle des Entwicklers wandelt sich hierbei zum Regisseur und Autoren. Werden wir also zu Erzählern und erschaffen Code, der nicht nur funktioniert, sondern seine eigene Bedeutung präzise auf die Leinwand bringt.
 
 **Klappe zu, Film ab!**
-
-
-
 
 ## Quellen-Verzeichnis
 
