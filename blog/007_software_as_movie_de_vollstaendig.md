@@ -5,7 +5,6 @@
  
  Tags: 🎬💻 #SoftwareArchitecture #CleanCode #AI #Storytelling #DesignPattern 
 
-
 # **🎞️ Software als Spielfilm-Drehbuch**
 
 Das Aufkommen von Künstlicher Intelligenz wie ChatGPT, Claude oder GitHub Copilot hat die Softwareentwicklung grundlegend verändert. Die alte Faustregel „zehnmal mehr lesen als schreiben" gilt heute stärker denn je – nur dass wir inzwischen nicht mehr unseren eigenen Code lesen, sondern vor allem den von Maschinen generierten. Um diese Flut überhaupt noch menschlich erfassen und beherrschen zu können, braucht es eine neue Perspektive auf Softwarearchitektur.
@@ -1795,5 +1794,7 @@ Die Spielfilmphilosophie geht somit über das bloße Befüllen technischer Schab
 * Yegor Bugayenko (2016): [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html)
 
 * Wikipedia (2026): [Adapter Pattern](https://en.wikipedia.org/wiki/Adapter_pattern)
+* Wikipedia (2026): [Composite Pattern](https://en.wikipedia.org/wiki/Composite_pattern)
 * Wikipedia (2026): [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern)
+* Wikipedia (2026): [Observer Pattern](https://en.wikipedia.org/wiki/Observer_pattern)
 * Wikipedia (2026): [Proxy Pattern](https://en.wikipedia.org/wiki/Proxy_pattern)
