@@ -1473,6 +1473,17 @@ public class WeddingCloseUp implements Take {
         
         button = new Button("Perform Wedding", () -> {
 
+			try {
+				RingBasket ringBasket = new RingBasket();
+				// groom.giveRing(ringBasket);
+				bride.receiveRing(ringBasket);
+				bride.giveRing(ringBasket);
+				groom.receiveRing(ringBasket);
+			} catch (Exception e) {
+				// Print the trace
+				e.printStackTrace();
+			}
+
     		groom.speak(groomSpeechBubble);
     		bride.speak(brideSpeechBubble);
     		
@@ -1521,26 +1532,17 @@ Das **Composite Pattern** ist ein strukturelles Designmuster, das es ermöglicht
 ```java
 public class SpeechBubble extends Media.Default {
 
-	private String text;
+	private String label;
 
-	public SpeechBubble() {
-		this("");
+	public SpeechBubble(String label) {
+		this.label = label;
 	}
-	
-	public SpeechBubble(String text) {
-		this.text = text;
-	}
-	
-	@Override
-	public String toString() { return text;}
 
 	@Override
-	public Media with(String name, String value) {
-		if ("text".equalsIgnoreCase(name)) {
-			text = value;
-		}
-		return this;
+	public String toString() {
+		return label + ": " + content.getOrDefault("text", "");
 	}
+
 }
 ```
 
