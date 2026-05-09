@@ -797,15 +797,11 @@ public class Email {
     }
 
     public String from() { return from; }
-
     public String to() { return to; }
-
     public String content() { return content;}
 
     @Override
-    public String toString() {
-        return "From: " + from + ", To: " + to + ", Text: " + content;
-    }
+    public String toString() {return "From: " + from + ", To: " + to + ", Text: " + content;}
 }
 ```
 
@@ -864,7 +860,6 @@ public class Transaction extends Media.Default {
     }
 
     public String from() { return fromAccount; }
-
     public String to() { return toAccount; }
 }
 ```
@@ -1458,30 +1453,27 @@ public class WeddingCloseUp implements Take {
 
 	@Override
 	public void render() {
-
+  
 		System.out.println("\n🎥 === CLOSE-UP: THE WEDDING ===");
 		System.out.println("📸 Camera focuses on " + groom.name() + " and " + bride.name());
 		System.out.println("🎞️ Recording tape rolling...");
 
-		grid = new CinematicGrid();
 		groomSpeechBubble = new SpeechBubble("Groom bubble");
 		brideSpeechBubble = new SpeechBubble("Bride bubble");
 		
-        button = new Button("Perform Wedding", () -> {
-        
-    		groom.perform();
-    		bride.perform();
-        	
-    		groom.speak(groomSpeechBubble);
-    		bride.speak(brideSpeechBubble);
-        	
-        });
-        
+		grid = new CinematicGrid();
         grid.add(groomSpeechBubble);
         grid.add(brideSpeechBubble);
         
-		System.out.println("📺 The image appears on the screen...");
-		grid.render();
+        button = new Button("Perform Wedding", () -> {
+
+    		groom.speak(groomSpeechBubble);
+    		bride.speak(brideSpeechBubble);
+    		
+    		System.out.println("📺 The image appears on the screen...");
+    		grid.render();
+        	
+        });
 
 	}
 
