@@ -107,16 +107,10 @@ In der Welt des Films gibt es Stars, Statisten und Komparsen. Im Drehbuch spiele
 ```java
 public interface Actor {
     
-    /** Name Requisite. */
     Name name();
     
-    /** The call to action. */
     void perform();
 
-    /**
-     * The communication channel. 
-     * @param media to speak on.
-     */
     void speak(Media media);
 }
 ```
@@ -142,13 +136,9 @@ public class Name {
     }
 
     @Override
-    public String toString() {
-        return value;
-    }
+    public String toString() { return value; }
 
-    public String value() {
-        return value;
-    }
+    public String value() { return value; }
 }
 ```
 
@@ -166,19 +156,13 @@ public abstract class Outfit implements Actor {
     
     protected final Actor decoratedActor;
     
-    protected Outfit(Actor actor) {
-        this.decoratedActor = actor;
-    }
+    protected Outfit(Actor actor) {this.decoratedActor = actor; }
     
     @Override
-    public Name name() {
-        return decoratedActor.name();
-    }
+    public Name name() { return decoratedActor.name(); }
     
     @Override
-    public void perform() {
-        decoratedActor.perform();
-    }
+    public void perform() { decoratedActor.perform();}
 }
 ```
 
@@ -189,12 +173,9 @@ Die Basisklasse `Outfit` ist ein abstrakter Decorator. Sie hält eine Referenz a
 Eine Szene ist der kleinste kohärente Handlungsbaustein eines Films. Sie beschreibt eine in sich geschlossene Interaktion zwischen Akteuren an einem Ort und zu einer Zeit.
 
 ```java
-/**
- * Scene.
- */
+
 @FunctionalInterface  
 public interface Scene {
-    
     void execute();  
 }
 ```
@@ -205,8 +186,8 @@ Dieses Interface reduziert die Szene auf ihre Essenz: die Ausführung einer Hand
 
 Kommunikation in Filmen findet über verschiedene Medien statt: Sprache, Gesten, Briefe, Telefonate. Im Code repräsentiert `Media` den Träger dieser Kommunikation.
 
+Das Interface `Media` definiert eine fluent API, um Inhalte zu befüllen.
 ```java
-
 public interface Media {
 
     Media with(String name, String value);
@@ -216,7 +197,7 @@ public interface Media {
     public String content(String name);
 }
 ```
-
+ Die Klasse `Media.Default` bietet eine Standard-Implementierung, die Inhalte in einer `Map` speichert. 
 ```java
 public abstract class Default implements Media {
     
@@ -239,19 +220,17 @@ public abstract class Default implements Media {
     }
     
     @Override
-    public String toString() {
-        return content.toString();
-    }
+    public String toString() { return content.toString();}
 }
 ```
+`Air` ist ein konkretes Medium für die unsichtbare Übertragung – etwa das gesprochene Wort in die Luft.
 
 ```java
 public final class Air extends Media.Default {
 
 }
 ```
-
-Das Interface `Media` definiert eine fluent API, um Inhalte zu befüllen. Die Klasse `Media.Default` bietet eine Standard-Implementierung, die Inhalte in einer `Map` speichert. `Air` ist ein konkretes Medium für die unsichtbare Übertragung – etwa das gesprochene Wort in die Luft. Weitere Spezialisierungen können für unterschiedliche Kontexte hinzugefügt werden, etwa `Email`, `RecordMedia` oder `VideoCanvas`.
+ Weitere Spezialisierungen können für unterschiedliche Kontexte hinzugefügt werden, etwa `Email`, `RecordMedia` oder `VideoCanvas`.
 
 ### **3.6 Der Film (Movie) – Der rote Faden**
 
@@ -301,9 +280,7 @@ public class Bride implements Actor {
     }
 
     @Override
-    public Name name() {
-        return name;
-    }
+    public Name name() {return name; }
 
     @Override
     public void perform() {
@@ -324,7 +301,10 @@ public class Bride implements Actor {
     }
 
     public void speak(Media media) {
-        media.with("role", "Bride").with("name", name.value()).with("text", "Yes, I will...").with("hasRing", hasRing);
+        media.with("role", "Bride")
+             .with("name", name.value())
+             .with("text", "Yes, I will...")
+             .with("hasRing", hasRing);
     }
 }
 ```
@@ -347,9 +327,7 @@ public class Groom implements Actor {
     }
 
     @Override
-    public Name name() {
-        return name;
-    }
+    public Name name() { return name;}
 
     @Override
     public void perform() {
@@ -396,20 +374,16 @@ public class Newborn implements Actor {
     }
     
     @Override
-    public Name name() {
-        return name;
-    }
+    public Name name() { return name;}
     
     @Override
     public void perform() {
         System.out.println("👶 " + name + " smiles cheerfully.");
     }
 
-     /** Baby cry.*/
     public void speak(Media media) {
-        String value = name.value();
         media.with("role", "Newborn")
-            .with("name", value)
+            .with("name", name.value())
             .with("text", "😭 " + name + " cries loudly!");
     }
 }
@@ -422,7 +396,6 @@ Das Neugeborene zeigt, wie einfach sich neue Charaktere hinzufügen lassen. Es i
 Gäste sind Nebencharaktere, die die Hochzeit bereichern. Sie können applaudieren und gratulieren.
 
 ```java
-
 public class Guest implements Actor {
 
     private final Name name;
@@ -432,9 +405,7 @@ public class Guest implements Actor {
     }
 
     @Override
-    public Name name() {
-        return name;
-    }
+    public Name name() { return name; }
 
     @Override
     public void perform() {
@@ -449,9 +420,9 @@ public class Guest implements Actor {
 
     public void speak(Media media) {
         media.with("role", "Guest")
-        .with("name", name.value())
-        .with("text", "💬 " + name + " congratulations!")
-        .with("action", "👏 " + name + " applaud!");
+             .with("name", name.value())
+             .with("text", "💬 " + name + " congratulations!")
+             .with("action", "👏 " + name + " applaud!");
     }
 }
 ```
@@ -500,9 +471,7 @@ public class Musician implements Actor {
     }
 
     @Override
-    public Name name() {
-        return name;
-    }
+    public Name name() { return name; }
 
     @Override
     public void perform() {
@@ -512,8 +481,8 @@ public class Musician implements Actor {
     @Override
     public void speak(Media media) {
         media.with("role", "Musician")
-        .with("name", name.value())
-        .with("text", "🎤💬 " + name + " singing a song!");
+             .with("name", name.value())
+             .with("text", "🎤💬 " + name + " singing a song!");
     }
 }
 ```
@@ -536,9 +505,7 @@ public class Band implements Iterable<Musician> {
         this.group = new ArrayList<>(group);
     }
 
-    public Name name() {
-        return name;
-    }
+    public Name name() { return name; }
 
     @Override
     public Iterator<Musician> iterator() {
@@ -620,6 +587,7 @@ public class BrideWithArchive extends Outfit {
     
     @Override
     public void perform() {
+        // perform the default behavier
         decoratedActor.perform();
         // Simulate database storage
         // The Archive hands the Actor a blank sheet (RecordMedia).
@@ -722,7 +690,6 @@ public class GroomWithPhone extends Outfit implements Headset {
     public void speak(Media spaek) {
         decoratedActor.speak(spaek);
     }
-
 }
 ```
 
@@ -832,17 +799,11 @@ public class Email {
         this.content = content;
     }
 
-    public String from() {
-        return from;
-    }
+    public String from() { return from; }
 
-    public String to() {
-        return to;
-    }
+    public String to() { return to; }
 
-    public String content() {
-        return content;
-    }
+    public String content() { return content;}
 
     @Override
     public String toString() {
@@ -905,13 +866,9 @@ public class Transaction extends Media.Default {
         }
     }
 
-    public String from() {
-        return fromAccount;
-    }
+    public String from() { return fromAccount; }
 
-    public String to() {
-        return toAccount;
-    }
+    public String to() { return toAccount; }
 }
 ```
 
@@ -969,14 +926,10 @@ public class Phone implements Channel {
         System.out.println("📞 Phone ready: " + phoneNumber);
     }
 
-    public void receive(Headset headset) {
-        subscribers.add(headset);
-        System.out.println("📞 Headset registered for phone: " + phoneNumber);
-    }
-
     @Override
     public void subscribe(Headset headset) {
-        receive(headset);
+        subscribers.add(headset);
+        System.out.println("📞 Headset registered for phone: " + phoneNumber);
     }
 
     @Override
@@ -998,8 +951,11 @@ Ein Film ist in Akte unterteilt, die wiederum aus Szenen bestehen. Jeder Akt erz
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_06_code_like_movie.png)
 ```
 manuscript/
-│
+...
 ├─ wedding/           ← AKT 1: Die Hochzeit
+│  ├─ video/
+│  │  ├─ LazyVideo.java           ← Lazy-Loading-Video (Proxy)
+│  │  └─ RealVideo.java           ← Tatsächliches Video
 │  ├─ WeddingCeremony.java        ← Hauptszene der Trauung
 │  ├─ RingExchange.java           ← Atomare Szene: Ringtausch
 │  ├─ CallTheBand.java            ← Szene: Band anrufen
@@ -1008,10 +964,7 @@ manuscript/
 │  ├─ LoveStoryFlashback.java     ← Szene: Video-Rückblick
 │  ├─ RingBasket.java             ← Medium für Ringübergabe
 │  ├─ Video.java                  ← Interface für Video-Dateien
-│  ├─ VideoCanvas.java            ← Medium für Video-Wiedergabe
-│  └─ video/
-│     ├─ LazyVideo.java           ← Lazy-Loading-Video (Proxy)
-│     └─ RealVideo.java           ← Tatsächliches Video
+│  └─ VideoCanvas.java            ← Medium für Video-Wiedergabe
 │
 ├─ honeymoon/         ← AKT 2: Die Hochzeitsreise
 │  ├─ HotelCheckIn.java           ← Szene: Hotel-Check-in
@@ -1021,9 +974,10 @@ manuscript/
 │  ├─ BirthScene.java             ← Szene: Geburt des Kindes
 │  └─ Hospital.java               ← Ort: Krankenhaus
 │
-└─ familylife/        ← AKT 4: Das Familienleben
-   ├─ MorningRoutine.java         ← Szene: Morgenroutine
-   └─ Bedtime.java                ← Szene: Gute-Nacht-Geschichte
+├─ familylife/        ← AKT 4: Das Familienleben
+│  ├─ MorningRoutine.java         ← Szene: Morgenroutine
+│  └─ Bedtime.java                ← Szene: Gute-Nacht-Geschichte
+...
 ```
 
 Jeder Akt ist als eigenes Paket organisiert. Die Szenen innerhalb eines Akts implementieren das `Scene`-Interface und kapseln einen abgeschlossenen fachlichen Ablauf.
@@ -1116,9 +1070,7 @@ Der Ringtausch ist eine atomare Szene: Sie orchestriert die Übergabe der Ringe 
 **Medium: Der Ringkorb (RingBasket)**
 
 ```java
-public class RingBasket extends Media.Default {
-
-}
+public class RingBasket extends Media.Default {}
 ```
 
 Der `RingBasket` ist ein spezialisiertes Medium für den Ringtausch. Er erbt von `Media.Default` und benötigt keine zusätzliche Logik, da die gesamte Semantik bereits durch die Akteure und die Szene definiert ist.
@@ -1183,9 +1135,7 @@ public class RealVideo implements Video {
     }
 
     @Override
-    public void show(Media canvas) {
-        canvas.with("video", filename);
-    }
+    public void show(Media canvas) { canvas.with("video", filename);}
 }
 ```
 
@@ -1227,7 +1177,6 @@ public class VideoCanvas extends Media.Default {
         System.out.println("📺 Video playing...");
         return this;
     }
-
 }
 ```
 
@@ -1467,16 +1416,17 @@ Die Bühne ist der Ort, an dem das Geschehen für das Publikum sichtbar wird. Im
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_08_code_like_movie.png)
 ```
 manuscript/stage/
-│
-├─ Take.java                     ← Schnittstelle für visuelle Aufnahmen
-│
+...
 ├─ accessory/
-│  ├─ ActionButton.java          ← Interaktive Schaltfläche
+│  ├─ Action.java                ← Interaktive Aktion
+│  ├─ Button.java                ← Interaktive Schaltfläche
 │  ├─ CinematicGrid.java         ← Cineastisches Rasterlayout
 │  └─ SpeechBubble.java          ← Sprechblase für Dialoge
-│
-└─ take/
-   └─ WeddingCloseUp.java        ← Nahaufnahme der Hochzeit
+├─ take/
+│  └─ WeddingCloseUp.java        ← Nahaufnahme der Hochzeit
+├─ Multimedia.java               ← Composite: Komponente mit Unterkomponenten
+├─ Take.java                     ← Schnittstelle für visuelle Aufnahmen
+...
 ```
 
 Die Bühne ist strikt von der Domäne getrennt. Sie greift auf Akteure zu, verändert sie aber nicht. Alle Interaktionen fließen von der UI zur Domäne, nie umgekehrt.
@@ -1535,7 +1485,32 @@ public class WeddingCloseUp {
 
 Die `WeddingCloseUp` zeigt, wie die Präsentationsschicht aufgebaut ist: Ein `CinematicGrid` organisiert die visuellen Elemente, `SpeechBubble` zeigt Dialoge, und `ActionButton` ermöglicht Interaktionen. Die Aufnahme selbst greift nur lesend auf die Domäne zu und erzeugt eine visuelle Repräsentation.
 
-### **8.3 Die Hilfselemente**
+
+
+
+### **8.3 Die grafischen Komponenten**
+
+**Komponenten in Komponente (Multimedia):**
+```java
+public abstract class Multimedia extends Media.Default {
+
+    	private Name name;
+    	protected List<Media> elements = new ArrayList<>(0);
+    
+    	public Multimedia(Name name) {
+        this.name = name;
+    	}
+    
+    	public Name name() { return name;}
+    
+    	public void add(Media media) {
+    		  elements.add(media);
+    	}
+    
+    	public abstract void render();
+}
+```
+Das **Composite Pattern** ist ein strukturelles Designmuster, das es ermöglicht, Objekte in Baumstrukturen zu organisieren, um Teil-Ganzes-Hierarchien darzustellen. Der entscheidende Vorteil ist, dass Clients einzelne Objekte (Leaves) und Gruppen von Objekten (Composites) über ein gemeinsames Interface einheitlich behandeln können.
 
 **Sprechblase (SpeechBubble):**
 ```java
@@ -1556,11 +1531,11 @@ public class SpeechBubble {
 }
 ```
 
-Die `SpeechBubble` lässt einen Akteur in ein `Air`-Medium sprechen und zeigt das Ergebnis an. Sie ist ein reines Präsentations-Element.
+Die `SpeechBubble` lässt einen Akteur in ein `Air`-Medium sprechen und zeigt das Ergebnis an. Sie ist ein reines Präsentations-Element (wie ein InputText).
 
-**Interaktive Schaltfläche (ActionButton):**
+**Interaktive Schaltfläche (Button & Action):**
 ```java
-public class ActionButton {
+public class Button {
 
     private String label;
     private Runnable action;
@@ -1570,36 +1545,42 @@ public class ActionButton {
         this.action = action;
     }
 
-    public void click() {
-        System.out.println("🖱️ Button clicked: " + label);
-        action.run();
-    }
+    public void click() { action.run();}
 
     @Override
-    public String toString() {
-        return "[" + label + "]";
-    }
+    public String toString() { return "[" + label + "]"; }
 }
 ```
+Das Command-Pattern kapselt eine Aktion.
 
-Der `ActionButton` kapselt eine Aktion, die beim Klicken ausgeführt wird. Er ist ein Beispiel für Command-Pattern in der UI.
+```java
+public interface Action extends Runnable {
+	
+}
+```
+Der `Button` kapselt eine Aktion, die beim Klicken ausgeführt wird. Er ist ein Beispiel für Command-Pattern in der UI.
 
 **Cineastisches Raster (CinematicGrid):**
 ```java
-public class CinematicGrid {
+public class CinematicGrid extends Multimedia {
 
-    private List<Object> elements = new ArrayList<>();
-
-    public void add(Object element) {
-        elements.add(element);
-    }
-
-    @Override
-    public String toString() {
-        return elements.stream()
-            .map(Object::toString)
-            .collect(Collectors.joining("\n"));
-    }
+     public CinematicGrid() {
+        super(new Name("CinematicGrid"));
+     }
+     
+     public void render() {
+        System.out.println("📺 Render " + name().value());
+        System.out.print(toString());
+     }
+     
+     @Override
+     public String toString() {
+         String text = "";
+         for (Media media : elements) {
+            text = text + "📺 Render " + media.toString() + "\n";
+         }
+         return text;
+     }
 }
 ```
 
@@ -1613,7 +1594,7 @@ Die Regie ist die Schaltzentrale. Sie orchestriert die gesamte Inszenierung, ins
 
 ```
 manuscript/directing/
-│
+...
 └─ AnalogMovie.java              ← Composition Root & Einstiegspunkt
 ```
 
@@ -1676,9 +1657,12 @@ public class AnalogMovie implements Movie {
         Video video = new LazyVideo("lifestory_hd.mp4");
         VideoCanvas screen = new VideoCanvas();
         filmRoll.add(new LoveStoryFlashback(video, screen));
-        // Visual Close-up
-        WeddingCloseUp visualTake = new WeddingCloseUp(romeo, julia);
-        filmRoll.add(visualTake::render);
+   	    // Visual Close-up & Interaction
+   	    WeddingCloseUp visualTake = new WeddingCloseUp(romeo, julia);
+   	    filmRoll.add(() -> {
+   	        visualTake.render();
+   	        visualTake.clickOnButton(); // Simulating the user's choice
+   	    });
 
         // ACT 2: The Honeymoon
         filmRoll.add(new HotelCheckIn(romeo, julia));
