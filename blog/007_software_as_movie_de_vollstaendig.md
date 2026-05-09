@@ -702,27 +702,24 @@ Während die Akteure und Szenen die fachliche Essenz der Geschichte tragen, arbe
 
 ```
 manuscript/backstage/
-│
+...
+├─ archive/
+│  ├─ DatabaseArchive.java   ← Konkrete Datenbankverbindung
+│  └─ RecordMedia.java       ← Datenträger für Datenbankeinträge
+├─ email/
+│  ├─ Email.java             ← E-Mail-Datenobjekt
+│  └─ EmailBox.java          ← E-Mail-Versandadapter
+├─ payment/
+│  ├─ StripeApi.java         ← Adapter zur Stripe-Zahlungs-API
+│  └─ Transaction.java       ← Transaktionsobjekt für Zahlungen
+├─ phone/
+│  ├─ Phone.java             ← Telefon-Kommunikationsadapter
+│  └─ Headset.java           ← Interface für Nachrichtenempfänger
 ├─ Archive.java              ← Schnittstelle zum Archiv (Datenbank)
 ├─ Channel.java              ← Kommunikationskanal (Publish/Subscribe)
 ├─ PostBox.java              ← Schnittstelle für Nachrichtenversand
 ├─ Payer.java                ← Schnittstelle für Zahlungsabwicklung
-│
-├─ archive/
-│  ├─ DatabaseArchive.java   ← Konkrete Datenbankverbindung
-│  └─ RecordMedia.java       ← Datenträger für Datenbankeinträge
-│
-├─ email/
-│  ├─ Email.java             ← E-Mail-Datenobjekt
-│  └─ EmailBox.java          ← E-Mail-Versandadapter
-│
-├─ payment/
-│  ├─ StripeApi.java         ← Adapter zur Stripe-Zahlungs-API
-│  └─ Transaction.java       ← Transaktionsobjekt für Zahlungen
-│
-└─ phone/
-   ├─ Phone.java             ← Telefon-Kommunikationsadapter
-   └─ Headset.java           ← Interface für Nachrichtenempfänger
+...
 ```
 
 Die Bühnentechnik ist strikt von der Domäne getrennt. Alle Infrastrukturkomponenten sind über Interfaces abstrahiert, sodass die fachliche Logik keine direkten Abhängigkeiten zu technischen Implementierungen hat. Dies ermöglicht es, Datenbanken, APIs oder Kommunikationswege auszutauschen, ohne die Kerngeschichte zu verändern.
@@ -751,8 +748,8 @@ public class DatabaseArchive implements Archive {
     
     @Override
     public void store(RecordMedia media) {
-        // Simulate database operation
-        System.out.println("💾 Storing in database: " + media.toRecord());
+        // Simulate database manipulation operation
+        System.out.println("💾 Storing in database: " + media.toDML());
     }
 }
 ```
@@ -763,7 +760,8 @@ Das Interface `Archive` definiert die fachliche Aktion: Speichern. Die konkrete 
 ```java
 public class RecordMedia extends Media.Default {
     
-    public String toRecord() {
+    public String toDML() {
+        // Simulate build DML statement
         return content.toString();
     }
 }
@@ -811,7 +809,7 @@ public class Email {
 }
 ```
 
-`Email` ist ein simples Datenobjekt, das die wesentlichen Informationen einer Nachricht kapselt. Es folgt dem Prinzip der **Single Responsibility**: Es repräsentiert eine E-Mail, ohne zu wissen, wie sie versendet wird.
+`Email` ist ein simples Datenobjekt, das die wesentlichen Informationen einer Nachricht kapselt. Es repräsentiert eine E-Mail, ohne zu wissen, wie sie versendet wird.
 
 **E-Mail-Versandadapter:**
 ```java
@@ -894,20 +892,11 @@ Die `StripeApi` simuliert die Verbindung zu einer Zahlungs-API. Sie erhält eine
 
 Das Telefon ermöglicht asynchrone Kommunikation zwischen Akteuren. Es folgt dem **Observer-Pattern**: Nachrichten werden publiziert, und registrierte Empfänger werden benachrichtigt.
 
-**Interface für Empfänger:**
-```java
-public interface Headset {
-    void accept(String message);
-}
-```
-
-Das `Headset`-Interface definiert einen Empfänger, der Nachrichten annehmen kann.
-
 **Kommunikationskanal:**
 ```java
-public interface Channel {
-    void subscribe(Headset headset);
-    void publish(String message);
+public interface Channel<T> {
+	void subscribe(Consumer<T> subscriber);
+	void publish(T message);
 }
 ```
 
@@ -915,33 +904,40 @@ Das `Channel`-Interface abstrahiert einen Publish/Subscribe-Mechanismus. Headset
 
 **Telefon-Implementierung:**
 ```java
-public class Phone implements Channel {
+public class Phone implements Channel<String> {
 
-    private final String phoneNumber;
-    private final List<Headset> subscribers = new ArrayList<>();
+	private String phoneNummer;
+	private List<Consumer<String>> subscribers = new ArrayList<>(0);
 
-    public Phone(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-        System.out.println("📞 Phone ready: " + phoneNumber);
-    }
+	public Phone(String phoneNummer) {
+		this.phoneNummer = phoneNummer;
+		System.out.println("📞 Phone ready: " + this.phoneNummer);
+	}
 
-    @Override
-    public void subscribe(Headset headset) {
-        subscribers.add(headset);
-        System.out.println("📞 Headset registered for phone: " + phoneNumber);
-    }
+	@Override
+	public void subscribe(Consumer<String> subscriber) {
+		this.subscribers.add(subscriber);
+	}
 
-    @Override
-    public void publish(String message) {
-        System.out.println("📞 Sending message: " + message);
-        for (Headset headset : subscribers) {
-            headset.accept("Message received: " + message);
-        }
-    }
+	@Override
+	public void publish(String message) {
+		System.out.println("📞 Sending message: " + message);
+		subscribers.forEach(subscriber -> subscriber.accept(message));
+	}
 }
+
 ```
 
 Das `Phone` verwaltet eine Liste von `Headset`-Empfängern. Beim Publizieren einer Nachricht werden alle registrierten Empfänger benachrichtigt. Dies zeigt, wie asynchrone Kommunikation objektorientiert modelliert werden kann, ohne auf Message-Broker oder Event-Systeme angewiesen zu sein.
+
+**Interface für Empfänger:**
+```java
+public interface Headset extends Consumer<String> {
+    void accept(String message);
+}
+```
+
+Das `Headset`-Interface definiert einen Empfänger, der Nachrichten annehmen kann.
 
 ## **7. Die Akte und Szenen (Die fachlichen Prozesse)**
 
@@ -1446,46 +1442,58 @@ Das Interface `Take` ist analog zu `Scene`, aber für die Präsentation. Es defi
 ### **8.2 Die Nahaufnahme (WeddingCloseUp)**
 
 ```java
-public class WeddingCloseUp {
+public class WeddingCloseUp implements Take {
 
-    private Groom groom;
-    private Bride bride;
+	private final Groom groom;
+	private final Bride bride;
+	private SpeechBubble groomSpeechBubble;
+	private SpeechBubble brideSpeechBubble;
+	private Button button;
+	private CinematicGrid grid;
+	
+	public WeddingCloseUp(Groom groom, Bride bride) {
+		this.groom = groom;
+		this.bride = bride;
+	}
 
-    public WeddingCloseUp(Groom groom, Bride bride) {
-        this.groom = groom;
-        this.bride = bride;
-    }
+	@Override
+	public void render() {
 
-    public void render() {
-        System.out.println("\n🎥 === WEDDING CLOSE-UP ===");
+		System.out.println("\n🎥 === CLOSE-UP: THE WEDDING ===");
+		System.out.println("📸 Camera focuses on " + groom.name() + " and " + bride.name());
+		System.out.println("🎞️ Recording tape rolling...");
+
+		grid = new CinematicGrid();
+		groomSpeechBubble = new SpeechBubble("Groom bubble");
+		brideSpeechBubble = new SpeechBubble("Bride bubble");
+		
+        button = new Button("Perform Wedding", () -> {
         
-        CinematicGrid grid = new CinematicGrid();
-        
-        SpeechBubble groomBubble = new SpeechBubble(groom);
-        SpeechBubble brideBubble = new SpeechBubble(bride);
-        
-        grid.add(groomBubble);
-        grid.add(brideBubble);
-        
-        ActionButton ringButton = new ActionButton("Give Ring", () -> {
-            RingBasket ringBasket = new RingBasket();
-            groom.giveRing(ringBasket);
-            bride.receiveRing(ringBasket);
+    		groom.perform();
+    		bride.perform();
+        	
+    		groom.speak(groomSpeechBubble);
+    		bride.speak(brideSpeechBubble);
+        	
         });
         
-        grid.add(ringButton);
+        grid.add(groomSpeechBubble);
+        grid.add(brideSpeechBubble);
         
-        System.out.println(grid);
-        
-        System.out.println("\n🎥 === CLOSE-UP COMPLETED ===\n");
-    }
+		System.out.println("📺 The image appears on the screen...");
+		grid.render();
+
+	}
+
+	public void clickOnButton() {
+	    System.out.println("🔘 Button clicked");
+		button.click();
+		System.out.println("🎥 === END OF CLOSE-UP ===\n");
+	}
 }
 ```
 
 Die `WeddingCloseUp` zeigt, wie die Präsentationsschicht aufgebaut ist: Ein `CinematicGrid` organisiert die visuellen Elemente, `SpeechBubble` zeigt Dialoge, und `ActionButton` ermöglicht Interaktionen. Die Aufnahme selbst greift nur lesend auf die Domäne zu und erzeugt eine visuelle Repräsentation.
-
-
-
 
 ### **8.3 Die grafischen Komponenten**
 
@@ -1497,13 +1505,13 @@ public abstract class Multimedia extends Media.Default {
     	protected List<Media> elements = new ArrayList<>(0);
     
     	public Multimedia(Name name) {
-        this.name = name;
+			this.name = name;
     	}
     
     	public Name name() { return name;}
     
     	public void add(Media media) {
-    		  elements.add(media);
+			elements.add(media);
     	}
     
     	public abstract void render();
@@ -1513,20 +1521,28 @@ Das **Composite Pattern** ist ein strukturelles Designmuster, das es ermöglicht
 
 **Sprechblase (SpeechBubble):**
 ```java
-public class SpeechBubble {
+public class SpeechBubble extends Media.Default {
 
-    private Actor actor;
+	private String text;
 
-    public SpeechBubble(Actor actor) {
-        this.actor = actor;
-    }
+	public SpeechBubble() {
+		this("");
+	}
+	
+	public SpeechBubble(String text) {
+		this.text = text;
+	}
+	
+	@Override
+	public String toString() { return text;}
 
-    @Override
-    public String toString() {
-        Media.Air speech = new Media.Air();
-        actor.speak(speech);
-        return "💬 " + actor.name() + ": " + speech.content("text");
-    }
+	@Override
+	public Media with(String name, String value) {
+		if ("text".equalsIgnoreCase(name)) {
+			text = value;
+		}
+		return this;
+	}
 }
 ```
 
