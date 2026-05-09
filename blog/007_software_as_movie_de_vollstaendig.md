@@ -1420,11 +1420,9 @@ public class WeddingCloseUp implements Take {
 
 	private final Groom groom;
 	private final Bride bride;
-	private SpeechBubble groomSpeechBubble;
-	private SpeechBubble brideSpeechBubble;
+
 	private Button button;
-	private CinematicGrid grid;
-	
+
 	public WeddingCloseUp(Groom groom, Bride bride) {
 		this.groom = groom;
 		this.bride = bride;
@@ -1432,19 +1430,19 @@ public class WeddingCloseUp implements Take {
 
 	@Override
 	public void render() {
-  
+
 		System.out.println("\n🎥 === CLOSE-UP: THE WEDDING ===");
 		System.out.println("📸 Camera focuses on " + groom.name() + " and " + bride.name());
 		System.out.println("🎞️ Recording tape rolling...");
 
-		groomSpeechBubble = new SpeechBubble("Groom bubble");
-		brideSpeechBubble = new SpeechBubble("Bride bubble");
-		
-		grid = new CinematicGrid();
-        grid.add(groomSpeechBubble);
-        grid.add(brideSpeechBubble);
-        
-        button = new Button("Perform Wedding", () -> {
+		SpeechBubble groomSpeechBubble = new SpeechBubble("Groom bubble");
+		SpeechBubble brideSpeechBubble = new SpeechBubble("Bride bubble");
+
+		CinematicGrid grid = new CinematicGrid();
+		grid.add(groomSpeechBubble);
+		grid.add(brideSpeechBubble);
+
+		button = new Button("Perform Wedding", () -> {
 
 			try {
 				RingBasket ringBasket = new RingBasket();
@@ -1457,18 +1455,18 @@ public class WeddingCloseUp implements Take {
 				e.printStackTrace();
 			}
 
-    		groom.speak(groomSpeechBubble);
-    		bride.speak(brideSpeechBubble);
-    		
-    		System.out.println("📺 The image appears on the screen...");
-    		grid.render();
-        	
-        });
+			groom.speak(groomSpeechBubble);
+			bride.speak(brideSpeechBubble);
+
+			System.out.println("📺 The image appears on the screen...");
+			grid.render();
+
+		});
 
 	}
 
 	public void clickOnButton() {
-	    System.out.println("🔘 Button clicked");
+		System.out.println("🔘 Button clicked");
 		button.click();
 		System.out.println("🎥 === END OF CLOSE-UP ===\n");
 	}
@@ -1557,8 +1555,7 @@ public class CinematicGrid extends Multimedia {
      }
      
      public void render() {
-        System.out.println("📺 Render " + name().value());
-        System.out.print(toString());
+        System.out.println("📺 Render " + name().value() + "\n" + toString());
      }
      
      @Override
