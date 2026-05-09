@@ -1702,7 +1702,7 @@ Die `AnalogMovie`-Klasse zeigt die gesamte Orchestrierung:
 
 Die Regie ist die einzige Stelle, die alle Abhängigkeiten kennt. Kein anderes Paket darf auf sie zugreifen. Dies garantiert, dass die Domäne unabhängig bleibt und die technische Orchestrierung isoliert ist.
 
-## **10. Die Inszenierung läuft ab**
+**Ablauf der Inszenierung**
 
 Wenn die `main`-Methode ausgeführt wird, läuft die gesamte Inszenierung ab. Die Konsole zeigt eine lebendige Erzählung:
 
@@ -1711,7 +1711,7 @@ Wenn die `main`-Methode ausgeführt wird, läuft die gesamte Inszenierung ab. Di
 3. **Szene 3:** Der Video-Rückblick startet. Dank des **Proxy-Patterns** wird der ressourcenfressende Film erst in dem Moment geladen, in dem der Souffleur die Leinwand bereitstellt.
 4. **Akte 2 bis 4:** Das Leben entfaltet sich - von der Klinik bis zur Guten-Nacht-Geschichte - sauber getrennt in Akte und Szenen. Die weiteren Akte der Lebensgeschichte laufen nacheinander ab.
 
-## **11. Der cineastische Stacktrace**
+## **10. Der cineastische Stacktrace**
 
 Das Qualitätsmerkmal einer guten Struktur zeigt sich im Moment des Scheiterns. Während man sich in klassischen Systemen bei einem Fehler meist durch kryptische Framework-Klassen und generische Service-Layer quält, liest sich der Fehlerspeicher in der Spielfilmphilosophie wie eine dramatische Inhaltsausgabe des Films.
 
@@ -1739,11 +1739,11 @@ Nicht nur die Braut, sondern auch der Stacktrace "schreit" die Fachlichkeit för
 
 Die Technik wird hier vollkommen transparent und tritt hinter die Erzählung zurück. Ein solcher *Stacktrace* erzeugt keine Frustration durch Unverständnis, sondern unmittelbare Resonanz. Man erkennt sofort, an welcher Stelle im Drehbuch die Erzählung unterbrochen wurde. Fehlersuche wandelt sich so vom stressigen Codewühlen zur gezielten Regiekorrektur, die die emotionale Integrität der Geschichte wiederherstellt.
 
-## **12. Bauplan als Drehbuch**
+## **11. Bauplan als Drehbuch**
 
 Um eine fachliche und progressive Erzählstruktur im Code zu gewährleisten, bedarf es einer klaren Trennung zwischen der Art der Kommunikation und der physischen Organisation des Projekts.
 
-## **12.1 Die leitenden Prinzipien (Die Regieanweisung)**
+## **11.1 Die leitenden Prinzipien (Die Regieanweisung)**
 
 Diese Prinzipien definieren, wie Akteure innerhalb des Systems interagieren, um die Kapselung und Autonomie zu wahren:
 
@@ -1753,7 +1753,7 @@ Diese Prinzipien definieren, wie Akteure innerhalb des Systems interagieren, um 
 
 **Law of Demeter:** Akteure kommunizieren nur mit ihren unmittelbaren Nachbarn. Diese Beschränkung der Zugriffspfade garantiert eine lose Kopplung und schützt die Inszenierung vor semantischer Instabilität.
 
-## **12.2 Regeln für die Projektstruktur (Das Inhaltsverzeichnis)**
+## **11.2 Regeln für die Projektstruktur (Das Inhaltsverzeichnis)**
 
 Damit die Geschichte für den Leser auffindbar bleibt, folgt die Paketierung fachlichen statt technischen Kriterien:
 
@@ -1769,7 +1769,7 @@ Damit die Geschichte für den Leser auffindbar bleibt, folgt die Paketierung fac
 
 **Fachsprache (Ubiquitous Language):** Die Benennung von *Paketen*, *Klassen* und *Methoden* folgt der Sprache der realen Fachwelt, nicht der technischen Umsetzung.
 
-## **13. Schlusswort: Code, der Geschichten erzählt**
+## **12. Schlusswort: Code, der Geschichten erzählt**
 
 Software als Drehbuch zu begreifen bedeutet, die Welt der leblosen Datencontainer zu verlassen und eine Bühne zu betreten, auf der die Fachlichkeit sichtbar wird. Die strikte Trennung von Backstagetechnik und Regieorchestrierung befreit die Domäne von technischem Ballast. Was bleibt, ist die reine Erzählung — klar, menschlich und nachvollziehbar. 
 
