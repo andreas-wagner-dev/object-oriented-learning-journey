@@ -206,9 +206,7 @@ Dieses Interface reduziert die Szene auf ihre Essenz: die Ausführung einer Hand
 Kommunikation in Filmen findet über verschiedene Medien statt: Sprache, Gesten, Briefe, Telefonate. Im Code repräsentiert `Media` den Träger dieser Kommunikation.
 
 ```java
-/**
- * Any medium to represent as media.
- */
+
 public interface Media {
 
     Media with(String name, String value);
@@ -216,53 +214,51 @@ public interface Media {
     Media with(String name, boolean value);
 
     public String content(String name);
-    
-    public abstract class Default implements Media {
-        
-        protected final Map<String, Object> content = new HashMap<>(0);
+}
+```
 
-        @Override
-        public Media with(String name, String value) {
-            content.put(name, value);
-            return this;
-        }
-        
-        @Override
-        public Media with(String name, boolean value) {
-            content.put(name, value);
-            return this;
-        }
-        
-        public String content(String name) {
-            return content.getOrDefault(name, "").toString();
-        }
-        
-        @Override
-        public String toString() {
-            return content.toString();
-        }
+```java
+public abstract class Default implements Media {
+    
+    protected final Map<String, Object> content = new HashMap<>(0);
+
+    @Override
+    public Media with(String name, String value) {
+        content.put(name, value);
+        return this;
     }
     
-    public final class Air extends Media.Default {
-
+    @Override
+    public Media with(String name, boolean value) {
+        content.put(name, value);
+        return this;
+    }
+    
+    public String content(String name) {
+        return content.getOrDefault(name, "").toString();
+    }
+    
+    @Override
+    public String toString() {
+        return content.toString();
     }
 }
 ```
 
-Das Interface `Media` definiert eine fluent API, um Inhalte zu befüllen. Die innere Klasse `Media.Default` bietet eine Standard-Implementierung, die Inhalte in einer `Map` speichert. `Air` ist ein konkretes Medium für die unsichtbare Übertragung – etwa das gesprochene Wort in die Luft. Weitere Spezialisierungen können für unterschiedliche Kontexte hinzugefügt werden, etwa `Email`, `RecordMedia` oder `VideoCanvas`.
+```java
+public final class Air extends Media.Default {
+
+}
+```
+
+Das Interface `Media` definiert eine fluent API, um Inhalte zu befüllen. Die Klasse `Media.Default` bietet eine Standard-Implementierung, die Inhalte in einer `Map` speichert. `Air` ist ein konkretes Medium für die unsichtbare Übertragung – etwa das gesprochene Wort in die Luft. Weitere Spezialisierungen können für unterschiedliche Kontexte hinzugefügt werden, etwa `Email`, `RecordMedia` oder `VideoCanvas`.
 
 ### **3.6 Der Film (Movie) – Der rote Faden**
 
 Der Film ist das Gesamtkunstwerk. Er orchestriert die Szenen und definiert den Ablauf der Geschichte.
 
 ```java
-/**
- * The Movie interface is the business-level representation of the story.
- * It defines the lifecycle and the sequence of the staging.
- */
 public interface Movie {
-
-    /** Plays all loaded scenes sequentially. */  
     void play();  
 }
 ```
@@ -294,9 +290,7 @@ Alle Charaktere implementieren das zentrale `Actor`-Interface und repräsentiere
 Die Braut ist eine der zentralen Protagonistinnen der Hochzeitsgeschichte. Sie kann ihre Gelübde vortragen, Ringe tauschen und ihre Zustimmung erklären.
 
 ```java
-/**
- * The actor playing the bride.
- */
+
 public class Bride implements Actor {
 
     private final Name name;
@@ -316,19 +310,11 @@ public class Bride implements Actor {
         System.out.println("💍 " + name + " recites her wedding vows..");
     }
 
-    /**
-     * The bride presents the ring.
-     */
     public void giveRing(Media ringBasket) {
         ringBasket.with("groom", "Wedding-Ring");
         System.out.println("💍 " + name + " hands over " + ringBasket + ".");
     }
 
-    /**
-     * The bride receives the ring.
-     * 
-     * @param ringBasket basket
-     */
     public void receiveRing(Media ringBasket) {
         if (hasRing) {
             throw new IllegalStateException("The bride is already wearing a ring!");
@@ -337,9 +323,6 @@ public class Bride implements Actor {
         hasRing = true;
     }
 
-    /**
-     * The bride "says" her "I will."
-     */
     public void speak(Media media) {
         media.with("role", "Bride").with("name", name.value()).with("text", "Yes, I will...").with("hasRing", hasRing);
     }
@@ -353,9 +336,7 @@ Die Braut verwaltet ihren eigenen Zustand (`hasRing`) und trifft Entscheidungen 
 Der Bräutigam spielt die komplementäre Rolle zur Braut. Seine Implementierung folgt demselben Prinzip: Er ist ein autonomer Akteur mit eigener Identität und eigenem Verhalten.
 
 ```java
-/**
- * Der Bräutigam ist einer der Hauptcharaktere in der Hochzeitsgeschichte.
- */
+
 public class Groom implements Actor {
 
     private final Name name;
@@ -375,19 +356,11 @@ public class Groom implements Actor {
         System.out.println("💍 " + name + " exchanges his wedding vows.");
     }
 
-    /**
-     * The groom presents the ring.
-     */
     public void giveRing(Media ringBasket) {
         ringBasket.with("bride", "Wedding-Ring");
         System.out.println("💍 " + name + " presents the " + ringBasket + ".");
     }
-    
-    /**
-     * The groom receives the ring.
-     * 
-     * @param ringBasket basket
-     */
+
     public void receiveRing(Media ringBasket) {
         if (hasRing) {
             throw new IllegalStateException("The groom is already wearing a ring!");
@@ -413,9 +386,7 @@ Bride und Groom sind strukturell ähnlich, aber nicht identisch. Jeder Charakter
 Mit der Geburt betritt ein neuer Charakter die Bühne: das Neugeborene. Es repräsentiert die nächste Generation und erweitert das Ensemble.
 
 ```java
-/**  
- * The newborn is a new character who appears during the family story.  
- */  
+
 public class Newborn implements Actor {
     
     private final Name name;
@@ -451,9 +422,7 @@ Das Neugeborene zeigt, wie einfach sich neue Charaktere hinzufügen lassen. Es i
 Gäste sind Nebencharaktere, die die Hochzeit bereichern. Sie können applaudieren und gratulieren.
 
 ```java
-/**
- * Guest role.
- */
+
 public class Guest implements Actor {
 
     private final Name name;
@@ -472,18 +441,12 @@ public class Guest implements Actor {
         System.out.println("🧍‍♂️" + name + " lächelt fröhlich.");
     }
 
-    /**
-     * Guest clap.
-     */
     public void clap() {
         Media.Air air = new Media.Air();
         speak(air);
         System.out.println(air.toString());
     }
 
-    /**
-     * Congratulations and applause from the guest.
-     */
     public void speak(Media media) {
         media.with("role", "Guest")
         .with("name", name.value())
@@ -500,9 +463,6 @@ Die Methode `clap()` zeigt, wie ein Gast seine Kommunikation selbst inszeniert: 
 Mehrere Gäste bilden zusammen eine Gruppe. Diese wird als iterierbare Sammlung modelliert, sodass alle Gäste einfach durchlaufen werden können.
 
 ```java
-/**
- * Group of Guest.
- */
 public class Guests implements Iterable<Guest> {
 
     private List<Guest> guests;
@@ -531,9 +491,6 @@ Die Klasse `Guests` ist bewusst immutable gestaltet. Die Methode `add` erzeugt e
 Musiker spielen eine wichtige Rolle bei der Hochzeit. Sie sorgen für musikalische Untermalung.
 
 ```java
-/**
- * Musician role.
- */
 public class Musician implements Actor {
     
     private final Name name;
@@ -568,9 +525,6 @@ Auch der Musiker ist ein vollwertiger `Actor`. Seine Rolle ist klar definiert: M
 Mehrere Musiker bilden zusammen eine Band. Diese Gruppe hat einen eigenen Namen und kann iteriert werden.
 
 ```java
-/**
- * Group of Musicians.
- */
 public class Band implements Iterable<Musician> {
 
     private List<Musician> group;
@@ -666,9 +620,7 @@ public class BrideWithArchive extends Outfit {
     
     @Override
     public void perform() {
-        //
         decoratedActor.perform();
-        //
         // Simulate database storage
         // The Archive hands the Actor a blank sheet (RecordMedia).
         RecordMedia record = new RecordMedia();
@@ -859,11 +811,6 @@ Die Post ist ein Kommunikationskanal. Im Film wären das Briefe, im Code E-Mails
 
 **Interface:**
 ```java
-/**
- * Access to mail system.
- * 
- * @param <T> type of transfer data object
- */
 public interface PostBox<T> {
     void put(T content);
 }
@@ -873,9 +820,6 @@ Das generische Interface `PostBox<T>` abstrahiert den Versandmechanismus. Es ken
 
 **E-Mail-Datenobjekt:**
 ```java
-/**
- * Record to transfer email data.
- */
 public class Email {
 
     private String from;
@@ -911,9 +855,6 @@ public class Email {
 
 **E-Mail-Versandadapter:**
 ```java
-/**
- * Connects the EmailBox on server.
- */
 public class EmailBox implements PostBox<Email> {
 
     public EmailBox(String serverAddress) {
@@ -937,12 +878,7 @@ Zahlungen sind ein weiteres Beispiel für Infrastruktur. Im Film wäre das die K
 
 **Interface:**
 ```java
-/**
- * Adapter to payment system.
- */
 public interface Payer {
-    
-    /** Pay amount to account. */  
     void pay(double amount, String toAccountId);
 }
 ```
@@ -951,9 +887,6 @@ Das `Payer`-Interface abstrahiert die Zahlungsfunktion. Es kennt nur den fachlic
 
 **Transaktionsobjekt:**
 ```java
-/**
- * Transaction of payment.
- */
 public class Transaction extends Media.Default {
     
     private String fromAccount;
@@ -1687,9 +1620,7 @@ manuscript/directing/
 Die Klasse `AnalogMovie` ist die einzige Stelle im System, die alle Abhängigkeiten kennt. Sie baut das Objektgeflecht auf und startet die Inszenierung.
 
 ```java
-/**
- * The Composition Root of the console application.
- */
+/** The Composition Root of the console application. */
 public class AnalogMovie implements Movie {
 
     public static void main(String[] args) {
