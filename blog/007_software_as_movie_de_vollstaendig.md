@@ -1715,7 +1715,7 @@ Die Regie ist die einzige Stelle, die alle Abhängigkeiten kennt. Kein anderes P
 Wenn die `main`-Methode ausgeführt wird, läuft die gesamte Inszenierung ab. Die Konsole zeigt eine lebendige Erzählung:
 
 1. **Szene 1:** Der Bräutigam ruft die Band an. Das Telefon publiziert die Nachricht, und die Band bestätigt.
-2. **Szene 2:** Die Band will bezahlt werden. Der StripePaymentAdapter übersetzt Romeos fachliches pay() in die technische Sprache `executeTransaction()` der Stripe-API.
+2. **Szene 2:** Die Band will bezahlt werden. Der `StripePayment` übersetzt Romeos fachliches `pay()` in die technische Sprache `execute()` der Stripe-API.
 3. **Szene 3:** Der Video-Rückblick startet. Dank des **Proxy-Patterns** wird der ressourcenfressende Film erst in dem Moment geladen, in dem der Souffleur die Leinwand bereitstellt.
 4. **Akte 2 bis 4:** Das Leben entfaltet sich - von der Klinik bis zur Guten-Nacht-Geschichte - sauber getrennt in Akte und Szenen. Die weiteren Akte der Lebensgeschichte laufen nacheinander ab.
 
@@ -1727,15 +1727,14 @@ Das Qualitätsmerkmal einer guten Struktur zeigt sich im Moment des Scheiterns. 
 ![](https://github.com/andreas-wagner-dev/object-oriented-learning-journey/blob/main/blog/picture/008_10_code_like_movie.png)
 
 ```
-Exception in thread "main" java.lang.IllegalStateException: Ring konnte nicht übergeben werden: Trauring ist nicht auffindbar!
-    at manuscript.character.Bride.receiveRing(Bride.java:42)
-    at manuscript.outfit.BrideWithArchive.perform(BrideWithArchive.java:31)
-    at manuscript.stage.take.WeddingCloseUp.lambda$render$0(WeddingCloseUp.java:38)
-    at manuscript.stage.accessory.Button.click(Button.java:15)
-    at manuscript.stage.take.WeddingCloseUp.clickOnButton(WeddingCloseUp.java:62)
-    at manuscript.directing.AnalogMovie.lambda$start$0(AnalogMovie.java:112)
-    at manuscript.directing.AnalogMovie.play(AnalogMovie.java:125)
-    at manuscript.directing.AnalogMovie.main(AnalogMovie.java:44)
+Exception in thread "main" java.lang.IllegalStateException: The bride is already wearing a ring!
+	at manuscript.character.Bride.receiveRing(Bride.java:44)
+	at manuscript.stage.take.WeddingCloseUp.lambda$0(WeddingCloseUp.java:46)
+	at manuscript.stage.accessory.Button.click(Button.java:16)
+	at manuscript.stage.take.WeddingCloseUp.clickOnButton(WeddingCloseUp.java:66)
+	at manuscript.directing.AnalogMovie.lambda$0(AnalogMovie.java:103)
+	at manuscript.directing.AnalogMovie.play(AnalogMovie.java:127)
+	at manuscript.directing.AnalogMovieTest.main(AnalogMovieTest.java:9)
 ```
 
 Nicht nur die Braut, sondern auch der Stacktrace "schreit" die Fachlichkeit förmlich heraus. Man sieht keine generische `DataUpdateException` in einem `AbstractServiceFactoryProxy`, sondern ein konkretes Drama am Set:
@@ -1743,7 +1742,7 @@ Nicht nur die Braut, sondern auch der Stacktrace "schreit" die Fachlichkeit för
 * Wer? Die Braut (`Bride`).
 * Was? Sie konnte den Ring nicht empfangen (`receiveRing`).
 * In welchem Kostüm? Während sie als `BrideWithArchive` agierte.
-* In welcher Situation? Während der Nahaufnahme (`WeddingCloseUp`) innerhalb der Trauungszeremonie (`WeddingCeremony`).
+* In welcher Situation? Während der Nahaufnahme (`WeddingCloseUp`).
 
 Die Technik wird hier vollkommen transparent und tritt hinter die Erzählung zurück. Ein solcher *Stacktrace* erzeugt keine Frustration durch Unverständnis, sondern unmittelbare Resonanz. Man erkennt sofort, an welcher Stelle im Drehbuch die Erzählung unterbrochen wurde. Fehlersuche wandelt sich so vom stressigen Codewühlen zur gezielten Regiekorrektur, die die emotionale Integrität der Geschichte wiederherstellt.
 
