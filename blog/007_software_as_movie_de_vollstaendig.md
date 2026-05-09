@@ -268,43 +268,46 @@ Alle Charaktere implementieren das zentrale `Actor`-Interface und repräsentiere
 Die Braut ist eine der zentralen Protagonistinnen der Hochzeitsgeschichte. Sie kann ihre Gelübde vortragen, Ringe tauschen und ihre Zustimmung erklären.
 
 ```java
-
 public class Bride implements Actor {
 
-    private final Name name;
-    private boolean hasRing = false;
+	private final Name name;
+	private boolean hasRing = false;
 
-    public Bride(String name) {
-        this.name = new Name(name);
-    }
+	public Bride(String name) {
+		this.name = new Name(name);
+	}
 
-    @Override
-    public Name name() {return name; }
+	@Override
+	public Name name() { return name;}
 
-    @Override
-    public void perform() {
-        System.out.println("💍 " + name + " recites her wedding vows..");
-    }
+	@Override
+	public void perform() {
+		System.out.println("💍 " + name + " recites her wedding vows..");
+	}
 
-    public void giveRing(Media ringBasket) {
-        ringBasket.with("groom", "Wedding-Ring");
-        System.out.println("💍 " + name + " hands over " + ringBasket + ".");
-    }
+	public void giveRing(Media ringBasket) {
+		ringBasket.with("groom-ring", "Wedding-Ring");
+		System.out.println("💍 " + name + " hands over " + ringBasket + ".");
+	}
 
-    public void receiveRing(Media ringBasket) {
-        if (hasRing) {
-            throw new IllegalStateException("The bride is already wearing a ring!");
-        }
-        System.out.println("💍 " + name + " take the " + ringBasket + ".");
-        hasRing = true;
-    }
+	public void receiveRing(Media ringBasket) {
+		if (hasRing) {
+			throw new IllegalStateException("The bride is already wearing a ring!");
+		}
+		String ring = ringBasket.content("bride-ring");
+		if (ring == null) {
+			throw new IllegalStateException("Wedding ring is missing!");
+		}
+		System.out.println("💍 " + name + " take the " + ring + ".");
+		hasRing = true;
+	}
 
-    public void speak(Media media) {
-        media.with("role", "Bride")
-             .with("name", name.value())
-             .with("text", "Yes, I will...")
-             .with("hasRing", hasRing);
-    }
+	public void speak(Media media) {
+		media.with("role", "Bride")
+		.with("name", name.value())
+		.with("text", "Yes, I will...")
+		.with("hasRing", hasRing);
+	}
 }
 ```
 
@@ -315,43 +318,46 @@ Die Braut verwaltet ihren eigenen Zustand (`hasRing`) und trifft Entscheidungen 
 Der Bräutigam spielt die komplementäre Rolle zur Braut. Seine Implementierung folgt demselben Prinzip: Er ist ein autonomer Akteur mit eigener Identität und eigenem Verhalten.
 
 ```java
-
 public class Groom implements Actor {
 
-    private final Name name;
-    private boolean hasRing;
+	private final Name name;
+	private boolean hasRing;
 
-    public Groom(String name) {
-        this.name = new Name(name);
-    }
+	public Groom(String name) {
+		this.name = new Name(name);
+	}
 
-    @Override
-    public Name name() { return name;}
+	@Override
+	public Name name() { return name;}
 
-    @Override
-    public void perform() {
-        System.out.println("💍 " + name + " exchanges his wedding vows.");
-    }
+	@Override
+	public void perform() {
+		System.out.println("💍 " + name + " recites her wedding vows..");
+	}
 
-    public void giveRing(Media ringBasket) {
-        ringBasket.with("bride", "Wedding-Ring");
-        System.out.println("💍 " + name + " presents the " + ringBasket + ".");
-    }
-
-    public void receiveRing(Media ringBasket) {
-        if (hasRing) {
-            throw new IllegalStateException("The groom is already wearing a ring!");
-        }
-        System.out.println("💍 " + name + " take the " + ringBasket + ".");
-        hasRing = true;
-    }
-    
-    public void speak(Media media) {
-        media.with("role", "Groom")
-        .with("name", name.value())
-        .with("text", "Yes, I will...")
-        .with("hasRing", hasRing);
-    }
+	public void giveRing(Media ringBasket) {
+		ringBasket.with("bride-ring", "Wedding-Ring");
+		System.out.println("💍 " + name + " presents the " + ringBasket + ".");
+	}
+	
+	public void receiveRing(Media ringBasket) {
+		if (hasRing) {
+			throw new IllegalStateException("The groom is already wearing a ring!");
+		}
+		String ring = ringBasket.content("groom-ring");
+		if (ring == null) {
+			throw new IllegalStateException("Wedding ring is missing!");
+		}
+		System.out.println("💍 " + name + " take the " + ring + ".");
+		hasRing = true;
+	}
+	
+	public void speak(Media media) {
+		media.with("role", "Groom")
+		.with("name", name.value())
+		.with("text", "Yes, I will...")
+		.with("hasRing", hasRing);
+	}
 
 }
 ```
