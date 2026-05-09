@@ -1734,7 +1734,7 @@ Nicht nur die Braut, sondern auch der Stacktrace "schreit" die Fachlichkeit för
 
 * Wer? Die Braut (`Bride`).
 * Was? Sie konnte den Ring nicht empfangen (`receiveRing`).
-* In welchem Kostüm? Während sie als PersistentActor agierte.
+* In welchem Kostüm? Während sie als `BrideWithArchive` agierte.
 * In welcher Situation? Während der Nahaufnahme (`WeddingCloseUp`) innerhalb der Trauungszeremonie (`WeddingCeremony`).
 
 Die Technik wird hier vollkommen transparent und tritt hinter die Erzählung zurück. Ein solcher *Stacktrace* erzeugt keine Frustration durch Unverständnis, sondern unmittelbare Resonanz. Man erkennt sofort, an welcher Stelle im Drehbuch die Erzählung unterbrochen wurde. Fehlersuche wandelt sich so vom stressigen Codewühlen zur gezielten Regiekorrektur, die die emotionale Integrität der Geschichte wiederherstellt.
