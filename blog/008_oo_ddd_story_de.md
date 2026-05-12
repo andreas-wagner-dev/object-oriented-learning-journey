@@ -83,12 +83,16 @@ Die Benennung folgt einer natürlichen Sprachlogik, die das **„Was“** (Dinge
 
 **Klassen beschreiben den Kontext (Präfix-basiert):** Klassennamen wirken wie Adjektive, die den aktuellen Zustand oder das Resultat einer Handlung beschreiben.
 
-* *Fachlicher Kontext:* PaidCar, CancelledCar, ReservedCar, ValidCar  
-* *Technischer Kontext:* StoredCar, CachedCar, LoggedCar  
-* *Process  *DispatchedCar(s), ProcessedCarstatt CarJob, CarValidationTask  
-* *Protokoll:* HttpPayPal, SmtpsEmail, JsonCar statt PayPalClient, EmailSender, CarMapper  
-* *Kanal:* PublishedCars, ReceivedCars statt CarProducer, CarConsumer  
-* *API/UI *ServedCars, DisplayedCars statt CarController, CarViewModel
+| Kontext Typ | Domänenorientiert (Was?) | statt Technisch (Wie?) |
+| :---- | :---- | :---- |
+| *Fachliche:* | PaidCar, CancelledCar, ReservedCar, AuditCar, ValidCar | |  
+| *Technische:* | AuthCar, StoredCar, CachedCar, LoggedCar | |
+| *Process* | DispatchedCar(s), ProcessedCar | CarJob, CarValidationTask |
+| *Kommunikation:* | PublishedCars, ReceivedCars | CarProducer, CarConsumer |   
+| *Protokoll:* | HttpPayPal, SmtpsEmail | PayPalClient, EmailSender  |   
+| *Parsing:* | XmlCar, JsonCar | CarParser, CarMapper |   
+| *API* | ServedCars, ApiCars | CarController |   
+| *UI* | DisplayedCars, Printable*  | CarController, CarViewModel | 
 
 **Vermeiden von Verben und technischen Suffixen:** Namen wie *Handler, *Manager, *Processor *Validator, *Calculatoroder *Worker klingen nach mechanischen “Jobs“ . Ebenso verschleiern Suffixe wie *Domain,*Model, *DTO, *Utiloder *Helper die fachliche Geschichte durch technische Klassifizierungen.
 
@@ -99,8 +103,13 @@ Auch im Frontend ist jede Komponente ein intelligenter Akteur. Gute Namen sprech
 * **Realwelt-Sprache:** Ein Komponentenname setzt sich aus dem Domänenbegriff (Was) und dem Control-Typ (Form) zusammen (z. B. OrderTable, CustomerCard, PaymentForm).  
 * **Vermeidung von Framework-Suffixen:** Begriffe wie -Component, -Container, -View oder -Widget  werden unterlassen, da sie keine Information über den fachlichen Inhalt vermitteln.
 
-|  Control-Typ Beispiel Fachliche Bedeutung Table InvoiceTable Tabellarische Übersicht & Interaktion Card ProductCard Kompakte Darstellung einer Entität Form RegistrationForm Eingabemaske / Bearbeitung Dashboard SalesDashboard Aggregierte Statusübersicht Dialog CancelOrderDialog Modaler Interaktionspunkt  |
-| :---- |
+|  Control-Typ | Beispiel | Fachliche Bedeutung |
+| :---- | :---- | :---- |
+| Table | InvoiceTable | Tabellarische Übersicht & Interaktion |
+| Card | ProductCard | Kompakte Darstellung einer Entität | 
+| Form | RegistrationForm | Eingabemaske / Bearbeitung | 
+| Dashboard | SalesDashboard  | Aggregierte Statusübersicht |
+| Dialog | CancelOrderDialog | Modaler Interaktionspunkt |
 
 Im UI existiert eine etablierte Fachsprache aus der realen Welt, die Anwender täglich benutzen: Tabellen, Karten, Masken, Kataloge. Diese Begriffe sind keine technischen Artefakte, sondern geteiltes Vokabular zwischen Entwicklung und Fachseite.
 
