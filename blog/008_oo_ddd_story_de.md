@@ -840,6 +840,7 @@ Entspricht einem „Quick & Dirty“-Stil. In einem OO-DDD-System sollte dies ve
 
 Das booking-Modul definiert seinen Bedarf (Interface). Das payment-Modul passt sich an und liefert die Umsetzung.
 
+```
 carrental-booking             ← Projekt (Customer)  
 ├── booking/  
 │   └── Reservation.cs        ← Nutzt IBookingPayment  
@@ -849,6 +850,7 @@ carrental-payment             ← Projekt (Supplier)
 ├── payment/  
 │   └── BookingPayment.cs     ← Implementiert IBookingPayment  
 └── [Abhängigkeit auf carrental-booking]
+```
 
 * **Story:** „Ich (Booking) sage, was ich brauche, und du (Payment) erfüllst mir den Wunsch.“  
 * **Vorteil:** Das Buchungs-Kapitel ist autark und kann ohne das Finanz-Kapitel existieren.
