@@ -142,6 +142,8 @@ When someone asks:
 
 ## 3. Object-Oriented Domain-Driven Analysis and Design
 
+### 3.1. Project Packaging
+
 The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
 
 ```
@@ -216,7 +218,7 @@ carrental/
 └── ...
 ```
 
-### 3.3. Key Principles of Packaging and Naming Conventions
+### 3.2. Key Principles of Packaging and Naming Conventions
 
 ### 1) Packages Should Never Depend on Sub-Packages
 
