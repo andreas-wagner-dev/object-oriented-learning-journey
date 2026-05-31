@@ -115,6 +115,8 @@ carrental/
 
 **This is a crucial strategic aspect of software architecture:** By directly mapping bounded contexts in code, we consistently apply the Ubiquitous Language at every level of system organization.
 
+Structuring code based on business context diagrams aligns software organization directly with the Ubiquitous Language, eliminating the need for mental mapping. This approach offers significant advantages in developer onboarding and communication by directly mapping domain concepts like "payment" or "booking" to specific packages, allowing for rapid code navigation.
+
 When someone asks: 
 *	"Where is the car logic?" → `carpool/`
 *	"Where is payment processing?" → `payment/`
