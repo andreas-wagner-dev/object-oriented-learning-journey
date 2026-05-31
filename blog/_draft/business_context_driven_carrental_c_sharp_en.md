@@ -955,16 +955,29 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 │   ...
 ```
 
+By retaining identical structural patterns across both front-end and back-end repositories, engineers can navigate the entire system with zero cognitive friction. A feature update to the payment workflow targets a `payment/` package on both sides of the network boundary.
 
 ### 8. Conclusion: Screaming Architecture
 
-There are **3 golden Rules** - to achieves the next level of readability:
+When *Uncle Bob* (Robert C. Martin) coined the term **"Screaming Architecture"**, he pointed out a major flaw in modern software development: when you look at a software system's codebase, the directory layout usually screams the framework choices (e.g., `controllers/`, `views/`, `models/`) rather than telling you what the application actually does.By anchoring your code organization directly to your Business Context Diagram, your architecture stops screaming technical plumbing and starts screaming its actual business purpose.
 
-1. Packages should never depend on sub-packages.
-2. Sub-packages should not introduce new concepts, just more details.
-3. Packages and classes should reflect business-concepts, not technical ones.
+```
+TRADITIONAL REPOSITORIES                SCREAMING ARCHITECTURE
+(Technical Plumbing)                    (Business Intent)
 
-so that the code tells a story.
+com.company.carrental                  com.company.carrental
+├── controllers/                       ├── carpool/
+├── services/             ──►          ├── customer/
+├── repositories/                      ├── payment/
+└── dtos/                              └── booking/
+```
+
+To elevate your project structures to this next level of maintainability, readability, and evolutionary capability, adhere to these Three Golden Rules:
+1. **Packages Never Depend on Sub-Packages:** The root package folder defines your absolute domain core. It remains pure and completely independent. Sub-packages depend on the core to implement its details, never the other way around.
+2. **Sub-Packages Introduce Details, Not new Concepts:** A sub-package file (like carpool/StoredCar.cs) must only provide a technological refinement of an existing domain abstraction. It is forbidden from inventing unmapped business capabilities.
+3. **Represent Business Concepts, Not Technical Patterns:** Abolish prozedural suffixes and organizational patterns like `*Service`, `*Repository`, *Handler, and `*DTO`. Name your components as real-world nouns prefixed with their direct functional outcome (e.g., `StoredCar`, `CachedCarPool`, ValidCustomer).
+
+By implementing these rules alongside Rigid Immutability, Pipeline Decorators, and an Anti-Corruption Layer, your code code ceases to be an unreadable pile of framework instructions. It becomes an executable story - directly reflecting your business domain, scaling cleanly across product milestones, and bridging the translation gap permanently.
 
 **Screaming Architecture:** —> means the structure screams the business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
 
