@@ -706,35 +706,36 @@ Because these EF Core configurations are completely boxed into the `exchange/` l
 * We simply update the contents of the `exchange/storage/` folder and adjust the construction steps inside the `StoredCar` and `CarRentalApp` factories.
 
 
----
-
 ## 6. Architectural Evolution Path
 
-A structure should evolve with the business and architectual needs. This section outlines a proven three-phase approach.
-
-### 6.1 Phase 1: Monolith
-
-**Start Here:** Single deployable artifact with all bounded contexts in one package.
+A software system's project structure must dynamically adapt to changing organizational scales and business needs. Rather than guessing future scaling patterns on day one, this framework establishes a predictable three-phase evolution model.
 
 ```
-carrental/          ← Single assembly
-├── application/
-├── carpool/
-├── customer/
-├── exchange/
-├── payment/
-└── booking/
+[ Phase 1: Monolith ] → [ Phase 2: Modular Monolith ] → [ Phase 3: Microservices ]
+  (Single Assembly)         (Logical/Project Cut)          (Physical Deployment Cut)
 ```
 
-**When to use:**
-•	Starting a new project
-•	Team size < 10 developers
-•	Business boundaries are still evolving
-•	Simple deployment requirements
+### 6.1 Phase 1: The Structured Monolith
 
----
-### 6.2 Modulith Artifacts (Phase 2)
+Every system should begin here. All Bounded Contexts live within a single deployable assembly, safely partitioned using the strict packaging rules defined in previous chapters.
 
+carrental/              ← Single .NET Assembly (.dll / executable)
+├── application/        → Composition Root & Framework Setup
+├── carpool/            → Bounded Context: Fleet & Assets
+├── customer/           → Bounded Context: CRM & Identity
+├── exchange/           → Shared Anti-Corruption Layer (ACL)
+├── payment/            → Bounded Context: Billing
+└── booking/            → Bounded Context: Reservations & UI
+
+**Context Indicators:**
+
+* **When to use:** Greenfield projects, team sizes under 10 developers, or scenarios where business domain boundaries are highly volatile.
+* **The Advantage:** Ultra-fast refactoring, instant build times, and zero operational deployment complexity.
+
+
+**6.2 Phase 2: The Modular Monolith (Modulith)**
+
+Migrating to a modular assembly model is a deliberate tactical choice to halt architectural decay as a codebase grows.
 A modular structurce of code is NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
 
 * **The team is growing:** With around 4-5 developers, natural areas of responsibility begin to emerge. Modules allow these boundaries to be defined in the code, so developers are less likely to "poach" on each other's code.
@@ -742,12 +743,13 @@ A modular structurce of code is NOT an obvious next step, but a conscious decisi
 * **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
 * **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
 
-
-
 #### 6.2.1. Revised Structure & Strategic Decoupling
 
-This step begins with a single monolithic artifact, which is successively decomposed into autonomous modules. 
-The functional boundaries of Bounded Contexts serve as the primary guideline for this modularization.
+Moving to Phase 2 means breaking the single assembly into separate, decoupled projects.
+
+> “Better duplication than the wrong abstraction.” — Sandi Metz
+
+To maximize system autonomy, the **shared kernel** project or `Common/` module must be entirely eliminated. Cross-context structural models - such as `CarId`, `CustomerId`, and `PaymentId` value objects - are intentionally duplicated directly inside the contexts that consume them.
 
 ```
 carrental-service              ← Deployable Unit
@@ -756,21 +758,19 @@ carrental-service              ← Deployable Unit
 ├── carrental-carpool          ← Bounded Context: Fleet Management
 ├── carrental-customer         ← Bounded Context: CRM / Identity
 ├── carrental-payment          ← Bounded Context: Billing & Transactions
-└── carrental-booking-client   ← Frontend / API Gateway Logic
+└── carrental-booking-ui       ← Frontend / API Gateway Logic
 ```
 
-**Strategic Note on Decoupling**
-
-**"Better duplication than the wrong abstraction."** - Sandi Metz (The Wall of Coding Wisdom)
-
-Ideally, the shared module `carrental` should be completely eliminated. This is achieved by duplicating necessary *Value Objects*, such as `CarId`, `CustomerId`, and `PaymentId`, directly within their respective contexts. 
-
 **Why avoid the Shared Kernel or Common module?**
-* **Autonomy:** Each *bounded context* remains truly independent and can evolve its data structures without side effects on others.
-* **Preventing Bloat:** It prevents a `common module` from becoming an uncontrolled *"dumping ground"* for unrelated logic.
-* **Semantic Precision:** A `CustomerId` in `Payment` might require different validation rules than in `Customer` Support.
 
-#### FLAT Project Structure (WITHOUT Shared Kernel)
+* **Total Autonomy:** Context teams can evolve internal primitive behaviors without risk of breaking downward dependencies.
+* **Anti-Bloat Protection:** It blocks generic folders from becoming unchecked junk drawers for unrelated code fragments.
+* **Semantic Drift Resolution:** A CustomerId model parsing behavior in the billing module may require completely different validations than a CustomerId record utilized by marketing analytics. Depending on repository size and IDE preference, you can organize these decoupled boundaries using a Flat Layout or a Hierarchical Layout.
+
+
+**Strategy A:** Flat Project Layout (Explicit Compilations)
+
+Every single architectural facet compiles to its own specialized project file (`.csproj`). Great for strict architectural validation.
 
 ```
 carrental-carpool             ← project of customer bounded context 
@@ -783,7 +783,6 @@ carrental-carpool             ← project of customer bounded context
 ├── ICar.cs                   ← Domain Interface
 ├── ICarPool.cs               ← Collection Interface
 ...
-carrental-carpool-endpoint    ← Http Clients with JSON DTOs
 carrental-carpool-resource    ← REST Services with JSON DTOs
 carrental-carpool-storage     ← ORM Entity DTOs with Repositories
 carrental-carpool-messaging   ← AVRO Schema generation of DTOs
@@ -802,7 +801,6 @@ carrental-customer             ← project of customer bounded context
 ├── ICustomers.cs              ← Collection Interface
 ...
 
-carrental-customer-endpoint    ← Http Clients with JSON DTOs
 carrental-customer-resource    ← REST Services with JSON DTOs
 carrental-customer-storage     ← ORM Entity DTOs with Repositories
 carrental-customer-mailing     ← Email: SMTPS, IMAPS or POP3S Protocol
@@ -833,9 +831,9 @@ carrental                     ← deployable module-composition of all projects,
 ```
 
 
-#### HIERARCHICAL Project Structure (WITHOUT Shared Kernel)
+**Strategy B:** Hierarchical Project Layout (Encapsulated Folders)
 
-If the number of projects becomes too unwieldy, the technical aspects can be encapsulated within the context modules, instead of creating a separate top-level module for each aspect:
+If managing dozens of root-level project files creates developer friction, bundle the infrastructure layers as child project directories contained inside the main context group.
 
 ```
 carrental                     ← Root Module-Composition of all Projects
@@ -844,35 +842,33 @@ carrental                     ← Root Module-Composition of all Projects
 │   └── KafkaQueueConfig.cs   ← Kafka Configuration
 ...
 
-carrental-carpool             → Module-Group - Parent Project
-├── carpool                   → Bounded Context Module
-├── carpool-endpoint
+carrental-carpool             → Module Context Parent Directory
+├── carpool                   → Bounded Context
 ├── carpool-resource
 ├── carpool-storage
 └── carpool-messaging
 
-carrental-customer            → Module-Group - Parent Project
-├── customer                  → Bounded Context Module
-├── customer-endpoint
+carrental-customer            ← Module Context Parent Directory
+├── customer                  → Bounded Context
 ├── customer-resource
 ├── customer-storage
 └── customer-mailing
 
-carrental-payment
-├── payment                    
+carrental-payment            ← Module Context Parent Directory
+├── payment                  → Bounded Context  
 └── payment-paypal
 
 
-carrental-booking
-├── user                 
+carrental-booking            ← Module Context Parent Directory
+├── user                     → Bounded Context
 └── ...
 
 ```
----
 
-### 6.3 Phase 3: Microservices
 
-Microservices are NOT an automatic next step. They bring significant complexity. Only consider microservices if:
+### 6.3 Phase 3: Distributed Microservices
+
+Microservices are NOT an automatic next step, they introduce extensive operational overhead (distributed transactions, partial network failures, deployment orchestration). This shift must be driven by strict technical necessity, never by design trends.
 
 **Organizational triggers:**
 * Multiple autonomous teams
@@ -904,7 +900,9 @@ carrental-payment-service   ← artifact (build as deployable .dll)
 
 carrental-booking-service   ← artifact frontend (build as deployable  .dll)
 ```
+
 **Note:** Each service maintains the SAME internal structure as the monolith/modulith. Only deployment boundaries change.
+
 
 ## 7. Frontend as a Standalone Microservice (BFF Pattern)
 
