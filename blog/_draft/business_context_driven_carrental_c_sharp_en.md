@@ -295,15 +295,49 @@ Avoid meaning of technical things and suffixes of architecture patterns.
 
 ### 4.1 Domain Interfaces in Root Package
 
-The **most important concepts and ideas** should be at the beginning - **in the top-level package** of the software. 
-This ensures *conceptual integrity*, preserving the *abstract identity* of the system before technical details distort it.
+The **essential domain concepts** – focusing on the Ubiquitous Language – belong directly in the software's **top-level package**. This ensures *conceptual integrity* and preserves the system's *abstract identity* before technical details distort the domain logic.
 
 ```
-carrental/
+carrental/          ← Never knows about technical details
 ├── .../
-├── ICar.cs          ← Never knows about technical details
+├── ICar.cs          
 ├── ICarRental.cs
+├── ICustomer.cs
+├── ICustomers.cs
 ├── ....cs
+```
+
+**The Customer Domain Interface (ICustomer.cs):**
+
+According to the business domain, a *customer rents a car*. To accurately reflect this Ubiquitous Language in the code, the `Rent` method is placed on the customer interface. The vehicle is passed as a behavioral parameter.
+
+```csharp
+namespace CarRental;
+
+public interface ICustomer
+{
+    string Id();
+    string Name();
+    void Rent(ICar car, DateTime from, DateTime to);
+    void Return(ICar car);
+}
+```
+
+
+**The Vehicle Interface (ICar.cs):** 
+
+The vehicle encapsulates its own states and calculation logic, but does not control the process itself.
+
+```csharp
+namespace CarRental;
+
+public interface ICar
+{
+    string Id();
+    bool IsAvailable();
+    decimal CalculatePrice(DateTime from, DateTime to);
+    void SetAvailability(bool available);
+}
 ```
 
 
