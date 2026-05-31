@@ -339,7 +339,7 @@ public interface ICustomer
 }
 ```
 
-## 4.2 The Composition Root Pattern
+### 4.2 The Composition Root Pattern
 
 Placing the main application interface at level "0" of the project structure clearly indicates the starting point of the story to the reader. The `ICarRentalApp.cs` interface serves as the structural umbrella, offering controlled entry to the domain via collection interfaces.
 
@@ -355,11 +355,11 @@ public interface ICarRentalApp
 ```
 The class `ICarRentalApp.cs` enables access via the collection classes e.g. `ICarPool.cs` to single **domain interfaces** like `ICar.cs`. 
 
-## 4.3 Detail Implementations with Decorators (customer/ & carpool/)
+### 4.3 Detail Implementations with Decorators (customer/ & carpool/)
 
 The business process of renting is executed through a chain of decorators. Each business requirement maps to exactly one decorator class, keeping responsibilities strictly separated by their Bounded Contexts.
 
-### 4.3.1. The Default Vehicle Implementation (carpool/SimpleCar.cs)
+#### 4.3.1. The Default Vehicle Implementation (carpool/SimpleCar.cs)
 
 The core implementation focuses solely on in-memory data representations and mathematical domain logic. Calling Reserve yields a fresh instance without mutating the existing state.
 
@@ -399,7 +399,7 @@ public class SimpleCar : ICar
 
 ```
 
-### 4.3.2. The Vehicle Persistence Decorator (carpool/StoredCar.cs)
+#### 4.3.2. The Vehicle Persistence Decorator (carpool/StoredCar.cs)
 
 This decorator intercepts the Reserve call, triggers the logical state transformation on the underlying instance, and immediately synchronizes the result with the Entity Framework database model. It then wraps the newly created state as a StoredCar.
 
@@ -443,7 +443,7 @@ public class StoredCar : ICar
 }
 ```
 
-### 4.3.3. The Default Customer Implementation (`customer/SimpleCustomer.cs`)
+#### 4.3.3. The Default Customer Implementation (`customer/SimpleCustomer.cs`)
 The customer's core logic handles process-specific business rules. It validates the request and passes the vehicle transformation directly back up the stack. No dead code, no unutilized return states.
 
 ```csharp
@@ -477,7 +477,7 @@ public class SimpleCustomer : ICustomer
 }
 ```
 
-### 4.3.4. The Customer Persistence Decorator (`customer/StoredCustomer.cs`)
+#### 4.3.4. The Customer Persistence Decorator (`customer/StoredCustomer.cs`)
 
 Because vehicle persistence is completely handled by `StoredCar`, the `StoredCustomer` simply routes the invocation down the pipeline. It remains isolated, focusing purely on customer-specific updates if required by future business features.
 
@@ -504,7 +504,7 @@ public class StoredCustomer : ICustomer
 }
 ```
 
-## 4.4 The Decorator Composition (The Executable Pipeline)
+### 4.4 The Decorator Composition (The Executable Pipeline)
 
 When executing this flow within an API Controller or a Use Case endpoint, the harmony of this functional design becomes fully apparent:
 
@@ -518,7 +518,7 @@ ICar car = _app.CarPool().CarOf(carId);                   // e.g., a StoredCar c
 ICar rentedCar = customer.Rent(car, from, to);
 ```
 
-## 4.5 Implementation of the Composition Root in `application/`
+### 4.5 Implementation of the Composition Root in `application/`
 
 The Composition Root is a unique location in an application where the entire dependency graph is composed.
 
@@ -595,11 +595,11 @@ public class CarRentalApp : ICarRentalApp
 **Decoupled Application Shells:** If you need to switch from an ASP.NET Core Web API to a console-based CLI or a serverless AWS Lambda function, you only swap out or add a new entry point class inside `application/`. The business context, domain interfaces, and decorator pipelines remain untouched.
 
 
-# 5. Isolation of Frameworks and Libraries: The Anti-Corruption Layer (ACL)
+## 5. Isolation of Frameworks and Libraries: The Anti-Corruption Layer (ACL)
 
 To prevent third-party frameworks, object-relational mappers (ORMs), or external APIs from bleeding into and contaminating your core domain logic, you must implement an **Anti-Corruption Layer (ACL)**. Depending on codebase size, team organization, and deployment scale, this isolation can be achieved through two distinct structural strategies.
 
-## 5.1 Option 1: Multi-Project Physical Isolation (Enterprise Scale)
+### 5.1 Option 1: Multi-Project Physical Isolation (Enterprise Scale)
 
 For large-scale systems or multi-team environments, third-party libraries and infrastructure tools should be moved out of the main domain assembly entirely. They live in dedicated, compile-time **isolated sub-projects** integrated as flat dependencies.
 
@@ -620,7 +620,7 @@ carrental-...                 ← other framework or library
 The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level. For example, if you are using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF classes in the package `carpool/` behind a class like `StoredCar.cs`, which is designed as a `Decorator`, `Bridge` or `Adapter` pattern.
 
 
-## 5.2 Option 2: Single-Project Logical Isolation (Small to Mid-Sized Codebases)
+### 5.2 Option 2: Single-Project Logical Isolation (Small to Mid-Sized Codebases)
 
 For more compact applications or single-team projects, spinning up dozens of physical projects adds unnecessary DevOps overhead. Instead, you can achieve the exact same logical isolation by grouping all framework-facing structures into a dedicated root-level `exchange/` package.
 
@@ -710,7 +710,7 @@ Because these EF Core configurations are completely boxed into the `exchange/` l
 
 A structure should evolve with the business and architectual needs. This section outlines a proven three-phase approach.
 
-### 5.1 Phase 1: Monolith
+### 6.1 Phase 1: Monolith
 
 **Start Here:** Single deployable artifact with all bounded contexts in one package.
 
@@ -731,7 +731,7 @@ carrental/          ← Single assembly
 •	Simple deployment requirements
 
 ---
-### 5.2 Modulith Artifacts (Phase 2)
+### 6.2 Modulith Artifacts (Phase 2)
 
 A modular structurce of code is NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
 
@@ -742,7 +742,7 @@ A modular structurce of code is NOT an obvious next step, but a conscious decisi
 
 
 
-#### 5.2.2. Revised Structure & Strategic Decoupling
+#### 6.2.1. Revised Structure & Strategic Decoupling
 
 This step begins with a single monolithic artifact, which is successively decomposed into autonomous modules. 
 The functional boundaries of Bounded Contexts serve as the primary guideline for this modularization.
@@ -868,7 +868,7 @@ carrental-booking
 ```
 ---
 
-### 5.3 Phase 3: Microservices
+### 6.3 Phase 3: Microservices
 
 Microservices are NOT an automatic next step. They bring significant complexity. Only consider microservices if:
 
@@ -904,7 +904,7 @@ carrental-booking-service   ← artifact frontend (build as deployable  .dll)
 ```
 **Note:** Each service maintains the SAME internal structure as the monolith/modulith. Only deployment boundaries change.
 
-### Frontend as a Standalone Microservice (BFF Pattern)
+## 7. Frontend as a Standalone Microservice (BFF Pattern)
 
 In modern cloud-native architectures, it is often beneficial to treat the frontend not merely as a static asset, a collection of files (such as .js, .css, .html), but as a standalone "Backend-for-Frontend" (BFF) service. The BFF functions as a customized user interface precisely tailored to the needs of a specific client (e.g., web, mobile, or smart device). This enables a strict separation of presentation logic and business interfaces.
 
@@ -973,7 +973,7 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 ```
 
 
-### 6. Conclusion: Screaming Architecture
+### 8. Conclusion: Screaming Architecture
 
 There are **3 golden Rules** - to achieves the next level of readability:
 
@@ -987,7 +987,7 @@ so that the code tells a story.
 
 
 ---
-## 7. References and Further Reading
+## 9. References and Further Reading
 
 * Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
 * Philipp Hauer, [Package by Feature (2020)](https://phauer.com/2020/package-by-feature/)
