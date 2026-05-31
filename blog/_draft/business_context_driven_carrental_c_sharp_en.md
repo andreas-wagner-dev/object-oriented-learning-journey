@@ -443,7 +443,7 @@ public class StoredCar : ICar
 }
 ```
 
-### 4.3.3. The Default Customer Implementation (customer/SimpleCustomer.cs)
+### 4.3.3. The Default Customer Implementation (`customer/SimpleCustomer.cs`)
 The customer's core logic handles process-specific business rules. It validates the request and passes the vehicle transformation directly back up the stack. No dead code, no unutilized return states.
 
 ```csharp
@@ -477,7 +477,7 @@ public class SimpleCustomer : ICustomer
 }
 ```
 
-### 4.3.4. The Customer Persistence Decorator (customer/StoredCustomer.cs)
+### 4.3.4. The Customer Persistence Decorator (`customer/StoredCustomer.cs`)
 
 Because vehicle persistence is completely handled by `StoredCar`, the `StoredCustomer` simply routes the invocation down the pipeline. It remains isolated, focusing purely on customer-specific updates if required by future business features.
 
@@ -595,15 +595,7 @@ public class CarRentalApp : ICarRentalApp
 **Decoupled Application Shells:** If you need to switch from an ASP.NET Core Web API to a console-based CLI or a serverless AWS Lambda function, you only swap out or add a new entry point class inside `application/`. The business context, domain interfaces, and decorator pipelines remain untouched.
 
 
-    public ICustomers Customers() 
-    {   // Composition logic: CachedCustomers(StoredCustomers(_services.GetRequiredService<CustomerDbContext>()))
-        // Returns the collection implementation for customers
-        return ...;
-    }
-}
-```
-
-### 4.5 Isolation of Frameworks and Libraries 
+## 5. Isolation of Frameworks and Libraries 
 
 Anti-Corruption Layer
 
@@ -727,7 +719,7 @@ public class CarDbContext : DbContext
 
 ---
 
-## 5. Architectural Evolution Path
+## 6. Architectural Evolution Path
 
 A structure should evolve with the business and architectual needs. This section outlines a proven three-phase approach.
 
