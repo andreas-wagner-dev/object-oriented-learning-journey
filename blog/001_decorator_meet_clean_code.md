@@ -10,6 +10,7 @@ A car gets rented, we **store** it to the database, **log** it, **cache** it for
 
 ```java
 public class CarService {
+
   public void rentCar(String carId, Customer customer,
                       LocalDate from, LocalDate to) {
     // Validation
@@ -37,7 +38,11 @@ public class CarService {
   }
 
   public void returnCar(String carId, Customer customer) {
-    // Validation, Caching, Logging, Database, Events, Logging...
+    // Validation, Logging, Database, Events, Logging...
+  }
+
+  public void payCar(String carId, Customer customer, Float amount) {
+    // Validation, Logging, Database, Events, Logging...
   }
 }
 ```
