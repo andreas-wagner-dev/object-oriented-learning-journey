@@ -298,18 +298,35 @@ Avoid meaning of technical things and suffixes of architecture patterns.
 The **essential domain concepts** – focusing on the Ubiquitous Language – belong directly in the software's **top-level package**. This ensures *conceptual integrity* and preserves the system's *abstract identity* before technical details distort the domain logic.
 
 ```
-carrental/          ← Never knows about technical details
+carrental/             ← Never knows about technical details
 ├── .../
-├── ICar.cs          
-├── ICarRental.cs
-├── ICustomer.cs
-├── ICustomers.cs
-├── ....cs
+├── ...
+├── ICar.cs           ← The rented asset (Immutable / Read-Only)
+├── ICustomer.cs      ← The primary actor of the domain (Root)
+├── ICustomers.cs     ← Domain collection abstraction (Repository)
+├── ICarRentalApp.cs  ← The system entry point (Composition Root Interface)
+└── ...
 ```
 
-**The Customer Domain Interface (ICustomer.cs):**
+**The Vehicle Interface (ICar.cs)** – Rigid Immutability
 
-According to the business domain, a *customer rents a car*. To accurately reflect this Ubiquitous Language in the code, the `Rent` method is placed on the customer interface. The vehicle is passed as a behavioral parameter.
+To eliminate side effects and guarantee thread safety, the `ICar` interface is strictly immutable. It features no property setters or mutating state methods. Every state transition (such as a reservation) yields a new, updated instance of the vehicle.
+
+```csharp
+namespace CarRental;
+
+public interface ICar
+{
+    string Id();
+    bool IsAvailable();
+    decimal Price(DateTime from, DateTime to);
+    ICar Reserve(string customerId); // Returns a new, reserved vehicle instance
+}
+```
+
+**The Domain Interface (ICustomer.cs)** – Functional Data Flow
+
+Following the Ubiquitous Language, the customer actively drives the business process. The customer accepts an immutable vehicle and triggers the action. To stay aligned with the immutable paradigm, the Rent method directly returns the newly transformed ICar instance back to the caller.
 
 ```csharp
 namespace CarRental;
@@ -318,99 +335,35 @@ public interface ICustomer
 {
     string Id();
     string Name();
-    void Rent(ICar car, DateTime from, DateTime to);
-    void Return(ICar car);
+    ICar Rent(ICar car, DateTime from, DateTime to); // Returns the transformed vehicle
 }
 ```
 
+## 4.2 The Composition Root Pattern
 
-**The Vehicle Interface (ICar.cs):** 
-
-The vehicle encapsulates its own states and calculation logic, but does not control the process itself.
-
-```csharp
-namespace CarRental;
-
-public interface ICar
-{
-    string Id();
-    bool IsAvailable();
-    decimal CalculatePrice(DateTime from, DateTime to);
-    void SetAvailability(bool available);
-}
-```
-
-
-E.g. `ICar.cs` - Domain Interface (ROOT!)
-```csharp
-
-namespace CarRental;
-
-public interface ICar
-{
-    void Rent(ICustomer customer, DateTime from, DateTime to);
-    void Return();
-    bool IsAvailable();
-    decimal CalculatePrice(DateTime from, DateTime to);
-}
-```
-
-E.g. `ICarPool.cs` - Collection Domain Interface (ROOT!)
+Placing the main application interface at level "0" of the project structure clearly indicates the starting point of the story to the reader. The `ICarRentalApp.cs` interface serves as the structural umbrella, offering controlled entry to the domain via collection interfaces.
 
 ```csharp
-namespace CarRental;
-
-public interface ICarPool
-{
-    ICar CarOf(CarId carId);
-
-    // other methods ...
-}
-```
-
-### 4.2 Composition Root Pattern
-
-By placing the initial system class (as an interface/abstract class) at level "0" of the project structure, we clearly indicate the beginning of the story to the reader.
-
-```
-carrental/
-├── .../
-├── ICar.cs          
-├── ICarRental.cs
-├── ICarRentalApp.cs  ← Composition Root
-```
-
-The class `ICarRentalApp.cs` enables access via the collection classes e.g. `ICarPool.cs` to single **domain interfaces** like `ICar.cs`. 
-
-```csharp
-// ICarRentalApp.cs - Composition Root Interface (ROOT!)
 namespace CarRental;
 
 public interface ICarRentalApp
 {
-    ICarPool CarPool();
     ICustomers Customers();
+    ICarPool CarPool();
+   // other methods ...
 }
 ```
+The class `ICarRentalApp.cs` enables access via the collection classes e.g. `ICarPool.cs` to single **domain interfaces** like `ICar.cs`. 
 
----
+## 4.3 Detail Implementations with Decorators (customer/ & carpool/)
 
-### 4.3 Detail Implementations with Decorators - `carpool/`
+The business process of renting is executed through a chain of decorators. Each business requirement maps to exactly one decorator class, keeping responsibilities strictly separated by their Bounded Contexts.
 
-Business logic as code – the radical idea behind the Decorator pattern.  
-This means that the code structure should precisely reflect the business process.
+### 4.3.1. The Default Vehicle Implementation (carpool/SimpleCar.cs)
 
-E.g. in a car rental business, when you rent a car, you:
-1. Validate the rental request
-2. Persist it to storage
-3. Cache it for performance
-4. Log it for audit
-5. Publish events for other systems
-
-Example of default implementation of `carpool/SimpleCar.cs` - instead of Factory building block from DDD.
+The core implementation focuses solely on in-memory data representations and mathematical domain logic. Calling Reserve yields a fresh instance without mutating the existing state.
 
 ```csharp
-
 namespace CarRental.CarPool;
 
 public class SimpleCar : ICar
@@ -418,24 +371,37 @@ public class SimpleCar : ICar
     private readonly string _id;
     private readonly string _model;
     private readonly decimal _dailyRate;
-    private bool _isRented;
+    private readonly bool _isRented;
+    private readonly string? _customerId;
 
-    public SimpleCar(string id, string model, decimal dailyRate)
+    public SimpleCar(string id, string model, decimal dailyRate) 
+        : this(id, model, dailyRate, false, null) {}
+
+    // Internal constructor for immutable state transitions
+    private SimpleCar(string id, string model, decimal dailyRate, bool isRented, string? customerId)
     {
         _id = id;
         _model = model;
         _dailyRate = dailyRate;
+        _isRented = isRented;
+        _customerId = customerId;
     }
 
-    public void Rent(ICustomer customer, DateTime from, DateTime to) => _isRented = true;
-    public void Return() => _isRented = false;
+    public string Id() => _id;
     public bool IsAvailable() => !_isRented;
-    public decimal CalculatePrice(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
+    public decimal Price(DateTime from, DateTime to) => (to - from).Days * _dailyRate;
+
+    public ICar Reserve(string customerId)
+    {
+        return new SimpleCar(_id, _model, _dailyRate, true, customerId);
+    }
 }
 
 ```
 
-Example of `carpool/StoredCar.cs` as Database Decorator using EF-Core classes from `exchange/storage/` package.
+### 4.3.2. The Vehicle Persistence Decorator (carpool/StoredCar.cs)
+
+This decorator intercepts the Reserve call, triggers the logical state transformation on the underlying instance, and immediately synchronizes the result with the Entity Framework database model. It then wraps the newly created state as a StoredCar.
 
 ```csharp
 using CarRental.Exchange.Storage;
@@ -446,103 +412,136 @@ public class StoredCar : ICar
 {
     private readonly ICar _origin;
     private readonly CarDbContext _dbContext;
-    private readonly string _carId;
 
-    public StoredCar(ICar origin, CarDbContext dbContext, string carId)
+    public StoredCar(ICar origin, CarDbContext dbContext)
     {
         _origin = origin;
         _dbContext = dbContext;
-        _carId = carId;
     }
 
-    public void Rent(ICustomer customer, DateTime from, DateTime to)
-    {
-        _origin.Rent(customer, from, to);
-        var entity = _dbContext.Cars.Find(_carId);
-        if (entity != null)
-        {
-            entity.IsRented = true;
-            entity.CurrentCustomerId = customer.Id();
-            _dbContext.SaveChanges();
-        }
-    }
-
-    public void Return()
-    {
-        _origin.Return();
-        var entity = _dbContext.Cars.Find(_carId);
-        if (entity != null)
-        {
-            entity.IsRented = false;
-            _dbContext.SaveChanges();
-        }
-    }
-
+    public string Id() => _origin.Id();
     public bool IsAvailable() => _origin.IsAvailable();
-    public decimal CalculatePrice(DateTime from, DateTime to) => _origin.CalculatePrice(from, to);
+    public decimal Price(DateTime from, DateTime to) => _origin.Price(from, to);
+
+    public ICar Reserve(string customerId)
+    {
+        // 1. Logical in-memory transformation
+        ICar nextCarState = _origin.Reserve(customerId);
+
+        // 2. Persist state changes to the database
+        var carEntity = _dbContext.Cars.Find(this.Id());
+        if (carEntity != null)
+        {
+            carEntity.IsRented = true;
+            carEntity.CurrentCustomerId = customerId;
+            _dbContext.SaveChanges();
+        }
+
+        // 3. Decorate the fresh state instance with persistence capabilities again
+        return new StoredCar(nextCarState, _dbContext);
+    }
 }
-
 ```
 
+### 4.3.3. The Default Customer Implementation (customer/SimpleCustomer.cs)
+The customer's core logic handles process-specific business rules. It validates the request and passes the vehicle transformation directly back up the stack. No dead code, no unutilized return states.
+
+```csharp
+namespace CarRental.Customer;
+
+public class SimpleCustomer : ICustomer
+{
+    private readonly string _id;
+    private readonly string _name;
+
+    public SimpleCustomer(string id, string name)
+    {
+        _id = id;
+        _name = name;
+    }
+
+    public string Id() => _id;
+    public string Name() => _name;
+
+    public ICar Rent(ICar car, DateTime from, DateTime to)
+    {
+        // Business rule validation
+        if (!car.IsAvailable())
+        {
+            throw new InvalidOperationException($"The vehicle {car.Id()} is already rented.");
+        }
+
+        // Execute transformation and return the resulting object immediately
+        return car.Reserve(this.Id());
+    }
+}
 ```
-...more other decorators: ValidCar, CachedCar, LoggedCar, PublishedCar...
+
+### 4.3.4. The Customer Persistence Decorator (customer/StoredCustomer.cs)
+
+Because vehicle persistence is completely handled by `StoredCar`, the `StoredCustomer` simply routes the invocation down the pipeline. It remains isolated, focusing purely on customer-specific updates if required by future business features.
+
+```csharp
+namespace CarRental.Customer;
+
+public class StoredCustomer : ICustomer
+{
+    private readonly ICustomer _origin;
+
+    public StoredCustomer(ICustomer origin) => _origin = origin;
+
+    public string Id() => _origin.Id();
+    public string Name() => _origin.Name();
+
+    public ICar Rent(ICar car, DateTime from, DateTime to)
+    {
+        // Cascades through the pipeline (validated by SimpleCustomer, saved by StoredCar)
+        ICar reservedCar = _origin.Rent(car, from, to);
+
+        // (Optional: Perform customer-specific DB modifications here)
+        return reservedCar;
+    }
+}
 ```
 
-**Decorator Composition:**
+## 4.4 The Decorator Composition (The Executable Pipeline)
 
+When executing this flow within an API Controller or a Use Case endpoint, the harmony of this functional design becomes fully apparent:
+
+```csharp
+// Inside an API Endpoint / Use Case action:
+ICustomer customer = _app.Customers().WithId(customerId); // e.g., a StoredCustomer chain
+ICar car = _app.CarPool().CarOf(carId);                   // e.g., a StoredCar chain
+
+// The entire process runs side-effect free across all decorators.
+// Databases update, validation guards execute, and clean states flow.
+ICar rentedCar = customer.Rent(car, from, to);
 ```
-  → ValidCar (Validation)
-    → StoredCar (Persistence)
-      → CachedCar (Caching)
-        → LoggedCar (Logging)
-          → PublishedCar (Events)
-```
 
-**The Core Message: Decorators Are the Business Logic**
+## 4.5 Implementation of the Composition Root in `application/`
 
-The paradigm shift:
+The Composition Root is a unique location in an application where the entire dependency graph is composed.
 
-* **Traditional thinking:** "Decorators are a technical pattern for adding functionality"
-* **Business-driven thinking:** "Decorators ARE the business process, made executable"
+>"A Composition Root is a unique location in an application where modules are composed together... Only applications should have Composition Roots. Libraries and frameworks shouldn't." — Mark Seemann, Dependency Injection in .NET
 
-Let's us look at this decorator chain again:
+In this architecture, the `application/` package acts as the infrastructure shell. It is the only place allowed to reference framework-specific DI mechanisms or an `IServiceProvider`. The rest of the domain remains entirely ignorant of how it is constructed.
 
-```
-Validation → Events → Logging → Caching → Persistence
-    ↓          ↓        ↓         ↓          ↓
- Business   Domain    Audit   Performance   Data
-  Rules     Events    Trail   Optimization  Storage
-```
-This isn't technical plumbing. This is our business.
-
-* When Product Owner says "we need to validate rental dates," you add **ValidCar**. 
-* When Compliance says "we need audit trails," you add **LoggedCar**. 
-* When Operations says "we need event-driven architecture," you add **PublishedCar**.
-
-Each business requirement = one decorator. *Clear*. *Traceable*. *Maintainable*.
-
----
-
-### 4.4 Implementation of Composition Root in `application/`
-
-The Composition Root is an application infrastructure component.
-> Only applications should have Composition Roots. Libraries and frameworks shouldn't.
-> The Composition Root can be implemented with DI Pure DI, but is also the (only) appropriate place to use a DI Container.
-> A DI Container should only be referenced from the Composition Root. All other modules should have no reference to the container.
-
-```
+```csharp
 carrental/
 ├── application/
-│   └── CarRentalApp.cs    ← application's entry point.
-├── ICar.cs          
-├── ICarRental.cs
-├── ICarRentalApp.cs       ← Composition Root
+│   └── CarRentalApp.cs    ← Application entry point & DI Bootstrap
+├── ...
+├── ICarPool.cs
+├── ICustomer.cs       
+├── ICustomers.cs        
+└── ICarRentalApp.cs       ← Composition Root Interface (Root level)
 ```
 
-The package `application/` can contain various implementations of the application's entry point.
+The `CarRentalAp`p class implements the root-level interface. It uses the `IServiceProvider` as a factory manager to resolve flat infrastructure components (like database contexts or caches) and manually nests decorators to enforce the desired runtime behavior pipeline.
 
 ```csharp
 using CarRental.CarPool;
+using CarRental.Customer;
 using CarRental.Exchange.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -553,18 +552,21 @@ public class CarRentalApp : ICarRentalApp
 {
     private readonly IServiceProvider _services;
 
-    // Framework Integration
-    public CarRentalApp(IServiceProvider services) => _services = services;
+    // Framework Integration: The container is encapsulated exclusively here.
+    public CarRentalApp(IServiceProvider services)
+    {
+        _services = services;
+    }
 
     public static void Main(string[] args) 
     {
-        // ASP.NET Core Setup & DI Configuration
+        // ASP.NET Core Setup & Host Bootstrapping would live here
     }
     
     public ICarPool CarPool() 
     {
-        // Implementation of ICarPool using collection decorators
-        // Composition logic: CachedCarPool(StoredCarPool(InMemoryCars))
+        // Composition Logic: CachedCarPool -> StoredCarPool
+        // Infrastructure dependencies are resolved, then decorated with cross-cutting concerns.
         return new CachedCarPool(
             new StoredCarPool(
                 _services.GetRequiredService<CarDbContext>()
@@ -574,14 +576,32 @@ public class CarRentalApp : ICarRentalApp
     }
 
     public ICustomers Customers() 
+    {   
+        // Composition Logic: StoredCustomers wrapping the database engine
+        // optional: CachedCustomers(StoredCustomers(_services.GetRequiredService<CarDbContext>()))
+        return new StoredCustomers(
+            _services.GetRequiredService<CarDbContext>()
+        );
+    }
+}
+```
+
+**Architectural Benefits of this Approach:**
+
+**No Service Locator Anti-Pattern in Domain:** Because `_services.GetRequiredService` is confined inside the Composition Root (`CarRentalApp`), the domain packages (`carpool/`, `customer/`) remain completely clean. They use standard Constructor Injection and have no compile-time dependency on framework DI containers.
+
+**Compile-Time Traceable Pipelines:** The nesting order of the pipelines (e.g., `CachedCarPool` wrapping `StoredCarPoo`l) is explicitly readable as raw code. If a decorator composition needs to change (for instance, removing a cache or adding an audit log), it happens strictly inside these factory methods.
+
+**Decoupled Application Shells:** If you need to switch from an ASP.NET Core Web API to a console-based CLI or a serverless AWS Lambda function, you only swap out or add a new entry point class inside `application/`. The business context, domain interfaces, and decorator pipelines remain untouched.
+
+
+    public ICustomers Customers() 
     {   // Composition logic: CachedCustomers(StoredCustomers(_services.GetRequiredService<CustomerDbContext>()))
         // Returns the collection implementation for customers
         return ...;
     }
 }
 ```
-
----
 
 ### 4.5 Isolation of Frameworks and Libraries 
 
