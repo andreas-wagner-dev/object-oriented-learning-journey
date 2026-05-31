@@ -4,9 +4,9 @@
 
 ## The Problem Every Developer Faces
 
-You're building a car rental system. Simple enough, right?
+We're building a car rental system. Simple enough, right?
 
-A car gets rented, you **store** it to the database, **log** it, **cache** it for performance, **publish** an event for analytics, and **validate** the input. So you write this:
+A car gets rented, we **store** it to the database, **log** it, **cache** it for performance, **publish** an event for analytics, and **validate** the input. So we often write this:
 
 ```java
 public class CarService {
@@ -35,6 +35,10 @@ public class CarService {
 
     log.info("Car {} successfully rented", carId);
   }
+
+  public void returnCar(String carId, Customer customer) {
+    // Validation, Caching, Logging, Database, Events, Logging...
+  }
 }
 ```
 
@@ -50,7 +54,7 @@ Every developer has written code like this. And every developer knows the pain:
 
 ## The Decorator Pattern: Business Logic as Code
 
-Here's the radical idea: what if your code structure looked exactly like your business process?
+Here's the radical idea: what if our code structure looked exactly like the business process?
 
 In a car rental business, a customer who rents a car triggers the following steps:
 
@@ -60,22 +64,27 @@ In a car rental business, a customer who rents a car triggers the following step
 4. 📝 Log it for audit
 5. 📡 Publish events for downstream systems
 
-Why shouldn't your code reflect this exact flow?
+Why shouldn't our code reflect this exact flow?
 
 ```java
-// This IS your business process
-Customer customer = new ValidCustomer( // 1. Validate first
-    new StoredCustomer(                // 2. Then persist
-        new CachedCustomer(            // 3. Then cache
-            new LoggedCustomer(        // 4. Then log
-                new PublishedCustomer( // 5. Finally publish events
+// This IS the business process
+Customer customer = new ValidCustomer(       // 1. Validate first
+    new PersistentCustomer(repository,       // 2. Then persist
+        new CachedCustomer(cache,            // 3. Then cache
+            new LoggedCustomer(log,          // 4. Then log
+                new PublishedCustomer(queue, // 5. Finally publish events
                     baseCustomer
                 )
             )
         )
     )
 );
-customer.rent(car, from, to);  // Clean. Simple. Business-focused.
+
+// rent
+customer.rentCar(car, from, to);  
+// or return
+customer.returnCar(car);
+// Clean. Simple. Business-focused.
 ```
 
 **This is the Decorator Pattern** — and it's not just a technical pattern. It's business logic made visible.
@@ -89,8 +98,9 @@ customer.rent(car, from, to);  // Clean. Simple. Business-focused.
 Each decorator has *one job*. Just one.
 
 ```java
-// ValidCustomer: ONLY validates
+// ONLY validates
 public class ValidCustomer implements Customer {
+
     private final Customer origin;
 
     public ValidCustomer(Customer origin) {
@@ -98,7 +108,7 @@ public class ValidCustomer implements Customer {
     }
 
     @Override
-    public void rent(Car car, LocalDate from, LocalDate to) {
+    public void rentCar(Car car, LocalDate from, LocalDate to) {
         if (car == null)
             throw new IllegalArgumentException("Car required");
         if (from.isBefore(LocalDate.now()))
@@ -106,7 +116,15 @@ public class ValidCustomer implements Customer {
         if (to.isBefore(from))
             throw new IllegalArgumentException("Invalid date range");
 
-        origin.rent(car, from, to);  // Delegate to next layer
+        origin.rentCar(car, from, to);  // Delegate to next layer
+    }
+
+    @Override
+    public void returnCar(Car car) {
+        if (car == null)
+            throw new IllegalArgumentException("Car required");
+
+        origin.returnCar(car);  // Delegate to next layer
     }
 
     @Override
@@ -115,8 +133,9 @@ public class ValidCustomer implements Customer {
     }
 }
 
-// LoggedCustomer: ONLY logs
+// ONLY logs
 public class LoggedCustomer implements Customer {
+
     private final Customer origin;
     private final Logger log;
 
@@ -126,13 +145,25 @@ public class LoggedCustomer implements Customer {
     }
 
     @Override
-    public void rent(Car car, LocalDate from, LocalDate to) {
+    public void rentCar(Car car, LocalDate from, LocalDate to) {
         log.info("RENT: Starting rental process");
         try {
-            origin.rent(car, from, to);
+            origin.rentCar(car, from, to);
             log.info("RENT: Successfully completed");
         } catch (Exception e) {
             log.error("RENT: Failed", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public void returnCar(Car car) {
+        log.info("RETURN: Starting return process");
+        try {
+            origin.returnCar(car);
+            log.info("RETURN: Successfully returned");
+        } catch (Exception e) {
+            log.error("RETURN: Failed", e);
             throw e;
         }
     }
@@ -152,7 +183,7 @@ Change logging? → Touch only **LoggedCustomer**.
 
 ### 🎯 Bonus: Printers Instead of Getters
 
-Did you notice the `print(Media media)` method? This is Yegor Bugayenko's ["Printers Instead of Getters"](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html) concept.
+Notice the `print(Media media)` method? This is Yegor Bugayenko's ["Printers Instead of Getters"](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html) concept.
 
 ❌ **Traditional approach:** Getters expose internals
 
@@ -160,8 +191,10 @@ Did you notice the `print(Media media)` method? This is Yegor Bugayenko's ["Prin
 public interface Customer {
     String getId();      // Exposes data
     String getName();    // Exposes data
-    void rent(Car car, LocalDate from, LocalDate to);
+    void rentCar(Car car, LocalDate from, LocalDate to);
+    void returnCar(Car car);
 }
+
 // Controller builds JSON manually
 String json = String.format(
     "{\"id\":\"%s\",\"name\":\"%s\"}", customer.getId(), customer.getName()
@@ -172,9 +205,11 @@ String json = String.format(
 
 ```java
 public interface Customer {
-    void rent(Car car, LocalDate from, LocalDate to);
+    void rentCar(Car car, LocalDate from, LocalDate to);
+    void returnCar(Car car);
     void print(Media media);  // Customer decides how to represent itself
 }
+
 // Customer prints itself to media
 Media media = new JsonMedia();
 customer.print(media);
@@ -200,22 +235,22 @@ Customer production = new ValidCustomer(
     new PublishedCustomer(queue,
         new LoggedCustomer(log,
             new CachedCustomer(cache,
-                new StoredCustomer(baseCustomer, repository)
+                new PersistentCustomer(baseCustomer, repository)
             )
         )
     )
 );
 
 // Admin tool: Skip validation
-Customer admin = new PublishedCustomer(
+Customer admin = new PublishedCustomer(queue,
     new LoggedCustomer(log,
-        new StoredCustomer(baseCustomer, repository)
+        new PersistentCustomer(baseCustomer, repository)
     )
 );
 
 // Testing: Minimal
 Customer test = new ValidCustomer(
-    new StoredCustomer(baseCustomer, repository)
+    new PersistentCustomer(baseCustomer, repository)
 );
 ```
 
@@ -236,11 +271,11 @@ public void validCustomer_shouldRejectPastDates() {
     LocalDate pastDate = LocalDate.now().minusDays(1);
 
     assertThrows(IllegalArgumentException.class, () ->
-        validCustomer.rent(mockCar, pastDate, LocalDate.now())
+        validCustomer.rentCar(mockCar, pastDate, LocalDate.now())
     );
 
     // Mock was never called — validation stopped it
-    verify(mockCustomer, never()).rent(any(), any(), any());
+    verify(mockCustomer, never()).rentCar(any(), any(), any());
 }
 
 @Test
@@ -249,7 +284,7 @@ public void loggedCustomer_shouldLogSuccessAndFailure() {
     Logger mockLogger = mock(Logger.class);
     Customer loggedCustomer = new LoggedCustomer(mockCustomer, mockLogger);
 
-    loggedCustomer.rent(mockCar, from, to);
+    loggedCustomer.rentCar(mockCar, from, to);
 
     verify(mockLogger).info(contains("RENT: Starting"));
     verify(mockLogger).info(contains("Successfully completed"));
@@ -264,14 +299,15 @@ No complex setup. No mocking of unrelated dependencies. Pure, focused tests.
 
 The SRP can be formalized as: [**SRP ≡ max(COHESION) ∧ min(COUPLING)**](https://medium.com/@andreas.wagner.info/the-single-responsibility-principle-beyond-myths-to-metrics-602d1a3efb49)
 
-Each decorator class strictly uses only two components: a delegate object and one tool.
+Each decorator class strictly uses only two components: a delegate object and one tool.  
+The delegate object ensures maximum cohesion, and coupling is reduced due to the use of a single tool.
 
 ```
-ValidCustomer    → Validates business rules
-StoredCustomer   → Persists to database (e.g. via Spring Data JPA)
-CachedCustomer   → Manages cache
-LoggedCustomer   → Writes audit logs
-PublishedCustomer → Publishes domain events
+ValidCustomer        → Validates business rules
+PersistentCustomer   → Persists to database (e.g. via Spring Data JPA)
+CachedCustomer       → Manages cache
+LoggedCustomer       → Writes audit logs
+PublishedCustomer    → Publishes domain events
 ```
 
 Not:
@@ -280,7 +316,7 @@ Not:
 CustomerService → Validates + Persists + Caches + Logs + Publishes  ❌
 ```
 
-When you need to change the caching strategy, you open **CachedCustomer** — not a 300-line service class.
+When we need to change the caching strategy, we open **CachedCustomer** — not many mixed line service class.
 
 ---
 
@@ -290,6 +326,7 @@ Need to add metrics? Don't modify existing code. Add a decorator:
 
 ```java
 public class MetricsCustomer implements Customer {
+
     private final Customer origin;
     private final MeterRegistry metrics;
 
@@ -299,13 +336,25 @@ public class MetricsCustomer implements Customer {
     }
 
     @Override
-    public void rent(Car car, LocalDate from, LocalDate to) {
+    public void rentCar(Car car, LocalDate from, LocalDate to) {
         Timer.Sample sample = Timer.start(metrics);
         try {
-            origin.rent(car, from, to);
+            origin.rentCar(car, from, to);
             sample.stop(metrics.timer("customer.rent.success"));
         } catch (Exception e) {
             metrics.counter("customer.rent.failure").increment();
+            throw e;
+        }
+    }
+
+    @Override
+    public void returnCar(Car car) {
+        Timer.Sample sample = Timer.start(metrics);
+        try {
+            origin.returnCar(car);
+            sample.stop(metrics.timer("customer.return.success"));
+        } catch (Exception e) {
+            metrics.counter("customer.return.failure").increment();
             throw e;
         }
     }
@@ -322,7 +371,7 @@ Customer customer = new MetricsCustomer(metric,  // NEW: Metrics
         new PublishedCustomer(queue,
             new LoggedCustomer(log,
                 new CachedCustomer(cache,
-                    new StoredCustomer(baseCustomer, repository)
+                    new PersistentCustomer(baseCustomer, repository)
                 )
             )
         )
@@ -336,7 +385,7 @@ Customer customer = new MetricsCustomer(metric,  // NEW: Metrics
 
 ### 6. Business Concepts in Code
 
-Your package structure can and should mirror your business domain.
+Our package structure can and should mirror the business domain.
 
 Packages are **hierarchically organized** according to domain concepts — not technical layers. Three rules by [Robert Bräutigam](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/) govern this:
 
@@ -361,26 +410,26 @@ carrental/
 ├── carpool/
 │   ├── CachedCar.java
 │   ├── LoggedCar.java
+│   ├── PersistentCar.java
+│   ├── PersistentCarPool.java
 │   ├── PublishedCar.java
 │   ├── SimpleCar.java
-│   ├── ServedCars.java             → REST Controller
-│   ├── StoredCar.java
-│   ├── StoredCarPool.java
 │   └── ValidCar.java
 ├── customer/
 │   ├── CachedCustomer.java
 │   ├── LoggedCustomer.java
 │   ├── PublishedCustomer.java
-│   ├── ServedCustomers.java             → REST Controller
+│   ├── ServedCustomerPool.java      → REST Controller
+│   ├── ServedCustomer.java          → expose data as REST
 │   ├── SimpleCustomer.java
-│   ├── StoredCustomer.java
+│   ├── PersistentCustomer.java
 │   └── ValidCustomer.java
 ├── payment/
 │   ├── StripePayment.java
 │   ├── PayPalPayment.java
 │   └── ValidPayment.java
 ├── rental/
-│   ├── ServedRentals.java
+│   ├── ServedRentals.java          → REST Controller
 │   ├── ...java
 │   ...
 ├── exchange/
@@ -394,7 +443,7 @@ carrental/
 ├── Car.java                        → Domain Entity interface
 ├── CarPool.java                    → Domain Aggregate interface
 ├── Customer.java                   → Domain Entity interface
-├── Customers.java                  → Domain Group interface
+├── CustomerPool.java                  → Domain Group interface
 ├── CarrentalApp.java               → Root Composition interface
 └── Media.java                      → Printer interface
 ```
@@ -446,7 +495,7 @@ Each business requirement = one decorator. Clear. Traceable. Maintainable.
 ```java
 // ROOT: Customer as the actor who rents cars
 public interface Customer {
-    void rent(Car car, LocalDate from, LocalDate to);
+    void rentCar(Car car, LocalDate from, LocalDate to);
     void returnCar(Car car);
     void print(Media media);
 }
@@ -475,15 +524,16 @@ public interface Media {
 public interface CarrentalApp {
     void run();
     CarPool carPool();
-    Customers customers();
+    CustomerPool CustomerPool();
 }
 ```
 
 ### Step 2: Create Your First Decorator
 
 ```java
-// ValidCustomer.java
+// Validation
 public class ValidCustomer implements Customer {
+
     private final Customer origin;
 
     public ValidCustomer(Customer origin) {
@@ -491,7 +541,7 @@ public class ValidCustomer implements Customer {
     }
 
     @Override
-    public void rent(Car car, LocalDate from, LocalDate to) {
+    public void rentCar(Car car, LocalDate from, LocalDate to) {
         if (car == null)
             throw new IllegalArgumentException("Car required");
         if (from.isBefore(LocalDate.now()))
@@ -499,7 +549,14 @@ public class ValidCustomer implements Customer {
         if (to.isBefore(from))
             throw new IllegalArgumentException("Invalid date range");
 
-        origin.rent(car, from, to);
+        origin.rentCar(car, from, to);
+    }
+
+    @Override
+    public void returnCar(Car car) {
+        if (car == null)
+            throw new IllegalArgumentException("Car required");
+        origin.returnCar(car, from, to);
     }
 
     @Override
@@ -512,18 +569,19 @@ public class ValidCustomer implements Customer {
 ### Step 3: Create the Storage Decorator
 
 ```java
-// StoredCustomer.java
-public class StoredCustomer implements Customer {
+// PersistentCustomer.java
+public class PersistentCustomer implements Customer {
+
     private final String id;
     private final CustomerRepository repository;
 
-    public StoredCustomer(String id, CustomerRepository repository) {
+    public PersistentCustomer(String id, CustomerRepository repository) {
         this.id = id;
         this.repository = repository;
     }
 
     @Override
-    public void rent(Car car, LocalDate from, LocalDate to) {
+    public void rentCar(Car car, LocalDate from, LocalDate to) {
         CustomerEntity customerEntity = repository.findCustomerById(id)
             .orElseThrow(() -> new EntityNotFoundException("Customer [" + id + "] not found"));
 
@@ -557,15 +615,16 @@ public class StoredCustomer implements Customer {
 ### Step 4: Compose at the Root
 
 ```java
-// StoredCustomerPool.java — factory for decorated customers
-public class StoredCustomerPool {
+// Persistent- factory for decorated customers
+public class PersistentCustomerPool {
+
     private final CustomerRepository repository;
     private final CacheManager cache;
     private final Logger log;
     private final KafkaTemplate<String, String> kafka;
 
     public Customer customerOf(String customerId) {
-        Customer customer = new StoredCustomer(customerId, repository);
+        Customer customer = new PersistentCustomer(customerId, repository);
         customer = new CachedCustomer(customer, cache);
         customer = new LoggedCustomer(customer, log);
         customer = new PublishedCustomer(customer, kafka);
@@ -574,7 +633,7 @@ public class StoredCustomerPool {
     }
 }
 
-// SpringCarrentalApp.java — composition root
+// Spring based — composition root
 @Configuration
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.company.**"})
@@ -593,13 +652,13 @@ public class SpringCarrentalApp implements CarrentalApp {
     @Bean
     @Override
     public CarPool carPool() {
-        return new StoredCarPool(carRepository, cache, log, kafka);
+        return new PersistentCarPool(carRepository, cache, log, kafka);
     }
 
     @Bean
     @Override
-    public Customers customers() {
-        return new StoredCustomers(customerRepository, cache, log, kafka);
+    public CustomerPool customers() {
+        return new PersistentCustomerPool(customerRepository, cache, log, kafka);
     }
 }
 ```
@@ -615,16 +674,16 @@ public class ServedRentals {
     private CarPool carPool;
 
     @Autowired
-    private StoredCustomers customers;
+    private PersistentCustomerPool customers;
 
     @PostMapping
     public ResponseEntity<String> rentCar(@RequestBody RentCarRequest request) {
         // Resolve decorated objects
-        Customer customer = customers.customerOf(request.getCustomerId());
+        Customer customer = customerPool.customerOf(request.getCustomerId());
         Car car = carPool.carOf(request.getCarId());
 
         // Execute — the decorator chain handles validation, logging, caching, events
-        customer.rent(car, request.getRentFrom(), request.getRentTo());
+        customer.rentCar(car, request.getRentFrom(), request.getRentTo());
 
         // Print to JSON — NO GETTERS!
         Media customerMedia = new JsonMedia();
@@ -653,12 +712,12 @@ HTTP POST /api/rentals
     ↓
 ServedRentals.rentCar()
     ↓
-customer.rent(car, from, to)
+customer.rentCar(car, from, to)
    ├─ ValidCustomer:     ✅ Validates car, dates
    ├─ PublishedCustomer: 📡 Prepares Kafka event
    ├─ LoggedCustomer:    📝 Logs "RENT: Starting..."
    ├─ CachedCustomer:    🗑️ Invalidates cache
-   └─ StoredCustomer:    💾 Saves via Spring Data JPA
+   └─ PersistentCustomer:    💾 Saves via Spring Data JPA
     ↓
 customer.print(new JsonMedia())   // Customer prints itself
 car.print(new JsonMedia())        // Car prints itself
@@ -674,6 +733,7 @@ HTTP Response (JSON) — no getters used
 
 ```java
 public class CarService {
+
     public void rentCar(String carId, Customer customer,
                         LocalDate from, LocalDate to) {
         // Validation
@@ -691,6 +751,11 @@ public class CarService {
         // Impossible to test in isolation
         // Changes to one concern affect everything
     }
+
+    public void returnCar(String carId, Customer customer) {
+        // ...
+    }
+
 }
 ```
 
@@ -708,19 +773,19 @@ public class CarService {
 // PublishedCustomer → ONLY publishes events
 // LoggedCustomer    → ONLY logs
 // CachedCustomer    → ONLY caches
-// StoredCustomer    → ONLY persists
+// PersistentCustomer    → ONLY persists
 
 Customer customer = new ValidCustomer(
     new PublishedCustomer(queue,
         new LoggedCustomer(log,
             new CachedCustomer(cache,
-                new StoredCustomer(customerId, repository)
+                new PersistentCustomer(customerId, repository)
             )
         )
     )
 );
 
-customer.rent(car, from, to);  // Executes the entire chain
+customer.rentCar(car, from, to);  // Executes the entire chain
 customer.print(new JsonMedia());
 ```
 
@@ -751,11 +816,11 @@ customer.print(new JsonMedia());
 
 ## Key Takeaways
 
-**Decorators ≠ Technical Pattern** — They are your business process made executable.
+**Decorators ≠ Technical Pattern** — They are our business process made executable.
 
 **Code Structure = Business Context** — Package by domain (`carpool/`, `payment/`, `customer/`), not by layer (`service/`, `repository/`).
 
-**One Decorator = One Concern** — `ValidCustomer` validates. `LoggedCustomer` logs. `StoredCustomer` persists. Period.
+**One Decorator = One Concern** — `ValidCustomer` validates. `LoggedCustomer` logs. `PersistentCustomer` persists. Period.
 
 **Composition > Inheritance** — Build complex behavior by composing simple decorators.
 
@@ -784,12 +849,14 @@ Your code becomes self-documenting. Your architecture becomes business-driven. Y
 
 ## Resources
 
-- [Happy Packaging](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/) — Robert Bräutigam on business-concept-driven package structure
+- [Happy Packaging](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/) — Robert Bräutigam
 - [Composition Root Pattern](https://blog.ploeh.dk/2011/07/28/CompositionRoot/) — Mark Seemann
 - [Printers Instead of Getters](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html) — Yegor Bugayenko
 - [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html) — Yegor Bugayenko
 - [Composable Decorators vs. Imperative Utility Methods](https://www.yegor256.com/2015/02/26/composable-decorators.html) — Yegor Bugayenko
-- [Defensive Programming via Validating Decorators](https://www.yegor256.com/2016/01/26/defensive-programming.html) — Yegor Bugayenko
+- [Defensive Programming via Validating Decorators](https://www.yegor256.com/2016/01/26/defensive-programming.html) — Yegor
+Bugayenko
+- [Maintaining Model Integrity](https://www.vzurauskas.com/2018/07/24/maintaining-model-integrity) - Vytautas Žurauskas
 - Gang of Four — *Design Patterns* (1994)
 - Robert C. Martin — *Clean Code*
 - Yegor Bugayenko — *Elegant Objects*, Vol. 1 & 2
