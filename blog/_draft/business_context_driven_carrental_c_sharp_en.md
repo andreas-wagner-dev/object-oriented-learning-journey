@@ -595,11 +595,13 @@ public class CarRentalApp : ICarRentalApp
 **Decoupled Application Shells:** If you need to switch from an ASP.NET Core Web API to a console-based CLI or a serverless AWS Lambda function, you only swap out or add a new entry point class inside `application/`. The business context, domain interfaces, and decorator pipelines remain untouched.
 
 
-## 5. Isolation of Frameworks and Libraries 
+# 5. Isolation of Frameworks and Libraries: The Anti-Corruption Layer (ACL)
 
-Anti-Corruption Layer
+To prevent third-party frameworks, object-relational mappers (ORMs), or external APIs from bleeding into and contaminating your core domain logic, you must implement an **Anti-Corruption Layer (ACL)**. Depending on codebase size, team organization, and deployment scale, this isolation can be achieved through two distinct structural strategies.
 
-**Option 1) Ideally**, technical aspects implemented through frameworks or libraries should be outsourced to **separate projects** and integrated into the main project as dependencies.
+## 5.1 Option 1: Multi-Project Physical Isolation (Enterprise Scale)
+
+For large-scale systems or multi-team environments, third-party libraries and infrastructure tools should be moved out of the main domain assembly entirely. They live in dedicated, compile-time **isolated sub-projects** integrated as flat dependencies.
 
 ```
 carrental                     → depends on: -endpoint, -resource, -storage, -... 
@@ -615,61 +617,41 @@ carrental-text                ← Textformatting library with DTOs/helper classe
 carrental-...                 ← other framework or library
 ```
 
-The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level.
+The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level. For example, if you are using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF classes in the package `carpool/` behind a class like `StoredCar.cs`, which is designed as a `Decorator`, `Bridge` or `Adapter` pattern.
 
-For example, if you are using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF classes in the package `carpool/` behind a class like `StoredCar.cs`, which is designed as a `Decorator`, `Bridge` or `Adapter` pattern.
 
-**Important:** The domain interfaces and classes in the root package of **carrental** project should never use classes technical of projects.
+## 5.2 Option 2: Single-Project Logical Isolation (Small to Mid-Sized Codebases)
 
-**Option 2) Alternative:** suitable for projects with small codebases.
-3.3 The Exchange Package: 
-Isolate all technical aspects (everything that requires data exchange with external systems)
-
-* into a dedicated package `exchange/`
-
-followed by further subpackages for each aspect, such as:
-
-* `endpoint/`   → HTTP classes for WEB access with helper classes
-* `resource/`   → HTTP classes for REST and JSON/XML DTOs with helper classes
-* `storage/`    → ORM classes for DB access with helper classes
-* `paypal/`     → Paypal REST library
-* `mailing/`    → SMTPS/IMAPS/POP3S for EMAIL sending and server integration with helper classes
-* `messaging/`  → AVRO classes for Kafka integration with helper classes
-* `text/`       → Textformatting library with helper classes
-* `pdf/`        → PDF library with helper classes
-* `other.../`   → ... library/classes ...
-
-The classes in these packages can then be used in the business packages starting at the first level.  
-E. g. when using ORMs like EF Core, isolate them in the `exchange/storage/` package.
+For more compact applications or single-team projects, spinning up dozens of physical projects adds unnecessary DevOps overhead. Instead, you can achieve the exact same logical isolation by grouping all framework-facing structures into a dedicated root-level `exchange/` package.
 
 ```
 carrental/
 ├── application/ 
-├── carpool/            
-│   └── StoredCar.cs         ← Uses exchange/storage/ for persistence
+├── carpool/
+│   ├── ...Car.cs       
+│   └── StoredCar.cs             ← Uses exchange/storage/ for persistence
 ├── exchange/
-│   ├── endpoint/            → HTTP classes JSON/XML DTOs
-│   ├── resource/            → REST classes JSON/XML DTOs
-│   ├── storage/             ← EF Core Entity       
-│   │   ├── CarEntity.cs     ← EF Core Entity
-│   │   ├── CarDbContext.cs  ← EF Core DbContext
-│   │   ├── Db....cs         ← EF Core common Utils or Helper only for this package
+│   ├── resource/                → REST classes JSON/XML DTOs
+│   ├── storage/                 ← EF Core Entity       
+│   │   ├── CarEntity.cs         ← EF Core Entity
+│   │   ├── CarDbContext.cs      ← EF Core DbContext
+│   │   ├── CustomerEntity.cs    
+│   │   ├── CustomerDbContext.cs
+│   │   ├── Db....cs             ← EF Core common Utils or Helper only for this package
 │   │   └── ...
-│   ├── paypal/              → Paypal: REST library
-│   ├── mailing/             → Email SMTPS, IMAPS or POP3S Protocol   
-│   ├── messaging/           → Queues Apache Avro or Protocol Buffers DTOs
+│   ├── paypal/                  → Paypal: REST library
+│   ├── mailing/                 → Email SMTPS, IMAPS or POP3S Protocol   
+│   ├── messaging/               → Queues Apache Avro or Protocol Buffers DTOs
 │   └── ...  
 ├── .../    
-└── ICar.cs                  ← Never knows about EF Core
+└── ICar.cs                      ← Never knows about EF Core
 ```
 
-**Important:**
-The domain interfaces and classes in the root package should never depends on technical DTO classes.
-* All ORM classes (Entity, DbContext) live in `exchange/storage/` package
-* The package `exchange/storage/` can be used by `carpool/`, `payment/` not otherwise
-* Domain adapters (like `StoredCar` in `carpool/`) depends on DTOs of `exchange/storage/` package
+**Strict Rules of the Exchange Architectural Boundary:**
 
-This ensures framework independence and clean dependency flow.
+* **Unidirectional Dependency Flow:** Domain adapters (such as `StoredCar` in `carpool/`) are allowed to import and look down into the data schemas of the `exchange/` package.
+* **Absolute Root Ignorance:** Interfaces and value objects sitting at level "0" (the root package directory like `ICar.cs`) must never import or mention data objects, entities, or libraries originating from `exchange/`.
+* **No Cross-Border Contamination:** The `exchange/storage/` package must exclusively deal with persistence mechanisms. It has no say over business decisions.
 
 **E.g. Integration of ORM Layer** -  `exchange/storage/ ` 
 
@@ -716,6 +698,11 @@ public class CarDbContext : DbContext
     }
 }
 ```
+
+**The Architectural Payoff**
+
+Because these EF Core configurations are completely boxed into the `exchange/` layer, your domain core remains highly malleable. If your team decides tomorrow to drop Entity Framework Core and rewrite the data layer using raw `Dapper SQL` queries or migrate entirely to a document store like *MongoDB*, not a single line of business logic or domain interface needs to change.You simply update the contents of the `exchange/storage/` folder and adjust the construction steps inside your `StoredCar` and `CarRentalApp` factories.
+
 
 ---
 
