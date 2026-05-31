@@ -142,6 +142,20 @@ When someone asks:
 
 ## 3. Object-Oriented Domain-Driven Analysis and Design
 
+Based on this analytical starting point, the areas of responsibility are sharply delineated from one another. This separation is physically manifested in the code through the top-level package structure—analogous to dividing a story into logical chapters:
+
+**Booking (User Interface):** Encompasses the logic for user interaction and reservation scheduling.
+* Package: `booking/`
+
+**Payment (PayPal/Stripe):** Encapsulates exclusively the logic for financial transactions and their security.
+* Package: `payment/`
+
+**Customer (Database):** Focuses on the management of renter profiles and relationship management.  
+* Package: `customer/`
+
+**Car Pool (Inventory):** Manages the entire lifecycle of the physical vehicles.
+* Package: `carpool/`
+
 ### 3.1. Project Packaging
 
 The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
