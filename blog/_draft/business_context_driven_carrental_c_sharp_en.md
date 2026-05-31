@@ -157,7 +157,7 @@ Based on this analytical starting point, the areas of responsibility are sharply
 **Car Pool (Inventory):** Manages the entire lifecycle of the physical vehicles.
 * Package: `carpool/`
 
-### 3.1. Project Packaging
+### 3.1. Project Package Structure
 
 The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
 
