@@ -719,6 +719,7 @@ A software system's project structure must dynamically adapt to changing organiz
 
 Every system should begin here. All Bounded Contexts live within a single deployable assembly, safely partitioned using the strict packaging rules defined in previous chapters.
 
+```
 carrental/              ← Single .NET Assembly (.dll / executable)
 ├── application/        → Composition Root & Framework Setup
 ├── carpool/            → Bounded Context: Fleet & Assets
@@ -726,12 +727,12 @@ carrental/              ← Single .NET Assembly (.dll / executable)
 ├── exchange/           → Shared Anti-Corruption Layer (ACL)
 ├── payment/            → Bounded Context: Billing
 └── booking/            → Bounded Context: Reservations & UI
+```
 
 **Context Indicators:**
 
 * **When to use:** Greenfield projects, team sizes under 10 developers, or scenarios where business domain boundaries are highly volatile.
 * **The Advantage:** Ultra-fast refactoring, instant build times, and zero operational deployment complexity.
-
 
 **6.2 Phase 2: The Modular Monolith (Modulith)**
 
