@@ -701,7 +701,9 @@ public class CarDbContext : DbContext
 
 **The Architectural Payoff**
 
-Because these EF Core configurations are completely boxed into the `exchange/` layer, your domain core remains highly malleable. If your team decides tomorrow to drop Entity Framework Core and rewrite the data layer using raw `Dapper SQL` queries or migrate entirely to a document store like *MongoDB*, not a single line of business logic or domain interface needs to change.You simply update the contents of the `exchange/storage/` folder and adjust the construction steps inside your `StoredCar` and `CarRentalApp` factories.
+Because these EF Core configurations are completely boxed into the `exchange/` layer, your domain core remains highly malleable. 
+* If the team decides tomorrow to drop Entity Framework Core and rewrite the data layer using raw `Dapper SQL` queries or migrate entirely to a document store like *MongoDB*, not a single line of business logic or domain interface needs to change.
+* We simply update the contents of the `exchange/storage/` folder and adjust the construction steps inside the `StoredCar` and `CarRentalApp` factories.
 
 
 ---
