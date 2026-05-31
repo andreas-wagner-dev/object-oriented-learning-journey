@@ -147,17 +147,14 @@ When someone asks:
 **Business Capability Mapping:** In DDD, this is the primary method. It focuses on the **"what"** of the business (the capabilities). These capabilities form the **top-level packages**, such that the software architecture directly reflects the business domain.
 Based on this analytical starting point, the areas of responsibility are sharply delineated from one another. This separation is physically manifested in the code through the top-level package structure—analogous to dividing a story into logical chapters:
 
-**Booking (User Interface):** Encompasses the logic for user interaction and reservation scheduling.
-* Package: `booking/`
 
-**Payment (PayPal/Stripe):** Encapsulates exclusively the logic for financial transactions and their security.
-* Package: `payment/`
+**Booking (`booking/`):** Encapsulates the interaction logic for users, reservation workflows, and the state management of bookings.
 
-**Customer (Database):** Focuses on the management of renter profiles and relationship management.  
-* Package: `customer/`
+**Payment (`payment/`):** Exclusively encapsulates the processing of financial transactions and their associated security requirements.
 
-**Car Pool (Inventory):** Manages the entire lifecycle of the physical vehicles.
-* Package: `carpool/`
+**Customer (`customer/`):** Focuses on the management of renter profiles and customer history.
+
+**Car Pool (`carpool/`):** Manages the entire lifecycle of the physical vehicles and their availability.
 
 ### 3.1. Project Package Structure
 
