@@ -734,7 +734,7 @@ carrental/              ← Single .NET Assembly (.dll / executable)
 * **When to use:** Greenfield projects, team sizes under 10 developers, or scenarios where business domain boundaries are highly volatile.
 * **The Advantage:** Ultra-fast refactoring, instant build times, and zero operational deployment complexity.
 
-**6.2 Phase 2: The Modular Monolith (Modulith)**
+### 6.2 Phase 2: The Modular Monolith (Modulith)
 
 Migrating to a modular assembly model is a deliberate tactical choice to halt architectural decay as a codebase grows.
 A modular structurce of code is NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
@@ -744,7 +744,7 @@ A modular structurce of code is NOT an obvious next step, but a conscious decisi
 * **Exploding test times:** If the entire test suite runs for every minor change and takes more than 5-10 minutes, modularization helps create test slices that can be validated independently.
 * **Preparing for microservices:** A modular architecture is the best insurance against the "distributed monolith." Only when the functional interfaces within the modular architecture are stable is the physical transition to microservices safe.
 
-#### 6.2.1. Revised Structure & Strategic Decoupling
+#### 6.2.1. Strategic Decoupling
 
 Moving to Phase 2 means breaking the single assembly into separate, decoupled projects.
 
@@ -768,6 +768,8 @@ carrental-service              ← Deployable Unit
 * **Anti-Bloat Protection:** It blocks generic folders from becoming unchecked junk drawers for unrelated code fragments.
 * **Semantic Drift Resolution:** A CustomerId model parsing behavior in the billing module may require completely different validations than a CustomerId record utilized by marketing analytics. Depending on repository size and IDE preference, you can organize these decoupled boundaries using a Flat Layout or a Hierarchical Layout.
 
+
+#### 6.2.2. Project Layouts - Revised Structure
 
 **Strategy A:** Flat Project Layout (Explicit Compilations)
 
@@ -866,29 +868,9 @@ carrental-booking            ← Module Context Parent Directory
 
 ```
 
-
 ### 6.3 Phase 3: Distributed Microservices
 
 Microservices are NOT an automatic next step, they introduce extensive operational overhead (distributed transactions, partial network failures, deployment orchestration). This shift must be driven by strict technical necessity, never by design trends.
-
-**Organizational triggers:**
-* Multiple autonomous teams
-* Teams require independent deployment cycles
-* Different technology stacks are needed
-* Clear ownership boundaries are established
-
-**Technical triggers:**
-* Different scaling requirements (Payment needs 5 times more instances than Customer)
-* Individual contexts cause system-wide outages
-* Deployment process takes > minutes
-* Modules are already cleanly separated and stable
-  
-**Business triggers:**
-* Compliance requirements (e.g., isolating payment data)
-* Multi-tenancy with context-specific isolation
-* Different SLAs for different contexts
-
-**Warning:** If you have fewer than 15 developers or your modules are not yet stable, stick with the modular monolith!
 
 The following division is the logical consequence of Business Context-Driven structure. It separates  Bounded Contexts along with their technical infrastructure dependencies to individual microservices. Each service is structured like the **Mono or Modulith** artifact (in Phase 1 or 2).
 
