@@ -146,8 +146,11 @@ The packages of an object-oriented system are based on clear OO-Design principle
 
 ```
 carrental/
-├── application/
-│   ├── CarRentalApp.cs          ← ASP.NET Core Main + DI
+├── application/                 → Impl. Composition Root
+│   ├── CarRentalApp.cs          ← ASP.NET Core main() + DI
+│   ├── CarRentalAuth.cs         ← (optional) Auth Configuration
+│   ├── CarRentalConfig.cs       ← (optional) Configuration
+│   ├── CarRentalDependencies.cs ← (optional) DI or Dependencies
 │   └── KafkaQueueConfig.cs      ← Kafka Configuration
 ├── carpool/
 │   ├── CachedCar.cs             ← Cache Decorator
