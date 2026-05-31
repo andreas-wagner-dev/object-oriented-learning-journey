@@ -22,7 +22,7 @@ public class CarService {
     cache.invalidate(carId);
 
     // Logging
-    logger.info("Renting car {} to customer {}", carId, customer.getId());
+    log.info("Renting car {} to customer {}", carId, customer.getId());
 
     // Database
     CarEntity entity = repository.findById(carId).orElseThrow();
@@ -33,7 +33,7 @@ public class CarService {
     // Events
     kafka.publish(new CarRentedEvent(carId, customer.getId()));
 
-    logger.info("Car {} successfully rented", carId);
+    log.info("Car {} successfully rented", carId);
   }
 }
 ```
@@ -118,21 +118,21 @@ public class ValidCustomer implements Customer {
 // LoggedCustomer: ONLY logs
 public class LoggedCustomer implements Customer {
     private final Customer origin;
-    private final Logger logger;
+    private final Logger log;
 
-    public LoggedCustomer(Customer origin, Logger logger) {
+    public LoggedCustomer(Customer origin, Logger log) {
         this.origin = origin;
-        this.logger = logger;
+        this.log = log;
     }
 
     @Override
     public void rent(Car car, LocalDate from, LocalDate to) {
-        logger.info("RENT: Starting rental process");
+        log.info("RENT: Starting rental process");
         try {
             origin.rent(car, from, to);
-            logger.info("RENT: Successfully completed");
+            log.info("RENT: Successfully completed");
         } catch (Exception e) {
-            logger.error("RENT: Failed", e);
+            log.error("RENT: Failed", e);
             throw e;
         }
     }
@@ -183,8 +183,9 @@ String json = media.json();
 
 **Why this matters:**
 
-- 🔒 **Encapsulation:** `Customer` doesn't expose internal data
-- 🎨 **Flexibility:** The same object can print to JSON, XML, or HTML
+- 🔒 **Encapsulation:** `Customer` doesn’t expose internal data
+- 🧠 **Smart Objects:** `Customer` controls its own persistence and representation
+- 🎨 **Flexibility:** Same `Customer` can print to JSON, XML, HTML
 - 📦 **No DTOs needed:** Objects print directly to HTTP responses
 
 ---
@@ -196,9 +197,9 @@ Different scenarios need different combinations of concerns. Decorators make thi
 ```java
 // Production: Full chain
 Customer production = new ValidCustomer(
-    new PublishedCustomer(
-        new LoggedCustomer(
-            new CachedCustomer(
+    new PublishedCustomer(queue,
+        new LoggedCustomer(log,
+            new CachedCustomer(cache,
                 new StoredCustomer(baseCustomer, repository)
             )
         )
@@ -207,7 +208,7 @@ Customer production = new ValidCustomer(
 
 // Admin tool: Skip validation
 Customer admin = new PublishedCustomer(
-    new LoggedCustomer(
+    new LoggedCustomer(log,
         new StoredCustomer(baseCustomer, repository)
     )
 );
@@ -316,11 +317,11 @@ public class MetricsCustomer implements Customer {
 }
 
 // Compose it in — zero changes to existing code
-Customer customer = new MetricsCustomer(       // NEW: Metrics
+Customer customer = new MetricsCustomer(metric,  // NEW: Metrics
     new ValidCustomer(
-        new PublishedCustomer(
-            new LoggedCustomer(
-                new CachedCustomer(
+        new PublishedCustomer(queue,
+            new LoggedCustomer(log,
+                new CachedCustomer(cache,
                     new StoredCustomer(baseCustomer, repository)
                 )
             )
@@ -367,26 +368,35 @@ carrental/
 │   ├── StoredCarPool.java
 │   └── ValidCar.java
 ├── customer/
+│   ├── CachedCustomer.java
+│   ├── LoggedCustomer.java
+│   ├── PublishedCustomer.java
+│   ├── ServedCustomers.java             → REST Controller
 │   ├── SimpleCustomer.java
 │   ├── StoredCustomer.java
-│   ├── NotifiedCustomer.java
 │   └── ValidCustomer.java
 ├── payment/
 │   ├── StripePayment.java
 │   ├── PayPalPayment.java
 │   └── ValidPayment.java
+├── rental/
+│   ├── ServedRentals.java
+│   ├── ...java
+│   ...
 ├── exchange/
-│   ├── paypal/                     → HTTP client + DTOs
+│   ├── paypal/                     → Paypal REST + DTOs
 │   ├── resource/                   → REST DTOs
+│   ├── stripe/                     → Stripe REST + DTOs
 │   ├── storage/                    → JPA Entities
-│   ├── messaging/                  → AVRO DTOs
+│   ├── messaging/                  → Queue: Kafka + AVRO DTOs
 │   └── JsonMedia.java
 │
-├── Car.java                        → Domain interface (ROOT)
-├── Customer.java                   → Domain interface (ROOT)
-├── CarPool.java                    → Domain interface (ROOT)
-├── CarrentalApp.java               → Root Composition (ROOT)
-└── Media.java                      → Printer interface (ROOT)
+├── Car.java                        → Domain Entity interface
+├── CarPool.java                    → Domain Aggregate interface
+├── Customer.java                   → Domain Entity interface
+├── Customers.java                  → Domain Group interface
+├── CarrentalApp.java               → Root Composition interface
+└── Media.java                      → Printer interface
 ```
 
 - When business says *"there's a problem with car rentals"* → go to **carpool/**.
@@ -437,14 +447,14 @@ Each business requirement = one decorator. Clear. Traceable. Maintainable.
 // ROOT: Customer as the actor who rents cars
 public interface Customer {
     void rent(Car car, LocalDate from, LocalDate to);
+    void returnCar(Car car);
     void print(Media media);
 }
 
 // ROOT: Car as a rentable asset
 public interface Car {
-    void returnCar();
-    boolean isAvailable();
-    BigDecimal calculatePrice(LocalDate from, LocalDate to);
+    boolean available();
+    BigDecimal price(LocalDate from, LocalDate to);
     void print(Media media);
 }
 
@@ -465,6 +475,7 @@ public interface Media {
 public interface CarrentalApp {
     void run();
     CarPool carPool();
+    Customers customers();
 }
 ```
 
@@ -513,20 +524,27 @@ public class StoredCustomer implements Customer {
 
     @Override
     public void rent(Car car, LocalDate from, LocalDate to) {
-        CustomerEntity entity = repository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+        CustomerEntity customerEntity = repository.findCustomerById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Customer [" + id + "] not found"));
 
-        entity.setActiveRentalCarId(car.toString());
-        entity.setRentalFrom(from);
-        entity.setRentalTo(to);
+        CarEntity carEntity = repository.findCarById(car.id())
+            .orElseThrow(() -> new EntityNotFoundException("Car [" + car.id() + "] not found"));
 
-        repository.save(entity);
+        repository.saveRental(new RentalEntity(customerEntity, carEntity, from, to));
+    }
+
+    @Override
+    public void returnCar(Car car) {
+        RentalEntity entity = repository.findCustomerRentalByCarId(id, car.id())
+            .orElseThrow(() -> new EntityNotFoundException("Rental of Custormer not found"));
+
+        repository.remove(entity);
     }
 
     @Override
     public void print(Media media) {
         CustomerEntity entity = repository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Customer [" + id + "] not found"));
 
         // Customer prints itself to media — NO GETTERS in domain code!
         media.with("customerId", entity.getId())
@@ -543,13 +561,13 @@ public class StoredCustomer implements Customer {
 public class StoredCustomerPool {
     private final CustomerRepository repository;
     private final CacheManager cache;
-    private final Logger logger;
+    private final Logger log;
     private final KafkaTemplate<String, String> kafka;
 
     public Customer customerOf(String customerId) {
         Customer customer = new StoredCustomer(customerId, repository);
         customer = new CachedCustomer(customer, cache);
-        customer = new LoggedCustomer(customer, logger);
+        customer = new LoggedCustomer(customer, log);
         customer = new PublishedCustomer(customer, kafka);
         customer = new ValidCustomer(customer);
         return customer;
@@ -559,12 +577,13 @@ public class StoredCustomerPool {
 // SpringCarrentalApp.java — composition root
 @Configuration
 @SpringBootApplication
+@ComponentScan(basePackages = {"com.company.**"})
 public class SpringCarrentalApp implements CarrentalApp {
 
     private final CarRepository carRepository;
     private final CustomerRepository customerRepository;
     private final CacheManager cache;
-    private final Logger logger;
+    private final Logger log;
     private final KafkaTemplate<String, String> kafka;
 
     public static void main(String[] args) {
@@ -574,7 +593,13 @@ public class SpringCarrentalApp implements CarrentalApp {
     @Bean
     @Override
     public CarPool carPool() {
-        return new StoredCarPool(carRepository, cache, logger, kafka);
+        return new StoredCarPool(carRepository, cache, log, kafka);
+    }
+
+    @Bean
+    @Override
+    public Customers customers() {
+        return new StoredCustomers(customerRepository, cache, log, kafka);
     }
 }
 ```
@@ -590,12 +615,12 @@ public class ServedRentals {
     private CarPool carPool;
 
     @Autowired
-    private StoredCustomerPool customerPool;
+    private StoredCustomers customers;
 
     @PostMapping
     public ResponseEntity<String> rentCar(@RequestBody RentCarRequest request) {
         // Resolve decorated objects
-        Customer customer = customerPool.customerOf(request.getCustomerId());
+        Customer customer = customers.customerOf(request.getCustomerId());
         Car car = carPool.carOf(request.getCarId());
 
         // Execute — the decorator chain handles validation, logging, caching, events
@@ -658,11 +683,11 @@ public class CarService {
         // Database
         CarEntity entity = repository.findById(carId).orElseThrow();
         cache.evict("cars", carId);
-        logger.info("Renting car {} to customer {}", carId, customer.getId());
+        log.info("Renting car {} to customer {}", carId, customer.getId());
         entity.setRented(true);
         repository.save(entity);
         kafka.send("car-events", new CarRentedEvent(carId));
-        logger.info("Car {} successfully rented", carId);
+        log.info("Car {} successfully rented", carId);
         // Impossible to test in isolation
         // Changes to one concern affect everything
     }
@@ -686,9 +711,9 @@ public class CarService {
 // StoredCustomer    → ONLY persists
 
 Customer customer = new ValidCustomer(
-    new PublishedCustomer(
-        new LoggedCustomer(
-            new CachedCustomer(
+    new PublishedCustomer(queue,
+        new LoggedCustomer(log,
+            new CachedCustomer(cache,
                 new StoredCustomer(customerId, repository)
             )
         )
