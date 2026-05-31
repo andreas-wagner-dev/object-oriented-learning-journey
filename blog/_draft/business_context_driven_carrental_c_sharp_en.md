@@ -144,9 +144,11 @@ When someone asks:
 
 ## 3. Object-Oriented Domain-Driven Analysis and Design
 
-**Business Capability Mapping:** In DDD, this is the primary method. It focuses on the **"what"** of the business (the capabilities). These capabilities form the **top-level packages**, such that the software architecture directly reflects the business domain.
-Based on this analytical starting point, the areas of responsibility are sharply delineated from one another. This separation is physically manifested in the code through the top-level package structure—analogous to dividing a story into logical chapters:
+### 3.1 Business Capability Mapping
 
+The primary decomposition method (*Business Capability Mapping*) in Domain-Driven Design is based on business capabilities. It focuses exclusively on the **"what"** of the enterprise. These capabilities form the **top-level** packages, ensuring that the software architecture mirrors the business domain one-to-one.
+
+Thanks to this analytical starting point, responsibilities are demarcated with sharp precision. The physical structure of the code follows this division just like the chapters of a book:
 
 **Booking (`booking/`):** Encapsulates the interaction logic for users, reservation workflows, and the state management of bookings.
 
@@ -156,9 +158,9 @@ Based on this analytical starting point, the areas of responsibility are sharply
 
 **Car Pool (`carpool/`):** Manages the entire lifecycle of the physical vehicles and their availability.
 
-### 3.1. Project Package Structure
+### 3.2. Project Package Structure
 
-The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts.
+The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts. Classes are also organized hierarchically according to domain concepts and functionally extended using the **Design-Patterns** like *Adapter*, *Decorator*, *Bridge*, etc..
 
 ```
 carrental/
@@ -232,7 +234,7 @@ carrental/
 └── ...
 ```
 
-### 3.2. Key Principles of Packaging and Naming Conventions
+### 3.3. Key Principles of Packaging and Naming Conventions
 
 ### 1) Packages Should Never Depend on Sub-Packages
 
