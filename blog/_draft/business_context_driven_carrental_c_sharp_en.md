@@ -142,6 +142,7 @@ When someone asks:
 
 ## 3. Object-Oriented Domain-Driven Analysis and Design
 
+**Business Capability Mapping:** In DDD, this is the primary method. It focuses on the **"what"** of the business (the capabilities). These capabilities form the **top-level packages**, such that the software architecture directly reflects the business domain.
 Based on this analytical starting point, the areas of responsibility are sharply delineated from one another. This separation is physically manifested in the code through the top-level package structure—analogous to dividing a story into logical chapters:
 
 **Booking (User Interface):** Encompasses the logic for user interaction and reservation scheduling.
