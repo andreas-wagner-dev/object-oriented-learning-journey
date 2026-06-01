@@ -9,7 +9,7 @@ We're building a car rental system. Simple enough, right?
 A car gets rented, we **store** it to the database, **log** it, **cache** it for performance, **publish** an event for analytics, and **validate** the input. So we often write this:
 
 ```java
-public class CarService {
+public class CarRentalService {
 
   public void rentCar(String carId, Customer customer,
                       LocalDate from, LocalDate to) {
@@ -416,7 +416,7 @@ carrental/
 │   ├── CachedCar.java
 │   ├── LoggedCar.java
 │   ├── PersistentCar.java
-│   ├── PersistentCarPool.java
+│   ├── PersistentCarFleet.java
 │   ├── PublishedCar.java
 │   ├── SimpleCar.java
 │   └── ValidCar.java
@@ -424,16 +424,18 @@ carrental/
 │   ├── CachedCustomer.java
 │   ├── LoggedCustomer.java
 │   ├── PublishedCustomer.java
-│   ├── ServedCustomerPool.java      → REST Controller
-│   ├── ServedCustomer.java          → expose data as REST
-│   ├── SimpleCustomer.java
 │   ├── PersistentCustomer.java
+│   ├── PersistentCustomerPool.java
+│   ├── SimpleCustomer.java
 │   └── ValidCustomer.java
 ├── payment/
 │   ├── StripePayment.java
 │   ├── PayPalPayment.java
 │   └── ValidPayment.java
 ├── rental/
+│   ├── SimpleRental.java
+│   ├── CustomerRentals.java        → Rentals of Customer
+│   ├── PersistentRentals.java
 │   ├── ServedRentals.java          → REST Controller
 │   ├── ...java
 │   ...
@@ -446,10 +448,13 @@ carrental/
 │   └── JsonMedia.java
 │
 ├── Car.java                        → Domain Entity interface
-├── CarPool.java                    → Domain Aggregate interface
+├── CarFleet.java                    → Domain Aggregate interface
 ├── Customer.java                   → Domain Entity interface
-├── CustomerPool.java                  → Domain Group interface
+├── CustomerPool.java               → Domain Group interface
 ├── CarrentalApp.java               → Root Composition interface
+├── Payment.java                    → Domain interface
+├── Rental.java                     → Domain interface
+├── Rentals.java                    → Domain Group interface
 └── Media.java                      → Printer interface
 ```
 
@@ -513,7 +518,7 @@ public interface Car {
 }
 
 // ROOT: Factory for decorated car instances
-public interface CarPool {
+public interface CarFleet {
     Car carOf(String carId);
 }
 
@@ -528,8 +533,8 @@ public interface Media {
 // ROOT: Application composition
 public interface CarrentalApp {
     void run();
-    CarPool carPool();
-    CustomerPool CustomerPool();
+    CarFleet carFleet();
+    CustomerPool customerPool();
 }
 ```
 
@@ -656,14 +661,20 @@ public class SpringCarrentalApp implements CarrentalApp {
 
     @Bean
     @Override
-    public CarPool carPool() {
-        return new PersistentCarPool(carRepository, cache, log, kafka);
+    public CarFleet carFleet() {
+        return new PersistentCarFleet(carRepository, cache, log, kafka);
     }
 
     @Bean
     @Override
-    public CustomerPool customers() {
+    public CustomerPool customerPool() {
         return new PersistentCustomerPool(customerRepository, cache, log, kafka);
+    }
+
+    @Bean
+    @Override
+    public CustomerRentals customerRentals() {
+        return new PersistentCustomerRentals(rentalRepository, cache);
     }
 }
 ```
@@ -676,16 +687,17 @@ public class SpringCarrentalApp implements CarrentalApp {
 public class ServedRentals {
 
     @Autowired
-    private CarPool carPool;
+    private CarFleet carFleet;
 
     @Autowired
-    private PersistentCustomerPool customers;
+    private CustomerPool customerPool;
 
     @PostMapping
     public ResponseEntity<String> rentCar(@RequestBody RentCarRequest request) {
+
         // Resolve decorated objects
         Customer customer = customerPool.customerOf(request.getCustomerId());
-        Car car = carPool.carOf(request.getCarId());
+        Car car = carFleet.carOf(request.getCarId());
 
         // Execute — the decorator chain handles validation, logging, caching, events
         customer.rentCar(car, request.getRentFrom(), request.getRentTo());
@@ -737,7 +749,7 @@ HTTP Response (JSON) — no getters used
 ### ❌ The God Service (Traditional)
 
 ```java
-public class CarService {
+public class CarRentalService {
 
     public void rentCar(String carId, Customer customer,
                         LocalDate from, LocalDate to) {
@@ -761,6 +773,9 @@ public class CarService {
         // ...
     }
 
+    public void payCar(String carId, Customer customer, Float amount) {
+        // ...
+    }
 }
 ```
 
@@ -823,7 +838,7 @@ customer.print(new JsonMedia());
 
 **Decorators ≠ Technical Pattern** — They are our business process made executable.
 
-**Code Structure = Business Context** — Package by domain (`carpool/`, `payment/`, `customer/`), not by layer (`service/`, `repository/`).
+**Code Structure = Domain Context** — Package by business concept (`carpool/`, `payment/`, `customer/`), not by layer (`service/`, `repository/`).
 
 **One Decorator = One Concern** — `ValidCustomer` validates. `LoggedCustomer` logs. `PersistentCustomer` persists. Period.
 
@@ -846,7 +861,7 @@ customer.print(new JsonMedia());
 - When they ask *"Where's the caching?"* → **CachedCustomer**.
 - When they ask *"How does the rental process work?"* → show them the **decorator chain**.
 
-Your code becomes self-documenting. Your architecture becomes business-driven. Your tests become trivial.
+Our code becomes self-documenting. Our architecture becomes business-driven. Our tests become trivial.
 
 > That's the power of the Decorator Pattern.
 
