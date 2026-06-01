@@ -412,7 +412,7 @@ All logical features of the application are already visible in the parent packag
 carrental/
 ├── application/
 │   └── SpringCarrentalApp.java     → Main, DI, Config
-├── carpool/
+├── carfleet/
 │   ├── CachedCar.java
 │   ├── LoggedCar.java
 │   ├── PersistentCar.java
@@ -429,6 +429,7 @@ carrental/
 │   ├── SimpleCustomer.java
 │   └── ValidCustomer.java
 ├── payment/
+│   ├── CustomerPayments.java
 │   ├── StripePayment.java
 │   ├── PayPalPayment.java
 │   └── ValidPayment.java
@@ -448,11 +449,12 @@ carrental/
 │   └── JsonMedia.java
 │
 ├── Car.java                        → Domain Entity interface
-├── CarFleet.java                    → Domain Aggregate interface
+├── CarFleet.java                   → Domain Aggregate interface
 ├── Customer.java                   → Domain Entity interface
 ├── CustomerPool.java               → Domain Group interface
 ├── CarrentalApp.java               → Root Composition interface
 ├── Payment.java                    → Domain interface
+├── Payments.java                   → Domain interface
 ├── Rental.java                     → Domain interface
 ├── Rentals.java                    → Domain Group interface
 └── Media.java                      → Printer interface
