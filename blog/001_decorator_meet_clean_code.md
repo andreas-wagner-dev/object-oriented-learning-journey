@@ -512,9 +512,14 @@ public interface Customer {
     void print(Media media);
 }
 
-// ROOT: Car as a rentable asset
+// ROOT: Car
 public interface Car {
     boolean available();
+    void print(Media media);
+}
+
+// ROOT:Rentable asset
+public interface Rental {
     BigDecimal price(LocalDate from, LocalDate to);
     void print(Media media);
 }
@@ -624,6 +629,20 @@ public class PersistentCustomer implements Customer {
 }
 ```
 
+```java
+// Rentals of Customer to pay
+public class CustomerWithRentals implements Customer {
+
+
+    @Override
+    public void payRental(CarRental carRental) {
+        Payment payment = payments.preferred(id);
+        payment.charge(carRental.price());
+        origin.payRental(carRental);
+    }
+}
+```
+
 ### Step 4: Compose at the Root
 
 ```java
@@ -645,6 +664,7 @@ public class PersistentCustomerPool {
     }
 }
 
+
 // Spring based — composition root
 @Configuration
 @SpringBootApplication
@@ -653,6 +673,7 @@ public class SpringCarrentalApp implements CarrentalApp {
 
     private final CarRepository carRepository;
     private final CustomerRepository customerRepository;
+    private final RentalRepository rentalRepository;
     private final CacheManager cache;
     private final Logger log;
     private final KafkaTemplate<String, String> kafka;
@@ -721,6 +742,11 @@ public class ServedRentals {
             .contentType(MediaType.APPLICATION_JSON)
             .body(response);
     }
+
+    @PostMapping
+    public ResponseEntity<String> payRental(@RequestBody PayRentalRequest request) {
+
+    }
 }
 ```
 
@@ -775,7 +801,7 @@ public class CarRentalService {
         // ...
     }
 
-    public void payCar(String carId, Customer customer, Float amount) {
+    public void payRental(String carId, Customer customer, Float amount) {
         // ...
     }
 }
