@@ -597,7 +597,8 @@ public class CarRentalApp : ICarRentalApp
 
 ## 5. Isolation of Frameworks and Libraries: The Anti-Corruption Layer (ACL)
 
-To prevent third-party frameworks, object-relational mappers (ORMs), or external APIs from bleeding into and contaminating your core domain logic, you must implement an **Anti-Corruption Layer (ACL)**. Depending on codebase size, team organization, and deployment scale, this isolation can be achieved through two distinct structural strategies.
+Implementing an  **Anti-Corruption Layer (ACL)** ensures strict decoupling of the core domain logic from third-party Libraries or frameworks like object-relational mappers (ORMs), or external APIs, thereby preventing system contamination.
+Depending on codebase size, team organization, and deployment scale, this isolation can be achieved through two distinct structural strategies.
 
 ### 5.1 Option 1: Multi-Project Physical Isolation (Enterprise Scale)
 
