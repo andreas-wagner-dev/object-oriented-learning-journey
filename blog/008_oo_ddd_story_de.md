@@ -119,28 +119,28 @@ Während Klassennamen die Charaktere definieren, beschreiben Methoden deren Tate
 
 **Single Action Rule (Eindeutigkeit):** Jede Methode führt genau eine vollständige fachliche Aktion aus. Zusammengesetzte Namen gelten als Indikator für eine zu hohe Komplexität.
 
-* invoice.send() statt validateAndSendInvoice()  
-* user.persist() statt createAndPersistUser()
+* `invoice.send()` statt `validateAndSendInvoice()`  
+* `user.persist()` statt `createAndPersistUser()`
 
 **Command-Naming (Veränderung):** Methoden, die eine Zustandsänderung bewirken (Mutatoren), nutzen knappe, imperative Verben. Technische Füllwörter wie set, update oder modify werden eliminiert, da sie den technischen Vorgang statt der fachlichen Handlung beschreiben.
 
-* price(NewPrice p) statt updatePrice()  
-* complete() statt setStatus(Status.COMPLETED)  
-* activate() statt setActive(true)
+* `price(NewPrice p)` statt `updatePrice()`  
+* `complete()` statt `setStatus(Status.COMPLETED)`  
+* `activate()` statt `setActive(true)`
 
 **Query-Naming (Eigenschaften):** Methoden ohne Seiteneffekte (Accessoren) geben zurück, was das Objekt ist oder besitzt. Das technische Präfix get entfällt, da es keinen fachlichen Mehrwert bietet.
 
-* orderOf(String id) statt findOrderById(String id)  
-* firstName() statt getFirstName()  
-* active() statt isActiveUser()  
-* xml() statt convertToXml()
+* `orderOf(String id)` statt `findOrderById(String id)`  
+* `firstName()` statt `getFirstName()`  
+* `active()` statt `isActiveUser()`  
+* `xml()` statt `convertToXml()`
 
 **Method Chaining (Flüssige Erzählung):** Um ausdrucksstarke Ketten zu bilden, die sich wie ein Satz lesen, werden Methoden nach dem zurückgegebenen Objekt benannt. Dies unterstützt das „Law of Demeter“ und vermeidet technisches Rauschen.
 
-* user.group().rights() statt user.getGroup().getRights()  
-* order.customer().address() statt order.getCustomer().getAddress()
+* `user.group().rights()` statt `user.getGroup().getRights()`  
+* `order.customer().address()` statt `order.getCustomer().getAddress()`
 
-Handlungen innerhalb eines Systems werden dann nachvollziehbar, wenn der Code eine flüssige Geschichte erzählt: „Die Rechte der Gruppe des Benutzers“ (user.group().rights()) ist eine fachliche Aussage – „Hole Gruppe und hole Rechte“ eine technische Anweisung.
+Handlungen innerhalb eines Systems werden dann nachvollziehbar, wenn der Code eine flüssige Geschichte erzählt: „Die Rechte der Gruppe des Benutzers“ (`user.group().rights()`) ist eine fachliche Aussage – „Hole Gruppe und hole Rechte“ eine technische Anweisung.
 
 ### **1.3.6 Attribute und Eigenschaften: Die Geheimnisse der Akteure**
 
@@ -148,8 +148,8 @@ Attribute werden als interne Details (**Secrets**) eines Akteurs begriffen. Für
 
 **Avoid Context Heavy Names:** Innerhalb eines Objekts ist der Kontext bereits durch den Klassennamen definiert. Wiederholungen des Klassennamens in Attributen werden konsequent vermieden, um die natürliche Lesbarkeit zu fördern und technisches Rauschen zu minimieren.
 
-* In Car: color statt carColor  
-* In Product: price statt p
+* In Car: `color` statt `carColor`  
+* In Product: `price` statt `p`
 
 **Fachliche Präzision:** Auch interne Felder folgen der *Ubiquitous Language*. Anstatt generischer technischer Typen werden bevorzugt *Smart Value Objects* verwendet (z. B. Betrag statt double), um den Wert bereits intern fachlich zu qualifizieren.
 
