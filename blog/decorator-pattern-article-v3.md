@@ -71,6 +71,9 @@ Every developer has written code like this. And every developer knows the pain:
 **Need to change the logging format?** → Touch many lines of mixed concerns…  
 **Want to reuse caching logic elsewhere?** → Copy-paste or refactor everything…
 
+Splitting of this one Service class into `CarRentalService`, `CarReturnService` and `CarPaymentService` solve not realy the problem. The cross-cutting concerns are steel mixed and now we have to touch more classes for changes on that.
+So maybe we can splitt also the cross-cutting concerns and put they `CarRentalValidationService`, `CarRentalCachingService` and `CarRentalLoggingService`. Is this realy helpfull?
+
 **There's a better way. And it's hiding in plain sight.**
 
 ---
