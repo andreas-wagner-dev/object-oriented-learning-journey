@@ -508,7 +508,7 @@ Customer customer = new MetricsCustomer(
 
 ### 6. Business Concepts in Code
 
-Our package structure mirrors the business domain exactly.
+Here’s where it gets really interesting. Also our package structure can mirror the business concepts.
 
 Packages are **hierarchically organized** according to domain concepts — not technical layers. Three rules by [Robert Bräutigam](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/) govern this:
 
@@ -531,11 +531,8 @@ carrental/
 ├── application/
 │   └── SpringCarrentalApp.java       → Main, DI, Composition Root
 ├── carfleet/
-│   ├── CachedCar.java
-│   ├── LoggedCar.java
 │   ├── PersistentCar.java
 │   ├── PersistentCarFleet.java
-│   ├── PublishedCar.java
 │   ├── SimpleCar.java
 │   └── ValidCar.java
 ├── customer/
