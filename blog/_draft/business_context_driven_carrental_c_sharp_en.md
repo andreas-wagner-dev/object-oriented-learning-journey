@@ -1,6 +1,6 @@
 # Business Context-Driven Code Structure 
 **State: Draft!!!**
-> From Monolith over Modulith to Microservice - *The Missing Link Between Business and Code*
+> From Monolith over Modulith to Microservice - *The Missing Link Between Business Model and Code*
 
 
 ## 1. **The Problem:** The Translation Gap
