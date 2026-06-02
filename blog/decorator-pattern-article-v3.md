@@ -6,7 +6,7 @@
 
 We're building a car rental system. Simple enough, right?
 
-A car gets rented, we **store** it to the database, **log** it, **cache** it for performance, **publish** an event for analytics, **validate** the input, and eventually **charge** the customer. So we often write this:
+A car gets rented, we **store** it to the database, **log** it, **cache** it for performance, **publish** an event for analytics, **validate** the input, and eventually **charge** the customer. So we often write something like this:
 
 ```java
 public class CarRentalService {
