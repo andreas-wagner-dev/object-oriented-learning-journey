@@ -508,23 +508,31 @@ Customer customer = new MetricsCustomer(
 
 ### 6. Business Concepts in Code
 
-Here’s where it gets really interesting. Also our package structure can mirror the business concepts.
+To achieve a progressive business flow of information, we must abandon the traditional layered mindset of Clean Architecture or DDD. 
 
-Packages are **hierarchically organized** according to domain concepts — not technical layers. Three rules by [Robert Bräutigam](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/) govern this:
+
+
+
+**The traditional layered approach:**
+
+```
+carrental/
+├── service/      ← Where's the car?
+├── repository/   ← Where's the customer?
+├── controller/   ← Where's the payment?
+└── dto/          ← Where's the business?
+```
+
+Instead, we must consistently mirror business concepts: the package structure is organized hierarchically, following the real-world domain. This design is governed by three rules outlined by  [Robert Bräutigam](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
 
 **Rule 1: Packages must never depend on sub-packages.**  
 The root package contains the most abstract concepts (interfaces). Changes in sub-packages cannot affect the parent.
 
-**Rule 2: Sub-packages must not introduce new concepts.**  
-All features are already visible in the root as interfaces. Sub-packages only implement them.
+**Rule 2: Sub-packages should not introduce new concepts, just more details.**  
+All features are already visible in the parent as interfaces. Sub-packages only implement them.
 
-**Rule 3: Packages must reflect business concepts, not technical ones.**
-
-| ❌ Technical grouping | ✅ Domain language |
-|---|---|
-| `service/`, `repository/`, `controller/` | `carfleet/`, `customer/`, `payment/` |
-| `dto/`, `entity/`, `aggregate/` | `exchange/`, `storage/`, `messaging/` |
-| `util/`, `config/`, `adapter/` | `audit/`, `notification/`, `billing/` |
+**Rule 3: Packages must reflect business concepts, not technical ones.**  
+Always use the language of the domain - not that of the framework or an architectural pattern - in package names (strictly avoid technical grouping).
 
 ```
 carrental/
@@ -578,21 +586,15 @@ carrental/
 - When they say *"payment processing is slow"* → **payment/**.
 - When they ask *"how does charging work?"* → **CustomerWithRentals** + **PersistentPayments**.
 
-**The code structure is the business context diagram.**
-
-Compare to the traditional layered approach:
-
-```
-carrental/
-├── service/      ← Where's the car?
-├── repository/   ← Where's the customer?
-├── controller/   ← Where's the payment?
-└── dto/          ← Where's the business?
-```
+| ❌ Technical grouping | ✅ Domain language |
+|---|---|
+| `service/`, `repository/`, `controller/` | `carfleet/`, `customer/`, `payment/` |
+| `dto/`, `entity/`, `aggregate/` | `exchange/`, `storage/`, `messaging/` |
+| `util/`, `config/`, `adapter/` | `audit/`, `notification/`, `billing/` |
 
 ---
 
-## The Core Message: Decorators ARE Your Business Process
+## The Core Message: Decorators ARE Our Business Process
 
 **Traditional thinking:**
 > "Decorators are a technical pattern for adding functionality."
