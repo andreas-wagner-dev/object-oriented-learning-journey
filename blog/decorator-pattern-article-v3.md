@@ -71,8 +71,9 @@ Every developer has written code like this. And every developer knows the pain:
 **Need to change the logging format?** → Touch many lines of mixed concerns…  
 **Want to reuse caching logic elsewhere?** → Copy-paste or refactor everything…
 
-Splitting of this one Service class into `CarRentalService`, `CarReturnService` and `CarPaymentService` solve not realy the problem. The cross-cutting concerns are steel mixed and now we have to touch more classes for changes on that.
-So maybe we can splitt also the cross-cutting concerns and put they `CarRentalValidationService`, `CarRentalCachingService` and `CarRentalLoggingService`. Is this realy helpfull?
+Splitting a single service into smaller ones (`CarRentalService`, `CarReturnService`, `CarPaymentService`) decomposes the system horizontally, **but it leaves the vertical stack of cross-cutting concerns completely untouched.**
+
+If we introduce `CarRentalValidationService`, `CarRentalCachingService`, and `CarRentalLoggingService` as separate, tightly coupled dependencies, we are simply shifting the mess around. We would end up with a coordinator class that injects ten different technical services, resulting in the same spaghetti code, just spread across multiple files.
 
 **There's a better way. And it's hiding in plain sight.**
 
