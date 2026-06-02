@@ -38,12 +38,39 @@ public class CarRentalService {
   }
 
   public void returnCar(String carId, Customer customer) {
+    // Validation
+    if (customer == null)
+      throw new IllegalArgumentException("Customer required");
+    if (carId == null || carId.isEmpty())
+      throw new IllegalArgumentException("Car ID required");
 
+    // Logging
+    log.info("Returning car {} from customer {}", carId, customer.getId());
+
+    // Database
+    CarEntity entity = repository.findById(carId).orElseThrow();
+    
+    // Simple business check if the car belongs to the user returning it
+    if (!customer.getId().equals(entity.getCustomerId())) {
+      throw new IllegalStateException("Car was not rented by this customer");
+    }
+
+    entity.setRented(false);
+    entity.setCustomerId(null);
+    repository.save(entity);
+
+    // Caching
+    cache.put(carId, entity); // or cache.invalidate(carId);
+
+    // Events
+    kafka.publish(new CarReturnedEvent(carId, customer.getId()));
+
+    log.info("Car {} successfully returned", carId);
   }
 
   public void payRental(String rentalId, Customer customer) {
 
-    // Validation
+    // Database and Validation
     RentalEntity rental = rentalRepository.findById(rentalId).orElseThrow();
     PaymentEntity payment = paymentRepository.findPreferredBy(customer.getId()).orElseThrow();
 
@@ -51,16 +78,20 @@ public class CarRentalService {
     long days = rental.getRentFrom().until(rental.getRentTo(), ChronoUnit.DAYS);
     BigDecimal amount = rental.getDailyRate().multiply(BigDecimal.valueOf(days));
 
+    // Logging
+    log.info("Paying rental {} of customer {}", rentalId, customer.getId());
+
     // Payment
     if ("stripe".equals(entity.getType()))
       new StripeClient().charge(payment.getToken(), amount);
     if ("paypal".equals(entity.getType()))
       new PayPalClient().charge(payment.getEmail(), amount);
 
+    // Database
     rental.setPaid(true);
     rentalRepository.save(rental);
 
-    log.info("Rental {} successfully paid", rentalId);
+    log.info("Paying Rental {} successfully paid", rentalId);
   }
 }
 ```
