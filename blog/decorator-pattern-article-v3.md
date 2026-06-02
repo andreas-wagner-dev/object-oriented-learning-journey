@@ -38,11 +38,29 @@ public class CarRentalService {
   }
 
   public void returnCar(String carId, Customer customer) {
-    // Validation, Logging, Database, Events ...
+
   }
 
   public void payRental(String rentalId, Customer customer) {
-    // Validation, Logging, Payment provider, Database, Events ...
+
+    // Validation
+    RentalEntity rental = rentalRepository.findById(rentalId).orElseThrow();
+    PaymentEntity payment = paymentRepository.findPreferredBy(customer.getId()).orElseThrow();
+
+    // Calculate
+    long days = rental.getRentFrom().until(rental.getRentTo(), ChronoUnit.DAYS);
+    BigDecimal amount = rental.getDailyRate().multiply(BigDecimal.valueOf(days));
+
+    // Payment
+    if ("stripe".equals(entity.getType()))
+      new StripeClient().charge(payment.getToken(), amount);
+    if ("paypal".equals(entity.getType()))
+      new PayPalClient().charge(payment.getEmail(), amount);
+
+    rental.setPaid(true);
+    rentalRepository.save(rental);
+
+    log.info("Rental {} successfully paid", rentalId);
   }
 }
 ```
@@ -59,20 +77,15 @@ Every developer has written code like this. And every developer knows the pain:
 
 ## The Decorator Pattern: Business Logic as Code
 
-Here's the radical idea: what if our code structure looked exactly like the business process?
+**Here's the radical idea:** what if our code structure looked exactly like the business process?
 
-In a car rental business, a customer who rents a car triggers the following steps:
+In a car rental business, a customer who rents or returns a car triggers the following steps:
 
 1. ✅ Validate the rental request
 2. 💾 Persist it to storage
 3. 🗑️ Invalidate the cache
 4. 📝 Log it for audit
 5. 📡 Publish events for downstream systems
-
-And when a customer pays an open rental:
-
-6. 💳 Charge the preferred payment method
-7. 💾 Mark the rental as paid in storage
 
 Why shouldn't our code reflect these exact flows?
 
@@ -98,20 +111,103 @@ customer.rentCar(car, from, to);  // executes the full chain
 customer.returnCar(car);          // same chain, different operation
 ```
 
-And for payment — a **horizontal extension** via `CustomerWithRentals`:
+And when a customer pays an open rental:
+
+6. 💳 Charge the preferred payment method
+7. 💾 Mark the rental as paid in storage
+
+
+We can extend the Customer concept horizontally `PayableCustomer`:
 
 ```java
-// CustomerWithRentals extends the Customer concept horizontally:
-// it IS a Customer AND additionally knows how to pay rentals.
-CustomerWithRentals customerWithRentals =
-    new CustomerWithRentals(customer, payments, rentalRepository);
+// It IS a Customer AND additionally knows how to pay rentals.
+PayableCustomer payer =
+    new PayableCustomer(customer, payments, rentalRepository);
 
-customerWithRentals.payRental(rental);  // extra method, not in Customer
+payer.payRental(rental);  // extra method, not in Customer
 ```
 
 **This is the Decorator Pattern** — and it's not just a technical pattern. It's business logic made visible.
 
 ---
+
+### Business Concepts in Code
+
+To achieve a progressive business flow of information, we must abandon the traditional layered mindset of Clean Architecture or DDD. 
+
+**The traditional layered approach:**
+
+```
+carrental/
+├── service/      ← Where's the car?
+├── repository/   ← Where's the customer?
+├── controller/   ← Where's the payment?
+└── dto/          ← Where's the business?
+```
+
+Instead, we must consistently mirror business concepts: the package structure is organized hierarchically, following the real-world domain. This design is governed by three rules outlined by  [Robert Bräutigam](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
+
+**Rule 1: Packages must never depend on sub-packages.**  
+The root package contains the most abstract concepts (interfaces). Changes in sub-packages cannot affect the parent.
+
+**Rule 2: Sub-packages should not introduce new concepts, just more details.**  
+All features are already visible in the parent as interfaces. Sub-packages only implement them.
+
+**Rule 3: Packages must reflect business concepts, not technical ones.**  
+Always use the language of the domain - not that of the framework or an architectural pattern - in package names (strictly avoid technical grouping).
+
+```
+carrental/
+├── application/
+│   └── SpringCarrentalApp.java       → Main, DI, Composition Root
+├── carfleet/
+│   ├── PersistentCar.java
+│   ├── PersistentCarFleet.java
+│   ├── SimpleCar.java
+│   └── ValidCar.java
+├── customer/
+│   ├── CachedCustomer.java
+│   ├── PayableCustomer.java      ← horizontal decorator: payRental()
+│   ├── LoggedCustomer.java
+│   ├── MetricsCustomer.java
+│   ├── PersistentCustomer.java
+│   ├── PersistentCustomerPool.java
+│   ├── PublishedCustomer.java
+│   ├── SimpleCustomer.java
+│   └── ValidCustomer.java
+├── payment/
+│   ├── PersistentPayments.java       ← resolves preferred Payment per customer
+│   ├── StripePayment.java
+│   ├── PayPalPayment.java
+│   └── ValidPayment.java
+├── rental/
+│   ├── PersistentRentals.java
+│   ├── ServedRentals.java            → REST Controller
+│   └── SimpleRental.java
+├── exchange/
+│   ├── paypal/                       → PayPal HTTP client + DTOs
+│   ├── resource/                     → REST request/response DTOs
+│   ├── stripe/                       → Stripe HTTP client + DTOs
+│   ├── storage/                      → JPA Entities + Repositories
+│   ├── messaging/                    → Kafka + AVRO DTOs
+│   └── JsonMedia.java
+│
+├── Car.java                          → Domain interface (ROOT)
+├── CarFleet.java                     → Domain interface (ROOT)
+├── CarrentalApp.java                 → Composition interface (ROOT)
+├── Customer.java                     → Domain interface (ROOT)
+├── CustomerPool.java                 → Domain interface (ROOT)
+├── Media.java                        → Printer interface (ROOT)
+├── Payment.java                      → Domain interface (ROOT)
+├── Payments.java                     → Domain interface (ROOT)
+├── Rental.java                       → Domain interface (ROOT)
+└── Rentals.java                      → Domain interface (ROOT)
+```
+
+- When business says *"there's a problem with rentals"* → **rental/**.
+- When they say *"payment processing is slow"* → **payment/**.
+- When they ask *"how does charging work?"* → **PayableCustomer** + **PersistentPayments**.
+
 
 ## The Domain Interfaces
 
@@ -179,6 +275,52 @@ public interface CarrentalApp {
     CustomerPool customerPool();
 }
 ```
+
+---
+
+### 🎯 Bonus: Printers Instead of Getters
+
+Notice the `print(Media media)` method? This is Yegor Bugayenko's ["Printers Instead of Getters"](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html) concept.
+
+❌ **Traditional approach:** Getters expose internals
+
+```java
+public interface Customer {
+    String getId();      // Exposes data
+    String getName();    // Exposes data
+    void rentCar(Car car, LocalDate from, LocalDate to);
+    void returnCar(Car car);
+}
+
+// Controller builds JSON manually
+String json = String.format(
+    "{\"id\":\"%s\",\"name\":\"%s\"}", customer.getId(), customer.getName()
+);
+```
+
+✅ **Printers approach:** Objects print themselves
+
+```java
+public interface Customer {
+    void rentCar(Car car, LocalDate from, LocalDate to);
+    void returnCar(Car car);
+    void print(Media media);  // Customer decides how to represent itself
+}
+
+// Customer prints itself to any medium
+Media media = new JsonMedia();
+customer.print(media);
+String json = media.json();
+```
+
+**Why this matters:**
+
+- 🔒 **Encapsulation:** `Customer` doesn't expose internal data
+- 🧠 **Smart Objects:** `Customer` controls its own representation
+- 🎨 **Flexibility:** Same object can print to JSON, XML, HTML
+- 📦 **No DTOs needed:** Objects print directly to HTTP responses
+
+The same principle applies to `Rental` and `Payment` — they print themselves, hiding every implementation detail.
 
 ---
 
@@ -270,53 +412,6 @@ public class LoggedCustomer implements Customer {
 Change validation? → Touch only **ValidCustomer**.  
 Change logging? → Touch only **LoggedCustomer**.
 
----
-
-### 🎯 Bonus: Printers Instead of Getters
-
-Notice the `print(Media media)` method? This is Yegor Bugayenko's ["Printers Instead of Getters"](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html) concept.
-
-❌ **Traditional approach:** Getters expose internals
-
-```java
-public interface Customer {
-    String getId();      // Exposes data
-    String getName();    // Exposes data
-    void rentCar(Car car, LocalDate from, LocalDate to);
-    void returnCar(Car car);
-}
-
-// Controller builds JSON manually
-String json = String.format(
-    "{\"id\":\"%s\",\"name\":\"%s\"}", customer.getId(), customer.getName()
-);
-```
-
-✅ **Printers approach:** Objects print themselves
-
-```java
-public interface Customer {
-    void rentCar(Car car, LocalDate from, LocalDate to);
-    void returnCar(Car car);
-    void print(Media media);  // Customer decides how to represent itself
-}
-
-// Customer prints itself to any medium
-Media media = new JsonMedia();
-customer.print(media);
-String json = media.json();
-```
-
-**Why this matters:**
-
-- 🔒 **Encapsulation:** `Customer` doesn't expose internal data
-- 🧠 **Smart Objects:** `Customer` controls its own representation
-- 🎨 **Flexibility:** Same object can print to JSON, XML, HTML
-- 📦 **No DTOs needed:** Objects print directly to HTTP responses
-
-The same principle applies to `Rental` and `Payment` — they print themselves, hiding every implementation detail.
-
----
 
 ### 2. Flexible Composition
 
@@ -392,7 +487,7 @@ public void loggedCustomer_shouldLogSuccessAndFailure() {
 }
 
 @Test
-public void customerWithRentals_shouldChargePreferredPaymentOnPayRental() {
+public void payer_shouldChargePreferredPaymentOnPayRental() {
     Customer mockCustomer = mock(Customer.class);
     Payment mockPayment = mock(Payment.class);
     Payments mockPayments = mock(Payments.class);
@@ -402,8 +497,8 @@ public void customerWithRentals_shouldChargePreferredPaymentOnPayRental() {
     when(mockPayments.preferred()).thenReturn(mockPayment);
     when(mockRental.price()).thenReturn(price);
 
-    CustomerWithRentals cwr =
-        new CustomerWithRentals(mockCustomer, mockPayments, rentalRepository);
+    PayableCustomer cwr =
+        new PayableCustomer(mockCustomer, mockPayments, rentalRepository);
     cwr.payRental(mockRental);
 
     verify(mockPayment).charge(price);
@@ -426,7 +521,7 @@ PersistentCustomer   → Persists to database (via Spring Data JPA)
 CachedCustomer       → Manages cache
 LoggedCustomer       → Writes audit logs
 PublishedCustomer    → Publishes domain events
-CustomerWithRentals  → Charges payment for a rental (horizontal extension)
+PayableCustomer     → Charges payment for a rental (horizontal extension)
 ```
 
 Not:
@@ -504,95 +599,6 @@ Customer customer = new MetricsCustomer(
 
 **Open for extension. Closed for modification.**
 
----
-
-### 6. Business Concepts in Code
-
-To achieve a progressive business flow of information, we must abandon the traditional layered mindset of Clean Architecture or DDD. 
-
-
-
-
-**The traditional layered approach:**
-
-```
-carrental/
-├── service/      ← Where's the car?
-├── repository/   ← Where's the customer?
-├── controller/   ← Where's the payment?
-└── dto/          ← Where's the business?
-```
-
-Instead, we must consistently mirror business concepts: the package structure is organized hierarchically, following the real-world domain. This design is governed by three rules outlined by  [Robert Bräutigam](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
-
-**Rule 1: Packages must never depend on sub-packages.**  
-The root package contains the most abstract concepts (interfaces). Changes in sub-packages cannot affect the parent.
-
-**Rule 2: Sub-packages should not introduce new concepts, just more details.**  
-All features are already visible in the parent as interfaces. Sub-packages only implement them.
-
-**Rule 3: Packages must reflect business concepts, not technical ones.**  
-Always use the language of the domain - not that of the framework or an architectural pattern - in package names (strictly avoid technical grouping).
-
-```
-carrental/
-├── application/
-│   └── SpringCarrentalApp.java       → Main, DI, Composition Root
-├── carfleet/
-│   ├── PersistentCar.java
-│   ├── PersistentCarFleet.java
-│   ├── SimpleCar.java
-│   └── ValidCar.java
-├── customer/
-│   ├── CachedCustomer.java
-│   ├── CustomerWithRentals.java      ← horizontal decorator: payRental()
-│   ├── LoggedCustomer.java
-│   ├── MetricsCustomer.java
-│   ├── PersistentCustomer.java
-│   ├── PersistentCustomerPool.java
-│   ├── PublishedCustomer.java
-│   ├── SimpleCustomer.java
-│   └── ValidCustomer.java
-├── payment/
-│   ├── PersistentPayments.java       ← resolves preferred Payment per customer
-│   ├── StripePayment.java
-│   ├── PayPalPayment.java
-│   └── ValidPayment.java
-├── rental/
-│   ├── PersistentRentals.java
-│   ├── ServedRentals.java            → REST Controller
-│   └── SimpleRental.java
-├── exchange/
-│   ├── paypal/                       → PayPal HTTP client + DTOs
-│   ├── resource/                     → REST request/response DTOs
-│   ├── stripe/                       → Stripe HTTP client + DTOs
-│   ├── storage/                      → JPA Entities + Repositories
-│   ├── messaging/                    → Kafka + AVRO DTOs
-│   └── JsonMedia.java
-│
-├── Car.java                          → Domain interface (ROOT)
-├── CarFleet.java                     → Domain interface (ROOT)
-├── CarrentalApp.java                 → Composition interface (ROOT)
-├── Customer.java                     → Domain interface (ROOT)
-├── CustomerPool.java                 → Domain interface (ROOT)
-├── Media.java                        → Printer interface (ROOT)
-├── Payment.java                      → Domain interface (ROOT)
-├── Payments.java                     → Domain interface (ROOT)
-├── Rental.java                       → Domain interface (ROOT)
-└── Rentals.java                      → Domain interface (ROOT)
-```
-
-- When business says *"there's a problem with rentals"* → **rental/**.
-- When they say *"payment processing is slow"* → **payment/**.
-- When they ask *"how does charging work?"* → **CustomerWithRentals** + **PersistentPayments**.
-
-| ❌ Technical grouping | ✅ Domain language |
-|---|---|
-| `service/`, `repository/`, `controller/` | `carfleet/`, `customer/`, `payment/` |
-| `dto/`, `entity/`, `aggregate/` | `exchange/`, `storage/`, `messaging/` |
-| `util/`, `config/`, `adapter/` | `audit/`, `notification/`, `billing/` |
-
----
 
 ## The Core Message: Decorators ARE Our Business Process
 
@@ -612,14 +618,14 @@ Validation → Events → Logging → Caching → Persistence
 And for payment — a horizontal extension that enriches `Customer` without modifying it:
 
 ```
-CustomerWithRentals.payRental(rental)
+PayableCustomer.payRental(rental)
     → payments.preferred().charge(rental.price())
     → rental marked as paid in storage
 ```
 
 - Product Owner says *"validate rental dates"* → add **ValidCustomer**
 - Compliance says *"we need audit trails"* → add **LoggedCustomer**
-- Finance says *"charge on return"* → add **CustomerWithRentals**
+- Finance says *"charge on return"* → add **PayableCustomer**
 
 Each business requirement = one class. Clear. Traceable. Maintainable.
 
@@ -627,7 +633,7 @@ Each business requirement = one class. Clear. Traceable. Maintainable.
 
 ## Vertical vs. Horizontal Decorating
 
-Yegor Bugayenko distinguishes two kinds of decorator extension. Understanding both is key to the `CustomerWithRentals` design.
+Yegor Bugayenko distinguishes two kinds of decorator extension. Understanding both is key to the `PayableCustomer` design.
 
 ### Vertical Decorators — same interface, new behavior
 
@@ -652,16 +658,16 @@ BufferedReader reader = new BufferedReader(new FileReader(path));
 String line = reader.readLine();  // not in Reader — only on BufferedReader
 ```
 
-`CustomerWithRentals` follows the same principle:
+`PayableCustomer` follows the same principle:
 
 ```java
-// CustomerWithRentals IS-A Customer (vertical) AND adds payRental() (horizontal)
-CustomerWithRentals customerWithRentals = new CustomerWithRentals(customer, payments, rentals);
-customerWithRentals.rentCar(car, from, to);  // Customer behaviour — full chain
-customerWithRentals.payRental(rental);       // horizontal extension — not in Customer
+// PayableCustomer IS-A Customer (vertical) AND adds payRental() (horizontal)
+PayableCustomer payer = new PayableCustomer(customer, payments, rentals);
+payer.rentCar(car, from, to);  // Customer behaviour — full chain
+payer.payRental(rental);       // horizontal extension — not in Customer
 ```
 
-The caller (`ServedRentals`) holds the concrete type `CustomerWithRentals` deliberately — it needs the extra method. All other call sites continue to use `Customer` and are unaffected.
+The caller (`ServedRentals`) holds the concrete type `PayableCustomer` deliberately — it needs the extra method. All other call sites continue to use `Customer` and are unaffected.
 
 ---
 
@@ -845,21 +851,21 @@ public class PersistentRentals implements Rentals {
 Now the horizontal decorator — the `BufferedReader` of our domain:
 
 ```java
-// CustomerWithRentals.java — in customer/
+// PayableCustomer.java — in customer/
 //
 // Horizontal decorator: IS-A Customer (full vertical chain delegated)
 // AND adds payRental(Rental) — a method not present in the Customer interface.
 //
 // Analogy: java.io.BufferedReader extends Reader and adds readLine().
-// Callers that need payRental() hold CustomerWithRentals explicitly.
+// Callers that need payRental() hold PayableCustomer explicitly.
 // All other callers continue to use the Customer interface unchanged.
-public class CustomerWithRentals implements Customer {
+public class PayableCustomer implements Customer {
 
     private final Customer origin;
     private final Payments payments;
     private final RentalRepository rentalRepository;
 
-    public CustomerWithRentals(Customer origin,
+    public PayableCustomer(Customer origin,
                                 Payments payments,
                                 RentalRepository rentalRepository) {
         this.origin = origin;
@@ -1010,15 +1016,15 @@ public class PersistentCustomerPool implements CustomerPool {
     }
 
     /**
-     * Returns a CustomerWithRentals — the horizontal extension —
+     * Returns a PayableCustomer — the horizontal extension —
      * for endpoints that need to charge a rental.
      * The vertical decorator chain is reused; payRental() is added on top.
      */
-    public CustomerWithRentals customerWithRentalsOf(String customerId) {
+    public PayableCustomer PayableCustomerOf(String customerId) {
         Payments payments = new PersistentPayments(
             customerId, paymentRepository, stripe, paypal
         );
-        return new CustomerWithRentals(
+        return new PayableCustomer(
             customerOf(customerId),   // reuse the full vertical chain
             payments,
             rentalRepository
@@ -1122,7 +1128,7 @@ public class ServedRentals {
 
     // ── POST /api/rentals/{rentalId}/payment  — pay an open rental ──────────
     //
-    // CustomerWithRentals is used explicitly here because payRental() is a
+    // PayableCustomer is used explicitly here because payRental() is a
     // horizontal extension — not part of the Customer interface.
     // Exactly as BufferedReader is used explicitly when readLine() is needed.
 
@@ -1131,8 +1137,8 @@ public class ServedRentals {
                                             @RequestBody PayRentalRequest request) {
 
         // Horizontal decorator — holds the concrete type deliberately
-        CustomerWithRentals customerWithRentals =
-            customerPool.customerWithRentalsOf(request.getCustomerId());
+        PayableCustomer PayableCustomer =
+            customerPool.PayableCustomerOf(request.getCustomerId());
 
         // Resolve the open rental — fully encapsulated behind Rentals
         Rentals rentals = new PersistentRentals(
@@ -1141,13 +1147,13 @@ public class ServedRentals {
         Rental rental = rentals.rentalOf(rentalId);
 
         // payRental: preferred payment charged, rental marked as paid
-        customerWithRentals.payRental(rental);
+        PayableCustomer.payRental(rental);
 
         Media rentalMedia = new JsonMedia();
         rental.print(rentalMedia);
 
         Media customerMedia = new JsonMedia();
-        customerWithRentals.print(customerMedia);
+        PayableCustomer.print(customerMedia);
 
         String response = String.format(
             "{\"success\":true,\"customer\":%s,\"rental\":%s}",
@@ -1168,21 +1174,21 @@ POST /api/rentals/{rentalId}/payment
     ↓
 ServedRentals.payRental()
     ↓
-customerPool.customerWithRentalsOf(customerId)
+customerPool.payerOf(customerId)
     │  ↳ builds the vertical chain: ValidCustomer → ... → PersistentCustomer
-    │  ↳ wraps it in CustomerWithRentals (horizontal layer)
+    │  ↳ wraps it in PayableCustomer (horizontal layer)
     ↓
 rentals.rentalOf(rentalId)
     ↳ PersistentRentals  →  SimpleRental (price encapsulated)
     ↓
-customerWithRentals.payRental(rental)
+payer.payRental(rental)
     ├─ payments.preferred()                → PersistentPayments resolves provider
     │   └─ ValidPayment(StripePayment)     → validates amount, then charges Stripe
     ├─ payment.charge(rental.price())      → Stripe charged
     └─ rentalRepository.markAsPaid(rental) → persisted
     ↓
 rental.print(new JsonMedia())              → Rental prints itself
-customerWithRentals.print(new JsonMedia()) → Customer prints itself
+payer.print(new JsonMedia()) → Customer prints itself
     ↓
 HTTP 200 (JSON) — no getters used
 ```
@@ -1254,11 +1260,11 @@ customer.returnCar(car);            // same chain, other operation
 customer.print(new JsonMedia());    // prints itself
 
 // Horizontal extension — add payRental() without touching Customer
-CustomerWithRentals customerWithRentals =
-    new CustomerWithRentals(customer, payments, rentalRepository);
+PayableCustomer payer =
+    new PayableCustomer(customer, payments, rentalRepository);
 
 Payment payment = payments.preferred();  // Payments resolves provider
-customerWithRentals.payRental(rental);   // charges + marks as paid
+payer.payRental(rental);   // charges + marks as paid
 ```
 
 ✅ Test each concern in complete isolation  
@@ -1294,7 +1300,7 @@ customerWithRentals.payRental(rental);   // charges + marks as paid
 
 **Code Structure = Domain Context** — Package by business concept (`carfleet/`, `customer/`, `payment/`, `rental/`), not by layer (`service/`, `repository/`).
 
-**One Decorator = One Concern** — `ValidCustomer` validates. `LoggedCustomer` logs. `PersistentCustomer` persists. `CustomerWithRentals` charges. Period.
+**One Decorator = One Concern** — `ValidCustomer` validates. `LoggedCustomer` logs. `PersistentCustomer` persists. `PayableCustomer` charges. Period.
 
 **Composition > Inheritance** — Build complex behaviour by composing simple decorators.
 
@@ -1313,7 +1319,7 @@ customerWithRentals.payRental(rental);   // charges + marks as paid
 
 - *"Where's the validation?"* → **ValidCustomer**
 - *"Where's the caching?"* → **CachedCustomer**
-- *"How does payment work?"* → **CustomerWithRentals** + **PersistentPayments**
+- *"How does payment work?"* → **PayableCustomer** + **PersistentPayments**
 - *"How does the rental process work?"* → show the **decorator chain**
 
 Our code becomes self-documenting. Our architecture becomes business-driven. Our tests become trivial.
