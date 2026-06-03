@@ -153,7 +153,6 @@ But what happens when a customer pays for an open rental? This action triggers a
 6. 💳 Charge the preferred payment method
 7. 💾 Mark the rental as paid in storage
 
-
 Instead of bloating our core Customer interface with payment methods that other parts of the application don't care about, we can extend the concept horizontally using a `PayableCustomer` wrapper:
 
 ```java
@@ -170,10 +169,10 @@ payer.payRental(rental);  // extra method, not in Customer
 
 ### Business Concepts in Code
 
-To achieve a progressive business flow of information, we must abandon the traditional layered mindset of Clean Architecture or DDD. 
+To achieve a progressive business flow of information, we must abandon the traditional layered mindset of Clean Architecture or DDD.
 
-**The traditional layered approach:**
-
+**The Traditional Layered Approach (The Hidden Mess)**
+In a traditional architecture, technical grouping hides the actual business. When we look at the structure, we don't see a car rental system - we just see a framework setup:
 ```
 carrental/
 ├── service/      ← Where's the car?
@@ -182,17 +181,20 @@ carrental/
 └── dto/          ← Where's the business?
 ```
 
-Instead, we must consistently mirror business concepts: the package structure is organized hierarchically, following the real-world domain. This design is governed by three rules outlined by  [Robert Bräutigam](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
+**The Progressive Approach: Mirroring the Real World**  
+Instead of hiding the domain, our code structure must consistently mirror business concepts. The package structure is organized hierarchically, following the real-world domain. This design is governed by three fundamental rules outlined by [Robert Bräutigam](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
 
 **Rule 1: Packages must never depend on sub-packages.**  
-The root package contains the most abstract concepts (interfaces). Changes in sub-packages cannot affect the parent.
+The root package contains the most abstract concepts (interfaces). Since dependencies only point inward or upward, changes in sub-packages can never break or impact the parent.
 
 **Rule 2: Sub-packages should not introduce new concepts, just more details.**  
-All features are already visible in the parent as interfaces. Sub-packages only implement them.
+All capabilities are already declared at the parent level as interfaces. Sub-packages merely provide the concrete implementations or specializations.
 
 **Rule 3: Packages must reflect business concepts, not technical ones.**  
-Always use the language of the domain - not that of the framework or an architectural pattern - in package names (strictly avoid technical grouping).
+Always use the language of the domain — not that of a framework or an architectural pattern — in package names. Strictly avoid technical grouping.
 
+**The Result: A Storytelling Structure**  
+Applying these rules alongside the Decorator Pattern transforms our folder structure into an executable blueprint of the business:
 ```
 carrental/
 ├── application/
@@ -241,10 +243,14 @@ carrental/
 └── Rentals.java                      → Domain interface (ROOT)
 ```
 
+**No More Guesswork**  
+With this layout, finding code aligns instantly with how the business talks:
+
 - When business says *"there's a problem with rentals"* → **rental/**.
 - When they say *"payment processing is slow"* → **payment/**.
 - When they ask *"how does charging work?"* → **PayableCustomer** + **PersistentPayments**.
 
+By decoupling our code from technical layers and assembling behaviors horizontally through decorators, we build software that is incredibly easy to test, highly reusable, and matches the actual business workflow.
 
 ## The Domain Interfaces
 
