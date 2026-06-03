@@ -252,118 +252,6 @@ With this layout, finding code aligns instantly with how the business talks:
 
 By decoupling our code from technical layers and assembling behaviors horizontally through decorators, we build software that is incredibly easy to test, highly reusable, and matches the actual business workflow.
 
-## The Domain Interfaces
-
-Every interface lives at the **root package** — the most abstract layer. Sub-packages only implement, never redefine.
-
-```java
-// ROOT: Customer is the actor who rents and returns cars
-public interface Customer {
-    void rentCar(Car car, LocalDate from, LocalDate to);
-    void returnCar(Car car);
-    void print(Media media);
-}
-
-// ROOT: A single rentable car
-public interface Car {
-    boolean available();
-    void print(Media media);
-}
-
-// ROOT: An open or closed rental — the rentable contract
-public interface Rental {
-    BigDecimal price();
-    void print(Media media);
-}
-
-// ROOT: All open rentals belonging to a customer
-public interface Rentals {
-    Rental rentalOf(String rentalId);
-    void print(Media media);
-}
-
-// ROOT: A single payment method
-public interface Payment {
-    void charge(BigDecimal amount);
-    void print(Media media);
-}
-
-// ROOT: All payment methods of a customer
-public interface Payments {
-    Payment preferred();
-    void print(Media media);
-}
-
-// ROOT: Factories
-public interface CarFleet {
-    Car carOf(String carId);
-}
-
-public interface CustomerPool {
-    Customer customerOf(String customerId);
-}
-
-// ROOT: Printer — objects print themselves, no getters
-public interface Media {
-    Media with(String name, String value);
-    Media with(String name, BigDecimal value);
-    Media with(String name, LocalDate value);
-    Media with(String name, boolean value);
-}
-
-// ROOT: Application composition
-public interface CarrentalApp {
-    void run();
-    CarFleet carFleet();
-    CustomerPool customerPool();
-}
-```
-
----
-
-### 🎯 Bonus: Printers Instead of Getters
-
-Notice the `print(Media media)` method? This is Yegor Bugayenko's ["Printers Instead of Getters"](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html) concept.
-
-❌ **Traditional approach:** Getters expose internals
-
-```java
-public interface Customer {
-    String getId();      // Exposes data
-    String getName();    // Exposes data
-    void rentCar(Car car, LocalDate from, LocalDate to);
-    void returnCar(Car car);
-}
-
-// Controller builds JSON manually
-String json = String.format(
-    "{\"id\":\"%s\",\"name\":\"%s\"}", customer.getId(), customer.getName()
-);
-```
-
-✅ **Printers approach:** Objects print themselves
-
-```java
-public interface Customer {
-    void rentCar(Car car, LocalDate from, LocalDate to);
-    void returnCar(Car car);
-    void print(Media media);  // Customer decides how to represent itself
-}
-
-// Customer prints itself to any medium
-Media media = new JsonMedia();
-customer.print(media);
-String json = media.json();
-```
-
-**Why this matters:**
-
-- 🔒 **Encapsulation:** `Customer` doesn't expose internal data
-- 🧠 **Smart Objects:** `Customer` controls its own representation
-- 🎨 **Flexibility:** Same object can print to JSON, XML, HTML
-- 📦 **No DTOs needed:** Objects print directly to HTTP responses
-
-The same principle applies to `Rental` and `Payment` — they print themselves, hiding every implementation detail.
 
 ---
 
@@ -718,7 +606,118 @@ The caller (`ServedRentals`) holds the concrete type `PayableCustomer` deliberat
 
 ### Step 1: Domain Interfaces (No Getters!)
 
-Already defined at the root package above.
+## The Domain Interfaces
+
+Every interface lives at the **root package** — the most abstract layer. Sub-packages only implement, never redefine.
+
+```java
+// ROOT: Customer is the actor who rents and returns cars
+public interface Customer {
+    void rentCar(Car car, LocalDate from, LocalDate to);
+    void returnCar(Car car);
+    void print(Media media);
+}
+
+// ROOT: A single rentable car
+public interface Car {
+    boolean available();
+    void print(Media media);
+}
+
+// ROOT: An open or closed rental — the rentable contract
+public interface Rental {
+    BigDecimal price();
+    void print(Media media);
+}
+
+// ROOT: All open rentals belonging to a customer
+public interface Rentals {
+    Rental rentalOf(String rentalId);
+    void print(Media media);
+}
+
+// ROOT: A single payment method
+public interface Payment {
+    void charge(BigDecimal amount);
+    void print(Media media);
+}
+
+// ROOT: All payment methods of a customer
+public interface Payments {
+    Payment preferred();
+    void print(Media media);
+}
+
+// ROOT: Factories
+public interface CarFleet {
+    Car carOf(String carId);
+}
+
+public interface CustomerPool {
+    Customer customerOf(String customerId);
+}
+
+// ROOT: Printer — objects print themselves, no getters
+public interface Media {
+    Media with(String name, String value);
+    Media with(String name, BigDecimal value);
+    Media with(String name, LocalDate value);
+    Media with(String name, boolean value);
+}
+
+// ROOT: Application composition
+public interface CarrentalApp {
+    void run();
+    CarFleet carFleet();
+    CustomerPool customerPool();
+}
+```
+---
+
+### 🎯 Bonus: Printers Instead of Getters
+
+Notice the `print(Media media)` method? This is Yegor Bugayenko's ["Printers Instead of Getters"](https://www.yegor256.com/2016/04/05/printers-instead-of-getters.html) concept.
+
+❌ **Traditional approach:** Getters expose internals
+
+```java
+public interface Customer {
+    String getId();      // Exposes data
+    String getName();    // Exposes data
+    void rentCar(Car car, LocalDate from, LocalDate to);
+    void returnCar(Car car);
+}
+
+// Controller builds JSON manually
+String json = String.format(
+    "{\"id\":\"%s\",\"name\":\"%s\"}", customer.getId(), customer.getName()
+);
+```
+
+✅ **Printers approach:** Objects print themselves
+
+```java
+public interface Customer {
+    void rentCar(Car car, LocalDate from, LocalDate to);
+    void returnCar(Car car);
+    void print(Media media);  // Customer decides how to represent itself
+}
+
+// Customer prints itself to any medium
+Media media = new JsonMedia();
+customer.print(media);
+String json = media.json();
+```
+
+**Why this matters:**
+
+- 🔒 **Encapsulation:** `Customer` doesn't expose internal data
+- 🧠 **Smart Objects:** `Customer` controls its own representation
+- 🎨 **Flexibility:** Same object can print to JSON, XML, HTML
+- 📦 **No DTOs needed:** Objects print directly to HTTP responses
+
+The same principle applies to `Rental` and `Payment` — they print themselves, hiding every implementation detail.
+
 
 ### Step 2: Payment Implementations
 
