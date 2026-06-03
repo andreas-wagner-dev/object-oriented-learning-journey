@@ -112,9 +112,9 @@ If we introduce `CarRentalValidationService`, `CarRentalCachingService`, and `Ca
 
 ## The Decorator Pattern: Business Logic as Code
 
-**Here's the radical idea:** what if our code structure looked exactly like the business process?
+Here is the radical idea: **What if our code structure looked exactly like our business process?**
 
-In a car rental business, a customer who rents or returns a car triggers the following steps:
+In a car rental business, a customer who rents or returns a car triggers a predictable chain of events:
 
 1. ✅ Validate the rental request
 2. 💾 Persist it to storage
@@ -122,10 +122,10 @@ In a car rental business, a customer who rents or returns a car triggers the fol
 4. 📝 Log it for audit
 5. 📡 Publish events for downstream systems
 
-Why shouldn't our code reflect these exact flows?
+**Why shouldn't our code reflect these exact flows?**
 
 ```java
-// This IS the rental business process
+// This IS the actual car rental business process
 Customer customer = new ValidCustomer(       // 1. Validate first
     new PersistentCustomer(                  // 2. Then persist
         new CachedCustomer(                  // 3. Then invalidate cache
@@ -146,23 +146,25 @@ customer.rentCar(car, from, to);  // executes the full chain
 customer.returnCar(car);          // same chain, different operation
 ```
 
-And when a customer pays an open rental:
+**Extending Capabilities Horizontally**
+
+But what happens when a customer pays for an open rental? This action triggers a completely different set of business capabilities:
 
 6. 💳 Charge the preferred payment method
 7. 💾 Mark the rental as paid in storage
 
 
-We can extend the Customer concept horizontally `PayableCustomer`:
+Instead of bloating our core Customer interface with payment methods that other parts of the application don't care about, we can extend the concept horizontally using a `PayableCustomer` wrapper:
 
 ```java
-// It IS a Customer AND additionally knows how to pay rentals.
+// It IS a Customer, but it additionally knows how to handle payments.
 PayableCustomer payer =
     new PayableCustomer(customer, payments, rentalRepository);
-
+// Additional business method, kept out of the core Customer interface
 payer.payRental(rental);  // extra method, not in Customer
 ```
 
-**This is the Decorator Pattern** — and it's not just a technical pattern. It's business logic made visible.
+**This is the true power of the Decorator Pattern.** It is far more than just a technical design pattern to dodge framework coupling - *it is business logic made visible.*
 
 ---
 
