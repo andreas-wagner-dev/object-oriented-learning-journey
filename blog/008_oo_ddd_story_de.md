@@ -1022,23 +1022,23 @@ Die wahre Kunst des Storytellings im Code liegt darin, die Software wie ein Buch
 
 Diese Prinzipien verwandeln den Code von einer technischen Anleitung in ein lebendiges Dokument der Fachdomäne und minimiren damit pragmatisch die Übersetzungslücke zwischen IT und Business.
 
-# **6. Referenzen und weiterführende Literatur**
+# **6. Referenzen und weiterführende Quellen**
 
-Die in diesem Leitfaden vorgestellten Prinzipien basieren auf bewährten Mustern der Software-Architektur und radikalen objektorientierten Ansätzen. Zur Vertiefung der Konzepte – insbesondere der **Tell, Don’t Ask**, des **Composition Roots** und der **fachlichen Paketierung** – wird folgende Literatur empfohlen:
+Die in diesem Leitfaden vorgestellten Prinzipien basieren auf bewährten Mustern der Software-Struktur und objektorientierten Ansätzen. Zur Vertiefung der Konzepte – insbesondere der **Tell, Don’t Ask**, des **Composition Roots** und der **fachlichen Paketierung** – werden folgende Quellen empfohlen:
 
-**Architektur und Packaging**
+**Struktur und Packaging**
 
-* **Java Dev Guy (2017):** *Happy-Packaging* – Grundstein für die hierarchische, fachzentrierte Paketstruktur.  
-* **Philipp Hauer (2020):** *Package by Feature* – Plädoyer für die Gruppierung nach Fachlichkeit statt nach technischen Layern.  
-* **Mark Seemann (2011/2012):** *Composition Root Pattern* & *Poor Man's DI Pattern* – Die Standardwerke zur sauberen Initialisierung von Objektgraphen ohne Framework-Kopplung.
+* Robert Bräutigam, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
+* Philipp Hauer, [Package by Feature (2020)](https://phauer.com/2020/package-by-feature/)
+* Mark Seemann, [Composition Root Pattern (2011)](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
+* Mark Seemann, [Poor Man's DI Pattern (2012)](https://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/)
+* Yegor Bugayenko, [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 
 **Objektorientierung und Naming (Die Grammatik)**
 
-* **Yegor Bugayenko:** *Vertical and Horizontal Decorating* – Die Basis für den hier vorgestellten Decorator-Ansatz zur Kapselung technischer Aspekte.  
-* **Mihai A. Rode (2018):** *My Take On Object Naming* – Inspiration für eine präzise, domänenorientierte Benennung.  
-* **Yegor Bugayenko:** *Seven Virtues of a Good Object* – Manifest für autonome, intelligente Objekte („Smart Objects“).  
-* **Yegor Bugayenko:** *Naming Guidelines* – Strenge Regeln zur Vermeidung technischer Suffixe und Verben in Klassennamen:  
-  * *Prefixed Naming* (Kontext vor Identität)  
-  * *Don't Create Objects That End With -ER* (Vermeidung von prozeduralen „Managern“)  
-  * *A Compound Name Is a Code Smell* (Fokus auf Single Responsibility)  
-  * *Evil Suffixes for Object Names* (Eliminierung von technischem Rauschen wie -DTO oder -Impl)
+* Mihai A. RODEGBFR, [My Take On Object Naming (2018)](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
+* Yegor Bugayenko, [Seven Virtues of a Good Object](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
+* Yegor Bugayenko, [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
+* Yegor Bugayenko, [Don't Create Objects That End With -ER](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
+* Yegor Bugayenko, [A Compound Name Is a Code Smell](https://www.yegor256.com/2015/01/12/compound-name-is-code-smell.html)
+* Yegor Bugayenko, [Evil Suffix For Object Names](https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html)
