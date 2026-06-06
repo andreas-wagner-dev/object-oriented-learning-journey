@@ -946,6 +946,7 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 │   │   ├── ValidCustomer.js     → decorator for validation
 │   │   ...                      → other decorators (Logged*, Cashed*)
 │   ├── Address.js               → abstract domain class/interface
+│   ├── Auth.js                  → abstract authentication
 │   ├── Control.js               → abstract UI component class (composite-pattern)
 │   ├── Navigation.js            → abstract router/navigation
 │   ├── Car.js                   → abstract domain class/interface
