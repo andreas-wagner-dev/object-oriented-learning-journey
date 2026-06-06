@@ -896,12 +896,16 @@ In modern cloud-native architectures, it is often beneficial to treat the fronte
 carrental-booking-client             → Frontend Project / BFF Service Project 
 ├── src/
 │   ├── application/                  → startup: composition root pure JS / Node.js
-│   │   ├── NativeCarrentalApp.js     → decorator pure JS: main entry point
-│   │   ├── ServedCarrentalApp.js     → decorator Node.js: main entry point
+│   │   ├── NativeCarRentalApp.js     → decorator pure JS: main entry point
+│   │   ├── ServedCarRentalApp.js     → decorator Node.js: main entry point
 │   │   ...
 │   ├── exchange/                     → access of external resources
+│   │   ├── auth/                     → authentication
+│   │   │   ├── AuthApi.js            → HTTP client / ext. auth api
+│   │   │   ├── JwtAuthApi.js         → JWT-Token based auth api
+│   │   │   ...
 │   │   ├── database/                 → database / schema generation
-│   │   │   ├── UserDb
+│   │   │   ├── UserDb.js
 │   │   │   ...
 │   │   ├── endpoint/                 → HTTP clients for business services
 │   │   │   ├── CarPoolApi.js
@@ -917,7 +921,6 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 │   │   ├── List.js              → abstract List extends Control 
 │   │   ├── Table.js             → abstract Table extends Control  
 │   │   ├── Menu.js              → abstract Menu extends Control  
-│   │   ├── Navigation.js        → abstract Rooting extends Control
 │   │   ...
 │   ├── layout/                  → CSS styles / pictures / layouts 
 │   │   ├── icon/                → icons of application
@@ -929,12 +932,14 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 │   │ ...
 │   ├── page/                    → HTML sites or JS page components
 │   │   ├── admin-form.js
+│   │   ├── auth-page.js         → page of Login
 │   │   ├── car-details.js    
 │   │   ├── carpool-list.js  
 │   │   ├── payment-form.js  
 │   │   ├── user-profile.js
 │   │   ├── main-form.js  
-│   │   ├── main-menu.js  
+│   │   ├── main-menu.js
+│   │   ├── page-navigation.js   → impl. of page router
 │   │  ...
 │   ├── customer/                → implementation of domain logic of Person
 │   │   ├── ValidAddress.js      → decorator for validation
@@ -942,10 +947,11 @@ carrental-booking-client             → Frontend Project / BFF Service Project
 │   │   ...                      → other decorators (Logged*, Cashed*)
 │   ├── Address.js               → abstract domain class/interface
 │   ├── Control.js               → abstract UI component class (composite-pattern)
+│   ├── Navigation.js            → abstract router/navigation
 │   ├── Car.js                   → abstract domain class/interface
 │   ├── CarPool.js               → abstract domain class/interface
 │   ├── Customer.js              → abstract domain class/interface
-│   ├── CarrentalApp.js          → abstract main class for composition root
+│   ├── CarRentalApp.js          → abstract main class for composition root
 │   ├── UserProfile.js           → domain class extends Person
 │   ...
 ├── test/                        → Unit and integration tests
