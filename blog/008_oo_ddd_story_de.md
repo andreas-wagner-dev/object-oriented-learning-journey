@@ -85,8 +85,8 @@ Die Benennung folgt einer natürlichen Sprachlogik, die das **„Was“** (Dinge
 
 | Kontext Typ | Domänenorientiert (Was?) | statt Technisch (Wie?) |
 | :---- | :---- | :---- |
-| *Fachliche:* | PaidCar, CancelledCar, ReservedCar, AuditCar, ValidCar | |  
-| *Technische:* | AuthCar, StoredCar, CachedCar, LoggedCar | |
+| *Fachliche:* | PaidCar, CancelledCar, ReservedCar, AuditCar, ValidCar | ReservationService, CarValidation |  
+| *Technische:* | AuthUser, StoredCar, CachedCar, LoggedCar | UserAuthenticator, CarLogger, CarCacher |
 | *Process* | DispatchedCar(s), ProcessedCar | CarJob, CarValidationTask |
 | *Kommunikation:* | PublishedCars, ReceivedCars | CarProducer, CarConsumer |   
 | *Protokoll:* | HttpPayPal, SmtpsEmail | PayPalClient, EmailSender  |   
