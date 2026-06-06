@@ -263,6 +263,14 @@ The `application/` package provide main method + (DI) injections of technical in
 Each package forms a logical unit that encapsulates a domain concept and hide implementation details.
 
 ✅ **Recommended: Classes names are Nouns (things) with descriptive prefixes (RESULT oriented)**
+
+The naming follows a natural language logic that separates the **"what"** (things) from the **"how"** (context).
+
+**Interfaces are the protagonists (nouns):** They describe the essence of things and represent the **"what."**
+— `Car`, `Customer`, `Order`
+
+**Classes describe the context (prefix-based):** Class names function like adjectives, describing the current state or the result of an action.
+
 - `CachedCar`, `StoredCar`, `ValidCar`
 - `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
 - `customer/StoredCustomer`, `customer/ValidCustomer`
