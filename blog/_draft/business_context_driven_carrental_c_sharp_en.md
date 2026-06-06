@@ -255,10 +255,10 @@ The `application/` package provide main method + (DI) injections of technical in
 ### 3) Packages and Classes Reflect Business Concepts, Not Technical Roles
 
 ✅ **Recommended: Package names from Context Diagram**
-- `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
-- `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
-- `exchange/` (everything that requires data exchange with external systems or libraries HTTP / REST / DB / PDF /...)
-- `application/` (The application itself - package provide startup class with main method + (DI) injections of technical infrastructure)
+* `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
+* `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
+* `exchange/` (everything that requires data exchange with external systems or libraries HTTP / REST / DB / PDF /...)
+* `application/` (The application itself - package provide startup class with main method + (DI) injections of technical infrastructure)
 
 Each package forms a logical unit that encapsulates a domain concept and hide implementation details.
 
@@ -266,36 +266,38 @@ Each package forms a logical unit that encapsulates a domain concept and hide im
 
 The naming follows a natural language logic that separates the **"what"** (things) from the **"how"** (context).
 
-**Interfaces are the protagonists (nouns):** They describe the essence of things and represent the **"what."**
-— `Car`, `Customer`, `Order`
+**Interfaces are Nouns:**
+
+* `Car`, `Customer`, `Order`
+  
+They describe the essence of things and represent the **"what."**
 
 **Classes describe the context (prefix-based):** Class names function like adjectives, describing the current state or the result of an action.
 
-- `CachedCar`, `StoredCar`, `ValidCar`
-- `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
-- `customer/StoredCustomer`, `customer/ValidCustomer`
-- `InMemoryCar`, `StoredCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
-- `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
-- `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
+* `CachedCar`, `StoredCar`, `ValidCar`
+* `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
+* `InMemoryCar`, `StoredCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
+* `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
+* `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
 
 Only what the business customer says - with result oriented prefixes.
 
 ❌ **Avoid: Technical package names — very Bad (it is a SHAME)**
-- `service/`, `repository/`, `controller/`, `presentation/`, `persistence/`
-- `common/`, `shared/`, `util/`, `helper/`
-- `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
+* `service/`, `repository/`, `controller/`, `presentation/`, `persistence/`
+* `common/`, `shared/`, `util/`, `helper/`
+* `adapter/`, `client/`, `wrapper/`, `facade/`, `usecases/`, `interactors/`
 
 Avoid technical package names for grouping by architecture patterns.
 
 ❌ **Avoid: Classes names - Verbs or technical suffixes — very Bad (it is a SHAME)**
-- `CarProcessor`, `CarManager`, `CarClient`
-- `PaymentRepository`, `PaymentService` (architecture pattern)
-- `CustomerHandler`, `CustomerValidator`
-- `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes of architecture pattern)
-- `CarRepository`, `CarValidator` (technical roles)
-- `CarDTO`, `CarModel` (technical classification of architecture pattern)
-- `MailHelper`, `CarNumberUtil` (technical waste)
-- `CarConsumer`, `CarProducer` (use Received/Published prefix instead)
+* `CarProcessor`, `CarManager`, `CarClient`
+* `PaymentRepository`, `PaymentService` (architecture pattern)
+* `CustomerHandler`, `CustomerValidator`
+* `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes of architecture pattern)
+* `CarRepository`, `CarValidator` (technical roles)
+* `CarDTO`, `CarModel` (technical classification of architecture pattern)
+* `MailHelper`, `CarNumberUtil` (technical waste)
+* `CarConsumer`, `CarProducer` (use Received/Published prefix instead)
 
 Avoid meaning of technical things and suffixes of architecture patterns.
 
