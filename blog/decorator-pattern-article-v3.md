@@ -802,11 +802,11 @@ public class PersistentPayments implements Payments {
 
     private final String customerId;
     private final PaymentRepository repository;
-    private final StripeClient stripe;
-    private final PayPalClient paypal;
+    private final Stripe stripe;
+    private final PayPal paypal;
 
     public PersistentPayments(String customerId, PaymentRepository repository,
-                               StripeClient stripe, PayPalClient paypal) {
+                               Stripe stripe, PayPal paypal) {
         this.customerId = customerId;
         this.repository = repository;
         this.stripe = stripe;
@@ -897,8 +897,6 @@ public class PersistentRentals implements Rentals {
 ```
 
 #### Details of `customer/` package
-
-
 
 ```java
 // Validation of a customer.
@@ -999,7 +997,7 @@ public class PayableCustomer implements Customer {
         this.rentalRepository = rentalRepository;
     }
 
-    // Customer interface — fully delegated to the vertical chain
+    // Customer interface - fully delegated to the vertical chain
 
     @Override
     public void rentCar(Car car, LocalDate from, LocalDate to) {
@@ -1016,24 +1014,19 @@ public class PayableCustomer implements Customer {
         origin.print(media);
     }
 
-    // ── Horizontal extension — not in the Customer interface ────────────────
+    // - Horizontal extension - not in the Customer interface
 
     /**
      * Charges the customer's preferred payment method for the given rental
      * and marks the rental as paid in storage.
-     *
-     * Analogous to BufferedReader.readLine() — an operation that only makes
-     * sense at this enriched level, not in the base interface.
      */
     public void payRental(Rental rental) {
         Payment payment = payments.preferred();
         payment.charge(rental.price());
-
         rentalRepository.markAsPaid(rental);
     }
 }
 ```
-
 
 ```java
 // Persistence of Pool of customers
@@ -1059,7 +1052,7 @@ public class PersistentCustomerPool implements CustomerPool {
     }
 
     /**
-     * Returns a PayableCustomer — the horizontal extension —
+     * Returns a PayableCustomer - the horizontal extension -
      * for endpoints that need to charge a rental.
      * The vertical decorator chain is reused; payRental() is added on top.
      */
@@ -1114,27 +1107,34 @@ public class SpringCarrentalApp implements CarrentalApp {
             cache, log, kafka, stripe, paypal
         );
     }
+
+    @Bean
+    @Override
+    public Rentals rentals() {
+        return new PersistentRentals(rentalRepository);
+    }
+
 }
 ```
 
 ### Step 4: Use It in the REST Controller
 
 ```java
-// ServedRentals.java — in rental/
+// Serve API of rental.
 @RestController
 @RequestMapping("/api/rentals")
 public class ServedRentals {
 
     @Autowired private CarFleet         carFleet;
     @Autowired private CustomerPool customerPool;
+    @Autowired private Rentals           rentals;
 
-    // ── POST /api/rentals  — rent a car ─────────────────────────────────────
-
+    //- POST /api/rentals  — rent a car -
     @PostMapping
     public ResponseEntity<String> rentCar(@RequestBody RentCarRequest request) {
 
-        Customer customer = customerPool.customerOf(request.getCustomerId());
         Car car = carFleet.carOf(request.getCarId());
+        Customer customer = customerPool.customerOf(request.getCustomerId());
 
         // One line executes: validate → persist → cache → log → publish
         customer.rentCar(car, request.getRentFrom(), request.getRentTo());
@@ -1156,14 +1156,13 @@ public class ServedRentals {
             .body(response);
     }
 
-    // ── DELETE /api/rentals/{carId}  — return a car ─────────────────────────
-
+    //- DELETE /api/rentals/{carId}  — return a car -
     @DeleteMapping("/{carId}")
     public ResponseEntity<String> returnCar(@PathVariable String carId,
                                             @RequestBody ReturnCarRequest request) {
-        Customer customer = customerPool.customerOf(request.getCustomerId());
-        Car car = carFleet.carOf(carId);
 
+        Car car = carFleet.carOf(carId);
+        Customer customer = customerPool.customerOf(request.getCustomerId());
         customer.returnCar(car);
 
         Media customerMedia = new JsonMedia();
@@ -1174,25 +1173,16 @@ public class ServedRentals {
             .body(String.format("{\"success\":true,\"customer\":%s}", customerMedia.json()));
     }
 
-    // ── POST /api/rentals/{rentalId}/payment  — pay an open rental ──────────
-    //
-    // PayableCustomer is used explicitly here because payRental() is a
-    // horizontal extension — not part of the Customer interface.
-    // Exactly as BufferedReader is used explicitly when readLine() is needed.
-
+    // POST /api/rentals/{rentalId}/payment - pay an open rental -
     @PostMapping("/{rentalId}/payment")
     public ResponseEntity<String> payRental(@PathVariable String rentalId,
                                             @RequestBody PayRentalRequest request) {
 
-        // Horizontal decorator — holds the concrete type deliberately
-        PayableCustomer payer =
-            customerPool.PayableCustomerOf(request.getCustomerId());
-
         // Resolve the open rental — fully encapsulated behind Rentals
-        Rentals rentals = new PersistentRentals(
-            request.getCustomerId(), rentalRepository
-        );
-        Rental rental = rentals.rentalOf(rentalId);
+        Rental rental = rentals.rentalOf(rentalId, request.getCustomerId());
+
+        // Horizontal decorator — holds the concrete type deliberately
+        PayableCustomer payer = customerPool.payerOf(request.getCustomerId());
 
         // payRental: preferred payment charged, rental marked as paid
         payer.payRental(rental);
