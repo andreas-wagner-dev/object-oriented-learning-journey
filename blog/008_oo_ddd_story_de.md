@@ -1,5 +1,7 @@
 ## **1. Objektorientiertes Domain-Driven Design (OO-DDD): Translating Complexity into the Business Story of Software**
 
+**State: Draft!!!**
+
 **Abstract: OO-DDD – Wenn Code zur Geschichte wird**
 
 Dieser Artikel präsentiert einen Ansatz als Kombination aus klassischem Domain-Driven Design, strikter Objektorientierung und den Prinzipien des Storytellings.
@@ -65,13 +67,13 @@ Die folgende Übersicht zeigt, wie technische Paketbegriffe aus gängigen Archit
 
 | Kategorie | Technisch (Wie?) | Domänenorientiert (Was?) |
 | :---- | :---- | :---- |
-| **Modell** | entity/, model/, aggregate/ | bill/, order/, car/, customer/ |
-| **Prozess** | service/, usecase/, consumer/ | billing/, payment/, audit/, task/ |
-| **Persistenz** | persistence/, repository/, db/ | storage/, store/, database/ |
-| **API** | controller/, adapter/, rest/ | exchange/, expose/, checkout/ |
-| **UI** | web/, ui/, view/ | user/, display/, portal/ |
-| **Util** | common/, util/, lib/, helper/ | tax/, rule/, text/, log/ |
-| **Bootstrap** | config/, properties/, injections/ | application/, boot/, startup/ |
+| **Modell** | `entity/`, `model/`, `aggregate/` | `bill/`, `order/`, `car/`, `customer/` |
+| **Prozess** | `service/`, `usecase/`, `consumer/` | `billing/`, `payment/`, `audit/`, `task/` |
+| **Persistenz** | `persistence/`, `repository/`, `db/` | `storage/`, `store/`, `database/` |
+| **API** | `controller/`, `adapter/`, `rest/` | `exchange/`, `expose/`, `checkout/` |
+| **UI** | `web/`, `ui/`, `view/` | `user/`, `display/`, `portal/` |
+| **Util** | `common/`, `util/`, `lib/`, `helper/` | `tax`/, `rule/`, `text/`, `log/` |
+| **Bootstrap** | `config/`, `properties`, `injections/` | `application/`, `boot/`, `startup/` |
 
 Die rechte Spalte enthält keine Framework-Begriffe, sondern Fachkonzepte, die Entwickler und Fachseite gleichermaßen verstehen.
 
@@ -85,14 +87,15 @@ Die Benennung folgt einer natürlichen Sprachlogik, die das **„Was“** (Dinge
 
 | Kontext Typ | Domänenorientiert (Was?) | statt Technisch (Wie?) |
 | :---- | :---- | :---- |
-| *Fachliche:* | PaidCar, CancelledCar, ReservedCar, AuditCar, ValidCar | ReservationService, CarValidation |  
-| *Technische:* | AuthUser, StoredCar, CachedCar, LoggedCar | UserAuthenticator, CarLogger, CarCacher |
-| *Process* | DispatchedCar(s), ProcessedCar | CarJob, CarValidationTask |
-| *Kommunikation:* | PublishedCars, ReceivedCars | CarProducer, CarConsumer |   
-| *Protokoll:* | HttpPayPal, SmtpsEmail | PayPalClient, EmailSender  |   
-| *Parsing:* | XmlCar, JsonCar | CarParser, CarMapper |   
-| *API* | ServedCars, ApiCars | CarController |   
-| *UI* | DisplayedCars, Printable*  | CarController, CarViewModel | 
+| *Interface* | `Car`, `CarFleet`, `Payment` | `CarModel`, `CarRepository`, `PaymentService` |
+| *Fachliche:* | `PaidCar`, `CancelledCar`, `ReservedCar`, `AuditCar`, `ValidCar` | `CarService`, `CarValidation` |  
+| *Technische:* | `AuthUser`, `StoredCar`, `CachedCar`, `LoggedCar` | `UserAuthenticator`, `CarLogger`, `CarCacher` |
+| *Process* | `DispatchedCar`(s), `ProcessedCar` | `CarJob`, `CarValidationTask` |
+| *Kommunikation:* | `PublishedCars`, `ReceivedCars` | `CarProducer`, `CarConsumer` |   
+| *Protokoll:* | `HttpPayPal`, `SmtpsEmail` | `PayPalClient`, `EmailSender`  |   
+| *Parsing:* | `XmlCar`, `JsonCar` | `CarParser`, `CarMapper` |   
+| *API* | `ServedCars`, `ApiCars` | `CarController` |   
+| *UI* | `DisplayedCars`, `Printable`*  | `CarController`, `CarViewModel` | 
 
 **Vermeiden von Verben und technischen Suffixen:** Namen wie *Handler, *Manager, *Processor *Validator, *Calculatoroder *Worker klingen nach mechanischen “Jobs“ . Ebenso verschleiern Suffixe wie *Domain,*Model, *DTO, *Utiloder *Helper die fachliche Geschichte durch technische Klassifizierungen.
 
@@ -100,16 +103,16 @@ Die Benennung folgt einer natürlichen Sprachlogik, die das **„Was“** (Dinge
 
 Auch im Frontend ist jede Komponente ein intelligenter Akteur. Gute Namen sprechen die Sprache der Anwender und vermeiden Framework-Jargon.
 
-* **Realwelt-Sprache:** Ein Komponentenname setzt sich aus dem Domänenbegriff (Was) und dem Control-Typ (Form) zusammen (z. B. OrderTable, CustomerCard, PaymentForm).  
+* **Realwelt-Sprache:** Ein Komponentenname setzt sich aus dem Domänenbegriff (Was) und dem Control-Typ (Form) zusammen (z. B. `OrderTable`, `CustomerCard`, `PaymentForm`).  
 * **Vermeidung von Framework-Suffixen:** Begriffe wie -Component, -Container, -View oder -Widget  werden unterlassen, da sie keine Information über den fachlichen Inhalt vermitteln.
 
 |  Control-Typ | Beispiel | Fachliche Bedeutung |
 | :---- | :---- | :---- |
-| Table | InvoiceTable | Tabellarische Übersicht & Interaktion |
-| Card | ProductCard | Kompakte Darstellung einer Entität | 
-| Form | RegistrationForm | Eingabemaske / Bearbeitung | 
-| Dashboard | SalesDashboard  | Aggregierte Statusübersicht |
-| Dialog | CancelOrderDialog | Modaler Interaktionspunkt |
+| Table | `InvoiceTable` | Tabellarische Übersicht & Interaktion |
+| Card | `ProductCard` | Kompakte Darstellung einer Entität | 
+| Form | `RegistrationForm` | Eingabemaske / Bearbeitung | 
+| Dashboard | `SalesDashboard`  | Aggregierte Statusübersicht |
+| Dialog | `CancelOrderDialog` | Modaler Interaktionspunkt |
 
 Im UI existiert eine etablierte Fachsprache aus der realen Welt, die Anwender täglich benutzen: Tabellen, Karten, Masken, Kataloge. Diese Begriffe sind keine technischen Artefakte, sondern geteiltes Vokabular zwischen Entwicklung und Fachseite.
 
@@ -228,6 +231,7 @@ Anhand dieses Beispiels wird gezeigt, wie die fachliche Essenz des Mietgeschäft
 ## **3.1 Das Systemkontextdiagramm: Die Schauplätze der Handlung**
 
 Der erste Schritt in der praktischen Umsetzung ist die Untersuchung der Systemumgebung. Das Systemkontextdiagramm dient hierbei als **analytischer Ausgangspunkt**, um die Schauplätze unserer Geschichte – die Bounded Contexts – präzise zu identifizieren und die daraus resultierende Top-Level-Paketstruktur abzuleiten. Jede externe Interaktion und jeder funktionale Kernbereich wird als eigenständiger Kandidat für einen Schauplatz bewertet:
+
 ```
                        User  
                     (Booking)  
@@ -246,6 +250,7 @@ Der erste Schritt in der praktischen Umsetzung ist die Untersuchung der Systemum
                 │  (Inventory)  │  
                 └───────────────┘
 ```
+
 ## **3.2 Identifikation der Bounded Contexts: Die Kapitelstruktur**
 
 Ausgehend von diesem analytischen Startpunkt werden die Verantwortungsbereiche scharf voneinander abgegrenzt. Diese Trennung wird durch die **Top-Level-Paketstruktur** physisch im Code manifestiert, was der Aufteilung einer Geschichte in logische Kapitel entspricht:
@@ -267,6 +272,7 @@ Ausgehend von diesem analytischen Startpunkt werden die Verantwortungsbereiche s
 * *Paket:* carpool/
 
 **Die daraus resultierende initiale Projektstruktur:**
+
 ```
 carrental/  
 ├── carpool/  
@@ -274,6 +280,7 @@ carrental/
 ├── payment/  
 └── booking/
 ```
+
 ## **3.3 Abbildung der fachlichen Essenz (Ubiquitous Language)**
 
 Um die fachliche Essenz abzubilden, definiert jeder Schauplatz (Bounded Context) seine eigene, spezifische Sichtweise auf die Domäne. Ein „zentrales Datenobjekt“ (Shared Kernel) wird im OO-DDD strikt abgelehnt, um die Kapselung nicht zu schwächen. Stattdessen nutzen wir **kontextspezifische Interfaces** und **Value Objects** direkt im Root der jeweiligen Pakete (**Ebene 0**), um die Rollen der Akteure und deren Wissen festzulegen:
@@ -304,6 +311,7 @@ Um eine verständliche Navigation im Code zu ermöglichen, müssen die wichtigst
 **Das fachliche Vorwort einer Story (Ebene 0)**
 
 Durch die Platzierung der Domänen-Schnittstellen und zentralen Value Objects im Hauptpaket wird die „Geschichte“ des Systems für jeden Leser sofort greifbar. Die Struktur auf Ebene 0 liest sich wie ein **Inhaltsverzeichnis der Geschäftslogik**:
+
 ```
 carrental/  
 ├── CarNumber.cs           ← Value Object (Fachliche Identität)  
@@ -315,9 +323,11 @@ carrental/
 ├── IReservations.cs       ← Collection Interface (Das Buchungs-Journal)  
 └── ICarRentalApp.cs       ← Composition Root (Einstiegspunkt)
 ```
+
 **Der Composition Root als „Einstieg in die Geschichte“**
 
 Indem wir auch den **Composition Root** (ICarRentalApp) als Interface im Top-Level-Paket definieren, markieren wir unmissverständlich den Beginn der fachlichen Erzählung. Er dient als einziger logischer Einstiegspunkt, über den man zu den fachlichen Kollektionen und deren Objekten navigiert:
+
 ```
 // ICarRentalApp.cs - Composition Root Interface (Ebene 0)  
 namespace CarRental;
@@ -329,7 +339,8 @@ public interface ICarRentalApp
     IReservations Reservations();  
 }
 ```
-Die ICarRentalApp ermöglicht den kontrollierten Zugriff auf die Kollektions-Schnittstellen (z. B. ICarPool), welche wiederum den Zugriff auf die einzelnen verhaltensorientierten Domänenobjekte (z. B. ICar) steuern.
+
+Die ICarRentalApp ermöglicht den kontrollierten Zugriff auf die Kollektions-Schnittstellen (z. B. `ICarPool`), welche wiederum den Zugriff auf die einzelnen verhaltensorientierten Domänenobjekte (z. B. `ICar`) steuern.
 
 **Warum dieses Muster entscheidend für OO-DDD ist:**
 
@@ -346,6 +357,7 @@ Um diese strikte Trennung zwischen der fachlichen Logik und der technischen Infr
 **Option 1: Auslagerung in separate Projekte (Empfohlen für große Systeme)**
 
 Sämtliche technischen Aspekte werden in eigenständige Projekte ausgelagert und lediglich als Abhängigkeiten in das Hauptprojekt eingebunden. Das Kernprojekt carrental bleibt dadurch vollständig frei von technischem „Ballast“:
+
 ```
 carrental                     → depends on: -endpoint, -resource, -storage, -... 
 
@@ -359,11 +371,13 @@ carrental-pdf                 ← PDF library with DTOs/helper classes
 carrental-text                ← Textformatting library with DTOs/helper classes  
 carrental-...                 ← other framework or library
 ```
+
 **Wichtig:** Die Domänen-Interfaces auf **Ebene 0 (Root)** dürfen unter keinen Umständen Klassen aus diesen technischen Projekten referenzieren.
 
-**Option 2: Isolation im exchange/-Paket (Lösung für kompakte Codebasen)**
+**Option 2: Isolation im `exchange/`-Paket (Lösung für kompakte Codebasen)**
 
 Alle technischen Belange, die einen Datenaustausch mit externen Systemen erfordern, werden innerhalb eines dedizierten Pakets exchange/ isoliert und nach technischen Aspekten unterteilt:
+
 ```
 carrental/  
 ├── .../   
@@ -376,15 +390,16 @@ carrental/
 ├── .../      
 └── ICar.cs                 ← Hat keinerlei Kenntnis von EF Core oder REST
 ```
+
 **Die Rolle der technischen Klassen als „Statisten“**
 
-Klassen innerhalb des exchange/-Bereichs werden ausschließlich als **Werkzeuge** betrachtet. Sie treten erst in den tieferen Kapiteln (z. B. innerhalb der Implementierung von carpool/) auf, um die fachlichen Versprechen der Interfaces einzulösen, ohne die Identität auf Ebene 0 zu berühren.
+Klassen innerhalb des `exchange/`-Bereichs werden ausschließlich als **Werkzeuge** betrachtet. Sie treten erst in den tieferen Kapiteln (z. B. innerhalb der Implementierung von `carpool/`) auf, um die fachlichen Versprechen der Interfaces einzulösen, ohne die Identität auf Ebene 0 zu berühren.
 
 Ein ORM wie **EF Core** bleibt beispielsweise vollständig im Paket exchange/storage/ gekapselt. Die Domäne nutzt diese Strukturen lediglich für den Persistierungsvorgang. Es wird strikt vermieden, dass technische Attribute (z. B. Annotations) oder Framework-Basisklassen in das verhaltensorientierte Domänenmodell einsickern.
 
 ## **3.6 Die Charakterentwicklung: Detail-Implementierung (Behavioral Enrichment)**
 
-Innerhalb der domänenspezifischen Kapitel (z. B. carpool/) erhalten die Protagonisten ihre Tiefe. Während das Inhaltsverzeichnis (Ebene 0) lediglich festlegt, **was** ein Akteur ist (Interface), definieren wir hier, **wie** er sich verhält. Wir nutzen Entwurfsmuster als „grammatikalische Werkzeuge“, um technische Anforderungen als Fähigkeiten an den Akteur zu heften, ohne seine fachliche Identität zu verzerren.
+Innerhalb der domänenspezifischen Kapitel (z. B. `carpool/`) erhalten die Protagonisten ihre Tiefe. Während das Inhaltsverzeichnis (Ebene 0) lediglich festlegt, **was** ein Akteur ist (Interface), definieren wir hier, **wie** er sich verhält. Wir nutzen Entwurfsmuster als „grammatikalische Werkzeuge“, um technische Anforderungen als Fähigkeiten an den Akteur zu heften, ohne seine fachliche Identität zu verzerren.
 
 **Die Komposition der „Smart Objects“**
 
@@ -395,12 +410,13 @@ Statt einer starren Schichtenarchitektur setzen wir auf eine flexible Kompositio
   * StoredCar verleiht dem Akteur ein **Gedächtnis** (Persistenz).  
   * LoggedCar führt das **Protokoll** (Audit).  
   * PublishedCar ist der **Verkünder**, der Ereignisse an das Messaging-System sendet.  
-* **Adapter Pattern (Die Brücke zur Außenwelt):** Adapter übersetzen technische Werkzeuge aus dem exchange/-Paket (ACL) in die Sprache unserer Domäne. So kann ein technischer API-Client die fachliche Rolle eines „Zahlers“ übernehmen.  
+* **Adapter Pattern (Die Brücke zur Außenwelt):** Adapter übersetzen technische Werkzeuge aus dem `exchange/`-Paket (ACL) in die Sprache unserer Domäne. So kann ein technischer API-Client die fachliche Rolle eines „Zahlers“ übernehmen.  
 * **Bridge & Proxy (Infrastruktur-Geheimnisse):** Diese Muster kapseln Details wie verzögertes Laden (Lazy Loading) oder verschiedene Ausgabeformate (PDF/CSV). Der Protagonist delegiert die Technik, bleibt aber der Regisseur der Handlung.
 
 **Beispiel: Die Dramaturgie im Paket carpool/**
 
-Die Komposition ermöglicht es, technische Details modular zu „stapeln“, während die Basis (SimpleCar) rein fachlich bleibt:
+Die Komposition ermöglicht es, technische Details modular zu „stapeln“, während die Basis (`SimpleCar`) rein fachlich bleibt:
+
 ```
 carrental/  
 ├── .../  
@@ -411,11 +427,13 @@ carrental/
 │   ├── ServedCarPool.cs   ← Der Repräsentant nach außen (REST-Adapter)  
 │   └── PublishedCar.cs    ← Der Mitteilsame (Brücke zu Kafka)
 ```
+
 **Code-Beispiel: Das Zusammenspiel der Akteure**
 
 Das folgende Beispiel zeigt, wie ein StoredCar die Fachlogik erweitert, ohne die Kapselung zu verletzen. Ziel ist es, ein Auto zu vermieten (Rent), ohne dass die Fachlogik von der Datenbank weiß.
 
-**Der pure Charakter eines **Akteurs:
+**Der pure Charakter eines Akteurs:**
+
 ```
 namespace CarRental.CarPool;
 
@@ -431,7 +449,9 @@ public class SimpleCar : ICar
     }  
 }
 ```
-Dieser Akteur (mit **Gedächtnis**) nutzt technische Werkzeuge aus dem exchange/storage/-Paket, um die Tat im „Archiv“ zu sichern:
+
+Dieser Akteur (mit **Gedächtnis**) nutzt technische Werkzeuge aus dem `exchange/storage/`-Paket, um die Tat im „Archiv“ zu sichern:
+
 ```
 using CarRental.Exchange.Storage; 
 
@@ -456,9 +476,11 @@ public class StoredCar : ICar
     }  
 }
 ```
-**Code-Beispiel: Die Nebenhandlungen im Paket** payment/
 
-Der Adapter (als **diplomatische Übersetzer**) im Paket payment/ schließt die Lücke zwischen dem fachlichen Interface und der PayPal-Technik:
+**Code-Beispiel: Die Nebenhandlungen im Paket** `payment/`
+
+Der Adapter (als **diplomatische Übersetzer**) im Paket `payment/` schließt die Lücke zwischen dem fachlichen Interface und der PayPal-Technik:
+
 ```
 using CarRental.Exchange.Paypal; 
 
@@ -478,6 +500,7 @@ public class PaypalPayment : IPayment
     }  
 }
 ```
+
 **Konsequenzen für “Zuschauer”**
 
 Durch diesen Ansatz bleibt die **Ebene 0 vollständig frei von technischem Rauschen**. Die Komplexität wird nicht durch „Services“ versteckt, sondern durch die geschickte **Besetzung von intelligenten Objekten** gelöst. Jedes Objekt bleibt klein, testbar und erzählt einen klaren Teil der Geschichte.
@@ -488,7 +511,8 @@ Der **Composition Root** ist der finale Ort der Zusammenkunft. Hier wird die the
 
 **Die Bühne: Das Paket application/**
 
-Das Paket application/ beherbergt die verschiedenen Einstiegspunkte und die Konfiguration der technischen Infrastruktur:
+Das Paket `application/` beherbergt die verschiedenen Einstiegspunkte und die Konfiguration der technischen Infrastruktur:
+
 ```
 carrental/  
 ├── application/  
@@ -502,6 +526,7 @@ carrental/
 **Das „Zusammenbauen“ der Geschichte**
 
 Im Composition Root wird die fachliche Anforderung in eine Kette von Verantwortlichkeiten übersetzt. Wenn wir ein Auto aus dem Fuhrpark anfordern, bauen wir zur Laufzeit eine **„Zwiebel“ aus intelligenten Objekten**. Die Schachtelung im Code entspricht dabei exakt der Dramaturgie des Prozesses:
+
 ```
 using CarRental.CarPool;  
 using CarRental.Exchange.Storage;  
@@ -539,17 +564,19 @@ public class CarRentalApp : ICarRentalApp
     }  
 }
 ```
+
 **Montage des Storytelling:**
 
 * **Zentrale Regie:** Möchten wir für alle Autos ein Audit-Logging aktivieren? Wir fügen einfach einen LoggedCarPool-Decorator im Composition Root hinzu. Die „Schauspieler“ (Fachobjekte) müssen dafür nicht umgeschult werden.  
 * **Vollständige Framework-Agnostik:** Die Business-Pakete bleiben rein fachlich; sie wissen nicht einmal, dass ein DI-Container existiert.  
 * **Maximale Transparenz:** Die Reihenfolge der Verschachtelung legt die Ausführungslogik fest. Der Leser sieht sofort: Erst wird im Cache gesucht, dann im Archiv (Datenbank).  
 * **Explizite Dramaturgie:** Die Hierarchie der Decoratoren macht die Verarbeitungsreihenfolge (z. B. erst Validieren, dann Speichern) im Code explizit lesbar – wie Regieanweisungen in einem Drehbuch.  
-* **Saubere Charaktere:** Da die Entscheidung über die Komposition hier fällt, bleiben die Klassen in carpool/ oder customer/ fokussiert. Sie müssen keine Infrastruktur-Entscheidungen treffen, sondern bieten lediglich ihr Verhalten an.
+* **Saubere Charaktere:** Da die Entscheidung über die Komposition hier fällt, bleiben die Klassen in `carpool/` oder `customer/` fokussiert. Sie müssen keine Infrastruktur-Entscheidungen treffen, sondern bieten lediglich ihr Verhalten an.
 
 ## **3.8 Das fertige Manuskript: Die Systemstruktur im Überblick**
 
 Die folgende Projektstruktur ist das Ergebnis unserer Reise. Sie verdeutlicht die radikale Trennung zwischen der **fachlichen „Story“ (Ebene 0)**, der **verhaltensorientierten Ausgestaltung (Fachkapitel)** und der **technischen Infrastruktur (Exchange/ACL)**.
+
 ```
 carrental/  
 │  
@@ -625,6 +652,7 @@ carrental/
 ├── ICarRentalApp.cs                 ← Composition Root Interface (Einstieg Ebene 0)  
 └── ...
 ```
+
 # **4. Die Evolution der Erzählung: Vom Kurzroman zum Epos**
 
 **Der evolutionäre Pfad: Vom Monolithen zum Microservice**
@@ -652,11 +680,12 @@ Die Wahl des Modells sollte die Teamdynamik unterstützen, anstatt künstliche B
 
 **Das Inverse Conway Maneuver:**
 
-Zur Förderung einer fachlich orientierten Architektur werden Teams **vertikal nach Bounded Contexts** organisiert. Besitzt ein Team einen kompletten fachlichen Schauplatz (z. B. payment/) von der Benutzeroberfläche bis zur Datenhaltung, kann die Geschichte dieses Kontextes ohne Informationsverlust in Code überführt werden.
+Zur Förderung einer fachlich orientierten Architektur werden Teams **vertikal nach Bounded Contexts** organisiert. Besitzt ein Team einen kompletten fachlichen Schauplatz (z. B. `payment/`) von der Benutzeroberfläche bis zur Datenhaltung, kann die Geschichte dieses Kontextes ohne Informationsverlust in Code überführt werden.
 
 ## **4.1 Phase 1: Der Monolith – Die Geschichte in einem Band**
 
 Der Einstieg in die Systementwicklung erfolgt idealerweise als Monolith. In dieser Phase befinden sich alle Bounded Contexts innerhalb eines einzigen ausführbaren Artefakts (z. B. eine Assembly oder JAR-Datei). Die Trennung der fachlichen Schauplätze erfolgt rein logisch über die Top-Level-Paketstruktur.
+
 ```
 carrental/          ← Einziges ausführbares Artefakt (Monolith)  
 ├── application/    ← Einstiegspunkt & Montage (Composition Root)  
@@ -666,6 +695,7 @@ carrental/          ← Einziges ausführbares Artefakt (Monolith)
 ├── payment/        ← Bounded Context: Finanzen  
 └── booking/        ← Bounded Context: Reservierung
 ```
+
 **Kriterien für die Wahl des Monolithen**
 
 Die Entscheidung für einen Monolithen basiert auf spezifischen organisatorischen und fachlichen Rahmenbedingungen:
@@ -701,11 +731,12 @@ In dieser Phase wird das geteilte Modul carrental (Ebene 0) idealerweise vollst�
 
 * **Autonomie:** Jeder Bounded Context kann Datenstrukturen anpassen, ohne Nebeneffekte auf andere Module zu riskieren.  
 * **Strukturelle Sauberkeit:** Ein „Common“-Modul verliert seine Funktion als unkontrollierter Ablageort für unspezifische Logik.  
-* **Semantische Präzision:** Fachbegriffe erhalten kontextspezifische Validierungsregeln (z. B. eine CustomerId im Zahlungsverkehr vs. Support).
+* **Semantische Präzision:** Fachbegriffe erhalten kontextspezifische Validierungsregeln (z. B. eine `CustomerId` im Zahlungsverkehr vs. Support).
 
 ### **4.2.2 Die flache Projektstruktur**
 
 Jeder Bounded Context wird als eigenständiges Projekt mit eigenem Inhaltsverzeichnis (Ebene 0) realisiert. Die Domäne bleibt die steuernde Instanz (Regisseur) der jeweiligen Erzählung. Die **Technischen Anhänge** dienen als funktionale Werkzeuge, die streng vom fachlichen Kern getrennt sind:
+
 ```
 carrental-carpool             ← Projekt: Fuhrpark (Eigene Erzählung)  
 ├── carpool/                  → Hängt ab von: -endpoint, -resource, -storage, -messaging  
@@ -749,22 +780,26 @@ carrental-payment-paypal       ← Technischer Anhang: PayPal-Bibliothek
 carrental-booking              ← Projekt: Reservierung & UI  
 ...
 ```
+
 Die **Technische Anhänge** sind die funktionalen Werkzeuge, die ein Kapitel (Modul) benötigt, um seine Geschichte in der realen Welt (Datenbank, Netzwerk, E-Mail) zu manifestieren. Sie gehören zum „Wie“ und sind streng vom fachlichen „Was“ getrennt.
 
 ### **4.2.3 Das Kompositions-Modul (Der Schuber)**
 
 Das Projekt carrental fungiert in dieser Phase als **ausführbarer Schuber**. Es dient als Ort der Montage, führt alle autonomen Bände zusammen und regelt die Besetzung der Schnittstellen (Dependency Injection):
+
 ```
 carrental/                     ← Das Gesamtwerk (Deployable Unit)  
 └── application/               ← Montage: Hängt von allen Bänden ab  
     ├── CarRentalApp.cs        ← Regie & DI-Konfiguration (Composition Root)  
     └── KafkaQueueConfig.cs    ← Zentrale Messaging-Konfiguration
 ```
+
 ### **4.2.4 Hierarchische Projektstruktur (Kapselung der Technik)**
 
 Wird die Anzahl der Einzelprojekte in einem wachsenden System zu unübersichtlich, bietet sich eine **hierarchische Organisation** an.  Anstatt für jeden technischen Aspekt ein separates Top-Level-Projekt zu erstellen, werden diese innerhalb von **Modul-Gruppen** (Parent Projects) gekapselt. Dies bewahrt die Übersichtlichkeit, ohne die Prinzipien der fachlichen Isolation zu verletzen.
 
 In dieser Struktur bildet jeder Bounded Context eine funktionale Einheit, die ihre technischen Satelliten selbst verwaltet. Der fachliche Kern bleibt dabei das Herzstück jeder Gruppe:
+
 ```
 carrental                     ← Root-Modul: Komposition aller Projekte  
 ├── application/              → Hängt ab von: -carpool, -customer, -payment, -booking    
@@ -794,6 +829,7 @@ carrental-booking             ← Modul-Gruppe: Reservierung & UI
 ├── user/                     ← Web-Sitzung & UI-Logik  
 └── ...
 ```
+
 **Die Vorteile der Hierarchie:**
 
 * **Fachliche Kohäsion:** Alle technischen Adapter, die zu einem Kontext gehören, befinden sich räumlich in derselben Gruppe. Das „Was“ (Domäne) und das „Wie“ (Technik) sind nah beieinander, aber physisch getrennt.  
@@ -806,7 +842,7 @@ Diese Struktur ist der **ideale Reifegrad** für einen langlebigen Modulith, da 
 
 Im Modulith regelt das Context Mapping, wie die verschiedenen autonomen Module miteinander kommunizieren, ohne die fachliche Stabilität der Gesamterzählung zu gefährden. Damit die Geschichte konsistent bleibt, erfolgt die Kommunikation zwischen den Modulen ausschließlich über die **Interfaces der Ebene 0**.
 
-Der **Composition Root** (im Projekt application/) übernimmt hierbei die Rolle des Regisseurs: Er entscheidet, welcher „Supplier“ (Dienstleister) welchem „Customer“ (Auftraggeber) zur Laufzeit übergeben wird. Für die Realisierung dieser Inter-Modul-Kommunikation existieren verschiedene Ansätze, die je nach Kopplungsgrad unterschiedliche Auswirkungen auf Wartbarkeit und Autonomie haben.
+Der **Composition Root** (im Projekt `application/`) übernimmt hierbei die Rolle des Regisseurs: Er entscheidet, welcher „Supplier“ (Dienstleister) welchem „Customer“ (Auftraggeber) zur Laufzeit übergeben wird. Für die Realisierung dieser Inter-Modul-Kommunikation existieren verschiedene Ansätze, die je nach Kopplungsgrad unterschiedliche Auswirkungen auf Wartbarkeit und Autonomie haben.
 
 **Vergleichstabelle: Realisierung der Modul-Interaktion**
 
@@ -821,6 +857,7 @@ Der **Composition Root** (im Projekt application/) übernimmt hierbei die Rolle 
 **Variante A: Direkte Kopplung (Der technische Kurze)**
 
 In dieser Variante kennt das booking-Projekt das payment-Projekt direkt. Die Geschichte ist hier technisch verknüpft, was die Flexibilität einschränkt.
+
 ```
 carrental-booking             ← abhängigk von carrental-payment Projekt  
 ├── booking/  
@@ -860,6 +897,7 @@ Dies ist der **Standardweg**. Es ist logisch, dass der Dienstleister sich an die
 **Variante C: Der Vermittler im Root (Die Königsdisziplin)**
 
 Beide Fachmodule sind völlig isoliert. Die Brücke wird erst im übergeordneten Root-Projekt geschlagen.
+
 ```
 carrental-booking             ← Projekt (Insel A)  
 ├── booking/  
@@ -877,6 +915,7 @@ carrental                     ← Root-Projekt (Der Erzähler)
       └── BookingPayment.cs   ← Implementiert IBookingPayment (Insel A)   
 ...                            und ruft IPayment (Insel B) auf
 ```
+
 * **Story:** „Zwei Fremde (Booking & Payment) begegnen sich nie, aber der Erzähler (Root) verbindet ihre Schicksale durch einen Boten (Adapter).“  
 * **Vorteil:** Absolute Portabilität. Beide Fachmodule wissen nichts voneinander und können in völlig anderen Systemen wiederverwendet werden.
 
@@ -907,14 +946,15 @@ Microservices stellen keine zwangsläufige Endstation dar, sondern sind eine bew
 Der Schritt zu Microservices bringt Komplexität (Netzwerklatenz, Konsistenzfragen). Er ist erst dann gerechtfertigt, wenn:
 
 * **Organisatorische Freiheit:** Mehrere Teams müssen völlig unabhängig voneinander deployen können, ohne sich im „Schuber“ des Modulithen abzustimmen.  
-* **Selektive Skalierung:** Der Schauplatz payment/ benötigt aufgrund hoher Last zehnmal mehr Ressourcen als die customer/-Verwaltung.  
-* **Technologische Vielfalt:** Ein spezielles Kapitel (z. B. eine KI-gestützte Preiskalkulation im carpool/) lässt sich in einer anderen Sprache (z. B. Python) besser erzählen als im restlichen C#-System.
+* **Selektive Skalierung:** Der Schauplatz payment/ benötigt aufgrund hoher Last zehnmal mehr Ressourcen als die `customer/`-Verwaltung.  
+* **Technologische Vielfalt:** Ein spezielles Kapitel (z. B. eine KI-gestützte Preiskalkulation im `carpool/`) lässt sich in einer anderen Sprache (z. B. Python) besser erzählen als im restlichen C#-System.
 
 **Warnung:** Wer die Phasen 1 und 2 überspringt, baut keinen Microservice, sondern einen „verteilten Monolithen“ – ein technisches Chaos, in dem die Fachlichkeit verloren geht.
 
 ### **4.3.2 Die Prjekt-Struktur: Vom Methodenaufruf zum Netzwerk-Client**
 
-Das Faszinierende am OO-DDD-Ansatz: Die **Ebene 0** (Interfaces) bleibt stabil. Nur die Implementierung in den *Technischen Anhängen* (exchange/) ändert sich. Ein lokaler Adapter wird zu einem diplomatischen Funkspruch über das Netzwerk.
+Das Faszinierende am OO-DDD-Ansatz: Die **Ebene 0** (Interfaces) bleibt stabil. Nur die Implementierung in den *Technischen Anhängen* (`exchange/`) ändert sich. Ein lokaler Adapter wird zu einem diplomatischen Funkspruch über das Netzwerk.
+
 ```
 carrental-gateway-service   ← Der Pförtner (Zentraler Einstiegspunkt)
 
@@ -924,6 +964,7 @@ carrental-carpool-service   ← Service A: Ein eigenständiger Prozess
 carrental-customer-service  ← Service B: Mit eigener Datenbank  
 carrental-payment-service   ← Service C: Hochverfügbar skaliert
 ```
+
 ### **4.3.3 Kommunikation über Distanzen: Synchron vs. Asynchron**
 
 Wenn die Geschichte auf verschiedene Server verteilt wird, müssen die Akteure lernen, über das Netzwerk zu kommunizieren. Die Wahl der Kommunikationsart beeinflusst maßgeblich die Stabilität und Reaktionsfähigkeit des Systems:
@@ -939,13 +980,14 @@ Wenn die Geschichte auf verschiedene Server verteilt wird, müssen die Akteure l
 2. **Event-Driven Storytelling:** In der asynchronen Welt nutzt die Architektur **Domain Events**. Anstatt den Partner direkt zu rufen („Bezahle jetzt!“), verkündet ein Akteur einen Wendepunkt: „Die Buchung wurde angefragt“ (BookingRequested). Andere Services (wie Payment) „hören“ diese Nachricht (Pull-Prinzip) und reagieren darauf, wenn sie bereit sind.  
 3. **Fehlertoleranz:** Während synchrone Kommunikation bei Netzwerkfehlern oft sofort zu „Abstürzen“ in der Benutzeroberfläche führt, erlaubt asynchrones Messaging ein robustes Storytelling: Die Nachricht wird im Postfach (Queue) zwischengespeichert und später verarbeitet.
 
-**Strategische Empfehlung: **Nutzen Sie **synchrone Kommunikation** (HTTP) für Lesezugriffe (Queries), bei denen der Nutzer sofort Daten sehen muss (z.B. „Zeige verfügbare Autos“). Nutzen Sie **asynchrone Kommunikation** (Messaging) für Zustandsänderungen (Commands), um die Autonomie der Microservices zu wahren und die Geschichte auch bei technischen Störungen flüssig zu halten.
+**Strategische Empfehlung: **Nutzen Sie synchrone Kommunikation** (HTTP) für Lesezugriffe (Queries), bei denen der Nutzer sofort Daten sehen muss (z.B. „Zeige verfügbare Autos“). Nutzen Sie **asynchrone Kommunikation** (Messaging) für Zustandsänderungen (Commands), um die Autonomie der Microservices zu wahren und die Geschichte auch bei technischen Störungen flüssig zu halten.
 
 ### **4.3.4 Das Frontend als Standalone Microservice (BFF-Pattern)**
 
-In modernen Cloud-native Architekturen wird das Frontend nicht lediglich als statisches Asset (eine bloße Sammlung von .js-, .css- und .html-Dateien) behandelt. Es agiert stattdessen als eigenständiger **„Backend-for-Frontend“ (BFF)** Service. Das BFF fungiert als maßgeschneiderte Schnittstelle, die präzise auf die Bedürfnisse eines spezifischen Clients (z. B. Web-Browser, Mobile App oder Smart Device) zugeschnitten ist. Dies ermöglicht eine strikte Trennung von Präsentationslogik und Geschäfts-Interfaces.
+In modernen Cloud-native Architekturen wird das Frontend nicht lediglich als statisches Asset (eine bloße Sammlung von `.js`-, .`css`- und `.html`-Dateien) behandelt. Es agiert stattdessen als eigenständiger **„Backend-for-Frontend“ (BFF)** Service. Das BFF fungiert als maßgeschneiderte Schnittstelle, die präzise auf die Bedürfnisse eines spezifischen Clients (z. B. Web-Browser, Mobile App oder Smart Device) zugeschnitten ist. Dies ermöglicht eine strikte Trennung von Präsentationslogik und Geschäfts-Interfaces.
 
-Die Struktur des carrental-booking-client folgt dabei der bekannten **Screaming Architecture**, wodurch die fachliche Geschichte auch im Frontend unmittelbar lesbar bleibt:
+Die Struktur des `carrental-booking-client` folgt dabei der bekannten **Screaming Architecture**, wodurch die fachliche Geschichte auch im Frontend unmittelbar lesbar bleibt:
+
 ```
 carrental-booking-client/            ← Frontend / BFF Service Projekt  
 ├── src/  
