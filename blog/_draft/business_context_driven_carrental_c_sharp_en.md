@@ -5,7 +5,7 @@
 
 ## 1. **The Problem:** The Translation Gap
 
-*Why your code structure should be your Business-Context Diagram?*
+*Why our code structure should be our Business-Context Diagram?*
 
 **Imagine:** A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with **Payment** providers (`PayPal`/`Stripe`), a **Customer** database and **User** booking interface.
 
@@ -28,7 +28,7 @@
                 └───────────────┘
 ```
 
-Then you open the code and find one of the following structures:
+Then we open the code and find often one of the following structures:
 
 **Example 1:** Classic Layered Architecture
 ```
@@ -91,7 +91,7 @@ com.company.carrental
 
 **Where is Car?** - **Where is Customer?** - **Where is Payment?** - **Where is Booking from the Context Diagram?**
 
-**You must mentally translate:**
+**We must mentally translate:**
 
 * **Car** entity is probably hidden in the `service` package? - **Layered**
 * Or maybe in `infrastructure`? - **Clean Architecture**
@@ -103,7 +103,7 @@ Even modern patterns like Vertical Slices often focus primarily on technical fun
 
 ## 2. The Solution: Context-Driven Packaging
 
-**The solution is surprisingly simple:** Your package structure should primarily reflect the Context Diagram.
+**The solution is surprisingly simple:** Our package structure should primarily reflect the Context Diagram.
 
 ```
 carrental/
@@ -602,7 +602,7 @@ public class CarRentalApp : ICarRentalApp
 
 **Compile-Time Traceable Pipelines:** The nesting order of the pipelines (e.g., `CachedCarPool` wrapping `StoredCarPoo`l) is explicitly readable as raw code. If a decorator composition needs to change (for instance, removing a cache or adding an audit log), it happens strictly inside these factory methods.
 
-**Decoupled Application Shells:** If you need to switch from an ASP.NET Core Web API to a console-based CLI or a serverless AWS Lambda function, you only swap out or add a new entry point class inside `application/`. The business context, domain interfaces, and decorator pipelines remain untouched.
+**Decoupled Application Shells:** If we need to switch from an ASP.NET Core Web API to a console-based CLI or a serverless AWS Lambda function, we only swap out or add a new entry point class inside `application/`. The business context, domain interfaces, and decorator pipelines remain untouched.
 
 
 ## 5. Isolation of Frameworks and Libraries: The Anti-Corruption Layer (ACL)
@@ -628,12 +628,12 @@ carrental-text                ← Textformatting library with DTOs/helper classe
 carrental-...                 ← other framework or library
 ```
 
-The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level. For example, if you are using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF classes in the package `carpool/` behind a class like `StoredCar.cs`, which is designed as a `Decorator`, `Bridge` or `Adapter` pattern.
+The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level. For example, if we are using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF classes in the package `carpool/` behind a class like `StoredCar.cs`, which is designed as a `Decorator`, `Bridge` or `Adapter` pattern.
 
 
 ### 5.2 Option 2: Single-Project Logical Isolation (Small to Mid-Sized Codebases)
 
-For more compact applications or single-team projects, spinning up dozens of physical projects adds unnecessary DevOps overhead. Instead, you can achieve the exact same logical isolation by grouping all framework-facing structures into a dedicated root-level `exchange/` package.
+For more compact applications or single-team projects, spinning up dozens of physical projects adds unnecessary DevOps overhead. Instead, we can achieve the exact same logical isolation by grouping all framework-facing structures into a dedicated root-level `exchange/` package.
 
 ```
 carrental/
@@ -712,7 +712,7 @@ public class CarDbContext : DbContext
 
 **The Architectural Payoff**
 
-Because these EF Core configurations are completely boxed into the `exchange/` layer, your domain core remains highly malleable. 
+Because these EF Core configurations are completely boxed into the `exchange/` layer, our domain core remains highly malleable. 
 * If the team decides tomorrow to drop Entity Framework Core and rewrite the data layer using raw `Dapper SQL` queries or migrate entirely to a document store like *MongoDB*, not a single line of business logic or domain interface needs to change.
 * We simply update the contents of the `exchange/storage/` folder and adjust the construction steps inside the `StoredCar` and `CarRentalApp` factories.
 
@@ -777,7 +777,7 @@ carrental-service              ← Deployable Unit
 
 * **Total Autonomy:** Context teams can evolve internal primitive behaviors without risk of breaking downward dependencies.
 * **Anti-Bloat Protection:** It blocks generic folders from becoming unchecked junk drawers for unrelated code fragments.
-* **Semantic Drift Resolution:** A CustomerId model parsing behavior in the billing module may require completely different validations than a CustomerId record utilized by marketing analytics. Depending on repository size and IDE preference, you can organize these decoupled boundaries using a Flat Layout or a Hierarchical Layout.
+* **Semantic Drift Resolution:** A CustomerId model parsing behavior in the billing module may require completely different validations than a CustomerId record utilized by marketing analytics. Depending on repository size and IDE preference, we can organize these decoupled boundaries using a Flat Layout or a Hierarchical Layout.
 
 
 #### 6.2.2. Project Layouts - Revised Structure
@@ -977,7 +977,7 @@ By retaining identical structural patterns across both front-end and back-end re
 
 ### 8. Conclusion: Screaming Architecture
 
-When *Uncle Bob* (Robert C. Martin) coined the term **"Screaming Architecture"**, he pointed out a major flaw in modern software development: when you look at a software system's codebase, the directory layout usually screams the framework choices (e.g., `controllers/`, `views/`, `models/`) rather than telling us what the application actually does. By anchoring our code organization directly to our Business Context Diagram, our structure stops screaming technical plumbing and starts screaming its actual business purpose.
+When *Uncle Bob* (Robert C. Martin) coined the term **"Screaming Architecture"**, he pointed out a major flaw in modern software development: when we look at a software system's codebase, the directory layout usually screams the framework choices (e.g., `controllers/`, `views/`, `models/`) rather than telling us what the application actually does. By anchoring our code organization directly to our Business Context Diagram, our structure stops screaming technical plumbing and starts screaming its actual business purpose.
 
 ```
 DOGMATIC STRUCTURE                    SCREAMING STRUCTURE
@@ -990,14 +990,14 @@ com.company.carrental                  com.company.carrental
 └── dtos/                              └── payment/
 ```
 
-To elevate your project structures to this next level of maintainability, readability, and evolutionary capability, adhere to these [Three Golden Rules](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
-1. **Packages Never Depend on Sub-Packages:** The root package folder defines your absolute domain core. It remains pure and completely independent. Sub-packages depend on the core to implement its details, never the other way around.
+To elevate our project structures to this next level of maintainability, readability, and evolutionary capability, adhere to these [Three Golden Rules](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
+1. **Packages Never Depend on Sub-Packages:** The root package folder defines our absolute domain core. It remains pure and completely independent. Sub-packages depend on the core to implement its details, never the other way around.
 2. **Sub-Packages Introduce Details, Not new Concepts:** A sub-package file (like `carpool/StoredCar.cs`) must only provide a technological refinement of an existing domain abstraction. It is forbidden from inventing unmapped business capabilities.
 3. **Represent Business Concepts, Not Technical Patterns:** Abolish prozedural suffixes and organizational patterns like `*Service`, `*Repository`, *Handler, and `*DTO`. Name the components as real-world nouns prefixed with their direct functional outcome (e.g., `StoredCar`, `CachedCarPool`, `ValidCustomer`).
 
 Through the implementation of these rules - supplemented by "Rigid Immutability," "Pipeline Decorators," and an "Anti-Corruption Layer" our code ceases to be an unreadable jumble of framework instructions. It transforms into an executable narrative that directly reflects the business domain, scales cleanly across product milestones, and permanently bridges the translation gap.
 
-**Screaming Architecture:** —> means the structure screams the business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
+**Screaming Architecture:** —> means the structure screams the only business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
 
 
 ---
