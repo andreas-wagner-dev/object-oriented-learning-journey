@@ -107,10 +107,10 @@ Even modern patterns like Vertical Slices often focus primarily on technical fun
 
 ```
 carrental/
+├── booking/
 ├── carpool/
 ├── customer/
-├── payment/
-└── booking/
+└── payment/
 ```
 
 **This is a crucial strategic aspect of software architecture:** By directly mapping bounded contexts in code, we consistently apply the Ubiquitous Language at every level of system organization.
