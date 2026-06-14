@@ -999,16 +999,16 @@ Through the implementation of these rules - supplemented by "Rigid Immutability,
 
 **Screaming Architecture:** —> means the structure screams the only business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
 
-
 ---
 ## 9. References and Further Reading
 
-* Java Dev Guy, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
+* Robert Bräutingam, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
+* Robert C. Martin,[Screaming-Architecture (2011)](https://blog.cleancoder.com/uncle-bob/2011/09/30/Screaming-Architecture.html)
 * Philipp Hauer, [Package by Feature (2020)](https://phauer.com/2020/package-by-feature/)
 * Mark Seemann, [Composition Root Pattern (2011)](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
 * Mark Seemann, [Poor Man's DI Pattern (2012)](https://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/)
-* Yegor Bugayenko, [Vertical and Horizontal Decorating](https://www.yegor256.com/2015/10/01/vertical-horizontal-decorating.html)
 * Mihai A. RODEGBFR, [My Take On Object Naming (2018)](https://amihaiemil.com/2018/01/07/my-take-on-object-naming.html)
+* Yegor Bugayenko, [Composable Decorators (2015)](https://www.yegor256.com/2015/02/26/composable-decorators.html)
 * Yegor Bugayenko, [Seven Virtues of a Good Object](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
 * Yegor Bugayenko, [Prefixed Naming](https://www.yegor256.com/2020/03/03/prefixed-naming.html)
 * Yegor Bugayenko, [Don't Create Objects That End With -ER](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
