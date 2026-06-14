@@ -977,23 +977,23 @@ By retaining identical structural patterns across both front-end and back-end re
 
 ### 8. Conclusion: Screaming Architecture
 
-When *Uncle Bob* (Robert C. Martin) coined the term **"Screaming Architecture"**, he pointed out a major flaw in modern software development: when you look at a software system's codebase, the directory layout usually screams the framework choices (e.g., `controllers/`, `views/`, `models/`) rather than telling you what the application actually does.By anchoring your code organization directly to your Business Context Diagram, your architecture stops screaming technical plumbing and starts screaming its actual business purpose.
+When *Uncle Bob* (Robert C. Martin) coined the term **"Screaming Architecture"**, he pointed out a major flaw in modern software development: when you look at a software system's codebase, the directory layout usually screams the framework choices (e.g., `controllers/`, `views/`, `models/`) rather than telling us what the application actually does. By anchoring our code organization directly to our Business Context Diagram, our structure stops screaming technical plumbing and starts screaming its actual business purpose.
 
 ```
-TRADITIONAL REPOSITORIES                SCREAMING ARCHITECTURE
-(Technical Plumbing)                    (Business Intent)
+DOGMATIC STRUCTURE                    SCREAMING STRUCTURE
+(Technical Plumbing)                  (Business Intent)
 
 com.company.carrental                  com.company.carrental
-├── controllers/                       ├── carpool/
-├── services/             ──►          ├── customer/
-├── repositories/                      ├── payment/
-└── dtos/                              └── booking/
+├── controllers/                       ├── booking/
+├── services/             ──►          ├── carpool/
+├── repositories/                      ├── customer/
+└── dtos/                              └── payment/
 ```
 
-To elevate your project structures to this next level of maintainability, readability, and evolutionary capability, adhere to these Three Golden Rules:
+To elevate your project structures to this next level of maintainability, readability, and evolutionary capability, adhere to these [Three Golden Rules](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
 1. **Packages Never Depend on Sub-Packages:** The root package folder defines your absolute domain core. It remains pure and completely independent. Sub-packages depend on the core to implement its details, never the other way around.
-2. **Sub-Packages Introduce Details, Not new Concepts:** A sub-package file (like carpool/StoredCar.cs) must only provide a technological refinement of an existing domain abstraction. It is forbidden from inventing unmapped business capabilities.
-3. **Represent Business Concepts, Not Technical Patterns:** Abolish prozedural suffixes and organizational patterns like `*Service`, `*Repository`, *Handler, and `*DTO`. Name your components as real-world nouns prefixed with their direct functional outcome (e.g., `StoredCar`, `CachedCarPool`, `ValidCustomer`).
+2. **Sub-Packages Introduce Details, Not new Concepts:** A sub-package file (like `carpool/StoredCar.cs`) must only provide a technological refinement of an existing domain abstraction. It is forbidden from inventing unmapped business capabilities.
+3. **Represent Business Concepts, Not Technical Patterns:** Abolish prozedural suffixes and organizational patterns like `*Service`, `*Repository`, *Handler, and `*DTO`. Name the components as real-world nouns prefixed with their direct functional outcome (e.g., `StoredCar`, `CachedCarPool`, `ValidCustomer`).
 
 Through the implementation of these rules - supplemented by "Rigid Immutability," "Pipeline Decorators," and an "Anti-Corruption Layer" our code ceases to be an unreadable jumble of framework instructions. It transforms into an executable narrative that directly reflects the business domain, scales cleanly across product milestones, and permanently bridges the translation gap.
 
