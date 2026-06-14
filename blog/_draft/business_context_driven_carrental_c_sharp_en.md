@@ -268,8 +268,8 @@ The naming follows a natural language logic that separates the **"what"** (thing
 
 **Interfaces are Nouns:**
 
-* `Car`, `Customer`, `Order`
-  
+* `ICar`, `ICustomer`, `IReservation`, also the app it self `ICarRentalApp` as *Composition Root*
+
 They describe the essence of things and represent the **"what."**
 
 **Classes describe the context (prefix-based):** Class names function like adjectives, describing the current state or the result of an action.
@@ -278,7 +278,7 @@ They describe the essence of things and represent the **"what."**
 * `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
 * `InMemoryCar`, `StoredCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
 * `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
-* `ICarRentalApp` interface in root, `CarRentalApp` in `application/`
+* `CarRentalApp` in `application/` (implementation of `ICarRentalApp` interface)
 
 Only what the business customer says - with result oriented prefixes.
 
