@@ -7,7 +7,7 @@
 
 *Why your code structure should be your Business-Context Diagram?*
 
-Imagine: A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with **Payment** providers (`PayPal`/`Stripe`), a **Customer** database and **User** booking interface.
+**Imagine:** A Business Analyst shows you a System Context Diagram of a **Car Rental System**, integrated with **Payment** providers (`PayPal`/`Stripe`), a **Customer** database and **User** booking interface.
 
 ```
                        User
