@@ -1,7 +1,7 @@
 # **Open Knowledge Format (OKF) — Index-Based Structural Specification**
 
 This specification formalizes the **Open Knowledge Format (OKF)** as a purely file-based, indexed rule system. 
-It translates the "LLM-Wiki-Pattern" into an unambiguous, recursive folder and file structure that can be read, indexed,
+It translates the **"LLM-Wiki-Pattern"** into an unambiguous, recursive folder and file structure that can be read, indexed,
 and manipulated by AI agents and humans alike without an translation layer.
 
 The system controls knowledge domains exclusively through structure anchors (index files), category directories, and atomic concepts.
