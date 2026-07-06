@@ -7,6 +7,8 @@
 - https://www.vzurauskas.com/
 
 **Object Nameing:**
+- https://www.yegor256.com/2022/06/14/principle-of-one.html
+- https://www.yegor256.com/2017/02/28/too-many-classes.html
 - https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html
 - https://www.yegor256.com/2015/03/09/objects-end-with-er.html
 - https://www.yegor256.com/2017/09/12/evil-object-name-suffix-client.html
