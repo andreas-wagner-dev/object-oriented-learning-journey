@@ -13,6 +13,13 @@ The system controls knowledge domains exclusively through structure anchors (ind
 * **D[k]**: A directory / knowledge domain at logical path level `k`.  
 * **C[k.m]**: A specific concept file within domain `k` with the sequential object number `m`.
 
+Every system node is mapped to a structural index chain (k).
+* Let (k) be a sequence of positive integers: (k = [x_1, x_2, dots, x_n]), where (x_i in {N}^+).
+* Dot-notation represents sequence concatenation: (k.y = [x_1, x_2, dots, x_n, y]).
+* The string representation of an index chain replaces brackets with raw dot-delimited digits (e.g., 1.4.3.2).
+* Wildcard notation ([*]) denotes an arbitrary valid index component sequence.
+
+
 ## **2. Axioms (Structural Core Laws)**
 
 ### **Root Existence (Root Axiom)**
@@ -64,7 +71,15 @@ N/                                    # Root folder (Level 0)
 │       ├── C[2.4.2].md               # C[2.4.2] (First concept in subdomain D[2.4])  
 │       └── D[2.4.3]/                 # D[2.4.3] (Sub-subdirectory Level 3)  
 │           ├── index.md              # I[2.4.3.1] (Structure anchor Level 3)  
-│           └── C[2.4.3.2].md         # C[2.4.3.2] (Concept on Level 3)       
+│           ├── C[2.4.3.2].md         # C[2.4.3.2] (Concept on Level 3)
+│           └── D[2.4.3....].md       # C[2.4.3.2] (Concept on Level 3)
+└── D[*]/                             # D[*]       (Any directory n auf Level 1)
+    ├── index.md                      # I[*.1]     (Structure anchor of domain D[*])
+    ├── C[*.2].md                     # C[*.2]     (First concept in D[*])
+    ├── D[*.3]/                       # D[*.3]     (Subdirectory Level 2)
+    └── D[*.4]/                       # D[*.4]     (Second Subdirectory Level 2)
+        ├── index.md                  # I[*.4.1]   (Structure anchor auf Level 2)
+        └── D[*.4.2]/                 # D[*.4.2]   (Infinite recursion starts here)
 ```
 
 ## **5. Practical Example (E-Commerce Order System)**
@@ -88,7 +103,7 @@ E-Commerce-Project/                    # Root Folder (N)
     ├── stock_management.md            # C[2.2] (Concept: Inventory logic & safety stock thresholds)  
     └── shipping/                      # D[2.3] (Sub-Domain Level 2: Shipping fulfillment)  
         ├── index.md                   # I (Context map for carrier integration)  
-        └── tracking/          # C (Concept Container: Shipment tracking)  
+        └── tracking/                  # C (Concept Container: Shipment tracking)  
             ├── index.md               # I (Interface description for tracking APIs)  
             └── dhl_webhook.sql        # S (Snippet: Database schema for DHL webhook updates)
 ```
