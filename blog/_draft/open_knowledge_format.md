@@ -13,6 +13,14 @@ The system controls knowledge domains exclusively through structure anchors (ind
 * **D[k]**: A directory / knowledge domain at logical path level `k`.  
 * **C[k.m]**: A specific concept file within domain `k` with the sequential object number `m`.
 
+**Mathematical Index Chains**
+
+Every system node is mapped to a structural index chain `k`.
+* Let `k` be a sequence of positive integers: `k` = `[x_1, x_2, dots, x_n]`, where `x_i in N+`.
+* Dot-notation represents sequence concatenation: `k.y` = `[x_1, x_2, dots, x_n, y]`.
+* The string representation of an index chain replaces brackets with raw dot-delimited digits (e.g., `1.4.3.2`).
+* Wildcard notation `[*]` denotes an arbitrary valid index component sequence.
+
 ## **2. Axioms (Structural Core Laws)**
 
 ### **Root Existence (Root Axiom)**
@@ -40,11 +48,7 @@ This means: every element in a domain `D[k]` must be either the structure anchor
 3. **Concepts (C):** Concepts inherit the index chain `k` of their domain `D[k]` and extend it with a unique, sequential `ID `m on that specific level: `C[k.m]`.  
 4. **Recursion (D):** Subdirectories inherit the index chain `k` of the parent directory and extend it with a sequential directory `ID` n on that specific level: `D[k.n]`.
 
-Every system node is mapped to a structural index chain `k`.
-* Let `k` be a sequence of positive integers: `k` = `[x_1, x_2, dots, x_n]`, where `x_i in N+`.
-* Dot-notation represents sequence concatenation: `k.y` = `[x_1, x_2, dots, x_n, y]`.
-* The string representation of an index chain replaces brackets with raw dot-delimited digits (e.g., `1.4.3.2`).
-* Wildcard notation `[*]` denotes an arbitrary valid index component sequence.
+
 
 ## **4. Abstract Structure Model (Tree)**
 
