@@ -120,9 +120,9 @@ E-Commerce-Project/                    # Root Folder (N)
 
 In this setup:
 
-* The parent folder (`customer`) remains entirely independent of how nested billing details work.  
-* The deeper folders (`billing`, `invoices`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
-* The deeper folders (`logistics`, `shipping`, `tracking`)...
+* The folder (`customer`) remains entirely independent of how nested billing details work.  
+* The folders (`billing`) deeper folder (`invoices`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
+* The folders (`logistics`, `shipping`, `tracking`)...
 
 ## **6. Pragmatic Rules & Storytelling Philosophy**
 
