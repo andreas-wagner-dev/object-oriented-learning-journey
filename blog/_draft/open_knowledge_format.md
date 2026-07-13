@@ -8,10 +8,11 @@ The system controls knowledge domains exclusively through structure anchors (ind
 
 ## **1. Definitions**
 
-* **N**: The root folder / global `namespace` (Level 0).  
-* **I[k]**: A structure anchor (the `index.md` file) at logical path level `k`.  
-* **D[k]**: A directory / knowledge domain at logical path level `k`.  
-* **C[k.m]**: A specific concept file within domain `k` with the sequential object number `m`.
+* **N:**: The root folder / global `namespace` (Level 0).  
+* **I[k]:**: A structure anchor (the `index.md` file) at logical path level `k`
+* **D[k]:**: A directory / knowledge domain at logical path level `k`
+* **C[k.m]:**: A specific concept file within domain `k` with the sequential object number `m`
+* **S[k.o]:** A support snippet / asset file within domain `k` with the sequential object number `o`
 
 **Mathematical Index Chains**
 
@@ -38,51 +39,40 @@ A subdomain `D[k.n]` is always created as a direct child element of a directly s
 
 ### **Exclusive Content Area (Content Rule)**
 
-A directory may only contain its own structure anchor, concepts belonging to the same level, or deeper subdirectories. 
-Loose, unstructured files outside of this pattern are not permitted. 
-This means: every element in a domain `D[k]` must be either the structure anchor `I[k.1]`, a concept `C[k.m]`, or a subdomain `D[k.n]`.
+A directory may only contain its own structure anchor, concepts belonging to the same level, support snippets, or deeper subdirectories. Loose, unstructured files outside of this pattern are not permitted. Every element in a domain `D[k]` must be either the structure anchor `I[k.1]`, a concept `C[k.m]`, a snippet `S[k.o]`, or a subdomain `D[k.n]`.
 
-## **3. Indexing and Recursion Rules**
+## 3. Indexing and Recursion Rules
 
-1. **Structure Anchor (I):** The very first file in the root directory is always `I[1]`. Every subdirectory `D[k]` contains a structure anchor with the index `I[k.1]` as its first file (saved as `index.md`).  
-3. **Concepts (C):** Concepts inherit the index chain `k` of their domain `D[k]` and extend it with a unique, sequential `ID `m on that specific level: `C[k.m]`.  
-4. **Recursion (D):** Subdirectories inherit the index chain `k` of the parent directory and extend it with a sequential directory `ID` n on that specific level: `D[k.n]`.
-
-
+* Structure Anchor (`I`): The very first file in the root directory is always `I[1]`. Every subdirectory `D[k]` contains a structure anchor with the index `I[k.1]` as its first file (saved as `index.md`).
+* Concepts (`C)`: Concepts inherit the index chain k of their domain `D[k]` and extend it with a unique, sequential ID m on that specific level: `C[k.m]`.
+* Snippets (`S`): Snippets inherit the index chain k of their domain `D[k]` and extend it with a unique, sequential ID o on that specific level: `S[k.o]`.
+* Recursion (`D`): Subdirectories inherit the index chain k of the parent directory and extend it with a sequential directory ID n on that specific level: `D[k.n]`.
 
 ## **4. Abstract Structure Model (Tree)**
 
 ```text
-N/                                    # Root folder (Level 0)  
-├── index.md                          # I[1]     (Main structure anchor)  
-├── D[1]/                             # D[1]     (Main directory Level 1)  
-│   ├── index.md                      # I[1.1]   (Structure anchor of domain D[1])  
-│   ├── C[1.2].md                     # C[1.2]   (First concept in D[1])  
-│   ├── C[1.3].md                     # C[1.3]   (Second concept in D[1])  
-│   └── D[1.4]/                       # D[1.4]   (Subdirectory Level 2)  
-│       ├── index.md                  # I[1.4.1] (Structure anchor of subdomain D[1.4])  
-│       ├── C[1.4.2].md               # C[1.4.2] (First concept in subdomain D[1.4])  
-│       └── D[1.4.3]/                 # D[1.4.3] (Sub-subdirectory Level 3)  
-│           ├── index.md              # I[1.4.3.1] (Structure anchor Level 3)  
+N/                                    # Root folder (Level 0)
+│
+├── index.md                          # I[1]       (Main structure anchor)
+├── D[1]/                             # D[1]       (Main directory Level 1)
+│   ├── index.md                      # I[1.1]     (Structure anchor of domain D[1])
+│   ├── C[1.2].md                     # C[1.2]     (First concept in D[1])
+│   ├── S[1.3].json                   # S[1.3]     (First snippet in D[1])
+│   └── D[1.4]/                       # D[1.4]     (Subdirectory Level 2)
+│       ├── index.md                  # I[1.4.1]   (Structure anchor of subdomain D[1.4])
+│       ├── C[1.4.2].md               # C[1.4.2]   (First concept in subdomain D[1.4])
+│       └── D[1.4.3]/                 # D[1.4.3]   (Sub-subdirectory Level 3)
+│           ├── index.md              # I[1.4.3.1] (Structure anchor Level 3)
 │           └── C[1.4.3.2].md         # C[1.4.3.2] (Concept on Level 3)
-├── D[2]/                             # D[2]     (Main directory Level 1)  
-│   ├── index.md                      # I[2.1]   (Structure anchor of domain D[2])  
-│   ├── C[2.2].md                     # C[2.2]   (First concept in D[2])  
-│   ├── C[2.3].md                     # C[2.3]   (Second concept in D[2])  
-│   └── D[2.4]/                       # D[2.4]   (Subdirectory Level 2)  
-│       ├── index.md                  # I[2.4.1] (Structure anchor of subdomain D[2.4])  
-│       ├── C[2.4.2].md               # C[2.4.2] (First concept in subdomain D[2.4])  
-│       └── D[2.4.3]/                 # D[2.4.3] (Sub-subdirectory Level 3)  
-│           ├── index.md              # I[2.4.3.1] (Structure anchor Level 3)  
-│           ├── C[2.4.3.2].md         # C[2.4.3.2] (Concept on Level 3)
-│           └── D[2.4.3.3].md       # C[2.4.3.2] (Concept on Level 3)
+│
 └── D[*]/                             # D[*]       (Any directory n auf Level 1)
     ├── index.md                      # I[*.1]     (Structure anchor of domain D[*])
     ├── C[*.2].md                     # C[*.2]     (First concept in D[*])
-    ├── D[*.3]/                       # D[*.3]     (Subdirectory Level 2)
-    └── D[*.4]/                       # D[*.4]     (Second Subdirectory Level 2)
+│   ├── S[1.3].json                   # S[*.3]     (First snippet in D[*])
+    ├── D[*.4]/                       # D[*.3]     (Subdirectory Level 2)
+    └── D[*.5]/                       # D[*.4]     (Second Subdirectory Level 2)
         ├── index.md                  # I[*.4.1]   (Structure anchor auf Level 2)
-        └── D[*.4.2]/                 # D[*.4.2]   (Infinite recursion starts here)
+        └── D[*.5.2]/                 # D[*.4.2]   (Infinite recursion starts here)
 ```
 
 ## **5. Practical Example (E-Commerce Order System)**
@@ -120,25 +110,18 @@ E-Commerce-Project/                    # Root Folder (N)
 
 In this setup:
 
-* The folder (`customer`) remains entirely independent of how nested billing details work.  
-* The folders (`billing`) deeper folder (`invoices`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
-* The folders (`logistics`, `shipping`, `tracking`)...
+* The folder `customer` remains entirely independent of how nested billing details work.
+* The folders under `billing` (like `invoices`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
+* The folders `logistics`, `shipping`, and `tracking` demonstrate recursive refinement without polluting the namespace.
 
-## **6. Pragmatic Rules & Storytelling Philosophy**
+## **6. Three Pragmatic Rules**
 
 To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, follow these three core guidelines:
 
-### **Rule 1: Folders Should Never Depend on Sub-Folders**
+1.**Folders Should Never Depend on Sub-Folders:** Dependencies must always point inward (or downward).
+2. **Sub-Folders Do Not Introduce New Concepts, Just More Details:** A sub-folder must only exist to expand upon, refine, or detail a concept already introduced in its parent folder.
+3. **Folders Must Reflect Business Concepts, Not Technical Ones:** Organize by business domains (e.g., `customer/`, `billing/`), not technical roles (`controllers/`, `models/`).
 
-Dependencies must always point **inward** (or downward). A parent folder represents a higher level of abstraction and must remain fully functional and understandable without needing to know the implementation details of its sub-folders.
-
-### **Rule 2: Sub-Folders Do Not Introduce New Concepts, Just More Details**
-
-A sub-folder is not a dumping ground for unrelated ideas. It must only exist to expand upon, refine, or detail a concept already introduced in its parent folder. If you find yourself introducing an entirely new top-level business concept inside a nested directory, it belongs at a higher level (Level 1).
-
-### **Rule 3: Folders Must Reflect Business Concepts, Not Technical Ones**
-
-The directory structure must tell a cohesive business story. Avoid organizing folders by technical roles (such as `controllers/`, `views/`, `models/`, or `utils/`). Instead, organize them by the business domains they represent (such as `customer/`, `billing/`, or `shipping/`).
 
 ### **Summary: The Level "0" Trick**
 
