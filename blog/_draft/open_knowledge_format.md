@@ -118,13 +118,13 @@ In this setup:
 
 ## 4. Three Pragmatic Rules
 
-To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, follow these three core guidelines:
+To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, follow these [three core guidelines](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
 
 1. **Folders Should Never Depend on Sub-Folders:** Dependencies must always point inward (or downward).
 2. **Sub-Folders Do Not Introduce New Concepts, Just More Details:** A sub-folder must only exist to expand upon, refine, or detail a concept already introduced in its parent folder.
 3. **Folders Must Reflect Business Concepts, Not Technical Ones:** Organize by business domains (e.g., `customer/`, `billing/`), not technical roles (`controllers/`, `models/`).
 
 
-## 5. Summary: The Level "0" Trick
+## 5. Summary
 
-The secret to achieving next-level readability is focusing heavily on the highest hierarchy level (Level 0 and 1). By placing files representing the main, high-level business concepts directly at the top levels without technical clutter, anyone (and any AI model) can open the project and immediately understand *what* the system does. The sub-folders then naturally act as chapters, revealing finer details and sub-concepts only as the reader chooses to dive deeper.
+The Trick to achieving the next-level readability is focusing heavily on the highest (parent) hierarchy level (Level 0 and 1). By placing files representing the main, high-level business concepts directly at the top levels without technical clutter, anyone (and any AI model) can open the project and immediately understand *what* the system does. The sub-folders then naturally act as chapters, revealing finer details and sub-concepts only as the reader chooses to dive deeper.
