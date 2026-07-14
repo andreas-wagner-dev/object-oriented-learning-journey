@@ -75,10 +75,11 @@ A directory may only contain its own structure anchor, concepts belonging to the
 Below is a practical application of the OKF mapping a business domain (E-Commerce Orders) without any technical boilerplate clutter.
 
 ```text
-E-Commerce-Project/                    # Root Folder (N)  
-├── index.md                           # I (System overview & strategic goals)  
+E-Commerce-Project/                    # N Root Folder (namespace)
 │
-├── customer/                          # D (Main Domain 1: Customer Context)  
+├── index.md                           # I[1] (System overview & strategic goals)  
+│
+├── customer/                          # D[1] (Main Domain 1: Customer Context)  
 │   ├── index.md                       # I[1.1] (Context map for the customer domain)  
 │   ├── profile.md                     # C[1.2] (Concept: Customer profile & GDPR guidelines)  
 │   └── payment/                       # C (Concept Container: Payment methods)  
@@ -93,14 +94,14 @@ E-Commerce-Project/                    # Root Folder (N)
 │       ├── index.md                   # I[2.3.1] (Invoice context map)  
 │       └── tax_calculation.md         # C[2.3.2] (Atomic logic: Tax calculation rules)
 │
-└── logistics/                         # D (Main Domain 2: Warehouse & Shipping)  
+└── logistics/                         # D[3] (Main Domain 2: Warehouse & Shipping)  
     ├── index.md                       # I[3.1] (Context map for the logistics domain)  
     ├── stock_management.md            # C[3.2] (Concept: Inventory logic & safety stock thresholds)  
     └── shipping/                      # D[3.3] (Sub-Domain Level 2: Shipping fulfillment)  
-        ├── index.md                   # I (Context map for carrier integration)  
-        └── tracking/                  # C (Concept Container: Shipment tracking)  
-            ├── index.md               # I (Interface description for tracking APIs)  
-            └── dhl_webhook.sql        # S (Snippet: Database schema for DHL webhook updates)
+        ├── index.md                   # I[3.3.1] (Context map for carrier integration)  
+        └── tracking/                  # D[3.3.1] (Sub-Domain Level 3: Shipment tracking)  
+            ├── index.md               # I[3.3.2] (Interface description for tracking APIs)  
+            └── dhl_webhook.sql        # S[3.3.1] (Tracking: Database schema for DHL webhook updates)
 ```
 
 In this setup:
