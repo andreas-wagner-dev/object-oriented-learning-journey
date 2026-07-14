@@ -21,8 +21,6 @@ Every system node is mapped to a structural index chain `k`.
 * Dot-notation represents sequence concatenation: `k.y` = `[x1, x2, ..., xn, y]`
 * The string representation of an index chain replaces brackets with raw dot-delimited digits (e.g., `1.4.3.2`)  
 
-The Wildcard `[*]` notation is a placeholder  denotes an arbitrary valid index component sequence.
-
 ## **2. Abstract Structure Model (Tree)**
 
 ```text
@@ -49,6 +47,8 @@ N/                                    # Root folder (Level 0)
         ├── index.md                  # I[*.5.1]   (Structure anchor auf Level 2)
         └── D[*.5.2]/                 # D[*.5.2]   (Infinite recursion starts here)
 ```
+
+The Wildcard `[*]` notation is a placeholder denotes an arbitrary valid index component sequence.
 
 ### Axioms (Structural Core Rules)
 
