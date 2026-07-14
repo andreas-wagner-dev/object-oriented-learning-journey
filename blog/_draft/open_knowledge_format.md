@@ -118,7 +118,7 @@ In this setup:
 
 To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, follow these three core guidelines:
 
-1.**Folders Should Never Depend on Sub-Folders:** Dependencies must always point inward (or downward).
+1. **Folders Should Never Depend on Sub-Folders:** Dependencies must always point inward (or downward).
 2. **Sub-Folders Do Not Introduce New Concepts, Just More Details:** A sub-folder must only exist to expand upon, refine, or detail a concept already introduced in its parent folder.
 3. **Folders Must Reflect Business Concepts, Not Technical Ones:** Organize by business domains (e.g., `customer/`, `billing/`), not technical roles (`controllers/`, `models/`).
 
