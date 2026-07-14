@@ -75,33 +75,35 @@ A directory may only contain its own structure anchor, concepts belonging to the
 Below is a practical application of the OKF mapping a business domain (E-Commerce Orders) without any technical boilerplate clutter.
 
 ```text
+
 E-Commerce-Project/                    # N Root Folder (namespace)
+├── index.md                           # I[1] (System overview)
 │
-├── index.md                           # I[1] (System overview & strategic goals)  
+├── customer/                          # D[1] (Domain: Customer Context)
+│   ├── index.md                       # I[1.1] (Context map for customer)
+│   ├── profile.md                     # C[1.2] (Concept: Customer profile & GDPR guidelines) 
+│   └── payment/                       # D[1.3] (Sub-Domain: Payment)
+│       ├── index.md                   # I[1.3.1] (Overview of payments)
+│       ├── stripe_payload.json        # S[1.3.2] (Snippet: Raw API payload structure for Stripe)
+│       └── paypal_flow.mermaid        # S[1.3.3] (Snippet: Visual authentication flow chart)
 │
-├── customer/                          # D[1] (Main Domain 1: Customer Context)  
-│   ├── index.md                       # I[1.1] (Context map for the customer domain)  
-│   ├── profile.md                     # C[1.2] (Concept: Customer profile & GDPR guidelines)  
-│   └── payment/                       # C (Concept Container: Payment methods)  
-│       ├── index.md                   # I (Architectural overview of payment flows)  
-│       ├── stripe_payload.json        # S (Snippet: Raw API payload structure for Stripe)  
-│       └── paypal_flow.mermaid        # S (Snippet: Visual authentication flow chart)  
-│
-├── billing/                           # D[2] (Sub-domain: Billing details)  
-│   ├── index.md                       # I[2.1] (Billing context map)  
-│   ├── payment_methods.md             # C[2.2] (Sub-concept: Accepted payment configurations)  
-│   └── invoices/                      # D[2.3] (Sub-sub-domain: Invoice processing)  
-│       ├── index.md                   # I[2.3.1] (Invoice context map)  
+├── billing/                           # D[2] (Domain: Billing)
+│   ├── index.md                       # I[2.1] (Billing context)
+│   ├── payment_methods.md             # C[2.2] (Concept)
+│   └── invoices/                      # D[2.3] (Sub-Domain: Invoices)
+│       ├── index.md                   # I[2.3.1] (Invoice context)
 │       └── tax_calculation.md         # C[2.3.2] (Atomic logic: Tax calculation rules)
 │
-└── logistics/                         # D[3] (Main Domain 2: Warehouse & Shipping)  
-    ├── index.md                       # I[3.1] (Context map for the logistics domain)  
-    ├── stock_management.md            # C[3.2] (Concept: Inventory logic & safety stock thresholds)  
-    └── shipping/                      # D[3.3] (Sub-Domain Level 2: Shipping fulfillment)  
-        ├── index.md                   # I[3.3.1] (Context map for carrier integration)  
-        └── tracking/                  # D[3.3.1] (Sub-Domain Level 3: Shipment tracking)  
-            ├── index.md               # I[3.3.2] (Interface description for tracking APIs)  
-            └── dhl_webhook.sql        # S[3.3.1] (Tracking: Database schema for DHL webhook updates)
+└── logistics/                         # D[3] (Domain: Logistics)
+    ├── index.md                       # I[3.1] (Context map for logistics)
+    ├── stock_management.md            # C[3.2] (Concept: Inventory logic & safety stock thresholds)
+    └── shipping/                      # D[3.3] (Sub-Domain: Shipping fulfillment)
+        ├── index.md                   # I[3.3.1] (Shipping context)
+        └── tracking/                  # D[3.3.2] (Sub-Domain: Tracking)
+            ├── index.md               # I[3.3.2.1] (Tracking context)
+            └── dhl_webhook.sql        # S[3.3.2.2] (Snippet: Database schema for DHL webhook updates)
+
+
 ```
 
 In this setup:
