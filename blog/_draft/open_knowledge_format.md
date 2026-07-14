@@ -17,10 +17,11 @@ The system controls knowledge domains exclusively through structure anchors (ind
 **Mathematical Index Chains**
 
 Every system node is mapped to a structural index chain `k`.
-* Let `k` be a sequence of positive integers: `k` = `[x_1, x_2, dots, x_n]`, where `x_i in N+`.
-* Dot-notation represents sequence concatenation: `k.y` = `[x_1, x_2, dots, x_n, y]`.
+* Let `k` be a sequence of positive integers: `k` = `[x1, x2, ..., xn]`, where `xi` are positive integers
+* Dot-notation represents sequence concatenation: `k.y` = `[x1, x2, ..., xn, y]`
 * The string representation of an index chain replaces brackets with raw dot-delimited digits (e.g., `1.4.3.2`).
-* Wildcard notation `[*]` denotes an arbitrary valid index component sequence.
+* Wildcard notation is a placeholder `[*]` denotes an arbitrary valid index component sequence.
+
 
 ## **2. Axioms (Structural Core Laws)**
 
