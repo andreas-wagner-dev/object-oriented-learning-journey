@@ -23,7 +23,6 @@ Every system node is mapped to a structural index chain `k`.
 
 The Wildcard `[*]` notation is a placeholder  denotes an arbitrary valid index component sequence.
 
-
 ## **2. Axioms (Structural Core Laws)**
 
 ### **Root Existence (Root Axiom)**
@@ -46,9 +45,9 @@ A directory may only contain its own structure anchor, concepts belonging to the
 ## 3. Indexing and Recursion Rules
 
 * Structure Anchor (`I`): The very first file in the root directory is always `I[1]`. Every subdirectory `D[k]` contains a structure anchor with the index `I[k.1]` as its first file (saved as `index.md`).
-* Concepts (`C)`: Concepts inherit the index chain k of their domain `D[k]` and extend it with a unique, sequential ID m on that specific level: `C[k.m]`.
-* Snippets (`S`): Snippets inherit the index chain k of their domain `D[k]` and extend it with a unique, sequential ID o on that specific level: `S[k.o]`.
-* Recursion (`D`): Subdirectories inherit the index chain k of the parent directory and extend it with a sequential directory ID n on that specific level: `D[k.n]`.
+* Concepts (`C)`: Concepts inherit the index chain k of their domain `D[k]` and extend it with a unique, sequential ID `m` on that specific level: `C[k.m]`.
+* Snippets (`S`): Snippets inherit the index chain k of their domain `D[k]` and extend it with a unique, sequential ID `o` on that specific level: `S[k.o]`.
+* Recursion (`D`): Subdirectories inherit the index chain k of the parent directory and extend it with a sequential directory ID `n` on that specific level: `D[k.n]`.
 
 ## **4. Abstract Structure Model (Tree)**
 
