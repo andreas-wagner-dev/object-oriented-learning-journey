@@ -90,11 +90,11 @@ E-Commerce-Project/                    # N Root Folder (namespace)
 ├── billing/                           # D[2] (Domain: Billing)
 │   ├── index.md                       # I[2.1] (Billing context)
 │   ├── payment_methods.md             # C[2.2] (Concept)
-│   └── invoices/                      # D[2.3] (Sub-Domain: Invoices)
+│   └── invoice/                       # D[2.3] (Sub-Domain: Invoices)
 │       ├── index.md                   # I[2.3.1] (Invoice context)
 │       └── tax_calculation.md         # C[2.3.2] (Atomic logic: Tax calculation rules)
 │
-└── logistics/                         # D[3] (Domain: Logistics)
+└── logistic/                          # D[3] (Domain: Logistics)
     ├── index.md                       # I[3.1] (Context map for logistics)
     ├── stock_management.md            # C[3.2] (Concept: Inventory logic & safety stock thresholds)
     └── shipping/                      # D[3.3] (Sub-Domain: Shipping fulfillment)
@@ -109,8 +109,8 @@ E-Commerce-Project/                    # N Root Folder (namespace)
 In this setup:
 
 * The folder `customer` remains entirely independent of how nested `payment` details work.
-* The folders under `billing` (like `invoices`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
-* The folders `logistics`, `shipping`, and `tracking` demonstrate recursive refinement without polluting the namespace.
+* The folders under `billing` (like `invoice`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
+* The folders `logistic`, `shipping`, and `tracking` demonstrate recursive refinement without polluting the namespace.
 
 ## 4. Three Pragmatic Rules
 
