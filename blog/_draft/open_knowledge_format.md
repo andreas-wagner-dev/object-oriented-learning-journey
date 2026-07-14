@@ -9,9 +9,9 @@ The system controls knowledge domains exclusively through structure anchors (ind
 ## **1. Definitions**
 
 * **N:**: The root folder / global `namespace` (Level 0).  
-* **I[k]:**: A structure anchor (the `index.md` file) at logical path level `k`
-* **D[k]:**: A directory / knowledge domain at logical path level `k`
-* **C[k.m]:**: A specific concept file within domain `k` with the sequential object number `m`
+* **I[k]:** A structure anchor (the `index.md` file) at logical path level `k`
+* **D[k]:** A directory / knowledge domain at logical path level `k`
+* **C[k.m]:** A specific concept file within domain `k` with the sequential object number `m`
 * **S[k.o]:** A support snippet / asset file within domain `k` with the sequential object number `o`
 
 **Mathematical Index Chains**
