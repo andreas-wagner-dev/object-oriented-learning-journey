@@ -70,7 +70,7 @@ A subdomain `D[k.n]` is always created as a direct child element of a directly s
 A directory may only contain its own structure anchor, concepts belonging to the same level, support snippets, or deeper subdirectories. Loose, unstructured files outside of this pattern are not permitted. Every element in a domain `D[k]` must be either the structure anchor `I[k.1]`, a concept `C[k.m]`, a snippet `S[k.o]`, or a subdomain `D[k.n]`.
 
 
-## 2. Practical Example (E-Commerce Order System)
+## 3. Practical Example (E-Commerce Order System)
 
 Below is a practical application of the OKF mapping a business domain (E-Commerce Orders) without any technical boilerplate clutter.
 
@@ -109,7 +109,7 @@ In this setup:
 * The folders under `billing` (like `invoices`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
 * The folders `logistics`, `shipping`, and `tracking` demonstrate recursive refinement without polluting the namespace.
 
-## 3. Three Pragmatic Rules
+## 4. Three Pragmatic Rules
 
 To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, follow these [three core guidelines](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
 
@@ -120,6 +120,6 @@ To ensure that the file-based knowledge system remains highly readable, intuitiv
 5. **Folders Must Reflect Business Concepts, Not Technical Ones:**  
    Organize by business domains (e.g., `customer/`, `billing/`), not technical roles (`controllers/`, `models/`).
 
-## 4. Summary
+## 5. Summary
 
 The Trick to achieving the next-level readability is focusing heavily on the highest (parent) hierarchy level (Level 0 and 1). By placing files representing the main, high-level business concepts directly at the top levels without technical clutter, anyone (and any AI model) can open the project and immediately understand *what* the system does. The sub-folders then naturally act as chapters, revealing finer details and sub-concepts only as the reader chooses to dive deeper.
