@@ -23,7 +23,6 @@ Every system node is mapped to a structural index chain `k`.
 
 The Wildcard `[*]` notation is a placeholder  denotes an arbitrary valid index component sequence.
 
-
 ## **2. Abstract Structure Model (Tree)**
 
 ```text
@@ -51,7 +50,7 @@ N/                                    # Root folder (Level 0)
         └── D[*.5.2]/                 # D[*.4.2]   (Infinite recursion starts here)
 ```
 
-### 2.1 Axioms (Structural Core Rules)
+### Axioms (Structural Core Rules)
 
 #### Root Existence (Root Axiom)
 
@@ -70,18 +69,8 @@ A subdomain `D[k.n]` is always created as a direct child element of a directly s
 
 A directory may only contain its own structure anchor, concepts belonging to the same level, support snippets, or deeper subdirectories. Loose, unstructured files outside of this pattern are not permitted. Every element in a domain `D[k]` must be either the structure anchor `I[k.1]`, a concept `C[k.m]`, a snippet `S[k.o]`, or a subdomain `D[k.n]`.
 
-### 2.2 Indexing and Recursion Rules
 
-* **Structure Anchor** (`I`): The very first file in the root directory is always `I[1]`.  
-  Every subdirectory `D[k]` contains a structure anchor with the index `I[k.1]` as its first file (saved as `index.md`).
-* **Concepts** (`C)`: Concepts inherit the index chain k of their domain `D[k]`  
-  and extend it with a unique, sequential ID `m` on that specific level: `C[k.m]`.
-* **Snippets** (`S`): Snippets inherit the index chain k of their domain `D[k]`  
-  and extend it with a unique, sequential ID `o` on that specific level: `S[k.o]`.
-* **Recursion** (`D`): Subdirectories inherit the index chain k of the parent directory  
-  and extend it with a sequential directory ID `n` on that specific level: `D[k.n]`.
-
-## 3. Practical Example (E-Commerce Order System)
+## 2. Practical Example (E-Commerce Order System)
 
 Below is a practical application of the OKF mapping a business domain (E-Commerce Orders) without any technical boilerplate clutter.
 
@@ -120,7 +109,7 @@ In this setup:
 * The folders under `billing` (like `invoices`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
 * The folders `logistics`, `shipping`, and `tracking` demonstrate recursive refinement without polluting the namespace.
 
-## 4. Three Pragmatic Rules
+## 3. Three Pragmatic Rules
 
 To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, follow these [three core guidelines](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
 
@@ -129,6 +118,6 @@ To ensure that the file-based knowledge system remains highly readable, intuitiv
 3. **Folders Must Reflect Business Concepts, Not Technical Ones:** Organize by business domains (e.g., `customer/`, `billing/`), not technical roles (`controllers/`, `models/`).
 
 
-## 5. Summary
+## 4. Summary
 
 The Trick to achieving the next-level readability is focusing heavily on the highest (parent) hierarchy level (Level 0 and 1). By placing files representing the main, high-level business concepts directly at the top levels without technical clutter, anyone (and any AI model) can open the project and immediately understand *what* the system does. The sub-folders then naturally act as chapters, revealing finer details and sub-concepts only as the reader chooses to dive deeper.
