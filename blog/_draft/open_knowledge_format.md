@@ -112,7 +112,7 @@ E-Commerce-Project/                    # Root Folder (N)
 
 In this setup:
 
-* The folder `customer` remains entirely independent of how nested billing details work.
+* The folder `customer` remains entirely independent of how nested `payment` details work.
 * The folders under `billing` (like `invoices`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
 * The folders `logistics`, `shipping`, and `tracking` demonstrate recursive refinement without polluting the namespace.
 
