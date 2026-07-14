@@ -51,26 +51,26 @@ N/                                    # Root folder (Level 0)
         └── D[*.5.2]/                 # D[*.4.2]   (Infinite recursion starts here)
 ```
 
-## 2.1 Axioms (Structural Core Rules)
+### 2.1 Axioms (Structural Core Rules)
 
-### Root Existence (Root Axiom)
+#### Root Existence (Root Axiom)
 
 The top level of the bundle (the root folder `N`) must contain exactly one initial structure anchor, designated as `I[1]` (the `index.md` file).
 
-### Domain Existence (Directory Axiom)
+#### Domain Existence (Directory Axiom)
 
 For every existing domain `D[k]`, there must be an associated structure anchor `I[k.1]` (the `index.md` file) as a direct child element. 
 This explicitly declares the context for LLMs on this level.
 
-### Sub-Domain Existence (Sub-Domain Axiom)
+#### Sub-Domain Existence (Sub-Domain Axiom)
 
 A subdomain `D[k.n]` is always created as a direct child element of a directly superior parent domain `D[k]`.
 
-### Exclusive Content Area (Content Rule)
+#### Exclusive Content Area (Content Rule)
 
 A directory may only contain its own structure anchor, concepts belonging to the same level, support snippets, or deeper subdirectories. Loose, unstructured files outside of this pattern are not permitted. Every element in a domain `D[k]` must be either the structure anchor `I[k.1]`, a concept `C[k.m]`, a snippet `S[k.o]`, or a subdomain `D[k.n]`.
 
-## 2.2 Indexing and Recursion Rules
+### 2.2 Indexing and Recursion Rules
 
 * Structure Anchor (`I`): The very first file in the root directory is always `I[1]`. Every subdirectory `D[k]` contains a structure anchor with the index `I[k.1]` as its first file (saved as `index.md`).
 * Concepts (`C)`: Concepts inherit the index chain k of their domain `D[k]` and extend it with a unique, sequential ID `m` on that specific level: `C[k.m]`.
