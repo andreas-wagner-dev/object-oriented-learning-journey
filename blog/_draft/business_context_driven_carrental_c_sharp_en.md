@@ -1003,7 +1003,7 @@ Through the implementation of these rules - supplemented by "Rigid Immutability,
 ## 9. References and Further Reading
 
 * Robert Bräutingam, [Happy-Packaging (2017)](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/)
-* Robert C. Martin,[Screaming-Architecture (2011)](https://blog.cleancoder.com/uncle-bob/2011/09/30/Screaming-Architecture.html)
+* Robert C. Martin, [Screaming-Architecture (2011)](https://blog.cleancoder.com/uncle-bob/2011/09/30/Screaming-Architecture.html)
 * Philipp Hauer, [Package by Feature (2020)](https://phauer.com/2020/package-by-feature/)
 * Mark Seemann, [Composition Root Pattern (2011)](https://blog.ploeh.dk/2011/07/28/CompositionRoot/)
 * Mark Seemann, [Poor Man's DI Pattern (2012)](https://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/)
