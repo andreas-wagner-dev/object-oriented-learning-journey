@@ -36,7 +36,7 @@ sales/
 │   └── weekly_active_users.md
 ```
 
-### 2.1. Mathematical Definitions
+### 2.1. Mathematical Formalization
 
 * **N:** The root folder / global `namespace` (Level 0).  
 * **I[k]:** A structure anchor (the `index.md` file) at logical path level `k`
@@ -44,9 +44,7 @@ sales/
 * **C[k.m]:** A specific concept file within domain `k` with the sequential object number `m`
 * **S[k.o]:** A support snippet / asset file within domain `k` with the sequential object number `o`
 
-**Index Chains**
-
-Every system node is mapped to a structural index chain `k`.
+**Index Chains**: Every tree node is mapped to a structural index chain `k`.
 * Let `k` be a sequence of positive integers: `k` = `[x1, x2, ..., xn]`, where `xi` are positive integers
 * Dot-notation represents sequence concatenation: `k.y` = `[x1, x2, ..., xn, y]`
 * The string representation of an index chain replaces brackets with raw dot-delimited digits (e.g., `1.4.3.2`)  
@@ -89,7 +87,7 @@ The top level of the bundle (the root folder `N`) must contain exactly one initi
 For every existing domain `D[k]`, there must be an associated structure anchor `I[k.1]` (the `index.md` file) as a direct child element. 
 This explicitly declares the context for LLMs on this level.
 
-#### Sub-Domain Existence (Sub-Domain Axiom)
+#### Sub-Domain Existence (Sub-Directory Axiom)
 
 A subdomain `D[k.n]` is always created as a direct child element of a directly superior parent domain `D[k]`.
 
