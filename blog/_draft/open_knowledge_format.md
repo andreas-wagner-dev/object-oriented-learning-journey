@@ -4,9 +4,24 @@ This specification formalizes the [**Open Knowledge Format (OKF)**](https://clou
 It translates the **"LLM-Wiki-Pattern"** into an unambiguous, recursive folder and file structure that can be read, indexed,
 and manipulated by AI agents and humans alike without an translation layer.
 
-The system controls knowledge domains exclusively through structure anchors (index files), category directories, and atomic concepts.
+## 1. Three Pragmatic Rules
 
-## 1. Definitions
+To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, follow these [three core guidelines](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
+
+1. **Folders Should Never Depend on Sub-Folders:**  
+   Dependencies must always point inward (or downward).
+3. **Sub-Folders Do Not Introduce New Concepts, Just More Details:**  
+   A sub-folder must only exist to expand upon, refine, or detail a concept already introduced in its parent folder.
+5. **Folders Must Reflect Business Concepts, Not Technical Ones:**  
+   Organize by business domains (e.g., `customer/`, `billing/`), not technical roles (`controllers/`, `models/`).
+
+The Trick to achieving the next-level readability is focusing heavily on the highest (parent) hierarchy level (Level 0 and 1). By placing files representing the main, high-level business concepts directly at the top levels without technical clutter, anyone (and any AI model) can open the project and immediately understand *what* the system does. The sub-folders then naturally act as chapters, revealing finer details and sub-concepts only as the reader chooses to dive deeper.
+
+## **2. Abstract Structure Model (Tree)**
+
+According to [**Open Knowledge Format (OKF)**](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing?hl=en) the system controls knowledge domains exclusively through structure anchors (index files), category directories, and atomic concepts.
+
+### 2.1. Mathematical Definitions
 
 * **N:** The root folder / global `namespace` (Level 0).  
 * **I[k]:** A structure anchor (the `index.md` file) at logical path level `k`
@@ -14,14 +29,12 @@ The system controls knowledge domains exclusively through structure anchors (ind
 * **C[k.m]:** A specific concept file within domain `k` with the sequential object number `m`
 * **S[k.o]:** A support snippet / asset file within domain `k` with the sequential object number `o`
 
-**Mathematical Index Chains**
+**Index Chains**
 
 Every system node is mapped to a structural index chain `k`.
 * Let `k` be a sequence of positive integers: `k` = `[x1, x2, ..., xn]`, where `xi` are positive integers
 * Dot-notation represents sequence concatenation: `k.y` = `[x1, x2, ..., xn, y]`
 * The string representation of an index chain replaces brackets with raw dot-delimited digits (e.g., `1.4.3.2`)  
-
-## **2. Abstract Structure Model (Tree)**
 
 ```text
 N/                                    # Root folder (Level 0)
@@ -50,7 +63,7 @@ N/                                    # Root folder (Level 0)
 
 The Wildcard `[*]` notation is a placeholder denotes an arbitrary valid index component sequence.
 
-### Axioms (Structural Core Rules)
+### 2.2. Axioms (Structural Core Rules)
 
 #### Root Existence (Root Axiom)
 
@@ -103,7 +116,6 @@ E-Commerce-Project/                    # N Root Folder (namespace)
             ├── index.md               # I[3.3.2.1] (Tracking context)
             └── dhl_webhook.sql        # S[3.3.2.2] (Snippet: Database schema for DHL webhook updates)
 
-
 ```
 
 In this setup:
@@ -112,17 +124,4 @@ In this setup:
 * The folders under `billing` (like `invoice`) do not declare new global contexts; they strictly specialize and detail the concepts introduced in their parent directories.
 * The folders `logistic`, `shipping`, and `tracking` demonstrate recursive refinement without polluting the namespace.
 
-## 4. Three Pragmatic Rules
 
-To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, follow these [three core guidelines](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
-
-1. **Folders Should Never Depend on Sub-Folders:**  
-   Dependencies must always point inward (or downward).
-3. **Sub-Folders Do Not Introduce New Concepts, Just More Details:**  
-   A sub-folder must only exist to expand upon, refine, or detail a concept already introduced in its parent folder.
-5. **Folders Must Reflect Business Concepts, Not Technical Ones:**  
-   Organize by business domains (e.g., `customer/`, `billing/`), not technical roles (`controllers/`, `models/`).
-
-## 5. Summary
-
-The Trick to achieving the next-level readability is focusing heavily on the highest (parent) hierarchy level (Level 0 and 1). By placing files representing the main, high-level business concepts directly at the top levels without technical clutter, anyone (and any AI model) can open the project and immediately understand *what* the system does. The sub-folders then naturally act as chapters, revealing finer details and sub-concepts only as the reader chooses to dive deeper.
