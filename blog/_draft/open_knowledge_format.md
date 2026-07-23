@@ -21,6 +21,21 @@ The Trick to achieving the next-level readability is focusing heavily on the hig
 
 According to [**Open Knowledge Format (OKF)**](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing?hl=en) the system controls knowledge domains exclusively through structure anchors (index files), category directories, and atomic concepts.
 
+```text
+sales/
+├── index.md
+├── datasets/
+│   ├── index.md
+│   └── orders_db.md
+├── tables/
+│   ├── index.md
+│   ├── orders.md
+│   └── customers.md
+├── metrics/
+│   ├── index.md
+│   └── weekly_active_users.md
+```
+
 ### 2.1. Mathematical Definitions
 
 * **N:** The root folder / global `namespace` (Level 0).  
@@ -89,7 +104,7 @@ Below is a practical application of the OKF mapping a business domain (E-Commerc
 
 ```text
 
-E-Commerce-Project/                    # N Root Folder (namespace)
+e-commerce/                            # N Root Folder (namespace)
 ├── index.md                           # I[1] (System overview)
 │
 ├── customer/                          # D[1] (Domain: Customer Context)
