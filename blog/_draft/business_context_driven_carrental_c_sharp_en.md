@@ -160,7 +160,7 @@ Thanks to this analytical starting point, responsibilities are demarcated with s
 
 ### 3.2. Project Package Structure
 
-The packages of an object-oriented system are based on clear OO-Design principles. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts. Classes are also organized hierarchically according to domain concepts and functionally extended using the **Design-Patterns** like *Adapter*, *Decorator*, *Bridge*, etc..
+The packages of an object-oriented system should based on clear OO-Design principles and in combination with stratigic methods of DDD. There are **no layers** in the traditional sense of Clean Architecture or DDD. Instead, **packages are hierarchically organized** according to domain concepts. Classes are also organized hierarchically according to domain concepts and functionally extended using the **Design-Patterns** like *Adapter*, *Decorator*, *Bridge*, etc..
 
 ```
 carrental/
