@@ -260,7 +260,7 @@ The packages do not operate in isolation but rather interlock within a clear log
 #### 3.2.3 Interrelationships between the packages
 
 * `application/` **controls everything (top-down):** As the composition root, this package depends on all other packages. It knows how to assemble the individual decorators (database, cache, logging) for dependency injection.
-* `booking/` **manages the workflow:** The booking system is the user-facing component. It uses `customer/` for customer data and carpool/ for vehicle selection, and initiates the process in payment/ upon success.
+* `booking/` **manages the workflow:** The booking system is the user-facing component. It uses `customer/` for customer data and `carpool/` for vehicle selection, and initiates the process in `payment/` upon success.
 * `payment/` **connects logic and service providers:** It encapsulates the payment logic, utilizing the technical utility package `exchange/paypal/` to do so.
 
 #### 3.2.4 The bridge to the outside world
@@ -272,7 +272,7 @@ The `exchange` package acts as an Anti-Corruption Layer (ACL). It isolates the d
 
 ### 3.3. Key Rules of Packaging and Naming Conventions
 
-### 1) Packages Should Never Depend on Sub-Packages
+#### 1) Packages Should Never Depend on Sub-Packages
 
 Root package = Domain core, independent of everything.
 - e.g., `ICar`, `ICustomer` as interfaces or abstract classes
@@ -280,7 +280,7 @@ Root package = Domain core, independent of everything.
 Sub-packages = Implementations (adapters), dependent on core.
 - e.g., `carpool/ValidCar.cs` implements `ICar`
 
-### 2) Sub-Packages Don't Introduce New Concepts, Only Details
+#### 2) Sub-Packages Don't Introduce New Concepts, Only Details
 
 `car/StoredCar.cs` = detail of car persistence.
 
@@ -288,7 +288,7 @@ No new business concepts in sub-packages that don't exist as interfaces in root.
 
 The `application/` package provide main method + (DI) injections of technical infrastructure.
 
-### 3) Packages and Classes Reflect Business Concepts, Not Technical Roles
+#### 3) Packages and Classes Reflect Business Concepts, Not Technical Roles
 
 ✅ **Recommended: Package names from Context Diagram**
 * `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
