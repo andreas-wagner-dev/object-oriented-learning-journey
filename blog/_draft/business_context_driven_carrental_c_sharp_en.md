@@ -234,7 +234,43 @@ carrental/
 └── ...
 ```
 
-### 3.3. Key Principles of Packaging and Naming Conventions
+#### 3.2.1 The core principle (direction of dependency)
+
+The most important rule of this structure is that all concrete implementations depend on the central domain interfaces located directly in the root package `carrental/`. The application itself is also represented there as the abstraction `ICarRentalApp.cs`.
+
+* **The foundation:** The interfaces in the main directory (`ICar.cs`, `ICustomer.cs`, `ICarPool.cs`) define pure business behavior. They sit at the top of the hierarchy and have no internal dependencies themselves.
+* **The direction:** Packages such as `carpool/` or `customer/` depend directly on these interfaces. They implement them using chains of decorators (e.g., `SimpleCar` → `CachedCar` → `StoredCar`).
+
+#### 3.2.2 Interrelationships between the packages
+
+The packages do not operate in isolation but rather interlock within a clear logical chain:
+
+```
+[application] (Composition Root)
+       │
+       ├──► [booking] (UI & Prozesse) ──► [payment]
+       │         │                            │
+       │         ▼                            ▼
+       ├──► [carpool] / [customer] ◄──────────┘
+       │         │
+       ▼         ▼
+[exchange] (Anti-Corruption Layer / Daten & Infrastruktur)
+```
+
+#### 3.2.3 Interrelationships between the packages
+
+* `application/` **controls everything (top-down):** As the composition root, this package depends on all other packages. It knows how to assemble the individual decorators (database, cache, logging) for dependency injection.
+* `booking/` **manages the workflow:** The booking system is the user-facing component. It uses `customer/` for customer data and carpool/ for vehicle selection, and initiates the process in payment/ upon success.
+* `payment/` **connects logic and service providers:** It encapsulates the payment logic, utilizing the technical utility package `exchange/paypal/` to do so.
+
+#### 3.2.4 The bridge to the outside world
+
+The `exchange` package acts as an Anti-Corruption Layer (ACL). It isolates the domain from external data formats. **These classes DO NOT define business logic**, but rather general functionalities such as text formatting or database access.
+
+* **Dependency direction is top-down:** The domain packages (`carpool/`, `customer/`) use the data structures (DTOs) from `exchange/` to store or send data. 
+* **The connections:** `carpool/StoredCar` uses `exchange/storage/` (EF Core) for the database; `carpool/ServedCarPool` uses `exchange/resource/` for the REST interface; `carpool/PublishedCar` uses `exchange/messaging/` for Kafka events.
+
+### 3.3. Key Rules of Packaging and Naming Conventions
 
 ### 1) Packages Should Never Depend on Sub-Packages
 
