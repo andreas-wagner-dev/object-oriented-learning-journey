@@ -175,15 +175,15 @@ carrental/
 │   ├── CachedCarPool.cs         ← Cache Decorator
 │   ├── LoggedCar.cs             ← Logging Decorator
 │   ├── SimpleCar.cs             ← Default Decorator (Factory of cars in DDD)
-│   ├── StoredCar.cs             ← Database Decorator (use DTO's from exchange/storage/)
-│   ├── StoredCarPool.cs         ← Database Decorator (use DTO's from exchange/storage/)
+│   ├── PersistentCar.cs         ← Persistence Decorator (use DTO's from exchange/storage/)
+│   ├── PersistentCarPool.cs     ← Persistence Decorator (use DTO's from exchange/storage/)
 │   ├── ServedCarPool.cs         ← REST service for cars (use DTO's from exchange/resource/)
 │   ├── PublishedCar.cs          ← Kafka Producer of Events (use DTO's from exchange/messaging/)
 │   ├── ReceivedCar.cs           ← Kafka Consumer of Message (use DTO's from exchange/messaging/)
 │   └── ValidCar.cs              ← Validation Decorator
 ├── customer/
-│   ├── StoredCustomer.cs        ← Database Decorator
-│   ├── StoredCustomers.cs       ← Database Decorator
+│   ├── PersistentCustomer.cs    ← Persistence Decorator
+│   ├── PersistentCustomers.cs   ← Persistence Decorator
 │   ├── NotifiedCustomer.cs      ← Email Decorator (use SmtpsEmail from exchange/mailing/)
 │   └── ...cs
 ├── exchange/                    → Anti-Corruption Layer
@@ -217,11 +217,11 @@ carrental/
 │   │   ├── Control.cs               ← abstract Control
 │   │   ├── Layout.cs                ← abstract Layout (Helper/Util)
 │   │   ├── Page.cs                  ← abstract Page extends Control
-│   │   ├── StoredUser.cs            ← Db Decorator
+│   │   ├── PersistentUser.cs        ← Persistence Decorator
 │   │   └── WebUser.cs               ← Web/Session Decorator
 │   ├── IUser.cs                     ← Domain Interface
 │   ├── IUsers.cs                    ← Domain Collection Interface
-│   ├── StoredReservation.cs         ← Database Decorator
+│   ├── PersistentReservation.cs     ← Persistence Decorator
 │   ...
 ├── CarNumber.cs                 ← Shared/Util/Helper for all packages
 ├── ICar.cs                      ← Domain Interface
@@ -239,7 +239,7 @@ carrental/
 The most important rule of this structure is that all concrete implementations depend on the central domain interfaces located directly in the root package `carrental/`. The application itself is also represented there as the abstraction `ICarRentalApp.cs`.
 
 * **The foundation:** The interfaces in the main directory (`ICar.cs`, `ICustomer.cs`, `ICarPool.cs`) define pure business behavior. They sit at the top of the hierarchy and have no internal dependencies themselves.
-* **The direction:** Packages such as `carpool/` or `customer/` depend directly on these interfaces. They implement them using chains of decorators (e.g., `SimpleCar` → `CachedCar` → `StoredCar`).
+* **The direction:** Packages such as `carpool/` or `customer/` depend directly on these interfaces. They implement them using chains of decorators (e.g., `SimpleCar` → `CachedCar` → `PersistentCar`).
 
 #### 3.2.2 Interrelationships between the packages
 
@@ -268,7 +268,7 @@ The packages do not operate in isolation but rather interlock within a clear log
 The `exchange` package acts as an Anti-Corruption Layer (ACL). It isolates the domain from external data formats. **These classes DO NOT define business logic**, but rather general functionalities such as text formatting or database access.
 
 * **Dependency direction is top-down:** The domain packages (`carpool/`, `customer/`) use the data structures (DTOs) from `exchange/` to store or send data. 
-* **The connections:** `carpool/StoredCar` uses `exchange/storage/` (EF Core) for the database; `carpool/ServedCarPool` uses `exchange/resource/` for the REST interface; `carpool/PublishedCar` uses `exchange/messaging/` for Kafka events.
+* **The connections:** `carpool/PersistentCar` uses `exchange/storage/` (EF Core) for the database; `carpool/ServedCarPool` uses `exchange/resource/` for the REST interface; `carpool/PublishedCar` uses `exchange/messaging/` for Kafka events.
 
 ### 3.3. Key Rules of Packaging and Naming Conventions
 
@@ -282,7 +282,7 @@ Sub-packages = Implementations (adapters), dependent on core.
 
 #### 2) Sub-Packages Don't Introduce New Concepts, Only Details
 
-`car/StoredCar.cs` = detail of car persistence.
+`car/PersistentCar.cs` = detail of car persistence.
 
 No new business concepts in sub-packages that don't exist as interfaces in root.
 
@@ -310,9 +310,9 @@ They describe the essence of things and represent the **"what."**
 
 **Classes describe the context (prefix-based):** Class names function like adjectives, describing the current state or the result of an action.
 
-* `CachedCar`, `StoredCar`, `ValidCar`
+* `CachedCar`, `PersistentCar`, `ValidCar`
 * `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
-* `InMemoryCar`, `StoredCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
+* `InMemoryCar`, `PersistentCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
 * `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
 * `CarRentalApp` in `application/` (implementation of `ICarRentalApp` interface)
 
@@ -445,21 +445,21 @@ public class SimpleCar : ICar
 
 ```
 
-#### 4.3.2. The Vehicle Persistence Decorator (carpool/StoredCar.cs)
+#### 4.3.2. The Vehicle Persistence Decorator (carpool/PersistentCar.cs)
 
-This decorator intercepts the Reserve call, triggers the logical state transformation on the underlying instance, and immediately synchronizes the result with the Entity Framework database model. It then wraps the newly created state as a StoredCar.
+This decorator intercepts the Reserve call, triggers the logical state transformation on the underlying instance, and immediately synchronizes the result with the Entity Framework database model. It then wraps the newly created state as a PersistentCar.
 
 ```csharp
 using CarRental.Exchange.Storage;
 
 namespace CarRental.CarPool;
 
-public class StoredCar : ICar
+public class PersistentCar : ICar
 {
     private readonly ICar _origin;
     private readonly CarDbContext _dbContext;
 
-    public StoredCar(ICar origin, CarDbContext dbContext)
+    public PersistentCar(ICar origin, CarDbContext dbContext)
     {
         _origin = origin;
         _dbContext = dbContext;
@@ -484,7 +484,7 @@ public class StoredCar : ICar
         }
 
         // 3. Decorate the fresh state instance with persistence capabilities again
-        return new StoredCar(nextCarState, _dbContext);
+        return new PersistentCar(nextCarState, _dbContext);
     }
 }
 ```
@@ -523,25 +523,25 @@ public class SimpleCustomer : ICustomer
 }
 ```
 
-#### 4.3.4. The Customer Persistence Decorator (`customer/StoredCustomer.cs`)
+#### 4.3.4. The Customer Persistence Decorator (`customer/PersistentCustomer.cs`)
 
-Because vehicle persistence is completely handled by `StoredCar`, the `StoredCustomer` simply routes the invocation down the pipeline. It remains isolated, focusing purely on customer-specific updates if required by future business features.
+Because vehicle persistence is completely handled by `PersistentCar`, the `PersistentCustomer` simply routes the invocation down the pipeline. It remains isolated, focusing purely on customer-specific updates if required by future business features.
 
 ```csharp
 namespace CarRental.Customer;
 
-public class StoredCustomer : ICustomer
+public class PersistentCustomer : ICustomer
 {
     private readonly ICustomer _origin;
 
-    public StoredCustomer(ICustomer origin) => _origin = origin;
+    public PersistentCustomer(ICustomer origin) => _origin = origin;
 
     public string Id() => _origin.Id();
     public string Name() => _origin.Name();
 
     public ICar Rent(ICar car, DateTime from, DateTime to)
     {
-        // Cascades through the pipeline (validated by SimpleCustomer, saved by StoredCar)
+        // Cascades through the pipeline (validated by SimpleCustomer, saved by PersistentCar)
         ICar reservedCar = _origin.Rent(car, from, to);
 
         // (Optional: Perform customer-specific DB modifications here)
@@ -556,8 +556,8 @@ When executing this flow within an API Controller or a Use Case endpoint, the ha
 
 ```csharp
 // Inside an API Endpoint / Use Case action:
-ICustomer customer = _app.Customers().WithId(customerId); // e.g., a StoredCustomer chain
-ICar car = _app.CarPool().CarOf(carId);                   // e.g., a StoredCar chain
+ICustomer customer = _app.Customers().WithId(customerId); // e.g., a PersistentCustomer chain
+ICar car = _app.CarPool().CarOf(carId);                   // e.g., a PersistentCar chain
 
 // The entire process runs side-effect free across all decorators.
 // Databases update, validation guards execute, and clean states flow.
@@ -611,10 +611,10 @@ public class CarRentalApp : ICarRentalApp
     
     public ICarPool CarPool() 
     {
-        // Composition Logic: CachedCarPool -> StoredCarPool
+        // Composition Logic: CachedCarPool -> PersistentCarPool
         // Infrastructure dependencies are resolved, then decorated with cross-cutting concerns.
         return new CachedCarPool(
-            new StoredCarPool(
+            new PersistentCarPool(
                 _services.GetRequiredService<CarDbContext>()
             ),
             _services.GetRequiredService<IMemoryCache>()
@@ -623,9 +623,9 @@ public class CarRentalApp : ICarRentalApp
 
     public ICustomers Customers() 
     {   
-        // Composition Logic: StoredCustomers wrapping the database engine
-        // optional: CachedCustomers(StoredCustomers(_services.GetRequiredService<CarDbContext>()))
-        return new StoredCustomers(
+        // Composition Logic: PersistentCustomers wrapping the database engine
+        // optional: CachedCustomers(PersistentCustomers(_services.GetRequiredService<CarDbContext>()))
+        return new PersistentCustomers(
             _services.GetRequiredService<CarDbContext>()
         );
     }
@@ -636,7 +636,7 @@ public class CarRentalApp : ICarRentalApp
 
 **No Service Locator Anti-Pattern in Domain:** Because `_services.GetRequiredService` is confined inside the Composition Root (`CarRentalApp`), the domain packages (`carpool/`, `customer/`) remain completely clean. They use standard Constructor Injection and have no compile-time dependency on framework DI containers.
 
-**Compile-Time Traceable Pipelines:** The nesting order of the pipelines (e.g., `CachedCarPool` wrapping `StoredCarPoo`l) is explicitly readable as raw code. If a decorator composition needs to change (for instance, removing a cache or adding an audit log), it happens strictly inside these factory methods.
+**Compile-Time Traceable Pipelines:** The nesting order of the pipelines (e.g., `CachedCarPool` wrapping `PersistentCarPoo`l) is explicitly readable as raw code. If a decorator composition needs to change (for instance, removing a cache or adding an audit log), it happens strictly inside these factory methods.
 
 **Decoupled Application Shells:** If we need to switch from an ASP.NET Core Web API to a console-based CLI or a serverless AWS Lambda function, we only swap out or add a new entry point class inside `application/`. The business context, domain interfaces, and decorator pipelines remain untouched.
 
@@ -664,7 +664,7 @@ carrental-text                ← Textformatting library with DTOs/helper classe
 carrental-...                 ← other framework or library
 ```
 
-The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level. For example, if we are using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF classes in the package `carpool/` behind a class like `StoredCar.cs`, which is designed as a `Decorator`, `Bridge` or `Adapter` pattern.
+The classes in these technical projects can then be used in the business packages of **carrental** project - starting at the first level. For example, if we are using ORMs like EF Core, isolate them in a **separate project** `storage` and then use EF classes in the package `carpool/` behind a class like `PersistentCar.cs`, which is designed as a `Decorator`, `Bridge` or `Adapter` pattern.
 
 
 ### 5.2 Option 2: Single-Project Logical Isolation (Small to Mid-Sized Codebases)
@@ -676,7 +676,7 @@ carrental/
 ├── application/ 
 ├── carpool/
 │   ├── ...Car.cs       
-│   └── StoredCar.cs             ← Uses exchange/storage/ for persistence
+│   └── PersistentCar.cs        ← Uses exchange/storage/ for persistence
 ├── exchange/
 │   ├── resource/                → REST classes JSON/XML DTOs
 │   ├── storage/                 ← EF Core Entity       
@@ -696,7 +696,7 @@ carrental/
 
 **Strict Rules of the Exchange Architectural Boundary:**
 
-* **Unidirectional Dependency Flow:** Domain adapters (such as `StoredCar` in `carpool/`) are allowed to import and look down into the data schemas of the `exchange/` package.
+* **Unidirectional Dependency Flow:** Domain adapters (such as `PersistentCar` in `carpool/`) are allowed to import and look down into the data schemas of the `exchange/` package.
 * **Absolute Root Ignorance:** Interfaces and value objects sitting at level "0" (the root package directory like `ICar.cs`) must never import or mention data objects, entities, or libraries originating from `exchange/`.
 * **No Cross-Border Contamination:** The `exchange/storage/` package must exclusively deal with persistence mechanisms. It has no say over business decisions.
 
@@ -750,7 +750,7 @@ public class CarDbContext : DbContext
 
 Because these EF Core configurations are completely boxed into the `exchange/` layer, our domain core remains highly malleable. 
 * If the team decides tomorrow to drop Entity Framework Core and rewrite the data layer using raw `Dapper SQL` queries or migrate entirely to a document store like *MongoDB*, not a single line of business logic or domain interface needs to change.
-* We simply update the contents of the `exchange/storage/` folder and adjust the construction steps inside the `StoredCar` and `CarRentalApp` factories.
+* We simply update the contents of the `exchange/storage/` folder and adjust the construction steps inside the `PersistentCar` and `CarRentalApp` factories.
 
 
 ## 6. Architectural Evolution Path
@@ -841,8 +841,8 @@ carrental-carpool-messaging   ← AVRO Schema generation of DTOs
 ```
 carrental-customer             ← project of customer bounded context 
 ├── customer/                  → depends on: customer-endpoint, *-resource, *-storage, -*-mailing
-│   ├── StoredCustomer.cs      ← Database Decorator (use EF-Core and -Entities from ...-*-storage project)
-│   ├── StoredCustomers.cs     ← Database Decorator (use EF-Core and -Entities from ...-*-storage project)
+│   ├── PersistentCustomer.cs  ← Database Decorator (use EF-Core and -Entities from ...-*-storage project)
+│   ├── PersistentCustomers.cs ← Database Decorator (use EF-Core and -Entities from ...-*-storage project)
 │   ├── NotifiedCustomer.cs    ← Email Decorator (use SmtpsEmail from ...-customer-mailing project)
 │   └── ...cs
 ├── CarId.cs                   ← Value Object
@@ -1028,8 +1028,8 @@ com.company.carrental                  com.company.carrental
 
 To elevate our project structures to this next level of maintainability, readability, and evolutionary capability, adhere to these [Three Golden Rules](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
 1. **Packages Never Depend on Sub-Packages:** The root package folder defines our absolute domain core. It remains pure and completely independent. Sub-packages depend on the core to implement its details, never the other way around.
-2. **Sub-Packages Introduce Details, Not new Concepts:** A sub-package file (like `carpool/StoredCar.cs`) must only provide a technological refinement of an existing domain abstraction. It is forbidden from inventing unmapped business capabilities.
-3. **Represent Business Concepts, Not Technical Patterns:** Abolish prozedural suffixes and organizational patterns like `*Service`, `*Repository`, `*Handler`, and `*DTO`. Name the components as real-world nouns prefixed with their direct functional outcome (e.g., `StoredCar`, `CachedCarPool`, `ValidCustomer`).
+2. **Sub-Packages Introduce Details, Not new Concepts:** A sub-package file (like `carpool/PersistentCar.cs`) must only provide a technological refinement of an existing domain abstraction. It is forbidden from inventing unmapped business capabilities.
+3. **Represent Business Concepts, Not Technical Patterns:** Abolish prozedural suffixes and organizational patterns like `*Service`, `*Repository`, `*Handler`, and `*DTO`. Name the components as real-world nouns prefixed with their direct functional outcome (e.g., `PersistentCar`, `CachedCarPool`, `ValidCustomer`).
 
 Through the implementation of these rules - supplemented by "Rigid Immutability," "Pipeline Decorators," and an "Anti-Corruption Layer" our code ceases to be an unreadable jumble of framework instructions. It transforms into an executable narrative that directly reflects the business domain, scales cleanly across product milestones, and permanently bridges the translation gap.
 
