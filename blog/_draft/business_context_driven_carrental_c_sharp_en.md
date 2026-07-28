@@ -43,11 +43,12 @@ com.company.carrental
 **Example 2:** Clean Architecture (Robert C. Martin)
 ```
 com.company.carrental
+├── application/
+│   ├── usecase/
+│   └── service/
 ├── domain/
 │   ├── entity/
-│   ├── usecase/
-│   └── port/
-├── application/
+│   └── valueobject/
 ├── infrastructure/
 │   ├── adapter/
 │   ├── database/
