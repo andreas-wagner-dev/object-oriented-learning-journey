@@ -797,7 +797,7 @@ Moving to Phase 2 means breaking the single assembly into separate, decoupled pr
 
 > “Better duplication than the wrong abstraction.” — Sandi Metz
 
-To maximize system autonomy, the **shared kernel** project or `Common/` module must be entirely eliminated. Cross-context structural models - such as `CarId`, `CustomerId`, and `PaymentId` value objects - are intentionally duplicated directly inside the contexts that consume them.
+To maximize system autonomy, the **shared kernel** project or `common/` module must be entirely eliminated. Cross-context structural models - such as `CarId`, `CustomerId`, and `PaymentId` value objects - are intentionally duplicated directly inside the contexts that consume them.
 
 ```
 carrental-service              ← Deployable Unit
@@ -813,7 +813,7 @@ carrental-service              ← Deployable Unit
 
 * **Total Autonomy:** Context teams can evolve internal primitive behaviors without risk of breaking downward dependencies.
 * **Anti-Bloat Protection:** It blocks generic folders from becoming unchecked junk drawers for unrelated code fragments.
-* **Semantic Drift Resolution:** A CustomerId model parsing behavior in the billing module may require completely different validations than a CustomerId record utilized by marketing analytics. Depending on repository size and IDE preference, we can organize these decoupled boundaries using a Flat Layout or a Hierarchical Layout.
+* **Semantic Drift Resolution:** A `CustomerId` model parsing behavior in the billing module may require completely different validations than a `CustomerId` record utilized by marketing analytics. Depending on repository size and IDE preference, we can organize these decoupled boundaries using a Flat Layout or a Hierarchical Layout.
 
 
 #### 6.2.2. Project Layouts - Revised Structure
