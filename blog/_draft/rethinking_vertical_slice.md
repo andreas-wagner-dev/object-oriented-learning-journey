@@ -129,13 +129,28 @@ Wenn ein Softwareentwickler oder Architekt ein neues Projekt öffnet, möchte er
 **1. Sofortige fachliche Orientierung**  
 Die Ordnerstruktur sollte das System-Kontext-Diagramm 1:1 abbilden. Wenn das Business aus Buchungen, Kunden und Zahlungen besteht, müssen genau diese Begriffe die oberste Ebene dominieren. Der Entwickler will sofort sehen: „Ah, das ist ein Autovermietungssystem!“ und nicht „Das ist ein ASP.NET-Projekt mit MediatR.“
 
-**3. Funktionale Navigation ohne Such-Odyssee**  
+**2. Funktionale Navigation ohne Such-Odyssee**  
 Wenn ein Fehler im PayPal-Prozess auftritt, will der Entwickler nicht erst überlegen müssen, welches globale Shared-Modul oder welche Querverlinkung im Features-Ordner dafür zuständig ist. Die Struktur muss intuitiv sein: Payment öffnen -> PayPal öffnen -> Fehler beheben. Alles, was fachlich zu PayPal gehört, muss genau dort gekapselt sein.
 
-**5. Technische Details im Hintergrund**  
+**3. Technische Details im Hintergrund**  
 Frameworks, Controller, HTTP-Schnittstellen und Datenbank-Treiber sind austauschbare Werkzeuge. Sie sind Mittel zum Zweck, nicht der Zweck selbst. Ein Entwickler möchte, dass diese technischen Details visuell in den Hintergrund treten. Sie gehören als Implementierungsdetails in das jeweilige Fachgebiet, anstatt das Projekt von außen zu umklammern.
 
 **Kurz gesagt:** *Die Architektur muss nach dem Business schreien, nicht nach der eingesetzten Technologie.*
+
+
+## Die Brücke zur Realität: Vom Wunschbild zur konkreten Struktur
+
+Um dieses fachliche Wunschbild – eine Architektur, die nach Autovermietung schreit – in die Realität umzusetzen, müssen wir die gewohnten Trampelpfade der klassischen Vertical Slices verlassen. Wir dürfen Slices nicht mehr als flache, isolierte Datei-Schubladen betrachten, sondern als lebendige, hierarchische Domänen-Module. 
+
+Hierfür wenden wir die folgenden Strukturierungsregeln an:
+
+1. Klassen in Paketen sollten niemals von Klassen in Unterpaketen abhängen.  
+2. Klassen in Unterpaketen sollten keine neuen Konzepte einführen, sondern lediglich weitere Details zu den Konzepten der übergeordneten Pakete liefern.  
+3. Klassen und Pakete sollten ausschließlich fachliche Konzepte widerspiegeln, keine technischen.
+
+Wenn wir die zuvor definierten drei eisernen Paketierungsregeln (keine Aufwärts-Abhängigkeiten, Unterpakete als Detail-Verfeinerung, Fachlichkeit vor Technik) konsequent anwenden, verschwinden die künstlichen Mauern zwischen Features, Infrastruktur und Shared. Sie verschmelzen zu einer Einheit, die sich exakt mit unserem System-Kontext-Diagramm deckt.
+
+Schauen wir uns nun an, wie radikal sich das Gesicht unseres Projekts verändert, wenn wir die technische Brille absetzen und die fachliche Struktur sprechen lassen:
 
 ```
 src/
