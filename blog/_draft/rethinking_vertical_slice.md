@@ -67,8 +67,8 @@ src/
 
 
 ```csharp
-using Microsoft.Extensions
-    .DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+
 using CarRental.Booking;
 using CarRental.CarPool;
 using CarRental.Customer;
