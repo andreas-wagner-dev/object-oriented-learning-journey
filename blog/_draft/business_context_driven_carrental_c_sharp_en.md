@@ -350,7 +350,7 @@ carrental/             ← Never knows about technical details
 ├── ...
 ├── ICar.cs           ← The rented asset (Immutable / Read-Only)
 ├── ICustomer.cs      ← The primary actor of the domain (Root)
-├── ICustomers.cs     ← Domain collection abstraction (Repository)
+├── ICustomers.cs     ← The group/collection of actors (NOT a Repository)
 ├── ICarRentalApp.cs  ← The system entry point (Composition Root Interface)
 └── ...
 ```
