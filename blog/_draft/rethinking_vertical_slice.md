@@ -217,14 +217,86 @@ src/
 
 ```
 
+Die `CarRentalApp.cs` enthält die Main-Methode innerhalb Namespaces, um den Bootstrapping-Prozess der Anwendung explizit zu steuern. Die Web-Infrastruktur, die Composition Root-Dienste und die HTTP-Pipeline werden innerhalb dieser Methode eingerichtet.
+
+
+ **1. CarRentalApp.cs (Der Einstiegspunkt)**
+
+`CarRentalApp.cs` startet den Prozess und lädt die Einstellungen (inklusive `CarRentalSettings.json`). Sie reicht die Konfiguration an `CarRentalDI.cs` weiter. `CarRentalDI.cs` extrahiert die `PayPalOptions` und konfiguriert den typisierten `HttpClient<PayPal>` für den Anti-Corruption Layer.
+
+```csharp
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions
+    .DependencyInjection;
+
+namespace CarRental.Application;
+
+public class CarRentalApp
+{
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+
+        // 1. Web-Infrastruktur hinzufügen
+        builder.Services.AddControllers();
+
+        // 2. Composition Root aufrufen und Konfiguration mitgeben
+        builder.Services.AddCarRentalServices(builder.Configuration);
+
+        var app = builder.Build();
+
+        // 3. HTTP-Pipeline konfigurieren
+        app.UseRouting();
+        app.MapControllers();
+
+        // 4. Anwendung starten
+        app.Run();
+    }
+}
+```
+
+📄 1. CarRentalSettings.json
+Hier hinterlegen wir die technischen Parameter für unsere Infrastruktur und den PayPal-ACL.
+
+```json
+
+{
+  "PayPal": {
+    "BaseUrl": "https://paypal.com",
+    "TimeoutSeconds": 30
+  }
+}
+```
+
+🛠️ 2. Das Options-Modell (Im Modul `CarRental.Payment/PayPal/`)
+
+Ein einfacher, unveränderlicher Datensatz (Record), der exakt der Struktur im JSON entspricht. 
+
+```csharp
+namespace CarRental.Payment.PayPal`;
+
+public record PayPalOptions
+{
+    public string BaseUrl { get; init; } 
+        = string.Empty;
+    public int TimeoutSeconds { get; init; } 
+        = 15;
+}
+```
+
+**3. Integration in CarRentalDI.cs (Composition Root)**
+
+Wir lesen die Konfigurationssektion mithilfe des IConfiguration-Objekts aus, registrieren sie im DI-Container und konfigurieren den zugehörigen HttpClient direkt mit diesen Werten.
 
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
-
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using CarRental.Booking;
 using CarRental.CarPool;
 using CarRental.Customer;
 using CarRental.Payment;
+using CarRental.Payment.PayPal;
 
 namespace CarRental.Application;
 
@@ -232,8 +304,14 @@ public static class CarRentalDI
 {
     public static IServiceCollection 
         AddCarRentalServices(
-            this IServiceCollection services)
+            this IServiceCollection services,
+            IConfiguration configuration)
     {
+        // --- CONFIGURATION BINDING ---
+        // Bindet die JSON-Sektion an das Options-Modell
+        services.Configure<PayPalOptions>(
+            configuration.GetSection("PayPal"));
+
         // --- 1. BOOKING MODUL ---
         services.AddScoped<
             IReservations, 
@@ -259,16 +337,30 @@ public static class CarRentalDI
                     PersistentCustomers>()
             ));
 
-        // --- 4. PAYMENT MODUL ---
-        services.AddScoped<IPayment, 
-            PayPalPayment>();
+        // --- 4. PAYMENT MODUL (Mit HttpClient & Options) ---
+        // Registriert den technischen PayPal-HTTP-Client mit den Optionen
+        services.AddHttpClient<PayPal>((sp, client) =>
+        {
+            var options = sp
+                .GetRequiredService<IOptions<PayPalOptions>>()
+                .Value;
+
+            client.BaseAddress = new Uri(options.BaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(
+                options.TimeoutSeconds);
+        });
+
+        services.AddScoped<IPayment, PayPalPayment>();
 
         return services;
     }
 }
 
-
 ```
+
+* **Explizite Kontrolle:** Durch die Main-Methode in der `CarRentalApp` wird der Startprozess von ASP.NET Core klassisch und transparent instanziiert.
+* **Saubere Trennung:** Die `CarRentalApp` kümmert sich ausschließlich um das technische Bootstrapping des Webservers (Routing, HTTP-Pipeline). Sie delegiert die gesamte fachliche und infrastrukturelle Verdrahtung sofort an die Erweiterungsmethode `.AddCarRentalServices()` in der `CarRentalDI.cs`.
+
 ## Fazit
 
 Wer Vertical Slices zu flach und rein technisch baut, erntet schnell Chaos. Indem wir hierarchische Domänen-Pakete, das Decorator-Muster und eine zentrale Composition Root nutzen, bleibt die Codebasis hochgradig modular. Technische Details verblassen – was bleibt, ist eine Softwarestruktur, die wie ein Buch über dein echtes Geschäft lesbar ist.
