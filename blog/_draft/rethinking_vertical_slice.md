@@ -226,8 +226,7 @@ Die `CarRentalApp.cs` enthält die Main-Methode innerhalb Namespaces, um den Boo
 
 ```csharp
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions
-    .DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CarRental.Application;
 
@@ -277,10 +276,8 @@ namespace CarRental.Payment.PayPal`;
 
 public record PayPalOptions
 {
-    public string BaseUrl { get; init; } 
-        = string.Empty;
-    public int TimeoutSeconds { get; init; } 
-        = 15;
+    public string BaseUrl { get; init; } = string.Empty;
+    public int TimeoutSeconds { get; init; } = 15;
 }
 ```
 
@@ -302,24 +299,17 @@ namespace CarRental.Application;
 
 public static class CarRentalDI
 {
-    public static IServiceCollection 
-        AddCarRentalServices(
-            this IServiceCollection services,
-            IConfiguration configuration)
+    public static IServiceCollection AddCarRentalServices(this IServiceCollection services, IConfiguration configuration)
     {
         // --- CONFIGURATION BINDING ---
         // Bindet die JSON-Sektion an das Options-Modell
-        services.Configure<PayPalOptions>(
-            configuration.GetSection("PayPal"));
+        services.Configure<PayPalOptions>(configuration.GetSection("PayPal"));
 
         // --- 1. BOOKING MODUL ---
-        services.AddScoped<
-            IReservations, 
-            PersistentReservations>();
+        services.AddScoped<IReservations, PersistentReservations>();
 
         // --- 2. CAR POOL MODUL ---
-        services.AddScoped<
-            PersistentCarPool>();
+        services.AddScoped<PersistentCarPool>();
             
         services.AddScoped<ICarPool>(sp => 
             new CachedCarPool(
@@ -328,8 +318,7 @@ public static class CarRentalDI
             ));
 
         // --- 3. CUSTOMER MODUL ---
-        services.AddScoped<
-            PersistentCustomers>();
+        services.AddScoped<PersistentCustomers>();
             
         services.AddScoped<ICustomers>(sp => 
             new NotifiedCustomer(
@@ -341,13 +330,10 @@ public static class CarRentalDI
         // Registriert den technischen PayPal-HTTP-Client mit den Optionen
         services.AddHttpClient<PayPal>((sp, client) =>
         {
-            var options = sp
-                .GetRequiredService<IOptions<PayPalOptions>>()
-                .Value;
+            var options = sp.GetRequiredService<IOptions<PayPalOptions>>().Value;
 
             client.BaseAddress = new Uri(options.BaseUrl);
-            client.Timeout = TimeSpan.FromSeconds(
-                options.TimeoutSeconds);
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
         });
 
         services.AddScoped<IPayment, PayPalPayment>();
