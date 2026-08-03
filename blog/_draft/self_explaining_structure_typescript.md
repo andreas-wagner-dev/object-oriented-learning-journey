@@ -71,7 +71,7 @@ Through this orchestration, the core business logic remains entirely untouched b
 
 *"Take the movie pool, secure it with authentication, accelerate it with a cache, and present it to the user in the catalog."*
 
-## **The Final Architecture Schema**
+## **The Schema for a Structure**
 
 Applying these principles consistently yields a clean, self-explaining project structure:
 
