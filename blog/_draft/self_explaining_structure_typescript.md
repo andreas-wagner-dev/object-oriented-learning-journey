@@ -1,6 +1,6 @@
 # **Self-Explaining Software Structure: Code That Tells a Story**
 
-The best architecture is the one that requires little to no explanation. When developers open a new project and immediately see folders like `components/`, `controllers/`, or `services/`, they learn a lot about the framework being used, but absolutely nothing about the customer's core business.
+The best code structure is the one that requires little to no explanation. When developers open a new project and immediately see folders like `components/`, `controllers/`, or `services/`, they learn a lot about the framework being used, but absolutely nothing about the customer's core business.
 
 The following philosophy breaks away from this framework-centric mindset. It radically shifts focus toward a domain- and customer-oriented structure where the folder hierarchy itself tells the **Customer Story**.
 
