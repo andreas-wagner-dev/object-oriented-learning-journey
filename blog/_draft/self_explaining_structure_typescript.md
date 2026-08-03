@@ -10,7 +10,7 @@ To elevate code to the next level of clarity, three fundamental structural rules
 
 1. **Packages Must Never Depend on Sub-Packages:** The dependency flow is a strict one-way top-down street. A parent package orchestrates, but remains unaware of how its sub-package details are implemented.  
 2. **Sub-Packages Introduce No New Concepts:** They do not bring new business domain logic into play; they merely provide further details and technical implementations for concepts already established on Level 0.  
-3. **Packages Must Reflect Business Concepts, Not Technical Ones:** Framework terminology is eliminated. For example, the user interface is organized inside a package named `user/`. The UI exists solely because a human (*User*) interacts with the system—it is an interaction concept, not a purely technical routing detail.
+3. **Packages Must Reflect Business Concepts, Not Technical Ones:** Framework terminology is eliminated. For example, the user interface is organized inside a package named `user/`. The UI exists solely because a human (*User*) interacts with the system—it is an interaction concept, not a purely technical routing detail - often name as `ui/` or `view/`.
 
 ## **The Schema of Exemplary Structure**
 
