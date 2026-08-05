@@ -1,5 +1,12 @@
 # Rethinking Vertical Slice: Architektur neu gedacht
 
+Die von Jimmy Bogard populär gemachte Vertical Slice Architecture (VSA) gilt als konsequente Evolution der Clean Architecture. Während Clean Architecture Abhängigkeiten über konzentrische Ringe hinweg nach innen auf eine isolierte Domäne ausrichtet, bricht VSA diese horizontalen Barrieren auf. Die Anwendung wird stattdessen vertikal nach Features geschnitten. Das Ziel: minimale Kopplung zwischen den Slices, maximale Kohäsion im Inneren. Jedes Feature kontrolliert seine Logik, Validierung und Datenquelle selbst.
+
+Obwohl diese Struktur als sinnvolle Verfeinerung die Kopplung effektiv minimiert, löst sie das eigentliche Kernproblem nicht, sondern kann das Chaos im Projektalltag sogar noch verschlimmern. Das fundamentale Problem bleibt das Festhalten an einer rein technischen Denkweise statt einer konsequent fachlichen Ausrichtung. Denn das Business denkt nicht in diesen Kategorien. Die altbekannten Probleme der Clean Architecture bleiben bestehen – sie werden lediglich direkt in den einzelnen Slice verlagert. Anstatt die technischen Schichten wirklich aufzulösen, baut die klassische VSA-Praxis in jedem einzelnen Feature-Ordner eine isolierte Mini-Schichtenarchitektur aus CQRS- und MediatR-Mustern auf. Das technische Denken dominiert weiterhin die Struktur.
+
+==================
+
+
 Die Vertical Slice Architecture (VSA) hat die Softwareentwicklung revolutioniert, indem sie technische Schichten (Controller, Service, Repository) aufbrach und Features in den Fokus rückte. Doch in der Praxis mutieren Slices oft zu unübersichtlichen Datei-Wüsten. Zeit für ein grundlegendes Umdenken.
 
 
