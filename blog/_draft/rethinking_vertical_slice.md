@@ -141,7 +141,7 @@ Wenn ein Softwareentwickler oder Architekt ein neues Projekt öffnet, möchte er
 
 Die Ordnerstruktur sollte das System-Kontext-Diagramm 1:1 abbilden. Wenn das Business aus Buchungen, Kunden und Zahlungen besteht, müssen genau diese Substantive die oberste Ebene dominieren. Der Entwickler will sofort sehen: „Ah, das ist eine Autovermietung.“
 
-2. Funktionale Navigation ohne Such-Odyssee
+2. Fachliche Navigation ohne Such-Odyssee
 
 Wenn ein Fehler im PayPal-Prozess auftritt, will der Entwickler nicht erst überlegen müssen, welches globale Shared-Modul oder welche Querverlinkung im Features-Ordner dafür zuständig ist. Die Struktur muss intuitiv sein: Payment öffnen → PayPal öffnen → Fehler beheben. Alles, was fachlich zu PayPal gehört, muss genau dort gekapselt sein.
 
@@ -149,7 +149,7 @@ Wenn ein Fehler im PayPal-Prozess auftritt, will der Entwickler nicht erst über
 
 Frameworks, Controller, HTTP-Schnittstellen und Datenbank-Treiber sind austauschbare Werkzeuge. Sie sind Mittel zum Zweck, nicht der Zweck selbst. Ein Entwickler möchte, dass diese technischen Details visuell in den Hintergrund treten. Sie gehören als Implementierungsdetails in das jeweilige Fachgebiet, anstatt das Projekt von außen zu umklammern.
 
-Kurz gesagt: Im Sinne der "Screeming Architektur" muss ein Codebasis nach dem Business schreien, nicht nach der eingesetzten Mustern oder  Technologie.
+Kurz gesagt: Im Sinne der "Screeming Architektur" muss eine Codebasis nach dem Business schreien, nicht nach der eingesetzten Mustern oder  Technologie.
 
 ## Die Brücke zur Realität: Vom Wunschbild zur konkreten Struktur
 
