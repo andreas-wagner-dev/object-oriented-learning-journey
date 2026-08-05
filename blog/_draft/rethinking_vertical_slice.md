@@ -145,7 +145,7 @@ Die Ordnerstruktur sollte das System-Kontext-Diagramm 1:1 abbilden. Wenn das Bus
 
 Wenn ein Fehler im PayPal-Prozess auftritt, will der Entwickler nicht erst überlegen müssen, welches globale Shared-Modul oder welche Querverlinkung im Features-Ordner dafür zuständig ist. Die Struktur muss intuitiv sein: Payment öffnen → PayPal öffnen → Fehler beheben. Alles, was fachlich zu PayPal gehört, muss genau dort gekapselt sein.
 
-3. Technische Details im Hintergrund
+3. Technische Details im Hintergrund  
 
 Frameworks, Controller, HTTP-Schnittstellen und Datenbank-Treiber sind austauschbare Werkzeuge. Sie sind Mittel zum Zweck, nicht der Zweck selbst. Ein Entwickler möchte, dass diese technischen Details visuell in den Hintergrund treten. Sie gehören als Implementierungsdetails in das jeweilige Fachgebiet, anstatt das Projekt von außen zu umklammern.
 
