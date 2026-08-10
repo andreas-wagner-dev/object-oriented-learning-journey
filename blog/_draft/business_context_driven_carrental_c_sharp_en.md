@@ -285,7 +285,7 @@ Sub-packages = Implementations (adapters), dependent on core.
 
 `car/PersistentCar.cs` = detail of car persistence.
 
-No new business concepts in sub-packages that don't exist as interfaces in root.
+No new business concepts in sub-packages that don't exist as abstraction in the parent or root package.
 
 The `application/` package provide main method + (DI) injections of technical infrastructure.
 
