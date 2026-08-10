@@ -633,7 +633,7 @@ public class CarRentalApp : ICarRentalApp
 }
 ```
 
-**Architectural Benefits of this Approach:**
+**Structural Benefits of this Approach:**
 
 **No Service Locator Anti-Pattern in Domain:** Because `_services.GetRequiredService` is confined inside the Composition Root (`CarRentalApp`), the domain packages (`carpool/`, `customer/`) remain completely clean. They use standard Constructor Injection and have no compile-time dependency on framework DI containers.
 
@@ -695,7 +695,7 @@ carrental/
 └── ICar.cs                      ← Never knows about EF Core
 ```
 
-**Strict Rules of the Exchange Architectural Boundary:**
+**Strict Rules of the Exchange Structural Boundary:**
 
 * **Unidirectional Dependency Flow:** Domain adapters (such as `PersistentCar` in `carpool/`) are allowed to import and look down into the data schemas of the `exchange/` package.
 * **Absolute Root Ignorance:** Interfaces and value objects sitting at level "0" (the root package directory like `ICar.cs`) must never import or mention data objects, entities, or libraries originating from `exchange/`.
@@ -747,14 +747,14 @@ public class CarDbContext : DbContext
 }
 ```
 
-**The Architectural Payoff**
+**The Structural Payoff**
 
 Because these EF Core configurations are completely boxed into the `exchange/` layer, our domain core remains highly malleable. 
 * If the team decides tomorrow to drop Entity Framework Core and rewrite the data layer using raw `Dapper SQL` queries or migrate entirely to a document store like *MongoDB*, not a single line of business logic or domain interface needs to change.
 * We simply update the contents of the `exchange/storage/` folder and adjust the construction steps inside the `PersistentCar` and `CarRentalApp` factories.
 
 
-## 6. Architectural Evolution Path
+## 6. Structural Evolution Path
 
 A software system's project structure must dynamically adapt to changing organizational scales and business needs. Rather than guessing future scaling patterns on day one, this framework establishes a predictable three-phase evolution model.
 
@@ -784,7 +784,7 @@ carrental/              ← Single .NET Assembly (.dll / executable)
 
 ### 6.2 Phase 2: The Modular Monolith (Modulith)
 
-Migrating to a modular assembly model is a deliberate tactical choice to halt architectural decay as a codebase grows.
+Migrating to a modular assembly model is a deliberate tactical choice to halt Structural decay as a codebase grows.
 A modular structurce of code is NOT an obvious next step, but a conscious decision to combat increasing entropy. It makes sense when:
 
 * **The team is growing:** With around 4-5 developers, natural areas of responsibility begin to emerge. Modules allow these boundaries to be defined in the code, so developers are less likely to "poach" on each other's code.
@@ -821,7 +821,7 @@ carrental-service              ← Deployable Unit
 
 **Strategy A:** Flat Project Layout (Explicit Compilations)
 
-Every single architectural facet compiles to its own specialized project file (`.csproj`). Great for strict architectural validation.
+Every single structural facet compiles to its own specialized project file (`.csproj`). Great for strict structural validation.
 
 ```
 carrental-carpool             ← project of customer bounded context 
@@ -1034,7 +1034,7 @@ To elevate our project structures to this next level of maintainability, readabi
 
 Through the implementation of these rules - supplemented by "Rigid Immutability," "Pipeline Decorators," and an "Anti-Corruption Layer" our code ceases to be an unreadable jumble of framework instructions. It transforms into an executable narrative that directly reflects the business domain, scales cleanly across product milestones, and permanently bridges the translation gap.
 
-**Screaming Architecture:** —> means the structure screams the only business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
+**Screaming Architecture:** —> means the code structure screams only the business domain at you. No translation layer. No mental mapping. Just direct, obvious correspondence between business concepts and code structure.
 
 ---
 ## 9. References and Further Reading
