@@ -13,21 +13,21 @@ The Combined Anchor (adr_index.md) serves a dual purpose in a single file:
 
 ### **Pragmatic Rules**
 
-* Mandatory Anchor Rule: Every folder at every hierarchy level MUST contain an adr_index.md file as its very first element at sequential index position .1.   
+* Mandatory Anchor Rule: Every folder at every hierarchy level MUST contain an **`adr_index.md`** file as its very first element at sequential index position `.1`.  
+* Strict Alphabetical Precedence & Sequential Indexing: Every item inside a directory receives a strictly unique, consecutive index integer based on its alphabetical position. adr_index.md is always index .1, followed strictly by concepts, snippets, and subdirectories in continuous sequence (.2, .3, .4, ...).  
 * Locality of Architectural Decisions: Decisions belong to the exact domain level they affect. Global architecture decisions sit at Level 0 (`AI[1]`), while localized domain or sub-domain decisions reside in their respective sub-directories inside that sub-domain's adr_index.md.  
-* Strict Alphabetical Precedence & Sequential Indexing: Every item inside a directory receives a strictly unique, consecutive index integer based on its alphabetical position. adr_index.md is always index .1, followed strictly by concepts, snippets, and subdirectories in continuous sequence (.2, .3, .4, ...).
-  
+
 To ensure that the file-based knowledge system remains highly readable, intuitive, and easy for AI agents to process, combine these [three core guidelines](https://javadevguy.wordpress.com/2017/12/18/happy-packaging/):
 
-1. Folders Should Never Depend on Sub-Folders: Dependencies must always point inward (or downward).  
-2. Sub-Folders Do Not Introduce New Concepts, Just More Details: A sub-folder must only exist to expand upon, refine, or detail a concept already introduced in its parent folder.
-3. Folders Must Reflect Business Domains, Not Technical Layers: Organize by business domains (e.g., `billing/`, `customer/`), not technical roles (controllers/, models/).
-  
+1. **Folders Should Never Depend on Sub-Folders:** Dependencies must always point inward (or downward).  
+2. **Sub-Folders Do Not Introduce New Concepts, Just More Details:** A sub-folder must only exist to expand upon, refine, or detail a concept already introduced in its parent folder.
+3. **Folders Must Reflect Business Domains, Not Technical Layers:** Organize by business domains (e.g., `billing/`, `customer/`), not technical roles (controllers/, models/).
+
 By enforcing `adr_index.md` (.1) in every directory, any human or AI agent navigating into any folder gets an immediate, self-contained overview of both the governing decision history and the domain's structure in one place.
 
 ## **2. Abstract Structure Model (Tree)**
 
-According to the Open Knowledge Format (OKF), the system controls knowledge domains exclusively through combined decision/structure anchors (adr_index.md), category directories, and atomic concepts/snippets. All directory contents are strictly sorted in alphabetical order and indexed sequentially.
+According to the Open Knowledge Format (OKF), the system controls knowledge domains exclusively through combined decision/structure anchors (`adr_index.md`), category directories, and atomic concepts/snippets. All directory contents are strictly sorted in alphabetical order and indexed sequentially.
 
 ```text
 sales/  
