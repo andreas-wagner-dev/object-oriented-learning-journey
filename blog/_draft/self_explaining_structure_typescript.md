@@ -31,7 +31,8 @@ Applying these principles consistently yields a clean, self-explaining project s
 │   │   ├── paypal/              # Sub-package: Payment provider integration  
 │   │   └── provider/            # Sub-package: Data exchange with external movie APIs  
 │   │       ├── CachedMoviePoolApi.ts # Decorator: Serves cached movie data  
-│   │       └── MoviePoolApi.ts   # Fetches raw movie data via REST/HTTP  
+│   │       └── MoviePoolApi.ts   # Fetches raw movie data via REST/HTTP
+│   │
 │   ├── control/                 → UI elements / generic controls  
 │   │   ├── InputGroup.ts        → Composite container  
 │   │   ├── Dashboard.ts         → Composite container  
@@ -69,7 +70,7 @@ Applying these principles consistently yields a clean, self-explaining project s
 
 ## **The Foundation: The Pristine "Level 0"**
 
-The core of this approach is **Level 0**—the top-level hierarchy of the project directory. Here, all classes and interfaces representing the fundamental business concepts of the application reside. Level 0 remains strictly free from technical baggage and framework code.
+The core of this approach is **Level 0** — the top-level hierarchy of the project directory. Here, all classes and interfaces representing the fundamental business concepts of the application reside. Level 0 remains strictly free from technical baggage and framework code.
 
 * **Focus on Core Entities:** In a movie streaming application (*Movie App*), Level 0 contains exclusively domain-level files such as `Movie.ts`, `Cast.ts`, or `Comment.ts`.  
 * **Value Objects Over Technical Helpers:** Suffixes like `PaymentUtil.ts` or `MovieHelper.ts` are completely banned. Logic and data belong together. Instead of placing loose formatting functions inside a utility class, a dedicated Value Object such as `MovieDuration` or `PaymentNumber` is created, encapsulating its own validations and methods.  
@@ -129,11 +130,11 @@ Through this orchestration, the core business logic remains entirely untouched b
 
 ## **Conclusion**
 
-This architecture degrades frameworks, libraries, and communication protocols to interchangeable details at the boundaries of the system. Switching from a REST API to GraphQL requires changes exclusively inside the `exchange/` directory. Because the Composition Root orchestrates all dependencies, the application core—the Customer Story—remains completely shielded from technical noise and reads like a book.
+This structure-layout degrades frameworks, libraries, and communication protocols to interchangeable details at the boundaries of the system. Switching from a REST API to GraphQL requires changes exclusively inside the `exchange/` directory. Because the Composition Root orchestrates all dependencies, the application core — the Customer Story — remains completely shielded from technical noise and reads like a book.
 
 ## **Exemplary Implementation: application/NodeJsMovieApp.ts**
 
-To illustrate how the Composition Root functions as a story orchestrator in practice, the following TypeScript example demonstrates concrete runtime wiring inside `application/`:
+To illustrate how the **Composition Root** functions as a story orchestrator in practice, the following *TypeScript* example demonstrates concrete runtime wiring inside `application/`:
 
 ```ts
 // application/NodeJsMovieApp.ts  
@@ -207,11 +208,11 @@ if (require.main === module) {
 }
 ```
 
-### **Composition Root Key Takeaways**
+### **Composition Root**
 
-1. **Pure Decoration:** Neither the domain core (MoviePool.ts) nor the API implementation (`MoviePoolApi.ts`) is aware of caching, auth tokens, or logging details.  
-2. **Exclusive Control:** `NodeJsMovieApp` alone decides which concrete implementations are assembled at runtime.  
-3. **Effortless Interchangeability:** Replacing `Node.js` with a serverless environment (e.g., `AwsLambdaMovieApp.ts`) requires zero changes to core domain logic.
+1. **Exclusive Control:** `NodeJsMovieApp.ts` alone decides which concrete implementations are assembled at runtime.  
+2. **Effortless Interchangeability:** Replacing `Node.js` with a serverless environment (e.g., `AwsLambdaMovieApp.ts`) requires zero changes to core domain logic.  
+3. **Pure Decoration:** Neither the domain core (MoviePool.ts) nor the API implementation (`MoviePoolApi.ts`) is aware of caching, auth tokens, or logging details.
 
 ### **Code Comparison: Util Class vs. Value Object**
 
