@@ -8,7 +8,7 @@ To ensure that the file-based knowledge system remains highly readable, intuitiv
 
 The Combined Anchor (`adr_index.md`) serves a dual purpose in a single file:
 
-1. Architecture Decision Records (ADR): Records why architectural, domain, or operational decisions were made at this specific scope level, including trade-offs, context, and current status.  
+1. Architecture Decision Records (**ADR**): Records why architectural, domain, or operational decisions were made at this specific scope level, including trade-offs, context, and current status.  
 2. Structural Index: Defines what the domain is, its boundaries, sub-domains, navigation, and active concepts.
 
 ### **Pragmatic Rules**
