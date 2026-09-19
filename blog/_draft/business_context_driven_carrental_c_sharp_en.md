@@ -807,7 +807,7 @@ carrental-service              ← Deployable Unit
 ├── carrental-carpool          ← Bounded Context: Fleet Management
 ├── carrental-customer         ← Bounded Context: CRM / Identity
 ├── carrental-payment          ← Bounded Context: Billing & Transactions
-└── carrental-booking-ui       ← Frontend / API Gateway Logic
+└── carrental-booking          ← Frontend / API Gateway Logic
 ```
 
 **Why avoid the Shared Kernel or Common module?**
