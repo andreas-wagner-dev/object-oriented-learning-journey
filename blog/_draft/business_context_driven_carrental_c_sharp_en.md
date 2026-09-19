@@ -758,9 +758,9 @@ Because these EF Core configurations are completely boxed into the `exchange/` l
 
 A software system's project structure must dynamically adapt to changing organizational scales and business needs. Rather than guessing future scaling patterns on day one, this framework establishes a predictable three-phase evolution model.
 
-```
+```text
 [ Phase 1: Monolith ] → [ Phase 2: Modular Monolith ] → [ Phase 3: Microservices ]
-  (Single Assembly)         (Logical/Project Cut)          (Physical Deployment Cut)
+  (Single Assembly)         (Logical/Project Cut)        (Physical Deployment Cut)
 ```
 
 ### 6.1 Phase 1: The Structured Monolith
@@ -802,8 +802,8 @@ To maximize system autonomy, the **shared kernel** project or `common/` module m
 
 ```
 carrental-service              ← Deployable Unit
-├── [carrental]                ← RECOMMENDED: To be eliminated (Shared Kernel)
-├── carrental-application      ← ASP.NET Core Entry Point & DI Configuration (Composition Root)
+├── carrental                  → depends on: carrental-carpool, *-customer, *-payment, *-booking  
+│   ├── application/           ← ASP.NET Core Entry Point & DI Configuration (module-composition)  
 ├── carrental-carpool          ← Bounded Context: Fleet Management
 ├── carrental-customer         ← Bounded Context: CRM / Identity
 ├── carrental-payment          ← Bounded Context: Billing & Transactions
@@ -881,7 +881,6 @@ carrental                     ← deployable module-composition of all projects,
 ...                              
 ```
 
-
 **Strategy B:** Hierarchical Project Layout (Encapsulated Folders)
 
 If managing dozens of root-level project files creates developer friction, bundle the infrastructure layers as child project directories contained inside the main context group.
@@ -909,9 +908,9 @@ carrental-payment            ← Module Context Parent Directory
 ├── payment                  → Bounded Context  
 └── payment-paypal
 
-
 carrental-booking            ← Module Context Parent Directory
-├── user                     → Bounded Context
+├── booking                  → Bounded Context
+│   ├── user/                → UI Context
 └── ...
 
 ```
@@ -932,8 +931,7 @@ carrental-payment-service   ← artifact (build as deployable .dll)
 carrental-booking-service   ← artifact frontend (build as deployable  .dll)
 ```
 
-**Note:** Each service maintains the SAME internal structure as the monolith/modulith. Only deployment boundaries change.
-
+**Note:** Each service maintains the SAME internal structure as the monolith or modulith. Only deployment boundaries change.
 
 ## 7. Frontend as a Standalone Microservice (BFF Pattern)
 
@@ -955,6 +953,7 @@ carrental-booking                    → Frontend Project / BFF Service Project
 │   │   │   ├── UserDb.ts
 │   │   │   ...
 │   │   ├── endpoint/                 → HTTP clients for business services
+│   │   │   ├── BookingApi.ts
 │   │   │   ├── CarPoolApi.ts
 │   │   │   ├── CustomerApi.ts
 │   │   │   ├── PaymentApi.ts
@@ -982,6 +981,7 @@ carrental-booking                    → Frontend Project / BFF Service Project
 │   │   ├── page/                    → HTML sites or JS page components
 │   │   │   ├── admin-form.ts
 │   │   │   ├── auth-page.ts         → page of Login
+│   │   │   ├── booking-form.ts
 │   │   │   ├── car-details.ts    
 │   │   │   ├── carpool-list.ts  
 │   │   │   ├── payment-form.ts  
