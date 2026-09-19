@@ -273,17 +273,6 @@ The `exchange` package acts as an Anti-Corruption Layer (ACL). It isolates the d
 
 ### 3.3. Key Rules of Packaging and Naming Conventions
 
-The root package contains the most abstract concepts and defines the ubiquitous language of the system.
-
-```text
-Root (domain concepts)
-  ↑
-Package (details of concepts)
-  ↑
-Sub-package (details of details)
-```
-> Dependencies always point toward the parent package.
-
 #### 1) Packages Should Never Depend on Sub-Packages
 
 Root package = Domain core, independent of everything.
@@ -291,6 +280,8 @@ Root package = Domain core, independent of everything.
 
 Sub-packages = Implementations (adapters), dependent on core.
 - e.g., `carpool/ValidCar.cs` implements `ICar`
+
+**Dependencies always point toward the parent packages.**
 
 #### 2) Sub-Packages Don't Introduce New Concepts, Only Details
 
@@ -300,10 +291,10 @@ Classes in sub-packages should not introduce new concepts, but just more details
 
 The `application/` package (application itself) provide an entry point with main method + (DI) injections of technical infrastructure.
 
-#### 3) Packages and Classes Reflect Business Concepts, Not Technical Roles
+#### 3) Packages and Classes Reflect Business Concepts, Not Technical Ones
 
 ✅ **Recommended: Package names from Context Diagram**
-* `payment/`, `inventory/`, `shipping/` (business concepts or external systems)
+* `payment/`, `inventory/`, `shipping/` (domain concepts or business processes)
 * `user/` (GUI interfaces or REST interfaces for GUI e.g. React)
 * `exchange/` (everything that requires data exchange with external systems or libraries HTTP / REST / DB / PDF /...)
 * `application/` (The application itself - package provide startup class with main method + (DI) injections of technical infrastructure)
