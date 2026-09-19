@@ -584,7 +584,7 @@ carrental/
 └── ICarRentalApp.cs       ← Composition Root Interface (Root level)
 ```
 
-The `CarRentalAp`p class implements the root-level interface. It uses the `IServiceProvider` as a factory manager to resolve flat infrastructure components (like database contexts or caches) and manually nests decorators to enforce the desired runtime behavior pipeline.
+The `CarRentalApp.cs` class implements the root-level `ICarRentalApp.cs` interface. It uses the `IServiceProvider` as a factory manager to resolve flat infrastructure components (like database contexts or caches) and manually nests decorators to enforce the desired runtime behavior pipeline.
 
 ```csharp
 using CarRental.CarPool;
