@@ -940,67 +940,72 @@ carrental-booking-service   ← artifact frontend (build as deployable  .dll)
 In modern cloud-native architectures, it is often beneficial to treat the frontend not merely as a static asset, a collection of files (such as .js, .css, .html), but as a standalone "Backend-for-Frontend" (BFF) service. The BFF functions as a customized user interface precisely tailored to the needs of a specific client (e.g., web, mobile, or smart device). This enables a strict separation of presentation logic and business interfaces.
 
 ```
-carrental-booking-client             → Frontend Project / BFF Service Project 
+carrental-booking                    → Frontend Project / BFF Service Project 
 ├── src/
 │   ├── application/                  → startup: composition root pure JS / Node.js
 │   │   ├── NativeCarRentalApp.js     → decorator pure JS: main entry point
-│   │   ├── ServedCarRentalApp.js     → decorator Node.js: main entry point
+│   │   ├── ServedCarRentalApp.ts     → decorator Node.js: main entry point
 │   │   ...
 │   ├── exchange/                     → access of external resources
 │   │   ├── auth/                     → authentication
-│   │   │   ├── AuthApi.js            → HTTP client / ext. auth api
-│   │   │   ├── JwtAuthApi.js         → JWT-Token based auth api
+│   │   │   ├── AuthApi.ts            → HTTP client / ext. auth api
+│   │   │   ├── JwtAuthApi.ts         → JWT-Token based auth api
 │   │   │   ...
 │   │   ├── database/                 → database / schema generation
-│   │   │   ├── UserDb.js
+│   │   │   ├── UserDb.ts
 │   │   │   ...
 │   │   ├── endpoint/                 → HTTP clients for business services
-│   │   │   ├── CarPoolApi.js
-│   │   │   ├── CustomerApi.js
-│   │   │   ├── PaymentApi.js
+│   │   │   ├── CarPoolApi.ts
+│   │   │   ├── CustomerApi.ts
+│   │   │   ├── PaymentApi.ts
 │   │   ...
-│   ├── control/                 → custom UI elements / external plugins (jquery ui)
-│   │   ├── InputGroup.js        → composite container
-│   │   ├── TextInput.js         → input field
-│   │   ├── TextLabel.js         → output field
-│   │   ├── Form.js              → abstract Form extends Control  
-│   │   ├── Page.js              → abstract Page extends Control  
-│   │   ├── List.js              → abstract List extends Control 
-│   │   ├── Table.js             → abstract Table extends Control  
-│   │   ├── Menu.js              → abstract Menu extends Control  
-│   │   ...
-│   ├── layout/                  → CSS styles / pictures / layouts 
-│   │   ├── icon/                → icons of application
-│   │   ├── image/               → images of application
-│   │   │   ├── background.png
+│   ├── user/                        → User concepts are UI concepts
+│   │   ├── control/                 → custom UI elements / external plugins (jquery ui)
+│   │   │   ├── InputGroup.ts        → composite container
+│   │   │   ├── TextInput.ts         → input field
+│   │   │   ├── TextLabel.ts         → output field
+│   │   │   ├── Form.ts              → abstract Form extends Control  
+│   │   │   ├── Page.ts              → abstract Page extends Control  
+│   │   │   ├── List.ts              → abstract List extends Control 
+│   │   │   ├── Table.ts             → abstract Table extends Control  
+│   │   │   ├── Menu.ts              → abstract Menu extends Control
+│   │   │   ├── ...ts
 │   │   │   ...
-│   │   ├── layout.css           → CSS common rules for layouts
-│   │   ├── Layout.js            → layout as helper class
-│   │ ...
-│   ├── page/                    → HTML sites or JS page components
-│   │   ├── admin-form.js
-│   │   ├── auth-page.js         → page of Login
-│   │   ├── car-details.js    
-│   │   ├── carpool-list.js  
-│   │   ├── payment-form.js  
-│   │   ├── user-profile.js
-│   │   ├── main-form.js  
-│   │   ├── main-menu.js
-│   │   ├── page-navigation.js   → impl. of page router
+│   │   ├── layout/                  → CSS styles / pictures / layouts 
+│   │   │   ├── icon/                → icons of application
+│   │   │   ├── image/               → images of application
+│   │   │   │   ├── background.png
+│   │   │   │   ...
+│   │   │   ├── layout.css           → CSS common rules for layouts
+│   │   │   ├── Layout.ts            → layout as helper class
+│   │   │   ...
+│   │   ├── page/                    → HTML sites or JS page components
+│   │   │   ├── admin-form.ts
+│   │   │   ├── auth-page.ts         → page of Login
+│   │   │   ├── car-details.ts    
+│   │   │   ├── carpool-list.ts  
+│   │   │   ├── payment-form.ts  
+│   │   │   ├── user-profile.ts
+│   │   │   ├── main-form.ts  
+│   │   │   ├── main-menu.ts
+│   │   │   ├── page-navigation.ts   → impl. of page router
+│   │   │   ...
+│   │   ├── ValidUser.ts         → decorator for validation
+│   │   ├── WebUser.ts           → decorator for Web session
 │   │  ...
 │   ├── customer/                → implementation of domain logic of Person
-│   │   ├── ValidAddress.js      → decorator for validation
-│   │   ├── ValidCustomer.js     → decorator for validation
+│   │   ├── ValidAddress.ts      → decorator for validation
+│   │   ├── ValidCustomer.ts     → decorator for validation
 │   │   ...                      → other decorators (Logged*, Cashed*)
-│   ├── Address.js               → abstract domain class/interface
-│   ├── Auth.js                  → abstract authentication
-│   ├── Control.js               → abstract UI component class (composite-pattern)
-│   ├── Navigation.js            → abstract router/navigation
-│   ├── Car.js                   → abstract domain class/interface
-│   ├── CarPool.js               → abstract domain class/interface
-│   ├── Customer.js              → abstract domain class/interface
-│   ├── CarRentalApp.js          → abstract main class for composition root
-│   ├── UserProfile.js           → domain class extends Person
+│   ├── Address.ts               → abstract domain class/interface
+│   ├── Auth.ts                  → abstract authentication
+│   ├── Control.ts               → abstract UI component class (composite-pattern)
+│   ├── Navigation.ts            → abstract router/navigation
+│   ├── Car.ts                   → abstract domain class/interface
+│   ├── CarPool.ts               → abstract domain class/interface
+│   ├── Customer.ts              → abstract domain class/interface
+│   ├── CarRentalApp.ts          → abstract main class for composition root
+│   ├── User.ts           
 │   ...
 ├── test/                        → Unit and integration tests
 ├── .gitignore                   → Environment variables
