@@ -312,7 +312,7 @@ They describe the essence of things and represent the **"what."**
 **Classes describe the context (prefix-based):** Class names function like adjectives, describing the current state or the result of an action.
 
 * `CachedCar`, `PersistentCar`, `ValidCar`
-* `PayPalPayment`, `StripePayment`, `PayPal` (use HttpClient), `Stripe` (...Http)
+* `PayPalPayment`, `StripePayment`, `PayPal` (use Http protocol), `Stripe` (...Http)
 * `InMemoryCar`, `PersistentCar`, `CachedCar`, `LoggedCar`, `ValidCar` (prefixes describe WHAT)
 * `PublishedCar` (send Kafka messages/events), `ReceivedCar` (receive Kafka messages/events)
 * `CarRentalApp` in `application/` (implementation of `ICarRentalApp` interface)
@@ -327,13 +327,11 @@ Only what the business customer says - with result oriented prefixes.
 Avoid technical package names for grouping by architecture patterns.
 
 ❌ **Avoid: Classes names - Verbs or technical suffixes — very Bad (it is a SHAME)**
-* `CarProcessor`, `CarManager`, `CarClient`
+* `CarProcessor`, `CarManager`, `CarClient` (technical jobs)
 * `PaymentRepository`, `PaymentService` (architecture pattern)
-* `CustomerHandler`, `CustomerValidator`
-* `CarService`, `CarManager`, `CarHandler` (verbs/technical suffixes of architecture pattern)
-* `CarRepository`, `CarValidator` (technical roles)
+* `CustomerHandler`, `CustomerValidator` (technical roles or jobs)
 * `CarDTO`, `CarModel` (technical classification of architecture pattern)
-* `MailHelper`, `CarNumberUtil` (technical waste)
+* `MailHelper`, `CarNumberUtil` (technical waste holder)
 * `CarConsumer`, `CarProducer` (use Received/Published prefix instead)
 
 Avoid meaning of technical things and suffixes of architecture patterns.
