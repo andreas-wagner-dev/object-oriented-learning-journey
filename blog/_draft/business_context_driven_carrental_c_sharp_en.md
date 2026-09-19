@@ -250,8 +250,8 @@ The packages do not operate in isolation but rather interlock within a clear log
 [application] (Composition Root)
        │
        ├──► [booking] (UI & Prozesse) ──► [payment]
-       │         │                            │
-       │         ▼                            ▼
+       │              │                       │
+       │              ▼                       ▼
        ├──► [carpool] / [customer] ◄──────────┘
        │              │                       │
        ▼              ▼                       ▼
