@@ -253,8 +253,8 @@ The packages do not operate in isolation but rather interlock within a clear log
        │         │                            │
        │         ▼                            ▼
        ├──► [carpool] / [customer] ◄──────────┘
-       │         │
-       ▼         ▼
+       │              │                       │
+       ▼              ▼                       ▼
 [exchange] (Anti-Corruption Layer / Daten & Infrastruktur)
 ```
 
@@ -272,6 +272,17 @@ The `exchange` package acts as an Anti-Corruption Layer (ACL). It isolates the d
 * **The connections:** `carpool/PersistentCar` uses `exchange/storage/` (EF Core) for the database; `carpool/ServedCarPool` uses `exchange/resource/` for the REST interface; `carpool/PublishedCar` uses `exchange/messaging/` for Kafka events.
 
 ### 3.3. Key Rules of Packaging and Naming Conventions
+
+The root package contains the most abstract concepts and defines the ubiquitous language of the system.
+
+```text
+Root (domain concepts)
+  ↑
+Package (details of concepts)
+  ↑
+Sub-package (details of details)
+```
+> Dependencies always point toward the parent package.
 
 #### 1) Packages Should Never Depend on Sub-Packages
 
