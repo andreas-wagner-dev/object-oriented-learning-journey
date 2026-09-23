@@ -590,16 +590,7 @@ public final class DbAgent implements Agent {
 Used by overview tables:
 
 ```java
-new DbAgent(
-    agents.of(type),
-    id,
-    stage,
-    type,
-    name,
-    description,
-    changed,
-    created
-);
+new DbAgent(agents.of(type), id, stage, type, name, description, changed, created);
 ```
 
 Only scalar values required by the table are available.
@@ -609,11 +600,7 @@ Only scalar values required by the table are available.
 Used by editors and behavior execution:
 
 ```java
-new DbAgent(
-    entityManager,
-    agentInfoId,
-    agents
-);
+new DbAgent(entityManager, agentInfoId, agents);
 ```
 
 The detail constructor loads and copies the complete required graph. JSF does not later dereference lazy JPA relationships.
@@ -669,7 +656,7 @@ public final class UiAgentTable extends LazyDataModel<UiAgent> {
     }
     
     @Override
-    public int count( Map<String, FilterMeta> filterBy) {
+    public int count(Map<String, FilterMeta> filterBy) {
     
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -686,7 +673,7 @@ public final class UiAgentTable extends LazyDataModel<UiAgent> {
 
     @Override
     public List<UiAgent> load(int first, int pageSize,
-        Map<String, SortMeta> sortBy,Map<String, FilterMeta> filterBy) {
+        Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
         
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
