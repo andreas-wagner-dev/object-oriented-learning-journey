@@ -1070,16 +1070,15 @@ For a small data-only application, direct entity binding is simpler. Wrapper-bas
 
 ## Summary
 
-
 * **Pure Decorator** = preserves the interface and mainly changes behavior
 * **Plain Wrapper** = adapts the API for another context
-* **Wrapper-Based Decoration** = preserves the domain interface and intentionally adds a context-specific API
+* **Wrapper-Based Decoration** = preserves the domain interface and intentionally adds a context-specific API  
 
 
 * `Agent` = domain behavior contract
 * `AgentInfo` = stored information
 * `DbAgent` = persistence-backed Agent and domain wrapper
-* `UiAgent` = JSF-facing wrapper and Agent decorator
+* `UiAgent` = JSF-facing wrapper and Agent decorator  
 
 
 * `XHTML` = binds to UiAgent
