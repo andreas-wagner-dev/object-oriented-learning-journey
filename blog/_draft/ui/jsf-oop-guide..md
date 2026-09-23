@@ -54,19 +54,22 @@ mvn wildfly-jar:run
 The physical Maven structure is independent of the business-oriented Java package structure.
 
 ```text
-{parent-project-name}
-├── {module-name}-app
-├── {module-name}-lib
+{app-name}
+├── {app-name}-app
+├── {app-name}-lib
+│   ├── {lib-name-x}
+│   ├── {lib-name-y}
+│   └── pom.xml
 ├── pom.xml
 └── README.md
 ```
 
-### Application Modules
+### Application Module
 
 The application module follows the standard Maven web layout:
 
 ```text
-{module-name}-app/
+{app-name}-app/
 ├── src/
 │   ├── main/
 │   │   ├── java/
@@ -89,10 +92,10 @@ The application module follows the standard Maven web layout:
 
 ### Library Modules
 
-**Optional:** Library `lib` modules may contain isolated integrations or infrastructure utilities:
+**Optional:** Third-party libraries and infrastructure tools can be moved out of the main `...-app` project entirely. They live in dedicated, compile-time isolated sub-projects integrated as flat dependencies.
 
 ```text
-{module-name}-lib/
+{app-name}-lib/
 ├── database/
 ├── paypal/
 ├── pdf/
@@ -101,120 +104,84 @@ The application module follows the standard Maven web layout:
 └── pom.xml
 ```
 
-Third-party integrations should remain compile-time isolated and should not become part of the central domain model.
+The classes in these technical projects **only common functionality** and can then be used in the business packages of main `...-app` project. For example, if we are using ORMs like JPA, isolate them in a separate project storage and then use JPA Entity classes in the business package `storage/` behind a class like `DbAgent.java`, which is designed as a Decorator, Wrapper, Bridge or Adapter pattern.
 
 
-## Packaging Rules
+## Object-Oriented JSF
 
-### 1. Packages never depend on sub-packages
+Traditional JavaServer Faces (JSF) applications often introduce DTOs, ViewModels, and mapper layers to bridge the gap between domain objects, persistence models, and user interfaces.
 
-The root package contains the most abstract concepts and defines the ubiquitous language.
+JSF binds components through JavaBeans properties (by getter and setter):
 
-```text
-Root
- ↑
-Package
- ↑
-Sub-package
+```xml
+<p:inputText value="#{agent.name}" />
 ```
 
-Dependencies point toward parent packages.
+Adding `getName()`, `setName()`, timestamps, identifiers, or editable rows to `Agent` object would transform the domain contract into a data container.
 
-### 2. Sub-packages add detail, not new concepts
-
-Every concept must already exist in an ancestor package. The rule applies recursively.
+Binding the HTML-Tags in a XHTML file in JSF directly to properties of JPA entities creates another form of coupling:
 
 ```text
-Root package = business concepts
- ↑
-Package = details of root concepts
- ↑
-Sub-package = further details of parent concepts
- ↑
-Sub-sub-package = further details of sub concepts
-```
-
-### 3. Packages represent business concepts
-
-Use domain language `order/`, `product/`, `payment/`, or `user/` instead of framework or pattern terminology.
-
-Create a package only when a new business concept is discovered. Package size alone is not a reason for another package.
-
-A circular dependency may reveal a missing concept:
-
-```text
-order
-  ↕
-payment
-```
-
-The missing concept may be `checkout`:
-
-```text
-order
+XHTML
   ↓
-checkout
+JPA entity
   ↓
-payment
+lazy association
+  ↓
+open persistence context during rendering
 ```
 
-**Avoid** generic layers or groupings: `service/, repository/, controller/, dto/, entity/, mapper/, common/, shared/, util/`
+A conventional DTO approach introduces disconnected structures, data boundaries and mapping chains:
 
+`AgentEntity` ↔ EntityToDtoMapper ↔ `AgentDto` ↔ DtoToViewMapper ↔ `AgentView`
 
-## Package Responsibilities
+This transfer of data across layer boundaries introduces unnecessary code and causes the original domain abstraction to fragment. Each layer transforms the same information for its own purpose, resulting in rigid and [maintenance-intensive systems](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/).
 
-* `root package` = domain behavior and contracts
-* `storage/database/` = persistence-backed implementations
-* `storage/schema/` = JPA information model
-* `user/` = user-facing wrappers and JSF interaction
-* `application/` =  application composition and framework orchestration
-* `other packages/` = for concepts in root package
-* `other nested packages/` = further detail for concepts in parent packages
+**Problem:**
 
-Example of a possible structure:
+* Object encapsulation is weakened by getters and setters
+* Objects become data holders without behavior or responsibility
+* Multiple transformations are required between objects and packages
+* Business logic becomes scattered across Service and Controller layers
+* Technical package names dominate the structure (`controller/`, `service/`, `domain/`, `repository/`)
+* Object names describe architectural patterns rather than business concepts
+
+A behavioral domain object should not expose every field required by UI forms or tables of a Database.
+
+**Solution:**
+
+This application follows an object-oriented approach based on wrapper decoration.
 
 ```text
-org.example.inspection/
-│
-├── application/
-│   ├── CdiAgents.java
-│   └── WebInspectionApp.java
-│
-├── storage/
-│   ├── database/
-│   │   ├── DbAgent.java
-│   │   ├── DbAgentProperty.java
-│   │   └── ...
-│   └── schema/
-│       ├── AgentInfo.java
-│       └── AgentPropertyInfo.java
-│
-├── user/
-│   └── agent/
-│       ├── UiAgent.java
-│       ├── UiAgentProperty.java
-│       ├── UiAgentTable.java
-│       ├── AgentForm.java
-│       └── AgentOverviewForm.java
-│
-├── Agent.java
-├── Agents.java
-├── Inspection.java
-└── InspectionApp.java
+user/
+- UiUser.java (Data + Logic + UI)
+    ↓
+storage/
+- DbUser.java (Data + Logic + DB)
+    ↓
+User.java (Interface)
 
 ```
+**Benefits:**  
+* True encapsulation
+* No transformations needed
+* No unnecessary getters or setters
+* No dependency on UI or persistence frameworks
+* Logic where it belongs, within the object's implementation
+* Contract-driven design
+* Behavior over data (Tell, Don't Ask)
+* One object, one responsibility
+* Immutability where practical
+* Composition over inheritance
+* Business-oriented class (User.java) and package (user/) naming
 
-## Composition Root
+The structural perspectives used to minimize data boundaries in JSF applications are:
 
-The `application/` package composes the object graph and integrates infrastructure.
-
-It may integrate CDI, obtain container-managed resources, configure JPA access, integrate Quartz, configure scheduling, and connect domain, storage, and user objects.
-
-No domain, storage, user, or integration package depends on `application/`.
-
-Composition classes are named after the objects they provide: `WebInspectionApp`, `EntityManagers`, `Schedulers`, `ExternalSystems`
-
-**Avoid** mechanism or Job tiles as suffixes: `Producer`, `Factory`, `Provider`, `Injector`, `Assembler`, `Configurator`
+* `Agent` = domain behavior contract
+* `AgentInfo` = stored information
+* `DbAgent` = persistence-backed Agent implementation
+* `UiAgent` = JSF-facing wrapper and Agent decorator
+* `AgentForm` = JSF view state and interaction
 
 ## Naming Conventions
 
@@ -261,21 +228,193 @@ Prefixes describe a more specific form, state, origin, or perspective of an exis
 Use control suffixes only when the object actually represents a visible control or composition.  
 **Do not** rename arbitrary orchestration code to `Form`, `Table`, or `Dialog`.
 
+## Packaging Rules
+
+### 1. Packages never depend on sub-packages
+
+The root package contains the most abstract concepts and defines the ubiquitous language.
+
+```text
+Root
+ ↑
+Package
+ ↑
+Sub-package
+```
+
+**Dependencies point toward parent packages.**
+
+It is allow to use sub-packages within other packages, as long as they are not at the same hierarchy level.
+
+### 2. Sub-packages add detail, not new concepts
+
+Every concept must already exist in an ancestor package. The rule applies recursively.
+
+```text
+Root package = business concepts
+ ↑
+Package = details of root concepts
+ ↑
+Sub-package = further details of parent concepts
+ ↑
+Sub-sub-package = further details of sub concepts
+```
+
+### 3. Packages represent business concepts
+
+Use domain language `order/`, `product/`, `payment/`, or `user/` instead of framework or pattern terminology.  
+**Avoid** generic layers or groupings: `service/, repository/, controller/, dto/, entity/, mapper/, common/, shared/, util/`
+
+In general, create a package only when a new business concept is discovered. Package size alone is not a reason for another package.
+
+**Resolve Circular Dependency**
+
+For example a circular dependency between `order/` ↔ `payment/` packages mostly reveal a missing concept.  
+The missing concept in this case is may be **Checkout**.  
+The circular dependency can now be resolve like: `order/` → `checkout/` ← `payment/`.
+
+### Package Responsibilities
+
+* `root package` = domain behavior and contracts
+* `storage/database/` = persistence-backed domain objects
+* `storage/schema/` = JPA information model
+* `user/` = user-facing wrappers and JSF interaction
+* `application/` =  application composition and framework orchestration
+* `other packages/` = for concepts in root package
+* `other nested packages/` = further detail for concepts in parent packages
+
+Example of a possible structure:
+
+```text
+org.example.inspection/
+│
+├── application/
+│   ├── CdiAgents.java
+│   └── CtxAgentApplication.java
+│
+├── storage/
+│   ├── database/
+│   │   ├── DbAgent.java
+│   │   ├── DbAgentProperty.java
+│   │   └── ...
+│   └── schema/
+│       ├── AgentInfo.java
+│       └── AgentPropertyInfo.java
+│
+├── user/
+│   └── agent/
+│       ├── UiAgent.java
+│       ├── UiAgentProperty.java
+│       ├── UiAgentTable.java
+│       ├── AgentForm.java
+│       └── AgentOverviewForm.java
+│
+├── Agent.java
+├── Agents.java
+└── AgentApplication.java
+
+```
+#### Data Operation
+
+The `storage/` package as archive contains data scheme information and provide operation to a database.
+
+#### User Interaction
+
+The `user/` package is the place where the business data becomes visible to the humans. It contains presentation concepts such: UI components, visual layout elements and provide UI controls for user interactions.
+
+#### Composition Root
+
+The `application/` package composes the object graph and integrates infrastructure.  
+**No domain package, storage, user, or integration package depends on `application/`**
+
+It may integrate CDI (Context Dependency Injection), `@WebListener` annotated on classes implements `jakarta.servlet.ServletContextListener` or `@WebFilter` (`jakarta.servlet.Filter`), obtain container-managed resources, configure JPA access, integrate Quartz, configure scheduling, and connect domain, storage, and user objects.
+
+* The **Root Composition class** it named after the main application it provides: `CtxAgentApplication` implements `ServletContextListener`  
+* The **CDI Producer classes** are named after the objects they provide `CdiEntityManager`, or `CdiQuartzScheduler`
+
+**Avoid** mechanism or job tiles as name suffixes: `...Producer`, `...Factory`, `...Provider`, `...Injector`, `..Assembler`, `...Configurator`
+
+
+## Wrapper Decoration
+
+### Decorator Pattern
+
+A pure decorator implements the same interface as its origin and mainly changes or extends behavior:
+
+```java
+public final class LoggedAgent implements Agent {
+
+    private final Agent origin;
+    private final Logger log;
+    
+    public LoggedAgent(Agent origin, Logger log) {
+        this.origin = origin; this.log = log;
+    }
+
+    @Override
+    public Agent connect() throws IOException {
+        log.info("connect");
+        return origin.connect();
+    }
+}
+```
+
+### Wrapper Pattern
+
+A plain wrapper adapts the API for another context and need not implement the origin's interface:
+
+```java
+public final class UiAgent {
+
+    private final DbAgent origin;
+    
+    public UiAgent(DbAgent origin) {
+        this.origin = origin;
+    }
+    
+    public String getName() {
+        return origin.name();
+    }
+}
+```
+
+### Wrapper Decorator
+
+The application combines both ideas:
+
+```java
+public final class UiAgent implements Agent {
+
+    private final DbAgent origin;
+
+    public UiAgent(DbAgent origin) {
+        this.origin = origin;
+    }
+    
+    @Override
+    public Agent connect() throws IOException {
+        return origin.connect();
+    }
+
+    public String getName() {
+        return origin.name();
+    }
+
+    public void setName(String name) {
+        origin.name(name);
+    }
+}
+```
+
+`UiAgent` is a wrapper because the UI-specific API is larger than `Agent`. `UiAgent` is also a decorator because `UiAgent` preserves `Agent` and delegates domain behavior.
+
+> Use a wrapper to add a context-specific API while preserving the domain contract through decoration.
+
+This is not a pure GoF decorator because the public API intentionally grows. It is not a DTO wrapper because the object remains behaviorally usable as an `Agent`.
+
 ## Domain Model
 
-The root package contains behavioral contracts and follows these principles:
-
-- true encapsulation
-- Tell, Don't Ask
-- behavior over data
-- immutability where practical
-- composition over inheritance
-- contract-driven design
-- business-oriented naming
-- no unnecessary getters or setters
-- no dependency on UI or persistence frameworks
-
-A domain contract describes behavior:
+A domain contract (interface) describes behavior:
 
 ```java
 public interface Agent {
@@ -288,50 +427,609 @@ public interface Agent {
 
     Agent connect() throws IOException;
 
-    Inspection inspect();
+    // ...
 
+}
+```
+
+## Domain Objects
+
+Domain Objects are implementation of contracts (interfaces).
+
+```java
+public final class SimpleAgent implements Agent {
+
+    private final String type;
+    private final Properties properties;
+    
+    public SimpleAgent(String type, Properties properties, ...) {
+        this.type = type; this.properties = properties;
+    }
+
+    @Override
+    public Agent connect() throws IOException {
+        return origin.connect();
+    }
+    
+    //...
 }
 ```
 
 The domain does not depend on JPA, `EntityManager`, Jakarta Faces, PrimeFaces, CDI scopes, Quartz, database schemas, or UI data binding.
 
-## The Problem: Data Boundaries of JSF
+## Persistence Model
 
-A behavioral domain object should not expose every field required by forms and tables. JSF binds components through JavaBeans properties:
+JPA entities are persistence implementation details. They may use mutable fields, field access, protected default constructors, getters and setters, bidirectional relationships, lazy associations, and technical identifiers.
+
+```java
+@Entity
+@Access(AccessType.FIELD)
+public class AgentInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private String id, String stage, type, name, description;
+    private Date changed, created;
+
+    @OneToMany(mappedBy = "agentInfo")
+    private List<AgentPropertyInfo> agentPropertyInfos = new ArrayList<>();
+
+}
+```
+
+```java
+@Entity
+@Access(AccessType.FIELD)
+public class AgentPropertyInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private String id, type, name, value, defaultValue;
+    private Long sortOrder;
+    private byte[] content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private AgentInfo agentInfo;
+
+}
+```
+
+### Relationship Naming
+
+Foreign-key fields use the referenced entity name in lower **camel case**:
+
+```java
+private ParentInfo parentInfo;
+```
+
+Collections use the referenced entity name with a **plural suffix**:
+
+```java
+private List<ChildInfo> childInfos;
+```
+
+`mappedBy` exactly matches the owning field:
+
+```java
+@ManyToOne(fetch = FetchType.LAZY)
+private ParentInfo parentInfo;
+```
+
+```java
+@OneToMany(mappedBy = "parentInfo")
+private List<ChildInfo> childInfos = new ArrayList<>();
+```
+
+## Database Object
+
+`DbAgent` is a complete persistence-backed implementation of `Agent`. `DbAgent` wraps a concrete `Agent`, owns all state required for domain behavior, and persists that state only when explicitly told to do so.
+
+```java
+public final class DbAgent implements Agent {
+
+    private final Agent origin;
+    private final String id, stage, type, name, description;
+    private final Date changed, created;
+    private final List<DbAgentProperty> properties;
+
+    public DbAgent(Agent origin, String id, String stage, String type, String name, 
+        String description, Date changed, Date created, List<DbAgentProperty> properties) {
+        this.origin = origin; this.id = id; this.stage = stage;
+        this.type = type; this.name = name; this.description = description;
+        this.changed = changed; this.created = created;
+        this.properties = List.copyOf(properties);
+    }
+
+    @Override
+    public Properties properties() {
+        Properties result = new Properties();
+        for (DbAgentProperty property : this.properties) {
+            result.put(property.name(), property.value() == null ? "": property.value());
+        }
+        return result;
+    }
+
+    @Override
+    public Agent connect() throws IOException {
+        return this.origin.init(this.properties()).connect();
+    }
+
+    public void storeTo(EntityManager entityManager) {
+        // Explicitly reconcile AgentInfo and AgentPropertyInfo.
+    }
+}
+```
+
+A `DbAgent` is never partially functional. Every constructor receives all information required by `properties()`, `connect()`..., and other `Agent` behavior.
+
+### Construction from a Table Projection
+
+The overview first loads the paged scalar projection, then loads the properties for all IDs on that page in one additional query. The grouped properties are passed into the constructor.
+
+```text
+paged Agent tuples + properties for all page IDs
+        ↓
+complete DbAgent
+        ↓
+UiAgent
+```
+
+This avoids both incomplete agents and one property query per row.
+
+```java
+List<Tuple> rows = this.agentRows(first, pageSize, sortBy, filterBy);
+
+List<String> ids = new ArrayList<>();
+
+for (Tuple row : rows) {
+    ids.add(row.get("id", String.class));
+}
+
+Map<String, List<DbAgentProperty>> propertiesByAgent = this.propertiesByAgent(ids);
+
+List<UiAgent> result = new ArrayList<>();
+
+for (Tuple row : rows) {
+
+    String id = row.get("id", String.class);
+    String type = row.get("type", String.class);
+
+    DbAgent dbAgent = new DbAgent(
+        this.agents.of(type),
+        id,
+        row.get("stage", String.class),
+        type,
+        row.get("name", String.class),
+        row.get("description", String.class),
+        row.get("changed", Date.class),
+        row.get("created", Date.class),
+        propertiesByAgent.getOrDefault(id, List.of())
+    );
+
+    result.add(new UiAgent(dbAgent));
+}
+
+return result;
+```
+
+The property query loads the complete page in one operation:
+
+```java
+private Map<String, List<DbAgentProperty>> propertiesByAgent(List<String> agentInfoIds) {
+    List<AgentPropertyInfo> stored =
+        entityManager.createQuery(
+            """
+            select propertyInfo
+             from AgentPropertyInfo propertyInfo
+             where propertyInfo.agentInfo.id in :agentInfoIds
+             order by propertyInfo.agentInfo.id,
+                      propertyInfo.sortOrder
+            """,
+            AgentPropertyInfo.class
+        ).setParameter("agentInfoIds", agentInfoIds).getResultList();
+
+    Map<String, List<DbAgentProperty>> result = new HashMap<>();
+
+    for (AgentPropertyInfo propertyInfo : stored) {
+    
+        String agentInfoId = propertyInfo.getAgentInfo().getId();
+
+        result.computeIfAbsent(
+            agentInfoId, ignored -> new ArrayList<>()).add(new DbAgentProperty(propertyInfo)
+        );
+    }
+
+    return result;
+}
+```
+
+### Construction for a Detail Form
+
+The detail query loads the same complete state with a fetch join and passes copied values into the same constructor.
+
+```java
+public DbAgent agent(EntityManager entityManager, String agentInfoId, Agents agents) {
+    AgentInfo info = entityManager.createQuery(
+        """
+        select distinct agentInfo
+          from AgentInfo agentInfo
+          left join fetch agentInfo.agentPropertyInfos
+         where agentInfo.id = :id
+        """,
+        AgentInfo.class
+    ).setParameter("id", agentInfoId).getSingleResult();
+
+    List<DbAgentProperty> properties = new ArrayList<>();
+
+    for (AgentPropertyInfo propertyInfo : info.getAgentPropertyInfos()) {
+        properties.add(new DbAgentProperty(propertyInfo));
+    }
+
+    return new DbAgent(
+        agents.of(info.getType()),
+        info.getId(),
+        info.getStage(),
+        info.getType(),
+        info.getName(),
+        info.getDescription(),
+        info.getChanged(),
+        info.getCreated(),
+        properties
+    );
+}
+```
+
+Overview and detail construction differ only in how the complete values are obtained. The resulting `DbAgent` has the same behavioral guarantees in both cases.
+
+## Explicit Persistence
+
+The application does not rely on cascade or `orphanRemoval` for complex graphs. Database objects explicitly persist, update, and remove every part.
+
+* `persist` new objects
+* `update` changed objects
+* `remove` deleted objects
+* `update` owning relationships
+
+`DbAgent.storeTo(EntityManager)` reconciles `AgentInfo` and `AgentPropertyInfo` explicitly.
+
+## UI Objects
+
+```text
+XHTML = binds to UiAgent
+
+UiAgent = exposes JavaBeans properties delegates Agent behavior to DbAgent
+
+DbAgent = owns complete behavior-relevant state
+    delegates domain behavior to Agent
+    persists explicitly through storeTo(EntityManager)
+```
+
+JSF pages do not bind directly to JPA entities, lazy associations, `EntityManager`, or internal domain state.
+
+## Pure JPA Lazy Table
+
+```text
+paged JPA Tuple projection
+        +
+batched property query
+        ↓
+complete DbAgent
+        ↓
+UiAgent
+        ↓
+LazyDataModel<UiAgent>
+```
+
+The table performs count, filtering, sorting, and pagination for the scalar rows. A second query retrieves the properties for every agent on the current page. No `DbAgent` is created without behavior-relevant properties.
+
+```java
+public final class UiAgentTable extends LazyDataModel<UiAgent> {
+
+    private static final long serialVersionUID = 1L;
+
+    private final EntityManager entityManager;
+    private final Agents agents;
+
+    public UiAgentTable(EntityManager entityManager, Agents agents) {
+        this.entityManager = entityManager; this.agents = agents;
+    }
+
+    @Override
+    public int count(Map<String, FilterMeta> filterBy) {
+    
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+
+        Root<AgentInfo> root = criteria.from(AgentInfo.class);
+
+        criteria.select(builder.count(root));
+        
+        criteria.where(filters(builder, root, filterBy));
+
+        return entityManager.createQuery(criteria).getSingleResult().intValue();
+    }
+
+    @Override
+    public List<UiAgent> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+    
+        List<Tuple> rows = this.agentRows(first, pageSize, sortBy, filterBy);
+
+        List<String> ids = new ArrayList<>();
+
+        for (Tuple row : rows) {
+            ids.add(row.get("id", String.class));
+        }
+
+        Map<String, List<DbAgentProperty>> propertiesByAgent = propertiesByAgent(ids);
+
+        List<UiAgent> result = new ArrayList<>();
+
+        for (Tuple row : rows) {
+            String id = row.get("id", String.class);
+            String type = row.get("type", String.class);
+
+            result.add(
+                new UiAgent(
+                    new DbAgent(
+                        this.agents.of(type),
+                        id,
+                        row.get("stage", String.class),
+                        type,
+                        row.get("name", String.class),
+                        row.get("description", String.class),
+                        row.get("changed", Date.class),
+                        row.get("created", Date.class),
+                        propertiesByAgent.getOrDefault(id,List.of())
+                    )
+                )
+            );
+        }
+
+        return result;
+    }
+
+    @Override
+    public String getRowKey(UiAgent agent) {
+        return agent.getId();
+    }
+
+    // agentRows(...), propertiesByAgent(...),
+    // filters(...), and orders(...) use plain JPA.
+}
+```
+
+The table performs two bounded database queries for the current page instead of producing partially functional objects or an N+1 query sequence.
+
+## Detail Loading
+
+```text
+AgentInfo + AgentPropertyInfo
+        ↓ copied into constructor values
+complete DbAgent
+        ↓
+UiAgent
+        ↓
+AgentForm
+```
+
+After construction, rendering and domain behavior do not require an open persistence context.
+
+## JSF Beans
+
+JFS beans are mediator between XHTML file and UI-Objects:
+
+```java
+@Named
+@ViewScoped
+public class AgentForm implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @PersistenceContext(unitName = "application-jta")
+    private transient EntityManager entityManager;
+
+    @Inject
+    private transient Agents agents;
+
+    private transient UiAgent agent;
+    
+    private String id;
+
+    @Transactional
+    public UiAgent getAgent() {
+        if (agent == null) {
+            agent = new UiAgent(
+                new DbAgent(entityManager, id, agents)
+            );
+        }
+        return agent;
+    }
+
+    @Transactional
+    public String save() {
+        agent.storeTo(entityManager);
+        return "agent-detail.xhtml?faces-redirect=true&id=" + agent.getId();
+    }
+}
+```
+
+Wrappers do not need default constructors. They always wrap a valid origin.
+
+## JSF Validation
+
+Simple input rules belong to XHTML:
 
 ```xml
-<p:inputText value="#{agent.name}" />
+<p:inputText id="name" value="#{agent.name}" required="true" requiredMessage="Name is required">
+
+    <f:validateLength minimum="3" maximum="120" />
+  
+</p:inputText>
+
+<p:message for="name" />
 ```
 
-Adding `getName()`, `setName()`, time-stamps, identifiers, and editable rows to `Agent` would turn the domain contract into a data container.
+Cross-field validation belongs to the form:
 
-Binding XHTML directly to JPA entities creates another coupling:
+```java
+public boolean valid(UiAgentConfig config) {
 
-```text
-XHTML
-  ↓
-JPA entity
-  ↓
-lazy association
-  ↓
-open persistence context during rendering
+    if (config.getSourceAgentInfoId().equals(config.getTargetAgentInfoId())) {
+    
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        context.validationFailed();
+        context.addMessage(null,
+            new FacesMessage(
+                FacesMessage.SEVERITY_ERROR,
+                "Source and target agent must differ.", null
+            )
+        );
+
+        return false;
+    }
+
+    return true;
+}
 ```
 
-A conventional DTO approach introduces disconnected structures, data boundaries and mapping chains:
+Validation remains separated:
 
-```text
-AgentEntity
-  ↓  mapper
-AgentDto
-  ↓  mapper
-AgentView
+* **Domain** = validates business behavior
+* **UI and JSF** = validate input and form consistency
+* **Database** = enforces persistence constraints
+
+## Serialization and Default Constructors
+
+Default construction and serialization are independent concerns.
+
+### JPA Entities
+
+JPA entities require a public or protected no-argument constructor:
+
+```java
+protected AgentInfo() {
+    // Required by JPA.
+}
 ```
 
-Those [Data Boundaries are the root cause of Maintenance Problems](https://javadevguy.wordpress.com/2019/06/06/data-boundaries-are-the-root-cause-of-maintenance-problems/). 
+### CDI-Managed JSF Beans
 
-The application instead uses **wrapper-based decoration**.
+`@ViewScoped` beans are created by CDI and must be passivation-capable:
 
-## Object Model
+```java
+@Named
+@ViewScoped
+public class AgentForm implements Serializable {
+
+}
+```
+
+### Wrapper Objects
+
+`DbAgent`, `UiAgent`, and `UiAgentProperty` do not need default constructors.
+
+Wrappers need `Serializable` only when intentionally stored as non-`transient` fields in a passivating scope. A pragmatic alternative is:
+
+```java
+private String id;
+private transient UiAgent agent;
+```
+
+The wrapper is reconstructed from the identifier when required.
+
+## Transactions
+
+The application uses container-managed JTA transactions.  
+**Do not** call, within the managed Bean context: `entityManager.getTransaction();` for a JTA persistence unit.
+
+Transaction boundaries protect short, consistent operations:
+
+- storing configuration
+- updating stored information
+- deleting stored information
+- recording results and logs
+- reconciling an edited graph
+
+**Do not** wrap long-running external synchronization in one database transaction.
+
+## Testing
+
+Integration tests verify:
+
+- JPA metadata and relationships
+- projection tuple mapping
+- sorting, filtering, counting, and pagination
+- explicit child persistence
+- explicit child removal
+- detail graph loading
+- behavior delegation through wrappers
+- JSF form validation rules where practical
+
+Integration tests may override the transaction type `JTA` persistence unit to  `RESOURCE_LOCAL` for standalone execution:
+
+```java
+Map<Object, Object> overrides = Map.of(
+    "jakarta.persistence.transactionType", "RESOURCE_LOCAL",
+    "jakarta.persistence.schema-generation.database.action", "create-drop"
+);
+```
+
+## Benefits
+
+- The domain remains behavior-oriented.
+- JSF receives the properties required for binding.
+- JPA entities remain implementation details.
+- Wrappers preserve the domain contract while adding context-specific APIs.
+- Tuple projections avoid loading complete JPA entity graphs while batched properties keep every `DbAgent` behaviorally complete.
+- Overview and detail paths both construct behaviorally complete `DbAgent` objects.
+- Rendering does not trigger lazy loading.
+- No DTO-to-domain-to-view conversion chain is required.
+- Persistence changes are explicit and testable.
+
+## Drawbacks
+
+**More Objects:** `Agent` <- `DbAgent` <- `UiAgent`  
+The model increases the number of objects and the conceptual load.
+
+**Additional Indirection:** `XHTML` -> `UiAgent` -> `DbAgent` -> `Agent`  
+The boundaries improve separation but require additional navigation.
+
+**Explicit Persistence**  
+Without cascade and `orphanRemoval`, graph reconciliation requires explicit code and integration tests.
+
+**Complete Construction Cost**  
+Every `DbAgent` receives all state required for behavior. Overview pages therefore execute one paged scalar query and one batched property query. This deliberately exchanges a smaller projection object for a uniform behavioral contract.
+
+**Query Coordination**  
+Overview loading must keep scalar rows and batched properties consistent and grouped by identifier. Integration tests must verify agents with no properties, multiple properties, sorting, filtering, and page boundaries.
+
+**View State Management**
+A complete wrapper graph in a passivating JSF scope may enlarge view state and require serialization. Keeping identifiers and reconstructing transient wrappers avoids this at the cost of additional loading.
+
+**Suitability**
+For a small data-only application, direct entity binding is simpler. Wrapper-based decoration becomes valuable when behavior, integrations, multiple representations, or framework independence matter.
+
+## Summary
+
+* **Pure Decorator** = preserves the interface and mainly changes behavior
+* **Plain Wrapper** = adapts the API for another context
+* **Wrapper-Based Decoration** = preserves the domain interface and intentionally adds a context-specific API  
+
+* `Agent` = domain behavior contract
+* `AgentInfo` = stored information
+* `DbAgent` = persistence-backed Agent and domain wrapper
+* `UiAgent` = JSF-facing wrapper and Agent decorator  
+
+* `XHTML` = binds to UiAgent
+* `UiAgent` = exposes JSF properties delegates Agent behavior to DbAgent
+* `DbAgent` = exposes persistence capabilities delegates business behavior to Agent
+* `AgentInfo` = stores the persistence state used by DbAgent
+
+This approach preserves behavioral OOP while satisfying the practical requirements of JPA, PrimeFaces, and Jakarta Faces.
+
+**OO-JSF Diagram Model**
 
 ```mermaid
 classDiagram
@@ -393,697 +1091,3 @@ classDiagram
     UiAgentTable --> UiAgent : returns
 ```
 
-The perspectives to resolve and minimize the Data Boundaries are:
-
-* `Agent` = domain behavior contract
-* `AgentInfo` = stored information
-* `DbAgent` = persistence-backed Agent and wrapper around the domain agent
-* `UiAgent` = JSF-facing wrapper and Agent decorator
-* `AgentForm` = JSF view state and interaction
-
-## Wrapper-Based Decoration
-
-### Pure Decorator-Pattren
-
-A pure decorator implements the same interface as its origin and mainly changes or extends behavior:
-
-```java
-public final class LoggedAgent implements Agent {
-
-    private final Agent origin;
-    private final Logger log;
-    
-    public LoggedAgent(Agent origin, Logger log) {
-        this.origin = origin;
-        this.log = log;
-    }
-
-    @Override
-    public Agent connect() throws IOException {
-        log.info("connect");
-        return origin.connect();
-    }
-}
-```
-
-### Plain Wrapper-Pattren
-
-A plain wrapper adapts the API for another context and need not implement the origin's interface:
-
-```java
-public final class UiAgent {
-
-    private final DbAgent origin;
-    
-    public UiAgent(DbAgent origin) {
-        this.origin = origin;
-    }
-    
-    public String getName() {
-        return origin.name();
-    }
-}
-```
-
-### Wrapper Decoration
-
-The application combines both ideas:
-
-```java
-public final class UiAgent implements Agent {
-
-    private final DbAgent origin;
-
-    public UiAgent(DbAgent origin) {
-        this.origin = origin;
-    }
-    
-    @Override
-    public Agent connect() throws IOException {
-        return origin.connect();
-    }
-
-    public String getName() {
-        return origin.name();
-    }
-
-    public void setName(String name) {
-        origin.name(name);
-    }
-}
-```
-
-`UiAgent` is a wrapper because the UI-specific API is larger than `Agent`. `UiAgent` is also a decorator because `UiAgent` preserves `Agent` and delegates domain behavior.
-
-> Use a wrapper to add a context-specific API while preserving the domain contract through decoration.
-
-This is not a pure GoF decorator because the public API intentionally grows. It is not a DTO wrapper because the object remains behaviorally usable as an `Agent`.
-
-## JPA Information Model
-
-JPA entities are persistence implementation details. They may use mutable fields, field access, protected default constructors, getters and setters, bidirectional relationships, lazy associations, and technical identifiers.
-
-```java
-@Entity
-@Access(AccessType.FIELD)
-public class AgentInfo implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private String id, String stage, type, name, description;
-    private Date changed, created;
-
-    @OneToMany(mappedBy = "agentInfo")
-    private List<AgentPropertyInfo> agentPropertyInfos = new ArrayList<>();
-
-}
-```
-
-```java
-@Entity
-@Access(AccessType.FIELD)
-public class AgentPropertyInfo implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private String id, type, name, value, defaultValue;
-    private Long sortOrder;
-    private byte[] content;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private AgentInfo agentInfo;
-
-}
-```
-
-### Relationship Naming
-
-Foreign-key fields use the referenced entity name in lower camel case:
-
-```java
-private ParentInfo parentInfo;
-```
-
-Collections use the referenced entity name with a plural suffix:
-
-```java
-private List<ChildInfo> childInfos;
-```
-
-`mappedBy` exactly matches the owning field:
-
-```java
-@ManyToOne(fetch = FetchType.LAZY)
-private ParentInfo parentInfo;
-```
-
-```java
-@OneToMany(mappedBy = "parentInfo")
-private List<ChildInfo> childInfos = new ArrayList<>();
-```
-
-## Explicit Persistence
-
-The application does not rely on cascade or `orphanRemoval` for complex graphs. Database objects explicitly persist, update, and remove every part.
-
-* `persist` new objects
-* `update` changed objects
-* `remove` deleted objects
-* `update` owning relationships
-
-`DbAgent.save(EntityManager)` reconciles `AgentInfo` and `AgentPropertyInfo` explicitly.
-
-## Database Object
-
-`DbAgent` is a persistence-backed implementation of `Agent` and a wrapper around a concrete domain agent.
-
-```java
-public final class DbAgent implements Agent {
-
-    private final Agent origin;
-
-    private String id, stage, type, name, description;
-    private Date changed, created;
-    private final List<DbAgentProperty> properties;
-
-    @Override
-    public Agent connect() throws IOException {
-        return origin.init(properties()).connect();
-    }
-
-    public String id() {
-        return id;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public void name(String name) {
-        this.name = name;
-    }
-}
-```
-
-### Projection Construction
-
-Used by overview tables:
-
-```java
-new DbAgent(agents.of(type), id, stage, type, name, description, changed, created);
-```
-
-Only scalar values required by the table are available.
-
-### Detail Construction
-
-Used by editors and behavior execution:
-
-```java
-new DbAgent(entityManager, agentInfoId, agents);
-```
-
-The detail constructor loads and copies the complete required graph. JSF does not later dereference lazy JPA relationships.
-
-## UI Objects
-
-The `user/` package contains UI wrappers, editable child wrappers, form objects, lazy table models, validation, and navigation behavior.
-
-```text
-XHTML = binds to UiAgent on getter and setter
-  ↓
-UiAgent = exposes JavaBeans properties delegates Agent behavior to DbAgent
-  ↓
-DbAgent = exposes persistence capabilities delegates domain behavior to Agent
-```
-
-JSF pages do not bind directly to JPA entities, lazy JPA associations, `EntityManager`, or internal domain state.
-
-## Pure JPA Lazy Table
-
-Large result sets are loaded page by page without relying on a generic table abstraction.
-
-```text
-JPA Tuple projection
-    ↓
-DbAgent with scalar fields
-    ↓
-UiAgent with getter and setter
-    ↓
-LazyDataModel<UiAgent>
-    ↓
-JSF DataTable
-```
-
-The following class performs count, filtering, sorting, pagination, tuple selection, and tuple mapping directly:
-
-```java
-public final class UiAgentTable extends LazyDataModel<UiAgent> {
-
-    private static final long serialVersionUID = 1L;
-
-    private final EntityManager entityManager;
-    private final Agents agents;
-
-    public UiAgentTable(EntityManager entityManager, Agents agents) {
-        this.entityManager = entityManager;
-        this.agents = agents;
-    }
-
-    @Override
-    public String getRowKey(UiAgent agent) {
-        return agent.getId();
-    }
-    
-    @Override
-    public int count(Map<String, FilterMeta> filterBy) {
-    
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-
-        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
-
-        Root<AgentInfo> root = criteria.from(AgentInfo.class);
-
-        criteria.select(builder.count(root));
-        
-        criteria.where(filters(builder, root, filterBy));
-
-        return entityManager.createQuery(criteria).getSingleResult().intValue();
-    }
-
-    @Override
-    public List<UiAgent> load(int first, int pageSize,
-        Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-        
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-
-        CriteriaQuery<Tuple> criteria = builder.createTupleQuery();
-
-        Root<AgentInfo> root = criteria.from(AgentInfo.class);
-
-        criteria.multiselect(
-            root.get("id").alias("id"),
-            root.get("stage").alias("stage"),
-            root.get("type").alias("type"),
-            root.get("name").alias("name"),
-            root.get("description").alias("description"),
-            root.get("changed").alias("changed"),
-            root.get("created").alias("created")
-        );
-
-        criteria.where(filters(builder, root, filterBy));
-
-        List<Order> orders = orders(builder, root, sortBy);
-
-        criteria.orderBy(orders);
-
-        TypedQuery<Tuple> query = entityManager.createQuery(criteria);
-
-        query.setFirstResult(first);
-        query.setMaxResults(pageSize);
-
-        List<UiAgent> result = new ArrayList<>();
-
-        for (Tuple tuple : query.getResultList()) {
-        
-            String type = tuple.get("type", String.class);
-
-            DbAgent dbAgent = new DbAgent(
-                agents.of(type),
-                tuple.get("id", String.class),
-                tuple.get("stage", String.class),
-                type,
-                tuple.get("name", String.class),
-                tuple.get("description", String.class),
-                tuple.get("changed", Date.class),
-                tuple.get("created", Date.class)
-            );
-
-            result.add(new UiAgent(dbAgent));
-        }
-
-        return result;
-    }
-
-    private Predicate filters(CriteriaBuilder builder, Root<AgentInfo> root,
-        Map<String, FilterMeta> filterBy) {
-        
-        Predicate condition = builder.conjunction();
-
-        for (FilterMeta filter : filterBy.values()) {
-            Object filterValue = filter.getFilterValue();
-
-            if (filterValue == null) {
-                continue;
-            }
-
-            String value = filterValue.toString().trim().toLowerCase();
-
-            if (value.isEmpty()) {
-                continue;
-            }
-
-            Path<String> path = switch (filter.getField()) {
-                case "stage" -> root.get("stage");
-                case "type" -> root.get("type");
-                case "name" -> root.get("name");
-                case "description" -> root.get("description");
-                default -> null;
-            };
-
-            if (path != null) {
-                condition = builder.and(
-                    condition,
-                    builder.like(builder.lower(path), "%" + value + "%")
-                );
-            }
-        }
-
-        return condition;
-    }
-
-    private List<Order> orders(CriteriaBuilder builder,Root<AgentInfo> root,
-        Map<String, SortMeta> sortBy) {
-        
-        List<SortMeta> sorts = new ArrayList<>(sortBy.values());
-        sorts.sort(Comparator.comparing(SortMeta::getPriority));
-
-        List<Order> result = new ArrayList<>();
-
-        for (SortMeta sort : sorts) {
-        
-            Path<?> path = switch (sort.getField()) {
-                case "stage" -> root.get("stage");
-                case "type" -> root.get("type");
-                case "name" -> root.get("name");
-                case "description" -> root.get("description");
-                case "changed" -> root.get("changed");
-                case "created" -> root.get("created");
-                default -> null;
-            };
-
-            if (path == null) {
-                continue;
-            }
-
-            if (sort.getOrder() == SortOrder.ASCENDING) {
-                result.add(builder.asc(path));
-            } else if (sort.getOrder() == SortOrder.DESCENDING) {
-                result.add(builder.desc(path));
-            }
-        }
-
-        return result;
-    }
-
-}
-```
-
-The overview does not load `AgentPropertyInfo` and does not expose JPA entities to JSF.
-
-## Detail Loading
-
-A detail page loads the required graph at the persistence boundary:
-
-```text
-AgentInfo - LEFT JOIN FETCH AgentPropertyInfo
-   ↓
-DbAgent - copies complete state
-   ↓
-UiAgent - mutate state
-   ↓
-AgentForm - detail form
-```
-
-```java
-public DbAgent(EntityManager entityManager, String agentInfoId, Agents agents) {
-
-    AgentInfo info = entityManager.createQuery(
-        """
-        select distinct agentInfo
-          from AgentInfo agentInfo
-          left join fetch agentInfo.agentPropertyInfos
-         where agentInfo.id = :id
-        """,
-        AgentInfo.class
-    ).setParameter("id", agentInfoId).getSingleResult();
-
-    origin = agents.of(info.getType());
-    id = info.getId();
-    type = info.getType();
-    name = info.getName();
-    description = info.getDescription();
-    properties = new ArrayList<>();
-
-    for (AgentPropertyInfo propertyInfo: info.getAgentPropertyInfos()) {
-        properties.add(new DbAgentProperty(propertyInfo));
-    }
-}
-```
-
-After construction, rendering does not require an open persistence context.
-
-## JSF Form
-
-```java
-@Named
-@ViewScoped
-public class AgentForm implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @PersistenceContext(unitName = "application-jta")
-    private transient EntityManager entityManager;
-
-    @Inject
-    private transient Agents agents;
-
-    private String id;
-    private transient UiAgent agent;
-
-    @Transactional
-    public UiAgent getAgent() {
-        if (agent == null) {
-            agent = new UiAgent(
-                new DbAgent(entityManager, id, agents)
-            );
-        }
-        return agent;
-    }
-
-    @Transactional
-    public String save() {
-    
-        agent.save(entityManager);
-
-        return "agent-detail.xhtml?faces-redirect=true&id=" + agent.getId();
-    }
-}
-```
-
-Wrappers do not need default constructors. They always wrap a valid origin.
-
-## PrimeFaces Validation
-
-Simple input rules belong to XHTML:
-
-```xml
-<p:inputText id="name" value="#{agent.name}" required="true" requiredMessage="Name is required">
-
-    <f:validateLength minimum="3" maximum="120" />
-  
-</p:inputText>
-
-<p:message for="name" />
-```
-
-Cross-field validation belongs to the form:
-
-```java
-public boolean valid(UiAgentConfig config) {
-
-    if (config.getSourceAgentInfoId().equals(config.getTargetAgentInfoId())) {
-    
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        context.validationFailed();
-        context.addMessage(
-        	  null,
-            new FacesMessage(
-                FacesMessage.SEVERITY_ERROR,
-                "Source and target agent must differ.", null
-            )
-        );
-
-        return false;
-    }
-
-    return true;
-}
-```
-
-Validation remains separated:
-
-* **Domain** = validates business behavior
-* **UI and JSF** = validate input and form consistency
-* **Database** = enforces persistence constraints
-
-## Serialization and Default Constructors
-
-Default construction and serialization are independent concerns.
-
-### JPA Entities
-
-JPA entities require a public or protected no-argument constructor:
-
-```java
-protected AgentInfo() {
-    // Required by JPA.
-}
-```
-
-### CDI-Managed JSF Beans
-
-`@ViewScoped` beans are created by CDI and must be passivation-capable:
-
-```java
-@Named
-@ViewScoped
-public class AgentForm implements Serializable {
-
-}
-```
-
-### Wrapper Objects
-
-`DbAgent`, `UiAgent`, and `UiAgentProperty` do not need default constructors.
-
-Wrappers need `Serializable` only when intentionally stored as non-transient fields in a passivating scope. A pragmatic alternative is:
-
-```java
-private String id;
-private transient UiAgent agent;
-```
-
-The wrapper is reconstructed from the identifier when required.
-
-## Transactions
-
-The application uses container-managed JTA transactions.  
-**Do not** call, within the managed Bean context: `entityManager.getTransaction();` for a JTA persistence unit.
-
-Transaction boundaries protect short, consistent operations:
-
-- storing configuration
-- updating stored information
-- deleting stored information
-- recording results and logs
-- reconciling an edited graph
-
-**Do not** wrap long-running external synchronization in one database transaction.
-
-## Testing
-
-Integration tests verify:
-
-- JPA metadata and relationships
-- projection tuple mapping
-- sorting, filtering, counting, and pagination
-- explicit child persistence
-- explicit child removal
-- detail graph loading
-- behavior delegation through wrappers
-- JSF form validation rules where practical
-
-RESOURCE_LOCAL integration tests may override a JTA persistence unit for standalone execution:
-
-```java
-Map<Object, Object> overrides = Map.of(
-    "jakarta.persistence.transactionType", "RESOURCE_LOCAL",
-    "jakarta.persistence.schema-generation.database.action", "create-drop"
-);
-```
-
-## Benefits
-
-- The domain remains behavior-oriented.
-- JSF receives the properties required for binding.
-- JPA entities remain implementation details.
-- Wrappers preserve the domain contract while adding context-specific APIs.
-- Tuple projections avoid complete entity loading for tables.
-- Detail pages materialize the required graph once.
-- Rendering does not trigger lazy loading.
-- No DTO-to-domain-to-view conversion chain is required.
-- Persistence changes are explicit and testable.
-
-## Drawbacks
-
-### More Objects
-
-```text
-Agent
-  ↑
-DbAgent
-  ↑
-UiAgent
-```
-
-The model increases the number of objects and the conceptual load.
-
-### Additional Indirection
-
-```text
-XHTML
-  ↓
-UiAgent
-  ↓
-DbAgent
-  ↓
-Agent
-```
-
-The boundaries improve separation but require additional navigation.
-
-### Explicit Persistence Work
-
-Without cascade and `orphanRemoval`, graph reconciliation requires explicit code and integration tests.
-
-### Multiple Lifecycles
-
-* **Table** = projection-backed DbAgent
-* **Editor** = fully loaded DbAgent
-* **Behavior execution** = configured Agent
-
-The use case must select the correct construction mode.
-
-### Wrapper Contract Discipline
-
-A projection-backed `DbAgent` must not execute behavior that requires unloaded properties. The operation must load the required state or reconstruct a full `DbAgent` by identifier.
-
-### View State Management
-
-A complete wrapper graph in a passivating JSF scope may enlarge view state and require serialization. Keeping identifiers and reconstructing transient wrappers avoids this at the cost of additional loading.
-
-### Suitability
-
-For a small data-only application, direct entity binding is simpler. Wrapper-based decoration becomes valuable when behavior, integrations, multiple representations, or framework independence matter.
-
-## Summary
-
-* **Pure Decorator** = preserves the interface and mainly changes behavior
-* **Plain Wrapper** = adapts the API for another context
-* **Wrapper-Based Decoration** = preserves the domain interface and intentionally adds a context-specific API  
-
-
-* `Agent` = domain behavior contract
-* `AgentInfo` = stored information
-* `DbAgent` = persistence-backed Agent and domain wrapper
-* `UiAgent` = JSF-facing wrapper and Agent decorator  
-
-
-* `XHTML` = binds to UiAgent
-* `UiAgent` = exposes JSF properties delegates Agent behavior to DbAgent
-* `DbAgent` = exposes persistence capabilities delegates business behavior to Agent
-* `AgentInfo` = stores the persistence state used by DbAgent
-
-This approach preserves behavioral OOP while satisfying the practical requirements of JPA, PrimeFaces, and Jakarta Faces.
